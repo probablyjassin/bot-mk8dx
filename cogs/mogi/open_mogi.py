@@ -12,9 +12,9 @@ class open_mogi(commands.Cog):
     async def open_mogi(self, ctx: ApplicationContext):
         try:
             create_mogi(ctx.channel.id)
-            await ctx.send("New Mogi open!")
-        except ValueError:
-            await ctx.send("A Mogi for this channel is already open.")
+            await ctx.respond("New Mogi open!")
+        except:
+            await ctx.respond("A Mogi for this channel is already open.")
 
 def setup(bot: commands.Bot):
     bot.add_cog(open_mogi(bot))
