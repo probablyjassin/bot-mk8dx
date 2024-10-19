@@ -4,7 +4,7 @@ from discord.ext import commands, tasks
 from utils.mogis import get_mogi, close_mogi
 from utils.models import Mogi, MogiPlayer
 
-class leave_mogi(commands.Cog):
+class list_mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.leave_semaphore = asyncio.Semaphore(1)
@@ -25,4 +25,4 @@ class leave_mogi(commands.Cog):
                 await ctx.respond(f"{ctx.author.mention} has left the mogi!\n{len(mogi.players)} players are in!")
 
 def setup(bot: commands.Bot):
-    bot.add_cog(leave_mogi(bot))
+    bot.add_cog(list_mogi(bot))
