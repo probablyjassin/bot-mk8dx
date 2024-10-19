@@ -1,10 +1,6 @@
-import os, json, discord, pymongo, random
-import re
-from pymongo import collection
-from copy import deepcopy
-from discord.ext import commands, tasks
-from dotenv import load_dotenv
-load_dotenv()
+import os
+import discord
+from discord.ext import commands
 
 intents = discord.Intents.all()
 
