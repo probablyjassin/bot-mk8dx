@@ -12,7 +12,7 @@ def get_mogi(channel_id: int):
         return None
     return mogi_registry[channel_id]
 
-def delete_mogi(channel_id: int):
+def close_mogi(channel_id: int):
     if channel_id not in mogi_registry:
         raise ValueError("Mogi with this ID does not exist.")
     del mogi_registry[channel_id]
