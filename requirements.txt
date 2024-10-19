@@ -1,0 +1,11 @@
+git+https://github.com/Pycord-Development/pycord
+aiohttp
+python-dotenv
+
+pymongo
+
+matplotlib
+dataframe_image
+pandas
+
+# pynacl
