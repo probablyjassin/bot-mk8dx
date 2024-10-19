@@ -13,12 +13,11 @@ owners = [769525682039947314, 450728788570013721]
 class customBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
-    
+
     async def close(self):
         for name,cog in self.cogs.items():
             cog._eject(self)
             print(f"Ejected {name}")
-        self.client.close()
         await super().close()
 
 bot = customBot(
@@ -28,10 +27,10 @@ bot = customBot(
 )
 
 @bot.event
-async def on_ready(self):
-    print(f'Logged into Discord as {self.bot.user.name} | ID: {self.bot.user.id}')
+async def on_ready():
+    print(f'Logged into Discord as {bot.user.name} | ID: {bot.user.id}')
     print("Guilds:")
-    for guild in list(self.bot.guilds):
+    for guild in bot.guilds:
         print(guild.name)
     print("--------")
 
