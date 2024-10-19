@@ -16,11 +16,7 @@ try:
 except ImportError:
     pass
 
-intents = discord.Intents.default()
-intents |= discord.Intents.guilds
-intents |= discord.Intents.messages
-intents |= discord.Intents.message_content
-intents |= discord.Intents.members
+intents = discord.Intents.all()
 
 owners = [769525682039947314, 450728788570013721]
 
