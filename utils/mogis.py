@@ -9,14 +9,8 @@ def create_mogi(channel_id: int):
 
 def get_mogi(channel_id: int):
     if channel_id not in mogi_registry:
-        raise ValueError("Mogi with this ID does not exist.")
+        return None
     return mogi_registry[channel_id]
-
-def edit_mogi(channel_id: int, mogi_data: dict):
-    if channel_id not in mogi_registry:
-        raise ValueError("Mogi with this ID does not exist.")
-    for key, value in mogi_data.items():
-        setattr(mogi_registry[channel_id], key, value)
 
 def delete_mogi(channel_id: int):
     if channel_id not in mogi_registry:
