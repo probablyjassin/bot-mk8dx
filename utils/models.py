@@ -16,23 +16,24 @@ class MogiPlayer:
 
 @dataclass
 class Mogi:
-    isOpen: bool
-    isVoting: bool
-    isPlaying: bool
-    isFinished: bool
+    channel_id: int
 
-    player_cap: int
+    isVoting: bool = False
+    isPlaying: bool = False
+    isFinished: bool = False
 
-    votes: dict[str, int]
-    voters: list[int]
+    player_cap: int = 12
 
-    players: list[MogiPlayer]
-    subs: list[MogiPlayer]
-    teams: list[list[MogiPlayer]]
-    team_tags: list[str]
+    votes: dict[str, int] = []
+    voters: list[int] = []
 
-    format: str
+    players: list[MogiPlayer] = []
+    subs: list[MogiPlayer] = []
+    teams: list[list[MogiPlayer]] = []
+    team_tags: list[str] = [f"Team {i+1}" for i in range(6)]
 
-    collected_points: list[int]
-    calced_results: list[str]
-    players_ordered_placements: list[str]
+    format: str = ""
+
+    collected_points: list[int] = []
+    calced_results: list[str] = []
+    players_ordered_placements: list[str] = []
