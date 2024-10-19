@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from utils.database import db
+from discord.ext import commands
 
 @dataclass
 class PlayerProfile:
@@ -13,6 +13,8 @@ class PlayerProfile:
 @dataclass
 class MogiPlayer:
     discord_id: int
+    points: int = None
+    placement: int = None
 
 def emtpty_list():
     return []
