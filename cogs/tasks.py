@@ -6,7 +6,7 @@ from discord.ext import commands, tasks
 class tasks(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-      
+
     @commands.Cog.listener()
     async def on_ready(self):
         self.change_activity.start()
