@@ -30,7 +30,7 @@ class Mogi:
     players: list[MogiPlayer] = []
     subs: list[MogiPlayer] = []
     teams: list[list[MogiPlayer]] = []
-    team_tags: list[str] = [f"Team {i+1}" for i in range(6)]
+    team_tags: list[str] = ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"] 
 
     format: str = ""
 
