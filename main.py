@@ -1,6 +1,7 @@
 import os
 import discord
 from discord.ext import commands
+from config import DISCORD_TOKEN
 
 intents = discord.Intents.all()
 
@@ -38,4 +39,4 @@ for filename in os.listdir('./cogs/mogi'):
     if filename.endswith('.py'):
         bot.load_extension(f'cogs.mogi.{filename[:-3]}')
 
-bot.run(os.getenv('DISCORD_TOKEN'))
+bot.run(DISCORD_TOKEN)
