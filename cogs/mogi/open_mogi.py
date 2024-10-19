@@ -1,5 +1,3 @@
-import random
-import discord
 from discord import slash_command, ApplicationContext
 from discord.ext import commands, tasks
 from utils.mogis import create_mogi
