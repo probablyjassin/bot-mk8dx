@@ -2,7 +2,7 @@ from discord import slash_command, ApplicationContext
 from discord.ext import commands
 from utils.mogis import get_mogi
 from utils.mogis import destroy_mogi
-from utils.commandUtils.confirm import confirmation
+from utils.commands.confirm import confirmation
 
 class close_mogi(commands.Cog):
     def __init__(self, bot):
