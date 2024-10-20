@@ -28,7 +28,7 @@ class register(commands.Cog):
         if username == "":
             username = ctx.interaction.user.name.lower()
 
-        if self.players.find_one({"name": username}):
+        if db_players.find_one({"name": username}):
             return await ctx.respond(
                 "This username is already taken. Try changing your server display name or ask a moderator for help.",
                 ephemeral=True,
@@ -41,7 +41,7 @@ class register(commands.Cog):
                 ephemeral=True,
             )
         try:
-            self.players.insert_one(
+            db_players.insert_one(
                 {
                     "name": username,
                     "mmr": 2000,
