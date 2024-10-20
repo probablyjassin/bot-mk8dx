@@ -14,11 +14,11 @@ class list_mogi(commands.Cog):
         async with self.leave_semaphore:
             mogi: Mogi = get_mogi(ctx.channel.id)
             if not mogi:
-                await ctx.respond("There is no mogi open in this channel.")
+                return await ctx.respond("There is no mogi open in this channel.")
             if not [player for player in mogi.players if player.discord_id == ctx.author.id]:
-                await ctx.respond("You're not in this mogi.")
+                return await ctx.respond("You're not in this mogi.")
             if mogi.isPlaying or mogi.isVoting:
-                await ctx.respond("This mogi has already started.")
+                return await ctx.respond("This mogi has already started.")
 
             else:
                 mogi.players = [player for player in mogi.players if player.discord_id != ctx.author.id]
