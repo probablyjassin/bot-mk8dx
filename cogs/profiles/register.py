@@ -5,12 +5,13 @@ from discord.utils import get
 from discord.ext import commands
 from utils.database import db_players, db_archived
 from utils.objects import get_register_channel, get_lounge_role
+from config import GUILD_IDS
 
 class register(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(name="register", description="Register for playing in Lounge")
+    @slash_command(name="register", description="Register for playing in Lounge", guild_ids=GUILD_IDS)
     async def register(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
