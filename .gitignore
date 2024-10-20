@@ -127,5 +127,6 @@ cython_debug/
 # VS Code settings
 .vscode/
 
-# Discord bot token and MongoDB URI
-.env
+# tests
+tests
+*test*.*
