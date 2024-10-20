@@ -12,6 +12,7 @@ class PlayerProfile:
     joined: int | None = None
     disconnects: int | None = None
     inactive: bool | None = None
+    suspended: bool | None = None
 
     def __repr__(self):
         return (f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
