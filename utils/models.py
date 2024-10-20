@@ -17,7 +17,7 @@ class PlayerProfile:
     def __repr__(self):
         return (f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
                 f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
-                f"disconnects={self.disconnects!r}, inactive={self.inactive!r})")
+                f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})")
 
 def emtpty_list():
     return []
