@@ -17,6 +17,9 @@ class list_mogi(commands.Cog):
                 await ctx.respond("There is no mogi open in this channel.")
             if not [player for player in mogi.players if player.discord_id == ctx.author.id]:
                 await ctx.respond("You're not in this mogi.")
+            if mogi.isPlaying or mogi.isVoting:
+                await ctx.respond("This mogi has already started.")
+
             else:
                 mogi.players = [player for player in mogi.players if player.discord_id != ctx.author.id]
                 if len(mogi.players) == 0:
