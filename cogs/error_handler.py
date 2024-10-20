@@ -7,6 +7,7 @@ import logging
 logging.basicConfig(
     filename='error.log',
     level=logging.ERROR,
+    filemode='w',
     format='%(asctime)s:%(levelname)s:%(name)s: %(message)s'
 )
 
