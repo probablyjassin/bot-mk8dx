@@ -16,6 +16,9 @@ class close_mogi(commands.Cog):
         mogi = get_mogi(ctx.channel.id)
         if not mogi:
             return await ctx.respond("No open Mogi in this channel.")
+        if mogi.isVoting or (mogi.isPlaying and not mogi.isFinished):
+            return await ctx.respond("You can't close the Mogi while it's in progress.")
+
         close_confirm_message = "{} don't close the mogi unless it fully finished. \nClosing will remove all players and discard any points.\n **Are you sure?**".format(ctx.author.mention)
         
         if (await confirmation(ctx, close_confirm_message)):
