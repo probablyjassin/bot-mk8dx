@@ -3,6 +3,7 @@ from discord import slash_command, ApplicationContext
 from discord.ext import commands
 from utils.mogis import get_mogi
 from utils.models import Mogi, MogiPlayer
+from utils.database import db_players, db_archived
 
 class join_mogi(commands.Cog):
     def __init__(self, bot):
@@ -18,6 +19,13 @@ class join_mogi(commands.Cog):
             if ctx.author.id in mogi.players:
                 await ctx.respond("You're already in this mogi.")
             else:
+                player = await db_players.find_one({"discord_id": ctx.author.id})
+                if not player:
+                    archived_player = await db_players.find_one({"discord_id": ctx.author.id, "archived": True})
+                    await ctx.respond("You're not registered for Lounge.")
+                else:
+                    mogi.players.append(MogiPlayer(discord_id=ctx.author.id))
+                    await ctx.respond(f"{ctx.author.mention} has joined the mogi!\n{len(mogi.players)} players are in!")
                 mogi.players.append(MogiPlayer(discord_id=ctx.author.id))
                 await ctx.respond(f"{ctx.author.mention} has joined the mogi!\n{len(mogi.players)} players are in!")
 
