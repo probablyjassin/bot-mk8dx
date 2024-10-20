@@ -2,6 +2,9 @@ import os
 import discord
 from discord.ext import commands
 from config import DISCORD_TOKEN
+from logger import setup_logger, normal, highlight
+
+logger = setup_logger(__name__)
 
 intents = discord.Intents.all()
 
@@ -25,18 +28,28 @@ bot = customBot(
 
 @bot.event
 async def on_ready():
-    print(f'Logged into Discord as {bot.user.name} | ID: {bot.user.id}')
-    print("Guilds:")
+    logger.info(f'Logged into Discord as {highlight(bot.user.name)}')
+    logger.info(f'ID: {highlight(bot.user.id)}')
+
+    logger.debug("Guilds:")
     for guild in bot.guilds:
         print(guild.name)
-    print("--------")
+    logger.debug("--------")
 
-for filename in os.listdir('./cogs'):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs.{filename[:-3]}')
+def load_extensions():
+    logger.debug("----Loading extensions----")
+    for root, dirs, files in os.walk('./cogs'):
+        for file in files:
+            if file.endswith('.py'):
+                cog_path = os.path.join(root, file)
+                extension = cog_path[2:].replace('/', '.').replace('\\', '.').replace('.py', '')
+                bot.load_extension(extension)
+                logger.info(f"Loaded {normal(extension)}")
+    logger.debug("----Finished loading extensions----")
 
-for filename in os.listdir('./cogs/mogi'):
-    if filename.endswith('.py'):
-        bot.load_extension(f'cogs.mogi.{filename[:-3]}')
+def main():
+    load_extensions()
+    bot.run(DISCORD_TOKEN)
 
-bot.run(DISCORD_TOKEN)
+if __name__ == "__main__":
+    main()

@@ -1,8 +1,8 @@
 git+https://github.com/Pycord-Development/pycord
-aiohttp
 python-dotenv
-
+aiohttp
 pymongo
+colorlog
 
 matplotlib
 dataframe_image
