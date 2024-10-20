@@ -7,7 +7,7 @@ class open_mogi(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="open", description="Open a mogi")
-    async def open_mogi(self, ctx: ApplicationContext):
+    async def open(self, ctx: ApplicationContext):
         try:
             create_mogi(ctx.channel.id)
             await ctx.respond("# Started a new mogi! \n Use /join to participate!")

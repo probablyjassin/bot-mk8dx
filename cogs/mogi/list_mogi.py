@@ -8,7 +8,7 @@ class leave_mogi(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="l", description="List the players in this mogi")
-    async def list_mogi(self, ctx: ApplicationContext):
+    async def l(self, ctx: ApplicationContext):
         mogi: Mogi = get_mogi(ctx.channel.id)
         if not mogi:
             return await ctx.respond("There is no mogi open in this channel.")
