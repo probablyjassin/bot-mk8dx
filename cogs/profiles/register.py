@@ -3,7 +3,7 @@ import discord
 from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
-from utils.database import db_players, db_archived
+from utils.database import db_players, db_archived, Int64
 from utils.objects import get_register_channel, get_lounge_role
 from config import GUILD_IDS
 
@@ -18,7 +18,7 @@ class register(commands.Cog):
         if ctx.channel_id != (await get_register_channel()).id:
             return await ctx.respond("You're not in the right channel for this command.", ephemeral=True)
 
-        existingPlayer = db_players.find_one({"discord_id": ctx.author.id}) | db_archived.find_one({"discord_id": ctx.author.id})
+        existingPlayer = db_players.find_one({"discord_id": Int64(ctx.author.id)}) | db_archived.find_one({"discord_id": Int64(ctx.author.id)})
         if existingPlayer:
             return await ctx.respond("You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.", ephemeral=True)
         
