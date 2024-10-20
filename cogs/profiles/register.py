@@ -1,5 +1,5 @@
 import discord
-from discord import slash_command
+from discord import slash_command, ApplicationContext
 from discord.ext import commands
 
 class register(commands.Cog):
@@ -7,8 +7,8 @@ class register(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="register", description="Register yourself as a player")
-    async def register(self, ctx: commands.Context):
-        pass
+    async def register(self, ctx: ApplicationContext):
+        await ctx.respond("WIP")
 
 def setup(bot: commands.Bot):
     bot.add_cog(register(bot))
