@@ -1,20 +1,21 @@
 import discord
 from discord import slash_command, ApplicationContext
+from discord.utils import get
 from discord.ext import commands
 from utils.database import db_players, db_archived
-
+from utils.objects import get_register_channel, get_lounge_role
 
 class register(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(name="register", description="Register for playing in the Lounge")
+    @slash_command(name="register", description="Register for playing in Lounge")
     async def register(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
         existingPlayer = db_players.find_one({"discord_id": ctx.author.id}) | db_archived.find_one({"discord_id": ctx.author.id})
         if existingPlayer:
-            return await ctx.respond("You are already registered for the Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.", ephemeral=True)
+            return await ctx.respond("You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.", ephemeral=True)
         
         username = "".join(
             e for e in ctx.interaction.user.display_name.lower() if e.isalnum()
