@@ -48,3 +48,13 @@ class Mogi:
     collected_points: list[int] = field(default_factory=emtpty_list)
     calced_results: list[str] = field(default_factory=emtpty_list)
     players_ordered_placements: list[str] = field(default_factory=emtpty_list)
+
+@dataclass
+class Rank:
+    name: str
+    range: tuple[int | float, int | float]
+
+    def __post_init__(self):
+        valid_names = {"Silver", "Gold", "Diamond"}
+        if self.name not in valid_names:
+            raise ValueError(f"Invalid rank name: {self.name}. Must be one of {valid_names}.")
