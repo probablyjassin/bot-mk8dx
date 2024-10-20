@@ -45,7 +45,7 @@ class register(commands.Cog):
                 {
                     "name": username,
                     "mmr": 2000,
-                    "discord_id": member.id,
+                    "discord_id": Int64(member.id),
                     "joined": round(time.time()),
                     "history": [],
                 },
