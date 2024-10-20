@@ -1,7 +1,7 @@
 import discord
 from discord import ApplicationContext, DiscordException
 from discord.ext import commands
-from config import ERROR_CHANNEL
+from config import ERROR_CHANNEL_ID
 import logging
 
 logging.basicConfig(
@@ -22,7 +22,7 @@ class ErrorHandler(commands.Cog):
         print(f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}")
         error_logger.error(f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}", exc_info=error)
 
-        channel = await self.bot.fetch_channel(ERROR_CHANNEL)
+        channel = await self.bot.fetch_channel(ERROR_CHANNEL_ID)
         print(channel)
         if channel:
             embed = discord.Embed(
