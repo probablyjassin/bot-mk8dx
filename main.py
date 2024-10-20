@@ -28,9 +28,12 @@ bot = customBot(
 
 @bot.event
 async def on_ready():
-    logger.info(f'Logged into Discord as {highlight(bot.user.name)}')
-    logger.info(f'ID: {highlight(bot.user.id)}')
-
+    logger.info(f'Logged into Discord')
+    print(f"""
+        {highlight(bot.user)}
+        ID: {highlight(bot.user.id)}
+    """)
+    
     logger.debug("Guilds:")
     for guild in bot.guilds:
         print(guild.name)
@@ -44,7 +47,7 @@ def load_extensions():
                 cog_path = os.path.join(root, file)
                 extension = cog_path[2:].replace('/', '.').replace('\\', '.').replace('.py', '')
                 bot.load_extension(extension)
-                logger.info(f"Loaded {normal(extension)}")
+                print(f"Loaded {normal(extension)}")
     logger.debug("----Finished loading extensions----")
 
 def main():

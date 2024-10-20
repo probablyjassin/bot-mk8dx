@@ -2,6 +2,15 @@ import discord
 from discord import ApplicationContext, DiscordException
 from discord.ext import commands
 from config import ERROR_CHANNEL
+import logging
+
+logging.basicConfig(
+    filename='error.log',
+    level=logging.ERROR,
+    format='%(asctime)s:%(levelname)s:%(name)s: %(message)s'
+)
+
+error_logger = logging.getLogger(__name__)
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
@@ -10,6 +19,8 @@ class ErrorHandler(commands.Cog):
     @commands.Cog.listener()
     async def on_application_command_error(self, ctx: ApplicationContext, error: DiscordException):
         print(f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}")
+        error_logger.error(f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}", exc_info=error)
+
         channel = await self.bot.fetch_channel(ERROR_CHANNEL)
         print(channel)
         if channel:
