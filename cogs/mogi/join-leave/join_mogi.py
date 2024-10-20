@@ -16,7 +16,7 @@ class join_mogi(commands.Cog):
             mogi: Mogi = get_mogi(ctx.channel.id)
             if not mogi:
                 return await ctx.respond("There is no mogi open in this channel.")
-            if ctx.author.id in mogi.players:
+            if [player for player in mogi.players if player.discord_id == ctx.author.id]:
                 return await ctx.respond("You're already in this mogi.")
             if len(mogi.players) >= mogi.player_cap:
                 return await ctx.respond("This mogi is full.")
