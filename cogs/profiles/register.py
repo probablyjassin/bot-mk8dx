@@ -1,3 +1,4 @@
+import time
 import discord
 from discord import slash_command, ApplicationContext
 from discord.utils import get
@@ -13,6 +14,9 @@ class register(commands.Cog):
     async def register(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
+        if ctx.channel_id != (await get_register_channel()).id:
+            return await ctx.respond("You're not in the right channel for this command.", ephemeral=True)
+
         existingPlayer = db_players.find_one({"discord_id": ctx.author.id}) | db_archived.find_one({"discord_id": ctx.author.id})
         if existingPlayer:
             return await ctx.respond("You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.", ephemeral=True)
@@ -25,15 +29,14 @@ class register(commands.Cog):
 
         if self.players.find_one({"name": username}):
             return await ctx.respond(
-                "This username is already taken. Try changing your server-nickname or ask a moderator.",
+                "This username is already taken. Try changing your server display name or ask a moderator for help.",
                 ephemeral=True,
             )
 
-        role = get(ctx.guild.roles, name="Lounge Player")
         member: discord.Member = ctx.user
-        if role in member.roles:
+        if (await get_lounge_role("Lounge Player")) in member.roles:
             return await ctx.respond(
-                "You already have the Lounge Player role even though you don't have a player role. Please ask a moderator.",
+                "You already have the Lounge Player role even though you don't have a player profile. Please ask a moderator for help.",
                 ephemeral=True,
             )
         try:
@@ -41,9 +44,7 @@ class register(commands.Cog):
                 {
                     "name": username,
                     "mmr": 2000,
-                    "wins": 0,
-                    "losses": 0,
-                    "discord": str(member.id),
+                    "discord_id": member.id,
                     "joined": round(time.time()),
                     "history": [],
                 },
@@ -53,8 +54,8 @@ class register(commands.Cog):
                 "Some error occured creating your player record. Please ask a moderator.",
                 ephemeral=True,
             )
-        await member.add_roles(get(ctx.guild.roles, name="Lounge Player"))
-        await member.add_roles(get(ctx.guild.roles, name="Lounge - Silver"))
+        await member.add_roles((await get_lounge_role("Lounge Player")))
+        await member.add_roles((await get_lounge_role("Lounge - Silver")))
         await ctx.respond(
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=True,
