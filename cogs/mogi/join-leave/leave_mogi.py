@@ -24,7 +24,7 @@ class list_mogi(commands.Cog):
                 mogi.players = [player for player in mogi.players if player.discord_id != ctx.author.id]
                 if len(mogi.players) == 0:
                     close_mogi(ctx.channel.id)
-                    return await ctx.respond("This mogi has been closed.")
+                    return await ctx.respond("# This mogi has been closed.")
                 await ctx.respond(f"{ctx.author.mention} has left the mogi!\n{len(mogi.players)} players are in!")
 
 def setup(bot: commands.Bot):

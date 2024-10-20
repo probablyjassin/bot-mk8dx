@@ -10,7 +10,7 @@ class open_mogi(commands.Cog):
     async def open_mogi(self, ctx: ApplicationContext):
         try:
             create_mogi(ctx.channel.id)
-            await ctx.respond("New Mogi open!")
+            await ctx.respond("# Started a new mogi! \n Use /join to participate!")
         except ValueError:
             await ctx.respond("A Mogi for this channel is already open.")
 
