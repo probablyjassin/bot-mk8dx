@@ -17,5 +17,9 @@ class debugging(commands.Cog):
     async def all_mogis(self, ctx: ApplicationContext):
         await ctx.respond(f"Mogi Registry: \n{mogi_registry}")
 
+    @debug.command(name="throw_error", description="throw an error")
+    async def throw_error(self, ctx: ApplicationContext):
+        raise Exception("This is a test error")
+
 def setup(bot: commands.Bot):
     bot.add_cog(debugging(bot))
