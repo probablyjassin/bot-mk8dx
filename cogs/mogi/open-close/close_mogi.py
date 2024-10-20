@@ -1,6 +1,5 @@
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
-from utils.models import Mogi
 from utils.mogis import get_mogi
 from utils.mogis import destroy_mogi
 from utils.confirm import confirmation
@@ -14,14 +13,15 @@ class close_mogi(commands.Cog):
     async def close(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
-        mogi = get_mogi(ctx.guild.id)
+        mogi = get_mogi(ctx.channel.id)
         if not mogi:
             return await ctx.respond("No open Mogi in this channel.")
         close_confirm_message = "{} don't close the mogi unless it fully finished. \nClosing will remove all players and discard any points.\n **Are you sure?**".format(ctx.author.mention)
         
         if (await confirmation(ctx, close_confirm_message)):
-            destroy_mogi(ctx.guild.id)
-        await ctx.respond("# This channel's Mogi has been closed.")
+            destroy_mogi(ctx.channel.id)
+            return await ctx.respond("# This channel's Mogi has been closed.")
+        await ctx.respond("Cancelled.")
 
 def setup(bot: commands.Bot):
     bot.add_cog(close_mogi(bot))
