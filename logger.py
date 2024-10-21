@@ -29,7 +29,3 @@ def setup_logger(name):
 def highlight(text):
     """Highlight in magenta."""
     return f'\033[95m{text}\033[0m'
-
-def normal(text):
-    """Normal text."""
-    return text

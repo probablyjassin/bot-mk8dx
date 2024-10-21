@@ -2,7 +2,7 @@ import os
 import discord
 from discord.ext import commands
 from config import DISCORD_TOKEN
-from logger import setup_logger, normal, highlight
+from logger import setup_logger, highlight
 
 logger = setup_logger(__name__)
 
@@ -47,7 +47,7 @@ def load_extensions():
                 cog_path = os.path.join(root, file)
                 extension = cog_path[2:].replace('/', '.').replace('\\', '.').replace('.py', '')
                 bot.load_extension(extension)
-                print(f"Loaded {normal(extension)}")
+                print(f"Loaded {extension}")
     logger.debug("----Finished loading extensions----")
 
 def main():
