@@ -1,7 +1,7 @@
 import logging
 import colorlog
 
-def setup_logger(name):
+def setup_logger(name: str, file: str ='discord.log') -> logging.Logger:
     """Set up a logger with colorlog and file handler."""
     stream_handler = colorlog.StreamHandler()
     stream_handler.setFormatter(colorlog.ColoredFormatter(
@@ -15,7 +15,7 @@ def setup_logger(name):
         }
     ))
 
-    file_handler = logging.FileHandler('discord.log', mode='w')
+    file_handler = logging.FileHandler(file, mode='w', encoding='utf-8')
     file_handler.setFormatter(logging.Formatter(
         '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
     ))

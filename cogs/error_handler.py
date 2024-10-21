@@ -2,16 +2,9 @@ import discord
 from discord import ApplicationContext, DiscordException
 from discord.ext import commands
 from config import ERROR_CHANNEL_ID
-import logging
+from logger import setup_logger
 
-logging.basicConfig(
-    filename='error.log',
-    level=logging.ERROR,
-    filemode='w',
-    format='%(asctime)s:%(levelname)s:%(name)s: %(message)s'
-)
-
-error_logger = logging.getLogger(__name__)
+error_logger = setup_logger(__name__, 'error.log')
 
 class ErrorHandler(commands.Cog):
     def __init__(self, bot):
