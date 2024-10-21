@@ -1,5 +1,5 @@
 import math
-from models import Rank
+from utils.models import Rank
 
 ranks = [
     Rank("Wood", (-math.inf, 1)),
