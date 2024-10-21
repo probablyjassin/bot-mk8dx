@@ -29,5 +29,7 @@ class ErrorHandler(commands.Cog):
 
         await ctx.respond("An error occurred. The administrators have been notified.")
 
+        # TODO: Implement error handling for other types of errors
+
 def setup(bot: commands.Bot):
     bot.add_cog(ErrorHandler(bot))
