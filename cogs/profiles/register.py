@@ -1,7 +1,6 @@
 import time
 import discord
 from discord import slash_command, ApplicationContext
-from discord.utils import get
 from discord.ext import commands
 from utils.database import db_players, db_archived, Int64
 from utils.objects import get_register_channel, get_lounge_role

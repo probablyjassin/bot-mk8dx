@@ -1,5 +1,4 @@
-import discord
-from discord import Option, ApplicationContext
+from discord import ApplicationContext
 from discord.ext import commands
 from discord.utils import get
 from utils.objects import (

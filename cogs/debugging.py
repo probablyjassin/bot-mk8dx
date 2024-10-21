@@ -1,5 +1,5 @@
-from discord import slash_command, SlashCommandGroup, ApplicationContext
-from discord.ext import commands, tasks
+from discord import SlashCommandGroup, ApplicationContext
+from discord.ext import commands
 from utils.mogis import mogi_registry
 
 class debugging(commands.Cog):

@@ -1,4 +1,3 @@
-import discord
 from discord import Guild, TextChannel, Role
 from discord.utils import get
 from config import GUILD_IDS, ERROR_CHANNEL_ID, REGISTER_CHANNEL_ID

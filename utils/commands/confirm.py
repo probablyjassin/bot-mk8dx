@@ -1,6 +1,4 @@
-import discord
 from discord import ApplicationContext
-from discord.ext import commands
 import asyncio
 
 async def confirmation(ctx: ApplicationContext, text: str) -> bool:
