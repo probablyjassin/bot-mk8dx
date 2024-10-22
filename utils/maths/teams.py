@@ -14,12 +14,12 @@ def distribute_players_to_teams(channel_id: int, team_size: int) -> list[list[Pl
     # Sort players by MMR in descending order
     player_list = get_mogi(channel_id).players
     player_count = len(player_list)
-    team_count = player_count / team_size
+    team_count = player_count // team_size
 
     player_list.sort(key=lambda player: player.mmr, reverse=True)
 
     # Initialize teams
-    teams = [[] for _ in range(int(team_count))]
+    teams = [[] for _ in range(team_count)]
 
     reverse = False
     team_index = 0
@@ -29,7 +29,7 @@ def distribute_players_to_teams(channel_id: int, team_size: int) -> list[list[Pl
 
         if not reverse:
             team_index += 1
-            if team_index == int(team_count):
+            if team_index == team_count:
                 team_index -= 1
                 reverse = True
         else:
