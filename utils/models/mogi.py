@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from bson.int64 import Int64
+from utils.maths.teams import distribute_players_to_teams
 
 @dataclass
 class PlayerProfile:
@@ -18,7 +19,7 @@ class PlayerProfile:
                 f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
                 f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})")
 
-def emtpty_list():
+def e():
     return []
 
 def default_team_tags():
@@ -31,22 +32,37 @@ class Mogi:
     isVoting: bool = False
     isPlaying: bool = False
     isFinished: bool = False
+    format: int | None = None
 
     player_cap: int = 12
 
-    votes: dict[str, int] = field(default_factory=emtpty_list)
-    voters: list[int] = field(default_factory=emtpty_list)
+    votes: dict[str, int] = field(default_factory=e)
+    voters: list[int] = field(default_factory=e)
 
-    players: list[PlayerProfile] = field(default_factory=emtpty_list)
-    subs: list[PlayerProfile] = field(default_factory=emtpty_list)
-    teams: list[list[PlayerProfile]] = field(default_factory=emtpty_list)
+    players: list[PlayerProfile] = field(default_factory=e)
+    subs: list[PlayerProfile] = field(default_factory=e)
+    teams: list[list[PlayerProfile]] = field(default_factory=e)
     team_tags: list[str] = field(default_factory=default_team_tags)
 
-    format: str = ""
+    collected_points: list[int] = field(default_factory=e)
+    calced_results: list[str] = field(default_factory=e)
+    players_ordered_placements: list[str] = field(default_factory=e)
 
-    collected_points: list[int] = field(default_factory=emtpty_list)
-    calced_results: list[str] = field(default_factory=emtpty_list)
-    players_ordered_placements: list[str] = field(default_factory=emtpty_list)
+    def play(self, format_int: int) -> None:
+        self.format = format_int
+
+        if format_int == 1:
+            for player in self.players:
+                self.teams.append([player])
+
+        else:
+            self.teams = distribute_players_to_teams(self.players, format_int)
+        
+        self.isVoting = False
+        self.isPlaying = True
+
+        self.voters = []
+        self.votes = {key: 0 for key in self.votes}
 
 @dataclass
 class Rank:

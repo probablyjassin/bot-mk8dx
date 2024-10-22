@@ -28,8 +28,7 @@ class start(commands.Cog):
         if mogi.isPlaying or mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
 
-        self.bot.mogi["voting"] = True
-        self.bot.mogi["locked"] = True
+        mogi.isVoting = True
 
         global player_count
         player_count = len(self.bot.mogi["players"])
