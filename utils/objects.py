@@ -2,7 +2,7 @@ from discord import Guild, TextChannel, Role
 from discord.utils import get
 from config import GUILD_IDS, ERROR_CHANNEL_ID, REGISTER_CHANNEL_ID
 from main import bot
-
+# TODO: replace these with a good solution
 
 MAIN_GUILD = None
 ERROR_CHANNEL = None
