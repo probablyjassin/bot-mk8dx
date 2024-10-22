@@ -2,8 +2,8 @@ import asyncio
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
 from utils.mogis import get_mogi
-from utils.models.mogi import Mogi
-from utils.models.players import PlayerProfile
+from models.mogi import Mogi
+from models.players import PlayerProfile
 from utils.database import db_players, db_archived, Int64
 
 class join_mogi(commands.Cog):
