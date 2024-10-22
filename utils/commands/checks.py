@@ -6,7 +6,7 @@ from utils.objects import (
     get_moderator_role,
     get_admin_role,
 )
-
+# TODO: find a way to get discord roles outside of cog 
 
 def is_mogi_manager():
     async def predicate(ctx: ApplicationContext):
