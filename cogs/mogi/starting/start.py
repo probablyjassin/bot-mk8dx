@@ -1,5 +1,6 @@
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
+from utils.commands.button_start import
 from utils.mogis import get_mogi
 from utils.objects import get_inmogi_role
 from config import GUILD_IDS
