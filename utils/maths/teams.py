@@ -1,8 +1,4 @@
-from utils.mogis import get_mogi
 from models import PlayerProfile
-
-# INFO: @Jässin, this should be done for the most part but we need to see how the method gets called in the first place.
-# That could change the arguments that need to be passed in for example.
 
 def distribute_players_to_teams(players_in_mogi: int, team_size: int) -> list[list[PlayerProfile]]:
     """
