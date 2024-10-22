@@ -1,6 +1,6 @@
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
-from utils.commands.button_start import
+from utils.commands.button_start import create_button_view
 from utils.mogis import get_mogi
 from utils.objects import get_inmogi_role
 from config import GUILD_IDS
@@ -33,9 +33,8 @@ class start(commands.Cog):
 
         global player_count
         player_count = len(self.bot.mogi["players"])
-        view = Menu(self.bot, player_count)
-        view.update_styles()
-        await ctx.respond(f"Voting start!\n ||{''.join(self.bot.mogi['players'])}||", view=view)
+        view = create_button_view(["FFA", "2v2", "3v3", "4v4", "5v5", "6v6"], mogi)
+        await ctx.respond(f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||", view=view)
 
 
 def setup(bot: commands.Bot):
