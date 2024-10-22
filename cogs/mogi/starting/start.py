@@ -1,6 +1,7 @@
 from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
+from utils.models.players import PlayerProfile
 from utils.commands.button_start import create_button_view
 from utils.mogis import get_mogi
 from config import GUILD_IDS

@@ -4,7 +4,8 @@ import discord
 from discord import Interaction
 from discord.ui import Button, View
 from discord.utils import get
-from utils.models.mogi import Mogi, PlayerProfile
+from utils.models.mogi import Mogi
+from utils.models.players import PlayerProfile
 from utils.mogis import get_mogi
 from config import GUILD_IDS
 from main import bot
@@ -61,6 +62,7 @@ def create_button(label: str, mogi: Mogi) -> Button:
             MOGI_FORMAT = int(winners[0]) if winners[0].isnumeric() else 1
             FORMAT_STR = winners[0]
 
+        print(f"Chosen format: {FORMAT_STR}: {MOGI_FORMAT}")
         # start playing mogi
         mogi.play(MOGI_FORMAT)
 

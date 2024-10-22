@@ -3,7 +3,8 @@ import discord
 from discord import slash_command, ApplicationContext, Option
 from discord.ext import commands
 from discord.ui import View, Button
-from utils.models.mogi import PlayerProfile, Rank
+from utils.models.mogi import Rank
+from utils.models.players import PlayerProfile
 from utils.database import db_players, Int64
 from utils.maths.ranks import getRankByMMR
 
