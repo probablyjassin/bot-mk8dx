@@ -1,4 +1,4 @@
-from utils.models.players import PlayerProfile
+from models.players import PlayerProfile
 
 def distribute_players_to_teams(players_in_mogi: list[PlayerProfile], team_size: int) -> list[list[PlayerProfile]]:
     """
