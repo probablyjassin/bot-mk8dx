@@ -1,6 +1,6 @@
-from utils.models.mogi import PlayerProfile
+#from utils.models.mogi import PlayerProfile
 
-def distribute_players_to_teams(players_in_mogi: int, team_size: int) -> list[list[PlayerProfile]]:
+def distribute_players_to_teams(players_in_mogi: int, team_size: int) -> list[list]:
     """
     Distribute players to teams in a balanced fashion based on their MMR (using greedy approach).
 

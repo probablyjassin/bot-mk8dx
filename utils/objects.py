@@ -3,11 +3,12 @@ from discord.utils import get
 from config import GUILD_IDS, ERROR_CHANNEL_ID, REGISTER_CHANNEL_ID
 from main import bot
 
+
+MAIN_GUILD = None
+ERROR_CHANNEL = None
+
 async def get_main_guild() -> Guild:
     return await bot.fetch_guild(GUILD_IDS[0])
-
-async def get_register_channel() -> TextChannel:
-    return await bot.fetch_channel(REGISTER_CHANNEL_ID)
 
 async def get_error_channel() -> TextChannel:
     return await bot.fetch_channel(ERROR_CHANNEL_ID)

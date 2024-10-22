@@ -22,6 +22,9 @@ class PlayerProfile:
 def e():
     return []
 
+def default_votes():
+    return { "ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "5v5": 0, "6v6": 0 }
+
 def default_team_tags():
     return ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"]
 
@@ -36,7 +39,7 @@ class Mogi:
 
     player_cap: int = 12
 
-    votes: dict[str, int] = field(default_factory=e)
+    votes: dict[str, int] = field(default_factory=default_votes)
     voters: list[int] = field(default_factory=e)
 
     players: list[PlayerProfile] = field(default_factory=e)

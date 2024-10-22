@@ -30,6 +30,22 @@ class ErrorHandler(commands.Cog):
         await ctx.respond("An error occurred. The administrators have been notified.")
 
         # TODO: Implement error handling for other types of errors
+    @commands.Cog.listener()
+    async def on_command_error(self, ctx: ApplicationContext, error: commands.CommandError):
+        if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.errors.InteractionResponded):
+            print(f"Interaction already responded in {ctx.channel.name} by {ctx.author.display_name}")
+            error_logger.warning(f"Interaction already responded in {ctx.channel.name} by {ctx.author.display_name}", exc_info=error)
+
+            channel = await self.bot.fetch_channel(ERROR_CHANNEL_ID)
+            if channel:
+                embed = discord.Embed(
+                    title="Warning",
+                    description=f"Interaction already responded in {ctx.channel.mention} by {ctx.author.mention}",
+                    color=discord.Color.orange()
+                )
+                embed.add_field(name="Command", value=ctx.command)
+                embed.add_field(name="Error", value="Interaction already responded")
+                await channel.send(embed=embed)
 
 def setup(bot: commands.Bot):
     bot.add_cog(ErrorHandler(bot))
