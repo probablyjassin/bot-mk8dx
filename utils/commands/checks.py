@@ -1,17 +1,12 @@
 from discord import ApplicationContext
 from discord.ext import commands
 from discord.utils import get
-from utils.objects import (
-    get_mogi_manager_role,
-    get_moderator_role,
-    get_admin_role,
-)
-# TODO: find a way to get discord roles outside of cog 
+
 
 def is_mogi_manager():
     async def predicate(ctx: ApplicationContext):
         if ctx.author.guild_permissions.is_superset(
-            (await get_mogi_manager_role()).permissions
+            get(ctx.guild.roles, name="Mogi Manager").permissions
         ):
             return True
         else:
@@ -24,7 +19,7 @@ def is_mogi_manager():
 def is_moderator():
     async def predicate(ctx: ApplicationContext):
         if ctx.author.guild_permissions.is_superset(
-            (await get_moderator_role()).permissions
+            get(ctx.guild.roles, name="Moderator").permissions
         ):
             return True
         else:
@@ -37,7 +32,7 @@ def is_moderator():
 def is_admin():
     async def predicate(ctx: ApplicationContext):
         if ctx.author.guild_permissions.is_superset(
-            (await get_admin_role()).permissions
+            get(ctx.guild.roles, name="Admin").permissions
         ):
             return True
         else:
