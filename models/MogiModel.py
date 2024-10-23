@@ -51,7 +51,7 @@ class Mogi:
 
     def play(self, format_int: int) -> None:
         self.format = format_int
-        print(format_int)
+
         if format_int == 1:
             for player in self.players:
                 self.teams.append([player])
