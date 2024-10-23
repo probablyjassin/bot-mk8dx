@@ -2,7 +2,7 @@ from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
 
-from utils.commands.button_start import create_button_view
+from utils.commands.mogi_start import create_button_view
 from utils.data.mogi_manager import get_mogi
 
 from config import GUILD_IDS
