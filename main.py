@@ -6,6 +6,7 @@ from discord.ext import commands
 from logger import setup_logger, highlight
 from config import DISCORD_TOKEN
 
+
 logger = setup_logger(__name__)
 
 intents = discord.Intents.all()
