@@ -4,7 +4,8 @@ from discord.ext import commands
 from utils.mogis import get_mogi
 from models.mogi import Mogi
 from models.players import PlayerProfile
-from utils.database import db_players, db_archived, Int64
+from utils.database import db_players, db_archived
+from bson.int64 import Int64
 
 class join_mogi(commands.Cog):
     def __init__(self, bot):

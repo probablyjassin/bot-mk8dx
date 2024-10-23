@@ -3,8 +3,9 @@ import discord
 from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
-from utils.database import db_players, db_archived, Int64
+from utils.database import db_players, db_archived
 from config import GUILD_IDS, REGISTER_CHANNEL_ID
+from bson.int64 import Int64
 
 class register(commands.Cog):
     def __init__(self, bot):
