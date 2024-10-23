@@ -1,7 +1,7 @@
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
 from utils.mogis import get_mogi
-from models.mogi import Mogi
+from models.MogiModel import Mogi
 
 class leave_mogi(commands.Cog):
     def __init__(self, bot):

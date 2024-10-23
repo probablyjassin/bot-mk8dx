@@ -4,8 +4,8 @@ import discord
 from discord import Interaction
 from discord.ui import Button, View
 from discord.utils import get
-from models.mogi import Mogi
-from models.players import PlayerProfile
+from models.MogiModel import Mogi
+from models.PlayerModel import PlayerProfile
 from utils.mogis import get_mogi
 from config import GUILD_IDS
 from main import bot

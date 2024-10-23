@@ -1,5 +1,5 @@
 import math
-from models.mogi import Rank
+from models.RankModel import Rank
 
 ranks = [
     Rank("Wood", (-math.inf, 1)),

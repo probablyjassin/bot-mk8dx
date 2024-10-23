@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from bson.int64 import Int64
 from utils.maths.teams import distribute_players_to_teams
-from models.players import PlayerProfile
+from models.PlayerModel import PlayerProfile
 
 def e():
     return []

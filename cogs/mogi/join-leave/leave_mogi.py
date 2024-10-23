@@ -2,7 +2,7 @@ import asyncio
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
 from utils.mogis import get_mogi, destroy_mogi
-from models.mogi import Mogi
+from models.MogiModel import Mogi
 
 class list_mogi(commands.Cog):
     def __init__(self, bot):

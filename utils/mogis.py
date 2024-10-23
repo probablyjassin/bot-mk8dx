@@ -1,4 +1,4 @@
-from models.mogi import Mogi
+from models.MogiModel import Mogi
 
 mogi_registry = {}
 
