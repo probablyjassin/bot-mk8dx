@@ -1,6 +1,6 @@
 from discord import SlashCommandGroup, ApplicationContext
 from discord.ext import commands
-from utils.mogis import mogi_registry
+from utils.mogi_manager import mogi_registry
 
 class debugging(commands.Cog):
     def __init__(self, bot):
