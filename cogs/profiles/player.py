@@ -8,11 +8,6 @@ from models.players import PlayerProfile
 from utils.database import db_players, Int64
 from utils.maths.ranks import getRankByMMR
 
-# TODO: fix player lookup
-#File "C:\Users\Jassin\Files\github\mk8dx-yuzu\bot-mk8dx-rewrite\cogs\profiles\player.py", line 27, in player
-#    "$or": [{"name": searched_name}, {"discord_id": Int64(searched_name.strip("<@!>"))}]
-#                                                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-#ValueError: invalid literal for int() with base 10: 'jimdeck'
 
 class player(commands.Cog):
     def __init__(self, bot):
@@ -31,7 +26,15 @@ class player(commands.Cog):
 
         else:
             potential_player = db_players.find_one({
-                "$or": [{"name": searched_name}, {"discord_id": Int64(searched_name.strip("<@!>"))}]
+                "$or": [
+                    {"name": searched_name}, 
+                    {
+                        "discord_id": 
+                            Int64(searched_name.strip("<@!>")) 
+                            if searched_name.strip("<@!>").isdigit() 
+                            else None
+                    }
+                ]
             })
 
         if not potential_player:
