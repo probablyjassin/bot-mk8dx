@@ -6,6 +6,9 @@ from discord.ext import commands
 from utils.data.database import db_players, db_archived
 from config import GUILD_IDS, REGISTER_CHANNEL_ID
 from bson.int64 import Int64
+from logger import setup_logger
+
+lounge_logger = setup_logger(__name__, 'lounge.log', 'a')
 
 class register(commands.Cog):
     def __init__(self, bot):
