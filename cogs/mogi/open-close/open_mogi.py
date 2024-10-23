@@ -1,6 +1,6 @@
 from discord import slash_command, ApplicationContext
 from discord.ext import commands
-from utils.mogi_manager import create_mogi
+from utils.data.mogi_manager import create_mogi
 
 class open_mogi(commands.Cog):
     def __init__(self, bot):

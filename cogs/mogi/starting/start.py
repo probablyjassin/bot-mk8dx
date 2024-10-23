@@ -3,7 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from utils.commands.button_start import create_button_view
-from utils.mogi_manager import get_mogi
+from utils.data.mogi_manager import get_mogi
 from config import GUILD_IDS
 
 class start(commands.Cog):

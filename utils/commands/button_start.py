@@ -6,7 +6,7 @@ from discord.ui import Button, View
 from discord.utils import get
 from models.MogiModel import Mogi
 from models.PlayerModel import PlayerProfile
-from utils.mogi_manager import get_mogi
+from utils.data.mogi_manager import get_mogi
 from config import GUILD_IDS
 from main import bot
 
