@@ -1,10 +1,12 @@
 from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
-from models.PlayerModel import PlayerProfile
+
 from utils.commands.button_start import create_button_view
 from utils.data.mogi_manager import get_mogi
+
 from config import GUILD_IDS
+
 
 class start(commands.Cog):
     def __init__(self, bot):
@@ -30,7 +32,9 @@ class start(commands.Cog):
             return await ctx.respond("Cant start with more than 12 players")
         # user not in the mogi
         if not self.INMOGI_ROLE in ctx.user.roles:
-            return await ctx.respond("You can't start a mogi you aren't in", ephemeral=True)
+            return await ctx.respond(
+                "You can't start a mogi you aren't in", ephemeral=True
+            )
         # mogi already started
         if mogi.isPlaying or mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
@@ -38,7 +42,10 @@ class start(commands.Cog):
         mogi.isVoting = True
 
         view = create_button_view(["FFA", "2v2", "3v3", "4v4", "5v5", "6v6"], mogi)
-        await ctx.respond(f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||", view=view)
+        await ctx.respond(
+            f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||",
+            view=view,
+        )
 
 
 def setup(bot: commands.Bot):
