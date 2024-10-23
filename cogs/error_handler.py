@@ -7,7 +7,7 @@ from logger import setup_logger
 from config import LOG_CHANNEL_ID
 
 
-error_logger = setup_logger(__name__, "error.log")
+error_logger = setup_logger(__name__, "error.log", console=False)
 
 DEFAULT_ERROR_MESSAGE = "An error occurred. The administrators have been notified."
 
