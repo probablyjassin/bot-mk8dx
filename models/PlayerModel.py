@@ -1,8 +1,13 @@
 from dataclasses import dataclass
 from bson.int64 import Int64
 
+
 @dataclass
 class PlayerProfile:
+    """
+    #### Represents a Player from the Database.
+    """
+
     _id: str
     name: str
     discord_id: Int64
@@ -14,6 +19,8 @@ class PlayerProfile:
     suspended: bool | None = None
 
     def __repr__(self):
-        return (f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
-                f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
-                f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})")
+        return (
+            f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
+            f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
+            f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})"
+        )
