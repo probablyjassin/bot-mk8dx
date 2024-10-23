@@ -9,6 +9,7 @@ from bson.int64 import Int64
 from logger import setup_logger
 
 lounge_logger = setup_logger(__name__, 'lounge.log', 'a')
+# TODO: Log register to lounge.log and log channel
 
 class register(commands.Cog):
     def __init__(self, bot):
