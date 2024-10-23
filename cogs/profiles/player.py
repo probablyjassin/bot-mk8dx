@@ -1,13 +1,23 @@
-from datetime import datetime
-import discord
-from discord import slash_command, ApplicationContext, Option
-from discord.ext import commands
+from discord import (
+    slash_command,
+    ApplicationContext,
+    Option,
+    ButtonStyle,
+    Embed,
+    Colour,
+)
 from discord.ui import View, Button
+from discord.ext import commands
+
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
+
 from utils.data.database import db_players
 from utils.maths.ranks import getRankByMMR
+
+from datetime import datetime
 from bson.int64 import Int64
+
 
 class player(commands.Cog):
     def __init__(self, bot):
@@ -17,7 +27,11 @@ class player(commands.Cog):
     async def player(
         self,
         ctx: ApplicationContext,
-        searched_name: str = Option(str, description="defaults to yourself: username | @ mention | discord_id", required=False),
+        searched_name: str = Option(
+            str,
+            description="defaults to yourself: username | @ mention | discord_id",
+            required=False,
+        ),
     ):
         potential_player = None
 
@@ -25,21 +39,24 @@ class player(commands.Cog):
             potential_player = db_players.find_one({"discord_id": Int64(ctx.author.id)})
 
         else:
-            potential_player = db_players.find_one({
-                "$or": [
-                    {"name": searched_name}, 
-                    {
-                        "discord_id": 
-                            Int64(searched_name.strip("<@!>")) 
-                            if searched_name.strip("<@!>").isdigit() 
-                            else None
-                    }
-                ]
-            })
+            potential_player = db_players.find_one(
+                {
+                    "$or": [
+                        {"name": searched_name},
+                        {
+                            "discord_id": (
+                                Int64(searched_name.strip("<@!>"))
+                                if searched_name.strip("<@!>").isdigit()
+                                else None
+                            )
+                        },
+                    ]
+                }
+            )
 
         if not potential_player:
             return await ctx.respond("Couldn't find that player")
-        
+
         player: PlayerProfile = PlayerProfile(**potential_player)
 
         class PlayerView(View):
@@ -47,44 +64,57 @@ class player(commands.Cog):
                 super().__init__(timeout=None)
                 self.add_item(
                     Button(
-                        label="View on Website", 
-                        style=discord.ButtonStyle.link, 
-                        url=f"https://mk8dx-yuzu.github.io/{player.name}"
+                        label="View on Website",
+                        style=ButtonStyle.link,
+                        url=f"https://mk8dx-yuzu.github.io/{player.name}",
                     )
                 )
 
-        embed = discord.Embed(
+        embed = Embed(
             title=f"{player.name}",
             description="",
-            color=discord.Colour.blurple(),
+            color=Colour.blurple(),
         )
         embed.add_field(name="Discord", value=f"<@{player.discord_id}>")
 
         if getattr(player, "joined", None):
-            embed.add_field(name="Joined", value=f"{datetime.fromtimestamp(player.joined).strftime('%b %d %Y')}")
+            embed.add_field(
+                name="Joined",
+                value=f"{datetime.fromtimestamp(player.joined).strftime('%b %d %Y')}",
+            )
 
         player_rank: Rank = getRankByMMR(player.mmr)
         embed.add_field(name="Rank", value=f"{player_rank.name}")
 
         player_wins = len([delta for delta in player.history if delta >= 0])
         player_losses = len([delta for delta in player.history if delta < 0])
-        embed.add_field(name="Wins", value = player_wins)
-        embed.add_field(name="Losses", value = player_losses)
+        embed.add_field(name="Wins", value=player_wins)
+        embed.add_field(name="Losses", value=player_losses)
 
         embed.add_field(
             name="Winrate",
-            value=
-            str(
+            value=str(
                 round(
-                    ( (player_wins / (player_wins + player_losses) if (player_wins + player_losses) else 0) *100 ) 
+                    (
+                        (
+                            player_wins / (player_wins + player_losses)
+                            if (player_wins + player_losses)
+                            else 0
+                        )
+                        * 100
+                    )
                 )
-            ) + "%"
+            )
+            + "%",
         )
 
         embed.add_field(name="MMR", value=f"{player.mmr}")
 
         if getattr(player, "history", None):
-            embed.add_field(name="History (last 5)", value=f"{', '.join(map(str, player.history[ len(player.history) -5: ]))}")
+            embed.add_field(
+                name="History (last 5)",
+                value=f"{', '.join(map(str, player.history[ len(player.history) -5: ]))}",
+            )
 
         if getattr(player, "inactive", None):
             embed.add_field(name="Inactive", value="Account marked for inactivity")
