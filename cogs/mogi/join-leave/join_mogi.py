@@ -14,8 +14,6 @@ class join_mogi(commands.Cog):
         self.bot: commands.Bot = bot
         self.join_semaphore = asyncio.Semaphore(1)
 
-    # TODO: Add inmogi role on join
-
     @slash_command(name="join", description="Join this mogi")
     async def join(self, ctx: ApplicationContext):
         async with self.join_semaphore:

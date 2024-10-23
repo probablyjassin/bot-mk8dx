@@ -10,8 +10,6 @@ class list_mogi(commands.Cog):
         self.bot: commands.Bot = bot
         self.leave_semaphore = asyncio.Semaphore(1)
 
-    # TODO: remove inmogi role on leave
-
     @slash_command(name="leave", description="Leave this mogi")
     async def leave(self, ctx: ApplicationContext):
         async with self.leave_semaphore:
