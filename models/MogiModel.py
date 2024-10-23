@@ -34,7 +34,6 @@ class Mogi:
             "2v2": 0,
             "3v3": 0,
             "4v4": 0,
-            "5v5": 0,
             "6v6": 0,
         }
     )
@@ -52,7 +51,7 @@ class Mogi:
 
     def play(self, format_int: int) -> None:
         self.format = format_int
-
+        print(format_int)
         if format_int == 1:
             for player in self.players:
                 self.teams.append([player])

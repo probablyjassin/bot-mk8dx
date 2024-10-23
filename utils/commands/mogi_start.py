@@ -51,7 +51,7 @@ def create_button(label: str, mogi: Mogi) -> Button:
         # get winning format
         max_score = max(mogi.votes.values())
         winners = [player for player, score in mogi.votes.items() if score == max_score]
-
+        print(f"Winning formats: {winners}")
         MOGI_FORMAT = None
         FORMAT_STR = None
 
@@ -64,7 +64,7 @@ def create_button(label: str, mogi: Mogi) -> Button:
             MOGI_FORMAT = int(chosen_winner[0]) if chosen_winner[0].isnumeric() else 1
             FORMAT_STR = chosen_winner
         else:
-            MOGI_FORMAT = int(winners[0]) if winners[0].isnumeric() else 1
+            MOGI_FORMAT = int(winners[0][0]) if winners[0][0].isnumeric() else 1
             FORMAT_STR = winners[0]
 
         print(f"Chosen format: {FORMAT_STR}: {MOGI_FORMAT}")
