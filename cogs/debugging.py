@@ -1,6 +1,8 @@
 from discord import SlashCommandGroup, ApplicationContext
 from discord.ext import commands
+
 from utils.data.mogi_manager import mogi_registry
+
 
 class debugging(commands.Cog):
     def __init__(self, bot):
@@ -20,6 +22,7 @@ class debugging(commands.Cog):
     @debug.command(name="throw_error", description="throw an error")
     async def throw_error(self, ctx: ApplicationContext):
         raise Exception("This is a test error")
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(debugging(bot))
