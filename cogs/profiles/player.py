@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.ui import View, Button
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
-from utils.database import db_players
+from utils.data.database import db_players
 from utils.maths.ranks import getRankByMMR
 from bson.int64 import Int64
 
