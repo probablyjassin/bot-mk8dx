@@ -1,7 +1,7 @@
 import discord
 from discord import ApplicationContext, DiscordException
 from discord.ext import commands
-from config import ERROR_CHANNEL_ID
+from config import LOG_CHANNEL_ID
 from logger import setup_logger
 from utils.commands.info_embed_factory import create_embed
 
@@ -17,7 +17,7 @@ class ErrorHandler(commands.Cog):
     async def on_application_command_error(self, ctx: ApplicationContext, error: DiscordException):
         
         error_logger.error(f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}", exc_info=error)
-        error_channel = await self.bot.fetch_channel(ERROR_CHANNEL_ID)
+        error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
         
         if error_channel:
             await error_channel.send(
@@ -36,7 +36,7 @@ class ErrorHandler(commands.Cog):
     async def on_interaction_error(self, interaction: discord.Interaction, error: DiscordException):
        
         error_logger.error(f"An error occurred during interaction in {interaction.channel.name} by {interaction.user.display_name}", exc_info=error)
-        error_channel = await self.bot.fetch_channel(ERROR_CHANNEL_ID)
+        error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
         
         if error_channel:
             await error_channel.send(
