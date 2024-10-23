@@ -14,7 +14,7 @@ intents = discord.Intents.all()
 owners = [769525682039947314, 450728788570013721]
 
 
-class customBot(commands.Bot):
+class YuzuLoungeBot(commands.Bot):
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
 
@@ -25,7 +25,7 @@ class customBot(commands.Bot):
         await super().close()
 
 
-bot = customBot(
+bot = YuzuLoungeBot(
     command_prefix=".",
     case_insensitive=True,
     help_command=None,
