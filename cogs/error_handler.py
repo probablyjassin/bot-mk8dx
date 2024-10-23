@@ -29,7 +29,6 @@ class ErrorHandler(commands.Cog):
 
         await ctx.respond("An error occurred. The administrators have been notified.")
 
-        # TODO: Implement error handling for other types of errors
     @commands.Cog.listener()
     async def on_command_error(self, ctx: ApplicationContext, error: commands.CommandError):
         if isinstance(error, commands.CommandInvokeError) and isinstance(error.original, discord.errors.InteractionResponded):
@@ -46,6 +45,28 @@ class ErrorHandler(commands.Cog):
                 embed.add_field(name="Command", value=ctx.command)
                 embed.add_field(name="Error", value="Interaction already responded")
                 await channel.send(embed=embed)
+                
+    # TODO: Actually test this:
+    @commands.Cog.listener()
+    async def on_interaction_error(self, interaction: discord.Interaction, error: DiscordException):
+        print(f"An error occurred during interaction in {interaction.channel.name} by {interaction.user.display_name}")
+        error_logger.error(f"An error occurred during interaction in {interaction.channel.name} by {interaction.user.display_name}", exc_info=error)
+
+        channel = await self.bot.fetch_channel(ERROR_CHANNEL_ID)
+        if channel:
+            embed = discord.Embed(
+                title="Error",
+                description=f"An error occurred during interaction in {interaction.channel.mention} by {interaction.user.mention}",
+                color=discord.Color.red()
+            )
+            embed.add_field(name="Interaction", value=interaction.type)
+            embed.add_field(name="Error", value=str(error))
+            await channel.send(embed=embed)
+
+        if interaction.response.is_done():
+            await interaction.followup.send("An error occurred. The administrators have been notified.", ephemeral=True)
+        else:
+            await interaction.response.send_message("An error occurred. The administrators have been notified.", ephemeral=True)
 
 def setup(bot: commands.Bot):
     bot.add_cog(ErrorHandler(bot))
