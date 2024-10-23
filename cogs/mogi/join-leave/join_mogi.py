@@ -1,10 +1,12 @@
 import asyncio
 from discord import slash_command, ApplicationContext
+from discord.utils import get
 from discord.ext import commands
 from utils.data.mogi_manager import get_mogi
 from models.MogiModel import Mogi
 from models.PlayerModel import PlayerProfile
 from utils.data.database import db_players, db_archived
+from config import GUILD_IDS
 from bson.int64 import Int64
 
 class join_mogi(commands.Cog):
@@ -47,6 +49,7 @@ class join_mogi(commands.Cog):
                 return await ctx.respond("You're temporarily inable to join mogis.")
             
             mogi.players.append(player)
+            await ctx.user.add_roles(get(ctx.guild.roles, name="InMogi"))
             await ctx.respond(f"{ctx.author.mention} has joined the mogi!\n{len(mogi.players)} players are in!")
 
 def setup(bot: commands.Bot):
