@@ -1,5 +1,6 @@
-from discord import SlashCommandGroup, ApplicationContext
+from discord import SlashCommandGroup, ApplicationContext, Interaction, ButtonStyle
 from discord.ext import commands
+from discord.ui import Button, View
 
 from utils.data.mogi_manager import mogi_registry
 
@@ -21,7 +22,7 @@ class debugging(commands.Cog):
 
     @debug.command(name="throw_error", description="throw an error")
     async def throw_error(self, ctx: ApplicationContext):
-        raise Exception("This is a test error")
+        raise Exception("This is a test command error")
 
 
 def setup(bot: commands.Bot):
