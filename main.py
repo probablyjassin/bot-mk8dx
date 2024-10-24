@@ -66,8 +66,7 @@ def load_extensions():
                 )
                 bot.load_extension(extension)
                 print(f"Loaded {extension}")
-    print("----Finished loading extensions----")
-    logger.debug("Finished loading extensions")
+    logger.debug("*Finished loading extensions*")
 
 
 def main():
