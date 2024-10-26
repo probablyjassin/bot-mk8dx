@@ -31,7 +31,7 @@ class list_mogi(commands.Cog):
 
         if context == "tablestring":
 
-            if mogi.format == 1:
+            if mogi.format == 1 or mogi.format == None:
                 list_of_players = "\n\n".join(
                     [f"{player.name} +" for player in mogi.players]
                 )
@@ -45,7 +45,7 @@ class list_mogi(commands.Cog):
 
         else:
 
-            if mogi.format == 1:
+            if mogi.format == 1 or mogi.format == None:
                 list_of_players = "\n".join(
                     [
                         (
@@ -72,11 +72,15 @@ class list_mogi(commands.Cog):
                     )
                     list_of_players += "\n\n"
 
+            max_mmr_player, min_mmr_player = max(
+                mogi.players, key=lambda x: x.mmr
+            ), min(mogi.players, key=lambda x: x.mmr)
+
             list_of_players += (
                 f"""\n
                     Average MMR: {round( sum( [player.mmr for player in mogi.players] ) / len(mogi.players) )}
-                    Highest MMR: {max(mogi.players, key=lambda x: x.mmr).name}
-                    Lowest MMR: {min(mogi.players, key=lambda x: x.mmr).name}
+                    Highest MMR: {max_mmr_player.name}: {max_mmr_player.mmr}
+                    Lowest MMR: {min_mmr_player.name}: {min_mmr_player.mmr}
                 """
                 if context == "mmr"
                 else ""
