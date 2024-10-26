@@ -25,7 +25,7 @@ class start(commands.Cog):
         if not mogi:
             return await ctx.respond("No open mogi in this channel", ephemeral=True)
         # not enough players
-        if len(mogi.players) < 0:  # BUG: remember to change this in production
+        if len(mogi.players) < 0:  # DEBUG: remember to change this in production
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(mogi.players) > 12:
