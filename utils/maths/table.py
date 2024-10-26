@@ -48,10 +48,10 @@ def create_table(mogi: Mogi) -> BytesIO:
             ]
         ).background_gradient(
             cmap=colors.LinearSegmentedColormap.from_list(
-                "", ["red", "red", "white", "green", "green"]
+                "", ["red", "red", "red", "white", "green", "green", "green"]
             ),
-            vmin=-200,
-            vmax=200,
+            vmin=-150,
+            vmax=150,
             subset=["Change"],
         ),
         buffer,
