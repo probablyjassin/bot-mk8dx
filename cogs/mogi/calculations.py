@@ -57,7 +57,12 @@ class calculations(commands.Cog):
         except ValueError as e:
             return await ctx.respond("Invalid tablestring format.")
 
-        await ctx.respond(f"Points collected: {mogi.collected_points}")
+        team_points_list = []
+        for team in mogi.teams:
+            team_points = sum(mogi.collected_points[player.name] for player in team)
+            team_points_list.append(team_points)
+
+        await ctx.respond(f"Team Points: {team_points_list}")
 
 
 def setup(bot: commands.Bot):

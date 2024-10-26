@@ -34,7 +34,7 @@ class debugging(commands.Cog):
         dummy_names = ["spamton", "jordan", "mrboost", "bruv"]
         dummy: PlayerProfile = PlayerProfile(
             _id=0,
-            name=random.choice(dummy_names),
+            name=f"{random.choice(dummy_names)}{str(random.randint(10, 99))}",
             mmr=random.randint(1000, 6000),
             discord_id=000000000000000000,
             history=[],
