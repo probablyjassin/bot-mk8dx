@@ -52,7 +52,6 @@ class calculations(commands.Cog):
             return
 
         # Collect the points to the mogi
-        mogi.collect_points(tablestring)
         try:
             mogi.collect_points(tablestring)
         except ValueError as e:
