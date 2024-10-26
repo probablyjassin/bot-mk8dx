@@ -24,7 +24,9 @@ class calculations(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    points = SlashCommandGroup(name="points", description="")
+    points = SlashCommandGroup(
+        name="points", description="commands for mmr calculations"
+    )
 
     @points.command(name="collect", description="Collect points from tablestring")
     async def collect(self, ctx: ApplicationContext):
@@ -118,6 +120,9 @@ class calculations(commands.Cog):
         mogi.mmr_results_by_group = []
 
         await ctx.respond("Points have been reset.")
+
+    # TODO: apply command
+    # TODO: permissions on all commands
 
 
 def setup(bot: commands.Bot):
