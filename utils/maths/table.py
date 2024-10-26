@@ -50,8 +50,8 @@ def create_table(mogi: Mogi) -> BytesIO:
             cmap=colors.LinearSegmentedColormap.from_list(
                 "", ["red", "red", "white", "green", "green"]
             ),
-            vmin=-300,
-            vmax=300,
+            vmin=-200,
+            vmax=200,
             subset=["Change"],
         ),
         buffer,

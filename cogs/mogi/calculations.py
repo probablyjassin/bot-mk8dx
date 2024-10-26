@@ -27,7 +27,7 @@ class calculations(commands.Cog):
     points = SlashCommandGroup(name="points", description="")
 
     @points.command(name="collect", description="Collect points from tablestring")
-    async def points(self, ctx: ApplicationContext):
+    async def collect(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
         mogi: Mogi = get_mogi(ctx.channel.id)
