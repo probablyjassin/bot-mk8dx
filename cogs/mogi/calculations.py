@@ -1,4 +1,4 @@
-import asyncio
+import math
 
 from discord import (
     slash_command,
@@ -7,10 +7,15 @@ from discord import (
     ApplicationContext,
     ChannelType,
     Thread,
+    File,
 )
 from discord.ext import commands, tasks
 
 from models.MogiModel import Mogi
+from utils.maths.table import create_table
+from utils.maths.mmr_algorithm import calculate_mmr
+from utils.maths.placements import get_placements_from_scores
+
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.data.mogi_manager import get_mogi
 
@@ -19,7 +24,9 @@ class calculations(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(name="points", description="Collect points from tablestring")
+    points = SlashCommandGroup(name="points", description="")
+
+    @points.command(name="collect", description="Collect points from tablestring")
     async def points(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
@@ -57,7 +64,39 @@ class calculations(commands.Cog):
         except ValueError as e:
             return await ctx.respond("Invalid tablestring format.")
 
-        await ctx.respond(f"Summed Points: {mogi.collected_points}")
+        # obtain the placements from the collected points
+        placements = list(get_placements_from_scores(mogi.collected_points).values())
+
+        # break down names and mmrs of all players
+        all_player_mmrs = [player.mmr for team in mogi.teams for player in team]
+
+        # Calculate MMR results
+        results = calculate_mmr(
+            all_player_mmrs,
+            placements,
+            mogi.format,
+        )
+
+        # apply custom mmr scaling
+        results = [
+            math.ceil(rating * 1.2) if rating > 0 else rating for rating in results
+        ]
+
+        # store the results in the mogi, extended for every player
+        for delta in results:
+            mogi.mmr_results_by_group.extend([delta] * mogi.format)
+
+        # Store the Placements in order of Players/Teams
+        for place in placements:
+            mogi.placements_by_group.extend([place] * mogi.format)
+
+        print(f"All MMRs: {all_player_mmrs}")
+        print(f"Summed Points: {mogi.collected_points}")
+        print(f"Placements Points: {get_placements_from_scores(mogi.collected_points)}")
+        print(f"MMR Changes: {mogi.mmr_results_by_group}")
+
+        file = File(create_table(mogi), filename="table.png")
+        await ctx.respond(content="Here's the table:", file=file)
 
 
 def setup(bot: commands.Bot):

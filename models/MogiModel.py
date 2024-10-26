@@ -24,8 +24,8 @@ class Mogi:
     isFinished: bool = False
 
     collected_points: list[int] = field(default_factory=lambda: [])
-    calced_results: list[str] = field(default_factory=lambda: [])
-    players_ordered_placements: list[str] = field(default_factory=lambda: [])
+    placements_by_group: list[int] = field(default_factory=lambda: [])
+    mmr_results_by_group: list[int] = field(default_factory=lambda: [])
 
     voters: list[int] = field(default_factory=lambda: [])
     votes: dict[str, int] = field(
