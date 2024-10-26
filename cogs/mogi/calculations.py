@@ -96,7 +96,7 @@ class calculations(commands.Cog):
         print(f"MMR Changes: {mogi.mmr_results_by_group}")
 
         file = File(create_table(mogi), filename="table.png")
-        await ctx.respond(content="Here's the table:", file=file)
+        await ctx.respond(content="# Results", file=file)
 
 
 def setup(bot: commands.Bot):
