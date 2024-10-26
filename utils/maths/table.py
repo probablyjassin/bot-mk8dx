@@ -59,3 +59,6 @@ def create_table(mogi: Mogi) -> BytesIO:
 
     buffer.seek(0)
     return buffer
+
+
+# TODO: change the colors
