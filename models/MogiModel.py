@@ -70,9 +70,11 @@ class Mogi:
             for player in self.players:
                 if player.name in line:
                     points = sum(
-                        sum(int(num) for num in part.split("+"))
-                        for part in line.split()
-                        if any(char.isdigit() for char in part)
+                        [
+                            int(num)
+                            for part in [part.split("+") for part in line.split()]
+                            for num in part
+                            if num.isdigit()
+                        ]
                     )
-                    if player.name in self.collected_points:
-                        self.collected_points[player.name] = points
+                    self.collected_points[player.name] = points

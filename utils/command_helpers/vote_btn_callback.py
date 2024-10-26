@@ -1,9 +1,14 @@
 import math
 import random
+
 from discord import Interaction
 
+from models.MogiModel import Mogi
 
-async def button_callback(interaction: Interaction, mogi, FORMAT_BUTTON_INT, label):
+
+async def button_callback(
+    interaction: Interaction, mogi: Mogi, FORMAT_BUTTON_INT, label
+):
     await interaction.response.defer()
 
     # Check if the user can vote

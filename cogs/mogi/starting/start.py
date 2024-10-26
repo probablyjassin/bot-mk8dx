@@ -1,4 +1,4 @@
-from discord import slash_command, ApplicationContext
+from discord import slash_command, SlashCommandGroup, Option, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
 
@@ -17,8 +17,10 @@ class start(commands.Cog):
         self.MAIN_GUILD = get(self.bot.guilds, id=GUILD_IDS[0])
         self.INMOGI_ROLE = get(self.MAIN_GUILD.roles, name="InMogi")
 
-    @slash_command(name="start", guild_ids=GUILD_IDS)
-    async def start(self, ctx: ApplicationContext):
+    start = SlashCommandGroup(name="start", description="Start a mogi")
+
+    @start.command(name="vote", guild_ids=GUILD_IDS)
+    async def vote(self, ctx: ApplicationContext):
         mogi = get_mogi(ctx.channel.id)
 
         # no mogi open
@@ -46,6 +48,31 @@ class start(commands.Cog):
             f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||",
             view=view,
         )
+
+    @start.command(name="force", guild_ids=GUILD_IDS)
+    async def force(
+        self,
+        ctx: ApplicationContext,
+        format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "6v6"]),
+    ):
+        mogi = get_mogi(ctx.channel.id)
+
+        # no mogi open
+        if not mogi:
+            return await ctx.respond("No open mogi in this channel", ephemeral=True)
+        # mogi already started
+        if mogi.isPlaying or mogi.isVoting:
+            return await ctx.respond("Mogi already started", ephemeral=True)
+
+        mogi.play(int(format[0]) if format[0].isnumeric() else 1)
+
+        lineup = ""
+        for i, team in enumerate(mogi.teams):
+            lineup += (
+                f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
+            )
+
+        await ctx.respond(f"Mogi started!\n{lineup}")
 
 
 def setup(bot: commands.Bot):
