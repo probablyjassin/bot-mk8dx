@@ -8,7 +8,7 @@ from models.MogiModel import Mogi
 import asyncio
 
 
-class list_mogi(commands.Cog):
+class leave_mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.leave_semaphore = asyncio.Semaphore(1)
@@ -39,4 +39,4 @@ class list_mogi(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(list_mogi(bot))
+    bot.add_cog(leave_mogi(bot))
