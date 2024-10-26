@@ -10,8 +10,7 @@ from bson.int64 import Int64
 import time
 
 
-# TODO: Log registers to lounge.log and log channel
-lounge_logger = setup_logger(__name__, "lounge.log", "a")
+lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 
 
 class register(commands.Cog):
@@ -81,11 +80,12 @@ class register(commands.Cog):
                 ephemeral=True,
             )
         await member.add_roles(get(self.MAIN_GUILD.roles, name="Lounge Player"))
-        # await member.add_roles(get(self.MAIN_GUILD.roles, name="Lounge - Silver"))
+        await member.add_roles(get(self.MAIN_GUILD.roles, name="Lounge - Silver"))
         await ctx.respond(
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=False,
         )
+        lounge_logger.info(f"{member.display_name} registered as {username}")
 
 
 def setup(bot: commands.Bot):
