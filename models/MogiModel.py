@@ -23,7 +23,7 @@ class Mogi:
     isPlaying: bool = False
     isFinished: bool = False
 
-    collected_points: list[int] = field(default_factory=lambda: [])
+    collected_points: dict[str, int] = field(default_factory=lambda: {})
     calced_results: list[str] = field(default_factory=lambda: [])
     players_ordered_placements: list[str] = field(default_factory=lambda: [])
 
@@ -64,3 +64,15 @@ class Mogi:
 
         self.voters = []
         self.votes = {key: 0 for key in self.votes}
+
+    def collect_points(self, tablestring: str) -> None:
+        for line in tablestring.split("\n"):
+            for player in self.players:
+                if player.name in line:
+                    points = sum(
+                        sum(int(num) for num in part.split("+"))
+                        for part in line.split()
+                        if any(char.isdigit() for char in part)
+                    )
+                    if player.name in self.collected_points:
+                        self.collected_points[player.name] = points
