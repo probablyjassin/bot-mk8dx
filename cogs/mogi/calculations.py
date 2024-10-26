@@ -25,6 +25,14 @@ class calculations(commands.Cog):
 
         mogi: Mogi = get_mogi(ctx.channel.id)
 
+        if not mogi:
+            return await ctx.respond("No open Mogi in this channel.")
+        if not mogi.isPlaying:
+            return await ctx.respond("This mogi has not started yet.")
+        if mogi.isFinished:
+            return await ctx.respond("This mogi has already finished.")
+
+        # Create a thread to collect points
         points_collection_thread: Thread = await ctx.channel.create_thread(
             name=f"collecting-points-{ctx.author.name}",
             type=ChannelType.public_thread,
@@ -33,14 +41,17 @@ class calculations(commands.Cog):
             f"{ctx.author.mention}, send the tablestring from `/l context:tablestring` to collect points from it."
         )
 
+        # Wait for the tablestring to be sent in the thread
         tablestring: str = await get_awaited_message(
             self.bot, ctx, points_collection_thread
         )
 
+        # clean up by deleting the thread
         await points_collection_thread.delete()
         if not tablestring:
             return
 
+        # Collect the points to the mogi
         mogi.collect_points(tablestring)
 
         await ctx.respond(f"Points collected: {mogi.collected_points}")
