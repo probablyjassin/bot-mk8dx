@@ -98,6 +98,27 @@ class calculations(commands.Cog):
         file = File(create_table(mogi), filename="table.png")
         await ctx.respond(content="# Results", file=file)
 
+    @points.command(name="reset", description="Reset collected points")
+    async def reset(self, ctx: ApplicationContext):
+        await ctx.response.defer()
+
+        mogi: Mogi = get_mogi(ctx.channel.id)
+
+        if not mogi:
+            return await ctx.respond("No open Mogi in this channel.")
+        if not mogi.isPlaying:
+            return await ctx.respond("This mogi has not started yet.")
+        if not mogi.collected_points:
+            return await ctx.respond("No points have been collected yet.")
+        if mogi.isFinished:
+            return await ctx.respond("This mogi has already finished.")
+
+        mogi.collected_points = []
+        mogi.placements_by_group = []
+        mogi.mmr_results_by_group = []
+
+        await ctx.respond("Points have been reset.")
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(calculations(bot))
