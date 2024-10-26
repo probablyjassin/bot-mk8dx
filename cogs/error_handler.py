@@ -39,7 +39,7 @@ class ErrorHandler(commands.Cog):
 
         await ctx.respond(DEFAULT_ERROR_MESSAGE, ephemeral=True)
 
-    # TODO: Actually test this, make it wave InteractionResponded error:
+    # BUG: Actually test this, make it wave InteractionResponded error:
     @commands.Cog.listener()
     async def on_interaction_error(
         self, interaction: Interaction, error: DiscordException
