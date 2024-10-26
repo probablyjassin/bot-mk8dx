@@ -1,7 +1,7 @@
 from discord import Interaction, ApplicationContext, DiscordException, Color
 from discord.ext import commands
 
-from utils.commands.info_embed_factory import create_embed
+from utils.command_helpers.info_embed_factory import create_embed
 from logger import setup_logger
 
 from config import LOG_CHANNEL_ID
