@@ -1,4 +1,4 @@
-from discord import slash_command, SlashCommandGroup, Option, ApplicationContext
+from discord import slash_command, ApplicationContext, Message, TextChannel
 from discord.utils import get
 from discord.ext import commands
 
@@ -31,6 +31,10 @@ class stop(commands.Cog):
             )
 
         mogi.stop()
+        if mogi.voting_message_id:
+            print(mogi.voting_message_id)
+            vote_msg: Message = await ctx.channel.fetch_message(mogi.voting_message_id)
+            await vote_msg.delete()
         await ctx.respond("Mogi has been stopped")
 
 

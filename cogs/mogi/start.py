@@ -41,10 +41,12 @@ class start(commands.Cog):
         mogi.isVoting = True
 
         view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], mogi)
-        mogi.voting_message = await ctx.respond(
+        message = await ctx.respond(
             f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||",
             view=view,
         )
+        response = await message.original_response()
+        mogi.voting_message_id = response.id
 
     @start.command(name="force", guild_ids=GUILD_IDS)
     async def force(
