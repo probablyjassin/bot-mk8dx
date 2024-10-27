@@ -12,9 +12,10 @@ from discord import (
 from discord.ext import commands, tasks
 
 from models.MogiModel import Mogi
-from utils.maths.table import create_table
 from utils.maths.mmr_algorithm import calculate_mmr
 from utils.maths.placements import get_placements_from_scores
+from utils.maths.table import create_table
+from utils.maths.apply import apply_mmr
 
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.data.mogi_manager import get_mogi
@@ -126,8 +127,26 @@ class calculations(commands.Cog):
 
         await ctx.respond("Points have been reset.")
 
-    # TODO: apply command
     # TODO: permissions on all commands
+
+    @points.command(name="apply", description="Apply MMR changes")
+    async def apply(self, ctx: ApplicationContext):
+        await ctx.response.defer()
+        mogi: Mogi = get_mogi(ctx.channel.id)
+
+        if not mogi:
+            return await ctx.respond("No open Mogi in this channel.")
+        if mogi.isVoting or not mogi.isPlaying:
+            return await ctx.respond("This mogi has not started yet.")
+        if not mogi.mmr_results_by_group:
+            return await ctx.respond("No results to apply or already applied")
+        if not len(mogi.mmr_results_by_group) == len(mogi.players):
+            return await ctx.respond(
+                "Something has gone seriously wrong, use /debug to find the issue and contact a moderator."
+            )
+
+        await apply_mmr(mogi)
+        await ctx.respond("Applied MMR changes ✅")
 
 
 def setup(bot: commands.Bot):
