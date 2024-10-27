@@ -4,6 +4,7 @@ from dataclasses import dataclass, field
 
 from models.PlayerModel import PlayerProfile
 
+from utils.data.database import db_mogis
 from utils.maths.teams_algorithm import distribute_players_to_teams
 
 
@@ -162,6 +163,21 @@ class Mogi:
             team_points_list.append(team_points)
 
         self.collected_points = team_points_list
+
+    def archive_mogi_data(self) -> None:
+        """
+        Save the mogi to the database.
+        """
+        db_mogis.insert_one(
+            {
+                "started_at": self.started_at,
+                "finished_at": self.finished_at,
+                "player_ids": [player.discord_id for player in self.players],
+                "format": self.format,
+                "subs": len(self.subs),
+                "results": self.collected_points,
+            }
+        )
 
     def finish(self) -> None:
         """
