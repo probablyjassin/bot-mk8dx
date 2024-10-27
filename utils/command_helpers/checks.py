@@ -92,7 +92,9 @@ def is_mogi_not_in_progress():
         mogi: Mogi = mogi_registry.get(ctx.channel.id)
         return await check(
             ctx=ctx,
-            condition=(not mogi.isVoting) and (not mogi.isPlaying) or (mogi.isFinished),
+            condition=(mogi and not mogi.isVoting)
+            and (not mogi.isPlaying)
+            or (mogi.isFinished),
             error_message="The mogi is either not in progress or has already finished calculations.",
         )
 
