@@ -128,6 +128,12 @@ class Mogi:
         self.isFinished = False
 
     def collect_points(self, tablestring: str) -> None:
+        """
+        Collects and calculates points for players and teams from a given table string.
+        Args:
+            tablestring (`str`): The string obtained from `/l context:table`
+        """
+
         all_points = {}
 
         for line in tablestring.split("\n"):
