@@ -3,6 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from utils.command_helpers.btn_factory import create_button_view
+from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 from utils.data.mogi_manager import get_mogi
 
 from config import GUILD_IDS
@@ -20,12 +21,11 @@ class start(commands.Cog):
     start = SlashCommandGroup(name="start", description="Start a mogi")
 
     @start.command(name="vote", guild_ids=GUILD_IDS)
+    @is_mogi_open()
+    @is_mogi_not_in_progress()
     async def vote(self, ctx: ApplicationContext):
         mogi = get_mogi(ctx.channel.id)
 
-        # no mogi open
-        if not mogi:
-            return await ctx.respond("No open mogi in this channel", ephemeral=True)
         # not enough players
         if len(mogi.players) < 0:  # DEBUG: remember to change this in production
             return await ctx.respond("Not enough players to start", ephemeral=True)
@@ -37,14 +37,11 @@ class start(commands.Cog):
             return await ctx.respond(
                 "You can't start a mogi you aren't in", ephemeral=True
             )
-        # mogi already started
-        if mogi.isPlaying or mogi.isVoting:
-            return await ctx.respond("Mogi already started", ephemeral=True)
 
         mogi.isVoting = True
 
         view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], mogi)
-        await ctx.respond(
+        mogi.voting_message = await ctx.respond(
             f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||",
             view=view,
         )
