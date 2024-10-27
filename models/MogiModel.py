@@ -8,15 +8,15 @@ from utils.maths.teams_algorithm import distribute_players_to_teams
 @dataclass
 class Mogi:
     """
-    # Represents a Mogi in a discord channel.
-    Attributes:
+    ### Represents a Mogi in a discord channel.
+    #### Attributes:
         channel_id (`int`): Integer ID of the channel where the Mogi lives.
         format (`int | None`): Integer representing the format of the Mogi (e.g., FFA, 2v2, etc.). Is `None` when the mogi hasn't started.
         players (`list[PlayerProfile]`): List of player profiles participating in the Mogi.
         teams (`list[list[PlayerProfile]]`): List of List for every team with their players. In FFA, each sublist has only one player.
         subs (`list[PlayerProfile]`): A list of those players who are playing as sub for someone else.
         isVoting (`bool`): Indicates if voting is currently active. Default is False.
-        isPlaying `(bool`): Indicates if the mogi is currently in progress (playing the races). Default is False.
+        isPlaying (`bool`): Indicates if the mogi is currently in progress (playing the races). Default is False.
         isFinished (`bool`): Indicates if the mmr calculation has finished. Default is False.
         collected_points (`list[int]`): A list of points collected in order of each team/player.
         placements_by_group (`list[int]`): A list of placements in order of teams/players.
