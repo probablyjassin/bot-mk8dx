@@ -2,6 +2,8 @@ from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
 
+from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
+
 from utils.data.database import db_players, db_archived
 from utils.data.mogi_manager import get_mogi
 
@@ -18,12 +20,11 @@ class join_mogi(commands.Cog):
         self.join_semaphore = asyncio.Semaphore(1)
 
     @slash_command(name="join", description="Join this mogi")
+    @is_mogi_open()
+    @is_mogi_not_in_progress()
     async def join(self, ctx: ApplicationContext):
         async with self.join_semaphore:
             mogi: Mogi = get_mogi(ctx.channel.id)
-            # check if mogi open
-            if not mogi:
-                return await ctx.respond("There is no mogi open in this channel.")
             # check if player already in mogi
             if [
                 player for player in mogi.players if player.discord_id == ctx.author.id
@@ -32,9 +33,6 @@ class join_mogi(commands.Cog):
             # check if mogi full
             if len(mogi.players) >= mogi.player_cap:
                 return await ctx.respond("This mogi is full.")
-            # check if mogi is in progress
-            if mogi.isPlaying or mogi.isVoting:
-                return await ctx.respond("This mogi has already started.")
 
             # fetch player record
             player_entry = db_players.find_one({"discord_id": Int64(ctx.author.id)})
