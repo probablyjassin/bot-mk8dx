@@ -1,3 +1,10 @@
+"""
+This module is responsible for connecting to the MongoDB database.
+#### Exports:
+    db_players: Collection object
+    db_archived: Collection object  
+"""
+
 import atexit
 from pymongo import MongoClient
 from config import MONGO_URI, LOUNGE_DB
