@@ -15,6 +15,7 @@ client = MongoClient(MONGO_URI)
 db = client.get_database(LOUNGE_DB)
 db_players = db.get_collection("players")
 db_archived = db.get_collection("archived")
+db_mogis = db.get_collection("mogis")
 
 logger.info(
     f"***\nConnected to MongoDB. Database: {db.name}\n***",
