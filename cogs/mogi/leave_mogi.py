@@ -20,14 +20,10 @@ class leave_mogi(commands.Cog):
     async def leave(self, ctx: ApplicationContext):
         async with self.leave_semaphore:
             mogi: Mogi = get_mogi(ctx.channel.id)
-            if not mogi:
-                return await ctx.respond("There is no mogi open in this channel.")
             if not [
                 player for player in mogi.players if player.discord_id == ctx.author.id
             ]:
                 return await ctx.respond("You're not in this mogi.")
-            if mogi.isPlaying or mogi.isVoting:
-                return await ctx.respond("This mogi has already started.")
 
             mogi.players = [
                 player for player in mogi.players if player.discord_id != ctx.author.id
