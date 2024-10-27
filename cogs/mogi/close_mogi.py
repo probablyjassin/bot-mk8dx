@@ -3,19 +3,21 @@ from discord.ext import commands
 
 from utils.data.mogi_manager import get_mogi, destroy_mogi
 from utils.command_helpers.confirm import confirmation
+from utils.command_helpers.checks import is_mogi_open
 
 
 class close_mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(name="close", description="Open a mogi")
+    @slash_command(name="close", description="Close a mogi")
+    @is_mogi_open()
     async def close(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
         mogi = get_mogi(ctx.channel.id)
         if not mogi:
-            return await ctx.respond("No open Mogi in this channel.")
+            return await ctx.respond("2 No open Mogi in this channel.")
         if mogi.isVoting or (mogi.isPlaying and not mogi.isFinished):
             return await ctx.respond("You can't close the Mogi while it's in progress.")
 
