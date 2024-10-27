@@ -1,4 +1,4 @@
-from discord import Interaction, ApplicationContext, DiscordException, Color
+from discord import Interaction, ApplicationContext, DiscordException, errors, Color
 from discord.ext import commands
 
 from utils.command_helpers.info_embed_factory import create_embed
@@ -20,7 +20,17 @@ class ErrorHandler(commands.Cog):
     async def on_application_command_error(
         self, ctx: ApplicationContext, error: DiscordException
     ):
+        # handle predicate check failures
+        if isinstance(error, errors.CheckFailure):
+            return await ctx.respond(
+                "**You can't do this** right now.\n"
+                "This might be because the **mogi is not open**, **already playing**,"
+                "**or anything else** prevents this action.\n"
+                "You might also not have the **permissions** to do this.",
+                ephemeral=True,
+            )
 
+        # handle every other error
         error_logger.error(
             f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}",
             exc_info=error,

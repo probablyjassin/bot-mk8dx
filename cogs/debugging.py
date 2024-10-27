@@ -1,6 +1,6 @@
 import random
 
-from discord import SlashCommandGroup, ApplicationContext, Interaction, ButtonStyle
+from discord import SlashCommandGroup, ApplicationContext
 from discord.ext import commands
 
 from models.MogiModel import Mogi
