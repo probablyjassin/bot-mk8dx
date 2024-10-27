@@ -73,3 +73,17 @@ def is_mogi_open():
         )
 
     return commands.check(predicate)
+
+
+def is_mogi_in_progress():
+    async def predicate(ctx: ApplicationContext):
+        mogi: Mogi = mogi_registry.get(ctx.channel.id)
+        return await check(
+            ctx=ctx,
+            condition=(not mogi.isVoting)
+            and (mogi.isPlaying)
+            and (not mogi.isFinished),
+            error_message="The mogi is either not in progress or has already finished calculations.",
+        )
+
+    return commands.check(predicate)

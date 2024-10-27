@@ -17,7 +17,11 @@ from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
-from utils.command_helpers.checks import is_mogi_open, is_mogi_manager
+from utils.command_helpers.checks import (
+    is_mogi_open,
+    is_mogi_in_progress,
+    is_mogi_manager,
+)
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
@@ -33,16 +37,12 @@ class calculations(commands.Cog):
 
     @points.command(name="collect", description="Collect points from tablestring")
     @is_mogi_open()
+    @is_mogi_in_progress()
     @is_mogi_manager()
     async def collect(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
         mogi: Mogi = get_mogi(ctx.channel.id)
-
-        if not mogi.isPlaying:
-            return await ctx.respond("This mogi has not started yet.")
-        if mogi.isFinished:
-            return await ctx.respond("This mogi has already finished.")
 
         # Create a thread to collect points
         points_collection_thread: Thread = await ctx.channel.create_thread(
@@ -111,18 +111,15 @@ class calculations(commands.Cog):
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_open()
+    @is_mogi_in_progress()
     @is_mogi_manager()
     async def reset(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        if not mogi.isPlaying:
-            return await ctx.respond("This mogi has not started yet.")
         if not mogi.collected_points:
             return await ctx.respond("No points have been collected yet.")
-        if mogi.isFinished:
-            return await ctx.respond("This mogi has already finished.")
 
         mogi.collected_points.clear()
         mogi.placements_by_group.clear()
@@ -134,15 +131,15 @@ class calculations(commands.Cog):
 
     @points.command(name="apply", description="Apply MMR changes")
     @is_mogi_open()
+    @is_mogi_in_progress()
     @is_mogi_manager()
     async def apply(self, ctx: ApplicationContext):
         await ctx.response.defer()
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        if mogi.isVoting or not mogi.isPlaying:
-            return await ctx.respond("This mogi has not started yet.")
         if not mogi.mmr_results_by_group:
             return await ctx.respond("No results to apply or already applied")
+
         if not len(mogi.mmr_results_by_group) == len(mogi.players):
             return await ctx.respond(
                 "Something has gone seriously wrong, players and results don't add up. Use /debug to find the issue and contact a moderator."
