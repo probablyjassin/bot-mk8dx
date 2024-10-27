@@ -4,10 +4,10 @@ from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from models.MogiModel import Mogi
 
+from utils.command_helpers.valid_discord_mention import is_discord_mention
 from utils.data.mogi_manager import get_mogi
 from utils.data.database import db_players
 from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
-import re
 
 
 def replace(space, player, sub):
@@ -40,32 +40,25 @@ class sub_manager(commands.Cog):
     ):
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        mention_pattern = re.compile(r"^<@!?(\d+)>$")
-
-        def is_mention(string):
-            return bool(mention_pattern.match(string))
-
-        if not is_mention(player_name):
-            return await ctx.respond("Player name must be a mention.", ephemeral=True)
-
-        if not is_mention(replacement_name):
-            return await ctx.respond(
-                "Replacement name must be a mention.", ephemeral=True
-            )
-
+        # user can input both discord mention or player name
+        # check for both cases
         if (
-            player_name not in [player.name for player in mogi.players]
+            not is_discord_mention(player_name)
+            and player_name not in [player.name for player in mogi.players]
+        ) or (
+            is_discord_mention(player_name)
             and int(player_name.strip("<@>"))
-            if player_name.strip("<@>").isdigit()
-            else 0 not in [player.discord_id for player in mogi.players]
+            not in [player.discord_id for player in mogi.players]
         ):
             return await ctx.respond("Player not in the mogi", ephemeral=True)
 
         if (
-            replacement_name in [player.name for player in mogi.players]
-            or int(replacement_name.strip("<@>"))
-            if replacement_name.strip("<@>").isdigit()
-            else 1 in [player.discord_id for player in mogi.players]
+            is_discord_mention(player_name)
+            and player_name in [player.name for player in mogi.players]
+        ) or (
+            not is_discord_mention(player_name) and int(player_name.strip("<@>"))
+            if is_discord_mention(player_name)
+            else None in [player.discord_id for player in mogi.players]
         ):
             return await ctx.respond("Sub is already in the mogi.", ephemeral=True)
 
@@ -81,8 +74,8 @@ class sub_manager(commands.Cog):
                         {
                             "discord_id": (
                                 int(replacement_name.strip("<@>"))
-                                if replacement_name.strip("<@>").isdigit()
-                                else 0
+                                if is_discord_mention(replacement_name)
+                                else None
                             )
                         },
                     ]
