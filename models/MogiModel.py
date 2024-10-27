@@ -1,3 +1,5 @@
+import time
+
 from dataclasses import dataclass, field
 
 from models.PlayerModel import PlayerProfile
@@ -76,6 +78,9 @@ class Mogi:
         ]
     )
 
+    started_at: int | None = None
+    finished_at: int | None = None
+
     def play(self, format_int: int) -> None:
         """
         ### Organizes players into teams and updates the game state based on the given format.
@@ -106,6 +111,7 @@ class Mogi:
 
         self.isVoting = False
         self.isPlaying = True
+        self.started_at = round(time.time())
 
         self.voters = []
         self.votes = {key: 0 for key in self.votes}
@@ -126,6 +132,7 @@ class Mogi:
         self.isVoting = False
         self.isPlaying = False
         self.isFinished = False
+        self.started_at = None
 
     def collect_points(self, tablestring: str) -> None:
         """
@@ -166,3 +173,4 @@ class Mogi:
 
         self.isPlaying = False
         self.isFinished = True
+        self.finished_at = round(time.time())
