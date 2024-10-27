@@ -58,6 +58,8 @@ class Mogi:
 
         else:
             self.teams = distribute_players_to_teams(self.players, format_int)
+            # important: we put players in the new order determined by the team-making
+            self.players = [player for team in self.teams for player in team]
 
         self.isVoting = False
         self.isPlaying = True

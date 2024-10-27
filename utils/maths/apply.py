@@ -6,14 +6,11 @@ from utils.data.database import db_players
 
 async def apply_mmr(mogi: Mogi) -> None:
 
-    # we grab all_player_names from 'teams'
-    # because 'teams' get shuffled
-    # and mogi.mmr_resutls_by_group is in the same order as 'teams'
-    all_player_names = [player.name for team in mogi.teams for player in team]
-    all_player_mmrs = [player.mmr for team in mogi.teams for player in team]
+    all_player_names = [player.name for player in mogi.players]
+    all_player_mmrs = [player.mmr for player in mogi.players]
     all_player_new_mmrs = [
         all_player_mmrs[i] + mogi.mmr_results_by_group[i]
-        for i in range(0, len(mogi.players))
+        for i in range(len(mogi.players))
     ]
 
     # create objects to update in the database in bulk

@@ -1,15 +1,13 @@
 import math
 
 from discord import (
-    slash_command,
     SlashCommandGroup,
-    Option,
     ApplicationContext,
     ChannelType,
     Thread,
     File,
 )
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 from models.MogiModel import Mogi
 from utils.maths.mmr_algorithm import calculate_mmr
@@ -17,6 +15,7 @@ from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
+from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.data.mogi_manager import get_mogi
 
@@ -71,7 +70,7 @@ class calculations(commands.Cog):
         placements = list(get_placements_from_scores(mogi.collected_points).values())
 
         # break down names and mmrs of all players
-        all_player_mmrs = [player.mmr for team in mogi.teams for player in team]
+        all_player_mmrs = [player.mmr for player in mogi.players]
 
         # Calculate MMR results
         results = calculate_mmr(
@@ -121,9 +120,9 @@ class calculations(commands.Cog):
         if mogi.isFinished:
             return await ctx.respond("This mogi has already finished.")
 
-        mogi.collected_points = []
-        mogi.placements_by_group = []
-        mogi.mmr_results_by_group = []
+        mogi.collected_points.clear()
+        mogi.placements_by_group.clear()
+        mogi.mmr_results_by_group.clear()
 
         await ctx.respond("Points have been reset.")
 
@@ -147,6 +146,7 @@ class calculations(commands.Cog):
 
         await apply_mmr(mogi)
         await ctx.respond("Applied MMR changes ✅")
+        await update_roles(ctx, mogi)
 
 
 def setup(bot: commands.Bot):
