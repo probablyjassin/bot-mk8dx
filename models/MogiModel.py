@@ -190,3 +190,4 @@ class Mogi:
         self.isPlaying = False
         self.isFinished = True
         self.finished_at = round(time.time())
+        self.archive_mogi_data()
