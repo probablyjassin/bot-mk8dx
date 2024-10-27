@@ -77,6 +77,22 @@ class Mogi:
     )
 
     def play(self, format_int: int) -> None:
+        """
+        ### Organizes players into teams and updates the game state based on the given format.
+        #### Parameters:
+        format_int (int): An integer representing the format of the game.
+                          If format_int is 1, each player is placed in their own team.
+                          Otherwise, players are distributed into teams based on the format.
+        #### Side Effects:
+        - Updates the `self.format` attribute with the given format.
+        - Modifies the `self.teams` attribute to contain the new teams.
+        - Reorders `self.players` based on the new team assignments.
+        - Sets `self.isVoting` to False.
+        - Sets `self.isPlaying` to True.
+        - Resets `self.voters` to an empty list.
+        - Resets the vote counts in `self.votes` to 0.
+
+        """
         self.format = format_int
 
         if format_int == 1:
