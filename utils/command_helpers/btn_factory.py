@@ -31,6 +31,16 @@ def create_button(label: str, mogi: Mogi) -> Button:
 
 
 def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
+    """
+    Creates a View object with buttons based on the provided labels and Mogi instance.
+    These buttons each have a callback function with the complex logic for starting the mogi if needed.
+    Args:
+        button_labels (`list[str]`): A list of labels for the buttons to be created.
+        mogi (`Mogi`): An instance of the Mogi class to be associated with each button.
+    Returns:
+        View: A View object containing the created buttons.
+    """
+
     view = View()
     for label in button_labels:
         view.add_item(create_button(label, mogi))
