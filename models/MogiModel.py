@@ -175,7 +175,7 @@ class Mogi:
                 "player_ids": [player.discord_id for player in self.players],
                 "format": self.format,
                 "subs": len(self.subs),
-                "results": self.collected_points,
+                "results": self.mmr_results_by_group,
             }
         )
 
