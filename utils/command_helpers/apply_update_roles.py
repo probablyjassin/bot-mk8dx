@@ -9,8 +9,6 @@ async def update_roles(
     ctx: ApplicationContext,
     mogi: Mogi,
 ):
-    all_player_names = [player.name for player in mogi.players]
-
     for player in mogi.players:
         discord_member: Member = get(ctx.guild.members, id=int(player.discord_id))
         if not discord_member:
