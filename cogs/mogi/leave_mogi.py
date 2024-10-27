@@ -2,6 +2,7 @@ from discord import slash_command, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
 
+from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 from utils.data.mogi_manager import get_mogi, destroy_mogi
 from models.MogiModel import Mogi
 
@@ -14,6 +15,8 @@ class leave_mogi(commands.Cog):
         self.leave_semaphore = asyncio.Semaphore(1)
 
     @slash_command(name="leave", description="Leave this mogi")
+    @is_mogi_open()
+    @is_mogi_not_in_progress()
     async def leave(self, ctx: ApplicationContext):
         async with self.leave_semaphore:
             mogi: Mogi = get_mogi(ctx.channel.id)
