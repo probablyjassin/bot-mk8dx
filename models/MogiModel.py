@@ -28,7 +28,7 @@ class Mogi:
     placements_by_group: list[int] = field(default_factory=lambda: [])
     mmr_results_by_group: list[int] = field(default_factory=lambda: [])
 
-    voting_message: Interaction | WebhookMessage | None = None
+    voting_message: Interaction | None = None
     voters: list[int] = field(default_factory=lambda: [])
     votes: dict[str, int] = field(
         default_factory=lambda: {
@@ -70,8 +70,8 @@ class Mogi:
         self.votes = {key: 0 for key in self.votes}
 
     def stop(self) -> None:
-        if self.voting_message:
-            self.voting_message.delete()
+        if self.voting_message.message:
+            self.voting_message.message.delete()
         self.votes = {key: 0 for key in self.votes}
         self.voters.clear()
         self.isVoting = False
