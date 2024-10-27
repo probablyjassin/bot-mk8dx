@@ -70,6 +70,8 @@ class Mogi:
         self.votes = {key: 0 for key in self.votes}
 
     def stop(self) -> None:
+        if self.voting_message:
+            self.voting_message.delete()
         self.votes = {key: 0 for key in self.votes}
         self.voters.clear()
         self.isVoting = False

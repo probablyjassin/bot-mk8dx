@@ -24,16 +24,13 @@ class stop(commands.Cog):
     async def stop(self, ctx: ApplicationContext):
         mogi = get_mogi(ctx.channel.id)
 
-        if mogi.voting_message:
-            await mogi.voting_message.delete()
-
         # user not in the mogi
         if not self.INMOGI_ROLE in ctx.user.roles:
             return await ctx.respond(
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
 
-        mogi.isFinished = True
+        mogi.stop()
         await ctx.respond("Mogi has been stopped")
 
 
