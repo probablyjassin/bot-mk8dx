@@ -113,7 +113,7 @@ class player(commands.Cog):
         if getattr(player, "history", None):
             embed.add_field(
                 name="History (last 5)",
-                value=f"{', '.join(map(str, player.history[ len(player.history) -5: ]))}",
+                value=", ".join(map(str, player.history[-5:])),
             )
 
         if getattr(player, "inactive", None):
