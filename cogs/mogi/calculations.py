@@ -149,6 +149,7 @@ class calculations(commands.Cog):
         await apply_mmr(mogi)
         await ctx.send("Applied MMR changes ✅")
         await update_roles(ctx, mogi)
+        mogi.finish()
 
         if await confirmation(
             ctx,
