@@ -89,3 +89,7 @@ class Mogi:
             team_points_list.append(team_points)
 
         self.collected_points = team_points_list
+
+    def finish(self) -> None:
+        self.isPlaying = False
+        self.isFinished = True

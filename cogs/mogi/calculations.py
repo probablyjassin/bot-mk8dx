@@ -15,9 +15,10 @@ from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
+from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import get_mogi, destroy_mogi
 
 
 class calculations(commands.Cog):
@@ -146,8 +147,18 @@ class calculations(commands.Cog):
             )
 
         await apply_mmr(mogi)
-        await ctx.respond("Applied MMR changes ✅")
+        await ctx.send("Applied MMR changes ✅")
         await update_roles(ctx, mogi)
+
+        if await confirmation(
+            ctx,
+            "{}, the mogi is ready to be closed. Would you like to?".format(
+                ctx.author.mention
+            ),
+        ):
+            destroy_mogi(ctx.channel.id)
+            return await ctx.respond("# This channel's Mogi has finished.")
+        await ctx.respond("Held mogi open.")
 
 
 def setup(bot: commands.Bot):
