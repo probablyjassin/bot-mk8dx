@@ -81,6 +81,7 @@ class Mogi:
 
     started_at: int | None = None
     finished_at: int | None = None
+    disconnections: int | None = 0
 
     def play(self, format_int: int) -> None:
         """
@@ -132,6 +133,7 @@ class Mogi:
         self.voters.clear()
         self.isVoting = False
         self.isPlaying = False
+
         self.isFinished = False
         self.started_at = None
 
@@ -147,15 +149,15 @@ class Mogi:
         for line in tablestring.split("\n"):
             for player in self.players:
                 if player.name in line:
+                    parts = [part.split("+") for part in line.split()]
                     points = sum(
-                        [
-                            int(num)
-                            for part in [part.split("+") for part in line.split()]
-                            for num in part
-                            if num.isdigit()
-                        ]
+                        [int(num) for part in parts for num in part if num.isdigit()]
                     )
                     all_points[player.name] = points
+                    self.disconnections = (
+                        len([num for part in parts for num in part if num.isdigit()])
+                        - 1
+                    )
 
         team_points_list = []
         for team in self.teams:
@@ -176,6 +178,7 @@ class Mogi:
                 "format": self.format,
                 "subs": len(self.subs),
                 "results": self.mmr_results_by_group,
+                "disconnections": self.disconnections,
             }
         )
 
