@@ -141,7 +141,7 @@ class calculations(commands.Cog):
             return await ctx.respond("No results to apply or already applied")
         if not len(mogi.mmr_results_by_group) == len(mogi.players):
             return await ctx.respond(
-                "Something has gone seriously wrong, use /debug to find the issue and contact a moderator."
+                "Something has gone seriously wrong, players and results don't add up. Use /debug to find the issue and contact a moderator."
             )
 
         await apply_mmr(mogi)
