@@ -21,48 +21,55 @@ async def check(
 
 def is_mogi_manager():
     async def predicate(ctx: ApplicationContext):
-        if ctx.author.guild_permissions.is_superset(
-            get(ctx.guild.roles, name="Mogi Manager").permissions
-        ):
-            return True
-        else:
-            await ctx.respond("You're not allowed to use this command.", ephemeral=True)
-            return False
+        return await check(
+            ctx=ctx,
+            condition=(
+                ctx.author.guild_permissions.is_superset(
+                    get(ctx.guild.roles, name="Mogi Manager").permissions
+                )
+            ),
+            error_message="You're not allowed to use this command.",
+        )
 
     return commands.check(predicate)
 
 
 def is_moderator():
     async def predicate(ctx: ApplicationContext):
-        if ctx.author.guild_permissions.is_superset(
-            get(ctx.guild.roles, name="Moderator").permissions
-        ):
-            return True
-        else:
-            await ctx.respond("You're not allowed to use this command.", ephemeral=True)
-            return False
+        return await check(
+            ctx=ctx,
+            condition=(
+                ctx.author.guild_permissions.is_superset(
+                    get(ctx.guild.roles, name="Moderator").permissions
+                )
+            ),
+            error_message="You're not allowed to use this command.",
+        )
 
     return commands.check(predicate)
 
 
 def is_admin():
     async def predicate(ctx: ApplicationContext):
-        if ctx.author.guild_permissions.is_superset(
-            get(ctx.guild.roles, name="Admin").permissions
-        ):
-            return True
-        else:
-            await ctx.respond("You're not allowed to use this command.", ephemeral=True)
-            return False
+        return await check(
+            ctx=ctx,
+            condition=(
+                ctx.author.guild_permissions.is_superset(
+                    get(ctx.guild.roles, name="Admin").permissions
+                )
+            ),
+            error_message="You're not allowed to use this command.",
+        )
 
     return commands.check(predicate)
 
 
 def is_mogi_open():
     async def predicate(ctx: ApplicationContext):
-        mogi_open: bool = mogi_registry.get(ctx.channel.id) != None
         return await check(
-            ctx=ctx, condition=mogi_open, error_message="No open Mogi in this channel."
+            ctx=ctx,
+            condition=(mogi_registry.get(ctx.channel.id) != None),
+            error_message="No open Mogi in this channel.",
         )
 
     return commands.check(predicate)
