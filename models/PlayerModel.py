@@ -5,7 +5,17 @@ from bson.int64 import Int64
 @dataclass
 class PlayerProfile:
     """
-    #### Represents a Player from the Database.
+    ### Represents a player's profile. Is obtained and modeled from the database.
+    #### Attributes:
+        _id (str): The _id assigned by MongoDB.
+        name (str): The username of the player.
+        discord_id (Int64): The Discord ID of the player. Note: MongoDB converts this to Int64.
+        mmr (int): The matchmaking rating of the player.
+        history (list[int]): A list of historical MMR deltas.
+        joined (int | None): The timestamp when the player joined, or None.
+        disconnects (int | None): The number of times the player has disconnected, or None.
+        inactive (bool | None): Indicates player inactivity, usually None.
+        suspended (bool | None): Indicates player suspension, usually None.
     """
 
     _id: str
