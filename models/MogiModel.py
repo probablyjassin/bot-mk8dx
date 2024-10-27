@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 
+from discord import Interaction, WebhookMessage
 from models.PlayerModel import PlayerProfile
 
 from utils.maths.teams_algorithm import distribute_players_to_teams
@@ -27,6 +28,7 @@ class Mogi:
     placements_by_group: list[int] = field(default_factory=lambda: [])
     mmr_results_by_group: list[int] = field(default_factory=lambda: [])
 
+    voting_message: Interaction | WebhookMessage | None = None
     voters: list[int] = field(default_factory=lambda: [])
     votes: dict[str, int] = field(
         default_factory=lambda: {
@@ -66,6 +68,13 @@ class Mogi:
 
         self.voters = []
         self.votes = {key: 0 for key in self.votes}
+
+    def stop(self) -> None:
+        self.votes = {key: 0 for key in self.votes}
+        self.voters.clear()
+        self.isVoting = False
+        self.isPlaying = False
+        self.isFinished = False
 
     def collect_points(self, tablestring: str) -> None:
         all_points = {}
