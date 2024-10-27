@@ -10,15 +10,17 @@ from discord import (
 from discord.ext import commands
 
 from models.MogiModel import Mogi
+from utils.data.mogi_manager import get_mogi, destroy_mogi
+
 from utils.maths.mmr_algorithm import calculate_mmr
 from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
+from utils.command_helpers.checks import is_mogi_open, is_mogi_manager
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
-from utils.data.mogi_manager import get_mogi, destroy_mogi
 
 
 class calculations(commands.Cog):
@@ -30,13 +32,13 @@ class calculations(commands.Cog):
     )
 
     @points.command(name="collect", description="Collect points from tablestring")
+    @is_mogi_open()
+    @is_mogi_manager()
     async def collect(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        if not mogi:
-            return await ctx.respond("No open Mogi in this channel.")
         if not mogi.isPlaying:
             return await ctx.respond("This mogi has not started yet.")
         if mogi.isFinished:
@@ -108,13 +110,13 @@ class calculations(commands.Cog):
         await ctx.respond(content="# Results", file=file)
 
     @points.command(name="reset", description="Reset collected points")
+    @is_mogi_open()
+    @is_mogi_manager()
     async def reset(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        if not mogi:
-            return await ctx.respond("No open Mogi in this channel.")
         if not mogi.isPlaying:
             return await ctx.respond("This mogi has not started yet.")
         if not mogi.collected_points:
@@ -131,12 +133,12 @@ class calculations(commands.Cog):
     # TODO: permissions on all commands
 
     @points.command(name="apply", description="Apply MMR changes")
+    @is_mogi_open()
+    @is_mogi_manager()
     async def apply(self, ctx: ApplicationContext):
         await ctx.response.defer()
         mogi: Mogi = get_mogi(ctx.channel.id)
 
-        if not mogi:
-            return await ctx.respond("No open Mogi in this channel.")
         if mogi.isVoting or not mogi.isPlaying:
             return await ctx.respond("This mogi has not started yet.")
         if not mogi.mmr_results_by_group:
