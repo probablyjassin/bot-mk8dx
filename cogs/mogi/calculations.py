@@ -92,6 +92,11 @@ class calculations(commands.Cog):
         for place in placements:
             mogi.placements_by_group.extend([place] * mogi.format)
 
+        if not len(mogi.mmr_results_by_group) == len(mogi.players):
+            return await ctx.respond(
+                "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
+            )
+
         print(f"All MMRs: {all_player_mmrs}")
         print(f"Summed Points: {mogi.collected_points}")
         print(f"Placements Points: {get_placements_from_scores(mogi.collected_points)}")
