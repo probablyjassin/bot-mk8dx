@@ -9,6 +9,12 @@ async def update_roles(
     ctx: ApplicationContext,
     mogi: Mogi,
 ):
+    """
+    Updates the roles of players in a Mogi based on their MMR changes.
+    ### Args:
+        ctx (`ApplicationContext`): The context where the command was invoked.
+        mogi (`Mogi`): The Mogi instance to perform the action on.
+    """
     for player in mogi.players:
         discord_member: Member = get(ctx.guild.members, id=int(player.discord_id))
         if not discord_member:
