@@ -111,6 +111,16 @@ class Mogi:
         self.votes = {key: 0 for key in self.votes}
 
     def stop(self) -> None:
+        """
+        Stops the current process and resets the voting and playing states.
+        This method performs the following actions:
+        - Resets all votes to zero.
+        - Clears the list of voters.
+        - Sets the voting state to False.
+        - Sets the playing state to False.
+        - Sets the finished state to False.
+        """
+
         self.votes = {key: 0 for key in self.votes}
         self.voters.clear()
         self.isVoting = False
