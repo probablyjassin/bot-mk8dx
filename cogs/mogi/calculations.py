@@ -97,6 +97,7 @@ class calculations(commands.Cog):
                 "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
             )
 
+        # DEBUG: remove this in prod
         print(f"All MMRs: {all_player_mmrs}")
         print(f"Summed Points: {mogi.collected_points}")
         print(f"Placements Points: {get_placements_from_scores(mogi.collected_points)}")
