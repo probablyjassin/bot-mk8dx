@@ -157,5 +157,12 @@ class Mogi:
         self.collected_points = team_points_list
 
     def finish(self) -> None:
+        """
+        Marks the current mogi as completed.
+        #### Side Effects:
+        - Sets `self.isPlaying` to False.
+        - Sets `self.isFinished` to True.
+        """
+
         self.isPlaying = False
         self.isFinished = True
