@@ -158,7 +158,7 @@ class calculations(commands.Cog):
             ),
         ):
             destroy_mogi(ctx.channel.id)
-            return await ctx.respond("# This channel's Mogi has finished.")
+            return await ctx.respond("# This channel's Mogi is finished and closed.")
         await ctx.respond("Held mogi open.")
 
 
