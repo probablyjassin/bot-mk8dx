@@ -1,6 +1,7 @@
 from discord import slash_command, Option, ApplicationContext
 from discord.ext import commands
 
+from utils.command_helpers.checks import is_mogi_open
 from utils.data.mogi_manager import get_mogi
 
 from models.MogiModel import Mogi
@@ -11,6 +12,7 @@ class list_mogi(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="l", description="List the players in this mogi")
+    @is_mogi_open()
     async def l(
         self,
         ctx: ApplicationContext,
@@ -22,8 +24,6 @@ class list_mogi(commands.Cog):
         ),
     ):
         mogi: Mogi = get_mogi(ctx.channel.id)
-        if not mogi:
-            return await ctx.respond("There is no mogi open in this channel.")
         if len(mogi.players) == 0:
             return await ctx.respond("No players in this mogi.")
 
