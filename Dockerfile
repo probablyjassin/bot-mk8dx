@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM python:3.9-slim
+FROM --platform=$TARGETPLATFORM python:3.10-slim
 
 LABEL org.opencontainers.image.source = "https://github.com/probablyjassin/bot-mk8dx-rewrite"
 
