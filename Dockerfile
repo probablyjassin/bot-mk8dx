@@ -23,5 +23,6 @@ COPY . /app
 
 # Add volume for data
 VOLUME /app/state
+VOLUME /app/logs
 
 CMD ["python", "-u", "main.py"]
