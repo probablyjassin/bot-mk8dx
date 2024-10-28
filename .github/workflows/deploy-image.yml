@@ -43,8 +43,3 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/probablyjassin/mk8dx-yuzu-bot:latest
-
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
