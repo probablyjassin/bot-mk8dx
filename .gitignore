@@ -130,3 +130,7 @@ cython_debug/
 # tests
 tests
 *test*.*
+
+# volumes
+data/
+logs/
