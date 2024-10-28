@@ -34,8 +34,6 @@ jobs:
         with:
           path: /tmp/.buildx-cache
           key: ${{ runner.os }}-buildx-${{ github.ref }}-${{ hashFiles('Dockerfile', 'requirements.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
 
       - name: Delete old caches if no cache found
         if: steps.cache-check.outputs.cache-hit != 'true'
