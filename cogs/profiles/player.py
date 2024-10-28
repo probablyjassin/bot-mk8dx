@@ -29,6 +29,7 @@ class player(commands.Cog):
         ctx: ApplicationContext,
         searched_name: str = Option(
             str,
+            name="name",
             description="defaults to yourself: username | @ mention | discord_id",
             required=False,
         ),
