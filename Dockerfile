@@ -1,4 +1,12 @@
-FROM --platform=$TARGETPLATFORM rapidfort/python-chromedriver:latest
+FROM --platform=$TARGETPLATFORM python:3.9-slim
+
+# Install Chrome and dependencies for both architectures
+RUN apt-get update && apt-get install -y \
+    wget \
+    gnupg \
+    chromium \
+    chromium-driver \
+    && rm -rf /var/lib/apt/lists/*
 
 WORKDIR /app
 
