@@ -7,5 +7,5 @@ services:
     build: .
     volumes:
       - .:/app
-      - data:/app/data
+      - state:/app/state
     command: python main.py

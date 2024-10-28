@@ -132,5 +132,5 @@ tests
 *test*.*
 
 # volumes
-data/
+state/
 logs/
