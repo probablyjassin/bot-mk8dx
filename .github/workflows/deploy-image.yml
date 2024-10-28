@@ -40,7 +40,11 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FOR_CACHE_REPO_PAT }}
         run: |
-          gh cache delete --all --repo probablyjassin/bot-mk8dx
+          if gh cache list --repo probablyjassin/bot-mk8dx | grep -q 'Cache'; then
+            gh cache delete --all --repo probablyjassin/bot-mk8dx
+          else
+            echo "No caches to delete."
+          fi
 
       - name: Cache Docker layers
         uses: actions/cache@v3
