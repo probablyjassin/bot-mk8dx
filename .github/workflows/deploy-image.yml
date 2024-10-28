@@ -40,7 +40,6 @@ jobs:
       - name: Delete old caches if no cache found
         if: steps.cache-check.outputs.cache-hit != 'true'
         run: |
-          echo "No cache found for the current key. Deleting old caches before caching new layers."
           rm -rf /tmp/.buildx-cache/*
 
       - name: Cache Docker layers
