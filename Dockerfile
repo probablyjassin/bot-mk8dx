@@ -1,6 +1,6 @@
 FROM --platform=$TARGETPLATFORM python:3.10-slim
 
-LABEL org.opencontainers.image.source = "https://github.com/probablyjassin/bot-mk8dx-rewrite"
+LABEL org.opencontainers.image.source = "https://github.com/probablyjassin/bot-mk8dx"
 
 # Install Chrome and dependencies for both architectures
 RUN apt-get update && apt-get install -y \
