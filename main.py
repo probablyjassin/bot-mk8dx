@@ -15,6 +15,12 @@ owners = [769525682039947314, 450728788570013721]
 
 
 class YuzuLoungeBot(commands.Bot):
+    """
+    A custom Discord bot class for the Yuzu Lounge server.
+
+    This class extends the `commands.Bot` class from the `discord.ext.commands` module.
+    """
+
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
 
