@@ -38,7 +38,7 @@ jobs:
       - name: Delete old caches if no cache found
         if: steps.cache-check.outputs.cache-hit != 'true'
         run: |
-          rm -rf /tmp/.buildx-cache/*
+          gh cache delete --all
 
       - name: Cache Docker layers
         uses: actions/cache@v3
