@@ -3,7 +3,7 @@ FROM python:3.10-slim
 # Metadata
 LABEL org.opencontainers.image.source = "https://github.com/probablyjassin/bot-mk8dx"
 
-# Install Chrome and dependencies for both architectures
+# Install dependencies
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
