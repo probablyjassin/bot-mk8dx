@@ -28,6 +28,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Check for existing cache
+        id: cache-check
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.ref }}-${{ hashFiles('Dockerfile', 'requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
+
+      - name: Delete old caches if no cache found
+        if: steps.cache-check.outputs.cache-hit != 'true'
+        run: |
+          echo "No cache found for the current key. Deleting old caches before caching new layers."
+          rm -rf /tmp/.buildx-cache/*
+
       - name: Cache Docker layers
         uses: actions/cache@v3
         with:
