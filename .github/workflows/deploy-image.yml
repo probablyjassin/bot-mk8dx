@@ -33,7 +33,7 @@ jobs:
         with:
           path: |
             /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: ${{ runner.os }}-buildx-${{ github.ref }}-$(echo ${{ hashFiles('Dockerfile', 'requirements.txt') }} | cut -c1-8)
           restore-keys: |
             ${{ runner.os }}-buildx-
 
