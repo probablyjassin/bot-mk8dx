@@ -39,16 +39,25 @@ def create_table(mogi: Mogi) -> BytesIO:
             [
                 {
                     "selector": "tr:nth-child(even)",
-                    "props": [("background-color", "#363f4f"), ("color", "white")],
+                    "props": [("background-color", "#151528"), ("color", "white")],
                 },
                 {
                     "selector": "tr:nth-child(odd)",
-                    "props": [("background-color", "#1d2735"), ("color", "white")],
+                    "props": [("background-color", "#0F0F1C"), ("color", "white")],
                 },
             ]
         ).background_gradient(
             cmap=colors.LinearSegmentedColormap.from_list(
-                "", ["red", "red", "red", "white", "green", "green", "green"]
+                "",
+                [
+                    "#E22012",
+                    "#E22012",
+                    "#E22012",
+                    "#CACAE3",
+                    "#22AA3B",
+                    "#22AA3B",
+                    "#22AA3B",
+                ],
             ),
             vmin=-150,
             vmax=150,
