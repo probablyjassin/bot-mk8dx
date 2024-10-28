@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  mk8dx-yuzu-bot:
+    build: .
+    environment:
+      - DISCORD_TOKEN=${DISCORD_TOKEN}
+      - MONGO_URI=${MONGO_URI}
+      - LOUNGE_DB=${LOUNGE_DB}
+      - GUILD_IDS=${GUILD_IDS}
+      - LOG_CHANNEL_ID=${LOG_CHANNEL_ID}
+      - REGISTER_CHANNEL_ID=${REGISTER_CHANNEL_ID}
+    volumes:
+      - .:/app
+      - data:/app/data
+    command: python main.py
