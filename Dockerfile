@@ -1,4 +1,4 @@
-FROM --platform=$TARGETPLATFORM selenium/standalone-chrome:latest
+FROM --platform=$TARGETPLATFORM rapidfort/python-chromedriver:latest
 
 WORKDIR /app
 
