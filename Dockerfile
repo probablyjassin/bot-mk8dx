@@ -1,4 +1,4 @@
-FROM selenium/standalone-chrome:latest
+FROM rapidfort/python-chromedriver:latest
 
 WORKDIR /app
 
