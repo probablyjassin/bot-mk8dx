@@ -38,9 +38,9 @@ jobs:
       - name: Delete old caches if no cache found
         if: steps.cache-check.outputs.cache-hit != 'true'
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.FOR_CACHE_REPO_PAT }}
         run: |
-          gh cache delete --all
+          gh cache delete --all --repo ${{ github.action_repository }}
 
       - name: Cache Docker layers
         uses: actions/cache@v3
