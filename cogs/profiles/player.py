@@ -37,7 +37,7 @@ class player(commands.Cog):
         player: PlayerProfile = search_player(searched_name or Int64(ctx.author.id))
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         class PlayerView(View):
             def __init__(self):
