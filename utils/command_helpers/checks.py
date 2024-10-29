@@ -3,7 +3,7 @@ from discord.errors import CheckFailure
 from discord.ext import commands
 from discord.utils import get
 
-from utils.data.mogi_manager import mogi_registry
+from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
 
 
@@ -68,7 +68,7 @@ def is_mogi_open():
     async def predicate(ctx: ApplicationContext):
         return await check(
             ctx=ctx,
-            condition=(mogi_registry.get(ctx.channel.id) != None),
+            condition=(mogi_manager.get_mogi(ctx.channel.id) != None),
             error_message="No open Mogi in this channel.",
         )
 
@@ -77,7 +77,7 @@ def is_mogi_open():
 
 def is_mogi_in_progress():
     async def predicate(ctx: ApplicationContext):
-        mogi: Mogi = mogi_registry.get(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
         return await check(
             ctx=ctx,
             condition=mogi.isVoting or (mogi.isPlaying) and (not mogi.isFinished),
@@ -89,7 +89,7 @@ def is_mogi_in_progress():
 
 def is_mogi_not_in_progress():
     async def predicate(ctx: ApplicationContext):
-        mogi: Mogi = mogi_registry.get(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
         return await check(
             ctx=ctx,
             condition=(mogi and not mogi.isVoting)

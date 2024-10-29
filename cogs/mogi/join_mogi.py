@@ -5,7 +5,7 @@ from discord.ext import commands
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 
 from utils.data.database import db_players, db_archived
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import mogi_manager
 
 from models.MogiModel import Mogi
 from models.PlayerModel import PlayerProfile
@@ -24,7 +24,7 @@ class join_mogi(commands.Cog):
     @is_mogi_not_in_progress()
     async def join(self, ctx: ApplicationContext):
         async with self.join_semaphore:
-            mogi: Mogi = get_mogi(ctx.channel.id)
+            mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
             # check if player already in mogi
             if [
                 player for player in mogi.players if player.discord_id == ctx.author.id

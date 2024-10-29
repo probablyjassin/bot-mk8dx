@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from utils.command_helpers.btn_factory import create_button_view
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import mogi_manager
 
 from config import GUILD_IDS
 
@@ -24,7 +24,7 @@ class start(commands.Cog):
     @is_mogi_open()
     @is_mogi_not_in_progress()
     async def vote(self, ctx: ApplicationContext):
-        mogi = get_mogi(ctx.channel.id)
+        mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         # not enough players
         if len(mogi.players) < 0:  # DEBUG: remember to change this in production
@@ -54,7 +54,7 @@ class start(commands.Cog):
         ctx: ApplicationContext,
         format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "6v6"]),
     ):
-        mogi = get_mogi(ctx.channel.id)
+        mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         # no mogi open
         if not mogi:

@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from utils.command_helpers.btn_factory import create_button_view
 from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import mogi_manager
 
 from config import GUILD_IDS
 
@@ -22,7 +22,7 @@ class stop(commands.Cog):
     @is_mogi_open()
     @is_mogi_in_progress()
     async def stop(self, ctx: ApplicationContext):
-        mogi = get_mogi(ctx.channel.id)
+        mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         # user not in the mogi
         if not self.INMOGI_ROLE in ctx.user.roles:
