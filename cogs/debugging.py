@@ -5,7 +5,7 @@ from discord.ext import commands
 
 from models.MogiModel import Mogi
 from models.PlayerModel import PlayerProfile
-from utils.data.mogi_manager import mogi_registry
+from utils.data.mogi_manager import mogi_manager
 
 
 class debugging(commands.Cog):
@@ -16,12 +16,12 @@ class debugging(commands.Cog):
 
     @debug.command(name="current_mogi", description="print the mogi for this channel")
     async def current_mogi(self, ctx: ApplicationContext):
-        mogi = mogi_registry.get(ctx.channel.id)
+        mogi = mogi_manager.get_mogi(ctx.channel.id)
         await ctx.respond(f"Current Mogi: \n{mogi}")
 
     @debug.command(name="all_mogis", description="print the mogi registry")
     async def all_mogis(self, ctx: ApplicationContext):
-        await ctx.respond(f"Mogi Registry: \n{mogi_registry}")
+        await ctx.respond(f"Mogi Registry: \n{mogi_manager.read_registry()}")
 
     @debug.command(name="throw_error", description="throw an error")
     async def throw_error(self, ctx: ApplicationContext):
@@ -29,7 +29,7 @@ class debugging(commands.Cog):
 
     @debug.command(name="test_player", description="add a dummy player to the mogi")
     async def test_player(self, ctx: ApplicationContext):
-        mogi: Mogi = mogi_registry.get(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         dummy_names = ["spamton", "jordan", "mrboost", "bruv"]
         dummy: PlayerProfile = PlayerProfile(
