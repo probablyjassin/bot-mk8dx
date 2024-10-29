@@ -11,8 +11,6 @@ logger = setup_logger(__name__)
 
 intents = discord.Intents.all()
 
-owners = [769525682039947314, 450728788570013721]
-
 
 class YuzuLoungeBot(commands.Bot):
     """
@@ -36,7 +34,6 @@ bot = YuzuLoungeBot(
     case_insensitive=True,
     help_command=None,
     intents=intents,
-    owner_ids=set(owners),
     status=discord.Status.online,
     activity=discord.Streaming(
         name="ones and zeroes", url="https://www.youtube.com/watch?v=xvFZjo5PgG0"
