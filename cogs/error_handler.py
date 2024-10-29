@@ -38,6 +38,7 @@ class ErrorHandler(commands.Cog):
                     description=f"An error occurred in {ctx.channel.mention} by {ctx.author.mention}",
                     fields={"Command": ctx.command, "Error": str(error)},
                     color=Color.red(),
+                    inline=True
                 )
             )
 
@@ -65,6 +66,7 @@ class ErrorHandler(commands.Cog):
                         "Error": str(error),
                     },
                     color=Color.red(),
+                    inline=True
                 )
             )
 
