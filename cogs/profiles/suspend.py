@@ -1,0 +1,52 @@
+from discord import SlashCommandGroup, ApplicationContext, Option
+from discord.ext import commands
+
+from models.PlayerModel import PlayerProfile
+from utils.data.database import search_player
+
+
+class suspend(commands.Cog):
+    def __init__(self, bot):
+        self.bot: commands.Bot = bot
+
+    suspension = SlashCommandGroup(
+        name="suspension", description="Suspend or unsuspend players"
+    )
+
+    @suspension.command(name="add", description="Suspend a player")
+    async def suspend_add(
+        self,
+        ctx: ApplicationContext,
+        searched_player: str = Option(
+            str, name="player", description="username | @ mention | discord_id"
+        ),
+    ):
+        player: PlayerProfile = search_player(searched_player)
+
+        if not player:
+            await ctx.respond("Couldn't find that player")
+
+        player.suspended = True
+
+        await ctx.respond(f"Suspended <@{player.discord_id}>")
+
+    @suspension.command(name="remove", description="Unsuspend a player")
+    async def suspend_remove(
+        self,
+        ctx: ApplicationContext,
+        searched_player: str = Option(
+            str, name="player", description="username | @ mention | discord_id"
+        ),
+    ):
+        player: PlayerProfile = search_player(searched_player)
+
+        if not player:
+            await ctx.respond("Couldn't find that player")
+
+        player.suspended = False
+
+        await ctx.respond(f"Unsuspended <@{player.discord_id}>")
+
+
+def setup(bot: commands.Bot):
+    bot.add_cog(suspend(bot))
