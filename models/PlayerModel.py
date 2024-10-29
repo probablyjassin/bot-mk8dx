@@ -28,29 +28,51 @@ class PlayerProfile:
     history: list[int]
     joined: int | None = None
 
-    disconnects: int | None = None
-    inactive: bool | None = None
-    suspended: bool | None = None
+    _disconnects: int | None = None
+    _inactive: bool | None = None
+    _suspended: bool | None = None
+
+    def __init__(
+        self,
+        _id: ObjectId,
+        name: str,
+        discord_id: Int64,
+        mmr: int,
+        history: list[int],
+        joined: int | None = None,
+        disconnects: int | None = None,
+        inactive: bool | None = None,
+        suspended: bool | None = None,
+    ):
+        self._id = _id
+        self.name = name
+        self.discord_id = discord_id
+        self.mmr = mmr
+        self.history = history
+        self.joined = joined
+        self._disconnects = disconnects
+        self._inactive = inactive
+        self._suspended = suspended
 
     def __repr__(self):
         return (
             f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
             f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
-            f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})"
+            f"disconnects={self._disconnects!r}, inactive={self._inactive!r}, suspended={self._suspended!r})"
         )
 
     # Disconnects
     @property
     def disconnects(self) -> int | None:
-        return self.__disconnects__
+        return self._disconnects
 
     @disconnects.getter
     def disconnects(self) -> int | None:
-        return self.__disconnects__
+        return self._disconnects
 
     @disconnects.setter
     def disconnects(self, value: int | None):
-        self.__disconnects__ = value
+        self._disconnects = value
         db_players.update_one(
             {"_id": self._id},
             ({"$set": {"disconnects": value}}),
@@ -59,15 +81,15 @@ class PlayerProfile:
     # Inactive
     @property
     def inactive(self) -> bool | None:
-        return self.__inactive__
+        return self._inactive
 
     @inactive.getter
     def inactive(self) -> bool | None:
-        return self.__inactive__
+        return self._inactive
 
     @inactive.setter
     def inactive(self, value: bool | None):
-        self.__inactive__ = value
+        self._inactive = value
         db_players.update_one(
             {"_id": self._id},
             ({"$set": {"suspended": value}}),
@@ -75,7 +97,7 @@ class PlayerProfile:
 
     @inactive.deleter
     def inactive(self):
-        self.__inactive__ = None
+        self._inactive = None
         db_players.update_one(
             {"_id": self._id},
             {"$unset": {"inactive": ""}},
@@ -84,15 +106,15 @@ class PlayerProfile:
     # Suspended
     @property
     def suspended(self) -> bool | None:
-        return self.__suspended__
+        return self._suspended
 
     @suspended.getter
     def suspended(self) -> bool | None:
-        return self.__suspended__
+        return self._suspended
 
     @suspended.setter
     def suspended(self, value: bool | None):
-        self.__suspended__ = value
+        self._suspended = value
         db_players.update_one(
             {"_id": self._id},
             (
@@ -110,14 +132,14 @@ class PlayerProfile:
             "mmr": self.mmr,
             "history": self.history,
             "joined": self.joined,
-            "disconnects": self.disconnects,
-            "inactive": self.inactive,
-            "suspended": self.suspended,
+            "disconnects": self._disconnects,
+            "inactive": self._inactive,
+            "suspended": self._suspended,
         }
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(
+        instance = cls(
             _id=ObjectId(data["_id"]),
             name=data["name"],
             discord_id=Int64(data["discord_id"]),
@@ -128,3 +150,7 @@ class PlayerProfile:
             inactive=data.get("inactive"),
             suspended=data.get("suspended"),
         )
+        instance.disconnects = data.get("disconnects")
+        instance.inactive = data.get("inactive")
+        instance.suspended = data.get("suspended")
+        return instance
