@@ -12,7 +12,7 @@ from discord.ext import commands
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
 
-from utils.data.database import search_player
+from utils.command_helpers.find_player import search_player
 from utils.maths.ranks import getRankByMMR
 
 from datetime import datetime

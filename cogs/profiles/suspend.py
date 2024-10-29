@@ -2,7 +2,7 @@ from discord import SlashCommandGroup, ApplicationContext, Option
 from discord.ext import commands
 
 from models.PlayerModel import PlayerProfile
-from utils.data.database import search_player
+from utils.command_helpers.find_player import search_player
 
 
 class suspend(commands.Cog):
