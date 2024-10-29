@@ -3,7 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
-from utils.data.mogi_manager import get_mogi, destroy_mogi
+from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
 
 import asyncio
@@ -19,7 +19,7 @@ class leave_mogi(commands.Cog):
     @is_mogi_not_in_progress()
     async def leave(self, ctx: ApplicationContext):
         async with self.leave_semaphore:
-            mogi: Mogi = get_mogi(ctx.channel.id)
+            mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
             if not [
                 player for player in mogi.players if player.discord_id == ctx.author.id
             ]:
@@ -30,7 +30,7 @@ class leave_mogi(commands.Cog):
             ]
             await ctx.user.remove_roles(get(ctx.guild.roles, name="InMogi"))
             if len(mogi.players) == 0:
-                destroy_mogi(ctx.channel.id)
+                mogi_manager.destroy_mogi(ctx.channel.id)
                 return await ctx.respond("# This mogi has been closed.")
             await ctx.respond(
                 f"{ctx.author.mention} has left the mogi!\n{len(mogi.players)} players are in!"

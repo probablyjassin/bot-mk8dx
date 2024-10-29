@@ -10,7 +10,7 @@ from discord import (
 from discord.ext import commands
 
 from models.MogiModel import Mogi
-from utils.data.mogi_manager import get_mogi, destroy_mogi
+from utils.data.mogi_manager import mogi_manager
 
 from utils.maths.mmr_algorithm import calculate_mmr
 from utils.maths.placements import get_placements_from_scores
@@ -42,7 +42,7 @@ class calculations(commands.Cog):
     async def collect(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
-        mogi: Mogi = get_mogi(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         # Create a thread to collect points
         points_collection_thread: Thread = await ctx.channel.create_thread(
@@ -116,7 +116,7 @@ class calculations(commands.Cog):
     async def reset(self, ctx: ApplicationContext):
         await ctx.response.defer()
 
-        mogi: Mogi = get_mogi(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         if not mogi.collected_points:
             return await ctx.respond("No points have been collected yet.")
@@ -135,7 +135,7 @@ class calculations(commands.Cog):
     @is_mogi_manager()
     async def apply(self, ctx: ApplicationContext):
         await ctx.response.defer()
-        mogi: Mogi = get_mogi(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         if not mogi.mmr_results_by_group:
             return await ctx.respond("No results to apply or already applied")
@@ -156,7 +156,7 @@ class calculations(commands.Cog):
                 ctx.author.mention
             ),
         ):
-            destroy_mogi(ctx.channel.id)
+            mogi_manager.destroy_mogi(ctx.channel.id)
             return await ctx.respond("# This channel's Mogi is finished and closed.")
         await ctx.respond("Held mogi open.")
 

@@ -5,7 +5,7 @@ from models.PlayerModel import PlayerProfile
 from models.MogiModel import Mogi
 
 from utils.command_helpers.valid_discord_mention import is_discord_mention
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players
 from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
 
@@ -38,7 +38,7 @@ class sub_manager(commands.Cog):
             str, name="sub", description="Replacement player coming in."
         ),
     ):
-        mogi: Mogi = get_mogi(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
 
         # user can input both discord mention or player name
         # check for both cases

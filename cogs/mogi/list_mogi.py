@@ -2,7 +2,7 @@ from discord import slash_command, Option, ApplicationContext
 from discord.ext import commands
 
 from utils.command_helpers.checks import is_mogi_open
-from utils.data.mogi_manager import get_mogi
+from utils.data.mogi_manager import mogi_manager
 
 from models.MogiModel import Mogi
 
@@ -23,7 +23,7 @@ class list_mogi(commands.Cog):
             choices=["tablestring", "mmr"],
         ),
     ):
-        mogi: Mogi = get_mogi(ctx.channel.id)
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
         if len(mogi.players) == 0:
             return await ctx.respond("No players in this mogi.")
 
