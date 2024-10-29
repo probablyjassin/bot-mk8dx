@@ -7,8 +7,7 @@ def create_embed(
     fields: dict = None,
     footer: dict = None,
     color: Color = Color.blue(),
-    inline: bool = True,
-
+    inline: bool = True
 ) -> Embed:
     embed = Embed(title=title, description=description, color=color)
     if thumbnail:
