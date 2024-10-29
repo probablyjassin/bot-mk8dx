@@ -25,7 +25,7 @@ def setup_logger(
         )
         logger.addHandler(stream_handler)
 
-    file_handler = logging.FileHandler(file, mode=file_mode, encoding="utf-8")
+    file_handler = logging.FileHandler(f"logs/{file}", mode=file_mode, encoding="utf-8")
     file_handler.setFormatter(
         logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
     )
