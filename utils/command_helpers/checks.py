@@ -80,19 +80,24 @@ def is_mogi_in_progress():
         mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
         return await check(
             ctx=ctx,
-            condition=mogi.isVoting or (mogi.isPlaying) and (not mogi.isFinished),
+            condition=mogi
+            and mogi.isVoting
+            or (mogi.isPlaying)
+            and (not mogi.isFinished),
             error_message="The mogi is either not in progress or has already finished calculations.",
         )
 
     return commands.check(predicate)
 
 
+# BUG: this doesnt work when the mogi doesnt exist
 def is_mogi_not_in_progress():
     async def predicate(ctx: ApplicationContext):
         mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
         return await check(
             ctx=ctx,
-            condition=(mogi and not mogi.isVoting)
+            condition=mogi
+            and not mogi.isVoting
             and (not mogi.isPlaying)
             or (mogi.isFinished),
             error_message="The mogi is either not in progress or has already finished calculations.",
