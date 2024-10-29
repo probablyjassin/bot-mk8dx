@@ -43,7 +43,7 @@ bot = YuzuLoungeBot(
 )
 
 
-def load_extensions():
+def main():
     print("----Loading extensions----")
     for root, dirs, files in os.walk("./cogs"):
         for file in files:
@@ -56,9 +56,6 @@ def load_extensions():
                 print(f"Loaded {extension}")
     logger.debug("*Finished loading extensions*")
 
-
-def main():
-    load_extensions()
     bot.run(DISCORD_TOKEN)
 
 
