@@ -28,9 +28,9 @@ class PlayerProfile:
     history: list[int]
     joined: int | None = None
 
-    __disconnects__: int | None = None
-    __inactive__: bool | None = None
-    __suspended__: bool | None = None
+    disconnects: int | None = None
+    inactive: bool | None = None
+    suspended: bool | None = None
 
     def __repr__(self):
         return (
