@@ -1,3 +1,4 @@
+import os
 import logging
 import colorlog
 
@@ -24,7 +25,7 @@ def setup_logger(
             )
         )
         logger.addHandler(stream_handler)
-
+    os.makedirs("logs", exist_ok=True)
     file_handler = logging.FileHandler(f"logs/{file}", mode=file_mode, encoding="utf-8")
     file_handler.setFormatter(
         logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
