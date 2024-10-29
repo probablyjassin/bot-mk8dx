@@ -3,7 +3,7 @@ import json
 from dataclasses import dataclass
 
 from models.MogiModel import Mogi
-from utils.data.mogi_manager import write_registry, mogi_registry
+from utils.data.mogi_manager import mogi_manager
 
 
 @dataclass
@@ -13,15 +13,17 @@ class BotState:
 
     def backup(self):
         with open("state/backup.json", "w") as backup:
+            data = mogi_manager.read_registry()
             json.dump(
-                {id: mogi_registry[id].to_dict() for id in mogi_registry.keys()},
+                {id: data[id].to_dict() for id in data.keys()},
                 backup,
             )
 
     def save(self):
         with open("state/saved.json", "w") as saved:
+            data = mogi_manager.read_registry()
             json.dump(
-                {id: mogi_registry[id].to_dict() for id in mogi_registry.keys()},
+                {id: data[id].to_dict() for id in data.keys()},
                 saved,
             )
 
@@ -31,7 +33,9 @@ class BotState:
         with open("state/backup.json", "r") as backup:
             data: dict = json.load(backup)
             if data:
-                write_registry({id: Mogi.from_dict(data[id]) for id in data.keys()})
+                mogi_manager.write_registry(
+                    {int(id): Mogi.from_dict(data[id]) for id in data.keys()}
+                )
             else:
                 print("No backup data found")
 
@@ -39,10 +43,11 @@ class BotState:
         if not os.path.exists("state/saved.json"):
             return
         with open("state/saved.json", "r") as saved:
-            global mogi_registry
             data: dict = json.load(saved)
             if data:
-                mogi_registry = data
+                mogi_manager.write_registry(
+                    {int(id): Mogi.from_dict(data[id]) for id in data.keys()}
+                )
 
 
 state_manager = BotState()

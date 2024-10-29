@@ -4,7 +4,10 @@ from models.MogiModel import Mogi
 
 @dataclass
 class MogiManager:
-    mogi_registry: dict[int, Mogi] = {}
+    def __init__(self, data: dict[int, Mogi]):
+        self.mogi_registry = data
+
+    mogi_registry: dict[int, Mogi]
 
     def create_mogi(self, channel_id: int) -> None:
         if channel_id in self.mogi_registry:
@@ -26,4 +29,4 @@ class MogiManager:
         return self.mogi_registry
 
 
-mogi_manager = MogiManager()
+mogi_manager = MogiManager({})
