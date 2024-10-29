@@ -37,27 +37,39 @@ def create_table(mogi: Mogi) -> BytesIO:
     dfi.export(
         df.style.set_table_styles(
             [
-                {
-                    "selector": "tr:nth-child(even)",
-                    "props": [("background-color", "#151528"), ("color", "white")],
-                },
-                {
-                    "selector": "tr:nth-child(odd)",
-                    "props": [("background-color", "#0F0F1C"), ("color", "white")],
-                },
-            ]
-        ).background_gradient(
-            cmap=colors.LinearSegmentedColormap.from_list(
-                "",
-                [
-                    "#E22012",
-                    "#E22012",
-                    "#E22012",
-                    "#CACAE3",
-                    "#22AA3B",
-                    "#22AA3B",
-                    "#22AA3B",
-                ],
+            {
+                "selector": "table",
+                "props": [("border", "none")],
+            },
+            {
+                "selector": "th",
+                "props": [("border", "1px solid rgba(14, 14, 27, 1)")],
+            },
+            {
+                "selector": "td",
+                "props": [("border", "1px solid rgba(14, 14, 27, 1)")],
+            },
+            {
+                "selector": "tr:nth-child(even)",
+                "props": [("background-color", "rgba(21, 21, 40, 1)"), ("color", "rgba(202, 202, 227, 1)")],
+            },
+            {
+                "selector": "tr:nth-child(odd)",
+                "props": [("background-color", "rgba(15, 15, 28, 1)"), ("color", "rgba(202, 202, 227, 1)")],
+            },
+        ]
+    ).background_gradient(
+        cmap=colors.LinearSegmentedColormap.from_list(
+            "",
+            [
+                "#E22012",
+                "#E22012",
+                "#E22012",
+                "#CACAE3",
+                "#22AA3B",
+                "#22AA3B",
+                "#22AA3B",
+            ],
             ),
             vmin=-150,
             vmax=150,
