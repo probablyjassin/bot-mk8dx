@@ -12,7 +12,7 @@ from discord.ext import commands
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
 
-from utils.data.database import db_players
+from utils.data.database import search_player
 from utils.maths.ranks import getRankByMMR
 
 from datetime import datetime
@@ -34,31 +34,10 @@ class player(commands.Cog):
             required=False,
         ),
     ):
-        potential_player = None
+        player: PlayerProfile = search_player(searched_name or Int64(ctx.author.id))
 
-        if not searched_name:
-            potential_player = db_players.find_one({"discord_id": Int64(ctx.author.id)})
-
-        else:
-            potential_player = db_players.find_one(
-                {
-                    "$or": [
-                        {"name": searched_name},
-                        {
-                            "discord_id": (
-                                Int64(searched_name.strip("<@!>"))
-                                if searched_name.strip("<@!>").isdigit()
-                                else None
-                            )
-                        },
-                    ]
-                }
-            )
-
-        if not potential_player:
-            return await ctx.respond("Couldn't find that player")
-
-        player: PlayerProfile = PlayerProfile(**potential_player)
+        if not player:
+            await ctx.respond("Couldn't find that player")
 
         class PlayerView(View):
             def __init__(self):
