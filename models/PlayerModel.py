@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from utils.data.database import db_players, db_archived
+from utils.data.database import db_players
 
 from bson.int64 import Int64
 from bson import ObjectId
@@ -51,7 +51,7 @@ class PlayerProfile:
     @disconnects.setter
     def disconnects(self, value: int | None):
         self.__disconnects__ = value
-        db_archived.update_one(
+        db_players.update_one(
             {"_id": self._id},
             ({"$set": {"disconnects": value}}),
         )
@@ -68,7 +68,7 @@ class PlayerProfile:
     @inactive.setter
     def inactive(self, value: bool | None):
         self.__inactive__ = value
-        db_archived.update_one(
+        db_players.update_one(
             {"_id": self._id},
             ({"$set": {"suspended": value}}),
         )
@@ -76,7 +76,7 @@ class PlayerProfile:
     @inactive.deleter
     def inactive(self):
         self.__inactive__ = None
-        db_archived.update_one(
+        db_players.update_one(
             {"_id": self._id},
             {"$unset": {"inactive": ""}},
         )
@@ -93,7 +93,7 @@ class PlayerProfile:
     @suspended.setter
     def suspended(self, value: bool | None):
         self.__suspended__ = value
-        db_archived.update_one(
+        db_players.update_one(
             {"_id": self._id},
             (
                 {"$set": {"suspended": value}}
