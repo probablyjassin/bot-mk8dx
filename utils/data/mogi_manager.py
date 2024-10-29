@@ -1,6 +1,6 @@
 from models.MogiModel import Mogi
 
-mogi_registry = {}
+mogi_registry: dict[int, Mogi] = {}
 
 
 def create_mogi(channel_id: int) -> None:
@@ -17,3 +17,8 @@ def destroy_mogi(channel_id: int) -> None:
     if channel_id not in mogi_registry:
         raise ValueError("Mogi with this ID does not exist.")
     del mogi_registry[channel_id]
+
+
+def write_registry(data: dict[int, Mogi]) -> None:
+    global mogi_registry
+    mogi_registry = data

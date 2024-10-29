@@ -3,6 +3,8 @@ import random
 from discord import Activity, ActivityType, Streaming
 from discord.ext import commands, tasks
 
+from utils.data.state import state_manager
+
 
 class tasks(commands.Cog):
     def __init__(self, bot):
@@ -11,6 +13,7 @@ class tasks(commands.Cog):
     @commands.Cog.listener()
     async def on_ready(self):
         self.change_activity.start()
+        self.manage_state.start()
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
@@ -28,6 +31,10 @@ class tasks(commands.Cog):
             ),
         ]
         await self.bot.change_presence(activity=random.choice(activities))
+
+    @tasks.loop(seconds=5)
+    async def manage_state(self):
+        state_manager.backup()
 
 
 def setup(bot: commands.Bot):

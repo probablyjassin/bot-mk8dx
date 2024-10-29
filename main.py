@@ -3,9 +3,8 @@ import os
 import discord
 from discord.ext import commands
 
-from logger import setup_logger, highlight
+from logger import setup_logger
 from config import DISCORD_TOKEN
-
 
 logger = setup_logger(__name__)
 
@@ -42,23 +41,6 @@ bot = YuzuLoungeBot(
         name="ones and zeroes", url="https://www.youtube.com/watch?v=xvFZjo5PgG0"
     ),
 )
-
-
-@bot.event
-async def on_ready():
-    logger.info(f"Logged into Discord")
-    logger.info(f"Latency: {bot.latency*1000:.2f}ms")
-    print(
-        f"""
-        {highlight(bot.user)}
-        ID: {highlight(bot.user.id)}
-    """
-    )
-
-    print("Guilds:")
-    for guild in bot.guilds:
-        print(guild.name)
-    print("--------")
 
 
 def load_extensions():

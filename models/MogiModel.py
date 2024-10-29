@@ -1,5 +1,4 @@
 import time
-
 from dataclasses import dataclass, field
 
 from models.PlayerModel import PlayerProfile
@@ -194,3 +193,70 @@ class Mogi:
         self.isFinished = True
         self.finished_at = round(time.time())
         self.archive_mogi_data()
+
+    def to_dict(self) -> dict:
+        """
+        Converts the Mogi instance to a dictionary.
+        Returns:
+            dict: A dictionary representation of the Mogi instance.
+        """
+        return {
+            "channel_id": self.channel_id,
+            "player_cap": self.player_cap,
+            "format": self.format,
+            "players": [player.to_dict() for player in self.players],
+            "teams": [[player.to_dict() for player in team] for team in self.teams],
+            "subs": [sub.to_dict() for sub in self.subs],
+            "isVoting": self.isVoting,
+            "isPlaying": self.isPlaying,
+            "isFinished": self.isFinished,
+            "collected_points": self.collected_points,
+            "placements_by_group": self.placements_by_group,
+            "mmr_results_by_group": self.mmr_results_by_group,
+            "voting_message_id": self.voting_message_id,
+            "voters": self.voters,
+            "votes": self.votes,
+            "team_tags": self.team_tags,
+            "started_at": self.started_at,
+            "finished_at": self.finished_at,
+            "disconnections": self.disconnections,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "Mogi":
+        """
+        Creates a Mogi instance from a dictionary.
+        Args:
+            data (dict): A dictionary representation of a Mogi instance.
+        Returns:
+            Mogi: A Mogi instance created from the dictionary.
+        """
+        return cls(
+            channel_id=data["channel_id"],
+            player_cap=data.get("player_cap", 12),
+            format=data.get("format"),
+            players=[
+                PlayerProfile.from_dict(player) for player in data.get("players", [])
+            ],
+            teams=[
+                [PlayerProfile.from_dict(player) for player in team]
+                for team in data.get("teams", [])
+            ],
+            subs=[PlayerProfile.from_dict(sub) for sub in data.get("subs", [])],
+            isVoting=data.get("isVoting", False),
+            isPlaying=data.get("isPlaying", False),
+            isFinished=data.get("isFinished", False),
+            collected_points=data.get("collected_points", []),
+            placements_by_group=data.get("placements_by_group", []),
+            mmr_results_by_group=data.get("mmr_results_by_group", []),
+            voting_message_id=data.get("voting_message_id"),
+            voters=data.get("voters", []),
+            votes=data.get("votes", {"ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "6v6": 0}),
+            team_tags=data.get(
+                "team_tags",
+                ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],
+            ),
+            started_at=data.get("started_at"),
+            finished_at=data.get("finished_at"),
+            disconnections=data.get("disconnections", 0),
+        )

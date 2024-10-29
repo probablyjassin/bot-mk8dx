@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from bson.int64 import Int64
+from bson import ObjectId
 
 
 @dataclass
@@ -18,7 +19,7 @@ class PlayerProfile:
         suspended (bool | None): Indicates player suspension, usually None.
     """
 
-    _id: str
+    _id: ObjectId
     name: str
     discord_id: Int64
     mmr: int
@@ -33,4 +34,31 @@ class PlayerProfile:
             f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
             f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
             f"disconnects={self.disconnects!r}, inactive={self.inactive!r}, suspended={self.suspended!r})"
+        )
+
+    def to_dict(self) -> dict:
+        return {
+            "_id": str(self._id),
+            "name": self.name,
+            "discord_id": self.discord_id,
+            "mmr": self.mmr,
+            "history": self.history,
+            "joined": self.joined,
+            "disconnects": self.disconnects,
+            "inactive": self.inactive,
+            "suspended": self.suspended,
+        }
+
+    @classmethod
+    def from_dict(cls, data: dict):
+        return cls(
+            _id=ObjectId(data["_id"]),
+            name=data["name"],
+            discord_id=Int64(data["discord_id"]),
+            mmr=data["mmr"],
+            history=data["history"],
+            joined=data.get("joined"),
+            disconnects=data.get("disconnects"),
+            inactive=data.get("inactive"),
+            suspended=data.get("suspended"),
         )
