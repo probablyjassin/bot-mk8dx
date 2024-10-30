@@ -30,20 +30,7 @@ class help(commands.Cog):
             
                         # TODO: Make the footer image and text take the guild's icon and name instead of hard coded values ↑
             await ctx.respond(embed=embed)
-
-        @commands.command(name="lan")
-        async def lan(self, ctx: commands.Context):
-            with open("media/lan.png", "rb") as f:
-                media = discord.File(f)
-                await ctx.send(file=media)
-            f.close()
-
-        @commands.command(name="changename")
-        async def changename(self, ctx: commands.Context):
-            with open("media/howtochangeusername.gif", "rb") as f:
-                media = discord.File(f)
-                await ctx.send(file=media)
-            f.close()
+            
 
 def setup(bot: commands.Bot):
     bot.add_cog(help(bot))
