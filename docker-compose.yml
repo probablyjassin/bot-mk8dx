@@ -1,0 +1,17 @@
+services:
+  bot:
+    container_name: mk8dx-yuzu-bot
+    image: ghcr.io/probablyjassin/mk8dx-yuzu-bot:latest
+    restart: unless-stopped
+    volumes:
+      - ./state:/app/state
+      - ./logs:/app/logs
+    env_file:
+      - .env
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 120 --cleanup # check every 2 minutes
+    restart: unless-stopped
