@@ -13,4 +13,14 @@
 
 ## How do I set it up?
 
-[By visiting this repo: _probablyjassin/bot-mk8dx-setup_](https://github.com/probablyjassin/bot-mk8dx-setup)
+```bash
+curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/main/docker-compose.yml
+```
+
+- make sure the .env is present
+
+```bash
+docker compose up -d
+```
+
+That's it! The bot uses [docker watchtower](https://github.com/containrrr/watchtower) to automatically restart the bot when the docker image gets updated!
