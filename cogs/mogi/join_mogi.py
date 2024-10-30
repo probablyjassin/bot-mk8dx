@@ -20,8 +20,8 @@ class join_mogi(commands.Cog):
         self.join_semaphore = asyncio.Semaphore(1)
 
     @slash_command(name="join", description="Join this mogi")
-    @is_mogi_open()
     @is_mogi_not_in_progress()
+    @is_mogi_open()
     async def join(self, ctx: ApplicationContext):
         async with self.join_semaphore:
             mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)

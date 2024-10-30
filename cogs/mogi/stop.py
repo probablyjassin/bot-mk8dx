@@ -19,8 +19,8 @@ class stop(commands.Cog):
         self.INMOGI_ROLE = get(self.MAIN_GUILD.roles, name="InMogi")
 
     @slash_command(name="stop", description="Halt the current mogi")
-    @is_mogi_open()
     @is_mogi_in_progress()
+    @is_mogi_open()
     async def stop(self, ctx: ApplicationContext):
         mogi = mogi_manager.get_mogi(ctx.channel.id)
 

@@ -21,8 +21,8 @@ class start(commands.Cog):
     start = SlashCommandGroup(name="start", description="Start a mogi")
 
     @start.command(name="vote", guild_ids=GUILD_IDS)
-    @is_mogi_open()
     @is_mogi_not_in_progress()
+    @is_mogi_open()
     async def vote(self, ctx: ApplicationContext):
         mogi = mogi_manager.get_mogi(ctx.channel.id)
 

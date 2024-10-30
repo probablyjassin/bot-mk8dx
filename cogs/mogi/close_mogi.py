@@ -11,8 +11,8 @@ class close_mogi(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="close", description="Close a mogi")
-    @is_mogi_open()
     @is_mogi_not_in_progress()
+    @is_mogi_open()
     async def close(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
