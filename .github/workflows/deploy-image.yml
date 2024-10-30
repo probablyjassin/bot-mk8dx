@@ -40,7 +40,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FOR_CACHE_REPO_PAT }}
         run: |
-          if gh cache list --repo probablyjassin/bot-mk8dx | grep -q 'Cache'; then
+          if gh cache list --repo probablyjassin/bot-mk8dx | grep -q 'buildx'; then
             gh cache delete --all --repo probablyjassin/bot-mk8dx
           else
             echo "No caches to delete."
