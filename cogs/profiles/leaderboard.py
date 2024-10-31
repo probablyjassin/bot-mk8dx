@@ -42,18 +42,28 @@ class leaderboard(commands.Cog):
             db_players.find().sort(sort.lower(), DESCENDING).skip(skip_count).limit(10)
         )
 
+        keys = ["name", "mmr", "wins", "losses"]
         tabledata = {
             "Placement": placements,
-            "Player": [player["name"] for player in data],
-            "Rank": [getRankByMMR(player["mmr"]).name for player in data],
-            "MMR": [player["mmr"] for player in data],
-            "Wins": [player["wins"] for player in data],
-            "Losses": [player["losses"] for player in data],
-            "Winrate %": [
-                round(player["wins"] / (player["wins"] + player["losses"]) * 100, 2)
-                for player in data
-            ],
+            "Player": [],
+            "Rank": [],
+            "MMR": [],
+            "Wins": [],
+            "Losses": [],
+            "Winrate %": [],
         }
+
+        for player in data:
+            wins = len([delta for delta in player["history"] if delta > 0])
+            losses = len([delta for delta in player["history"] if delta < 0])
+
+            tabledata["Player"].append(player["name"])
+            tabledata["Rank"].append(getRankByMMR(player["mmr"]).name)
+            tabledata["MMR"].append(player["mmr"])
+            tabledata["Wins"].append(wins)
+            tabledata["Losses"].append(losses)
+            winrate = round(wins / (wins + losses) * 100, 2) if wins + losses > 0 else 0
+            tabledata["Winrate %"].append(winrate)
 
         df = pd.DataFrame(tabledata).set_index("Placement")
         # df = df.sort_values(by="MMR", ascending=False)
