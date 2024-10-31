@@ -1,6 +1,7 @@
-from pymongo import DESCENDING
 import pandas as pd
 import dataframe_image as dfi
+from pymongo import DESCENDING
+from io import BytesIO
 
 from discord import slash_command, Option, ApplicationContext, Color, File
 from discord.ext import commands
@@ -76,6 +77,8 @@ class leaderboard(commands.Cog):
         # Format the Winrate to display only two decimal places
         df["Winrate %"] = df["Winrate %"].map("{:.2f}".format)
 
+        buffer = BytesIO()
+
         dfi.export(
             df.style.set_table_styles(
                 [
@@ -107,11 +110,12 @@ class leaderboard(commands.Cog):
                     },
                 ]
             ),
+            buffer,
             dpi=200,
-            filename="leaderboard-table.png",
         )
+        buffer.seek(0)
 
-        file = File("leaderboard-table.png")
+        file = File(buffer, filename="leaderboard-table.png")
         await ctx.respond(
             content=f"## Leaderboard sorted by {sort} (page {page_index})", file=file
         )
