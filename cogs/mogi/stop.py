@@ -1,10 +1,9 @@
-from discord import slash_command, ApplicationContext, Message, TextChannel
+from discord import slash_command, Message
 from discord.utils import get
 from discord.ext import commands
 
-from utils.command_helpers.btn_factory import create_button_view
+from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
-from utils.data.mogi_manager import mogi_manager
 
 from config import GUILD_IDS
 
@@ -21,8 +20,7 @@ class stop(commands.Cog):
     @slash_command(name="stop", description="Halt the current mogi")
     @is_mogi_in_progress()
     @is_mogi_open()
-    async def stop(self, ctx: ApplicationContext):
-        mogi = mogi_manager.get_mogi(ctx.channel.id)
+    async def stop(self, ctx: MogiApplicationContext):
 
         # user not in the mogi
         if not self.INMOGI_ROLE in ctx.user.roles:
@@ -30,10 +28,12 @@ class stop(commands.Cog):
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
 
-        mogi.stop()
-        if mogi.voting_message_id:
-            print(mogi.voting_message_id)
-            vote_msg: Message = await ctx.channel.fetch_message(mogi.voting_message_id)
+        ctx.mogi.stop()
+        if ctx.mogi.voting_message_id:
+            print(ctx.mogi.voting_message_id)
+            vote_msg: Message = await ctx.channel.fetch_message(
+                ctx.mogi.voting_message_id
+            )
             await vote_msg.delete()
         await ctx.respond("Mogi has been stopped")
 

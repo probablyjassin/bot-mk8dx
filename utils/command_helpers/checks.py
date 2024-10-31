@@ -1,14 +1,11 @@
-from discord import ApplicationContext
-from discord.errors import CheckFailure
 from discord.ext import commands
 from discord.utils import get
 
-from utils.data.mogi_manager import mogi_manager
-from models.MogiModel import Mogi
+from models.CustomMogiContext import MogiApplicationContext
 
 
 async def check(
-    ctx: ApplicationContext,
+    ctx: MogiApplicationContext,
     condition: bool,
     error_message: str = "You're not allowed to use this command.",
 ):
@@ -20,7 +17,7 @@ async def check(
 
 
 def is_mogi_manager():
-    async def predicate(ctx: ApplicationContext):
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
             condition=(
@@ -35,7 +32,7 @@ def is_mogi_manager():
 
 
 def is_moderator():
-    async def predicate(ctx: ApplicationContext):
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
             condition=(
@@ -50,7 +47,7 @@ def is_moderator():
 
 
 def is_admin():
-    async def predicate(ctx: ApplicationContext):
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
             condition=(
@@ -65,10 +62,10 @@ def is_admin():
 
 
 def is_mogi_open():
-    async def predicate(ctx: ApplicationContext):
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
-            condition=(mogi_manager.get_mogi(ctx.channel.id) != None),
+            condition=(ctx.mogi != None),
             error_message="No open Mogi in this channel.",
         )
 
@@ -76,14 +73,13 @@ def is_mogi_open():
 
 
 def is_mogi_in_progress():
-    async def predicate(ctx: ApplicationContext):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
-            condition=mogi
-            and mogi.isVoting
-            or (mogi.isPlaying)
-            and (not mogi.isFinished),
+            condition=(ctx.mogi != None)
+            and ctx.mogi.isVoting
+            or (ctx.mogi.isPlaying)
+            and (not ctx.mogi.isFinished),
             error_message="The mogi is either not in progress or has already finished calculations.",
         )
 
@@ -92,14 +88,13 @@ def is_mogi_in_progress():
 
 # BUG: this doesnt work when the mogi doesnt exist
 def is_mogi_not_in_progress():
-    async def predicate(ctx: ApplicationContext):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
+    async def predicate(ctx: MogiApplicationContext):
         return await check(
             ctx=ctx,
-            condition=mogi
-            and not mogi.isVoting
-            and (not mogi.isPlaying)
-            or (mogi.isFinished),
+            condition=ctx.mogi
+            and not ctx.mogi.isVoting
+            and (not ctx.mogi.isPlaying)
+            or (ctx.mogi.isFinished),
             error_message="The mogi is either not in progress or has already finished calculations.",
         )
 

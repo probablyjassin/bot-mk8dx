@@ -1,12 +1,9 @@
-from discord import SlashCommandGroup, Option, ApplicationContext
+from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
-from models.PlayerModel import PlayerProfile
-from models.MogiModel import Mogi
+from models.CustomMogiContext import MogiApplicationContext
 
 from utils.command_helpers.find_player import search_player
-from utils.data.mogi_manager import mogi_manager
-from utils.data.database import db_players
 from utils.command_helpers.checks import (
     is_mogi_open,
     is_mogi_in_progress,
@@ -35,7 +32,7 @@ class sub_manager(commands.Cog):
     @is_mogi_open()
     async def sub(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         player_name: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),
@@ -43,8 +40,6 @@ class sub_manager(commands.Cog):
             str, name="sub", description="username | @ mention | discord_id"
         ),
     ):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
-
         player_profile = search_player(player_name)
         replacement_profile = search_player(replacement_name)
 
@@ -54,18 +49,20 @@ class sub_manager(commands.Cog):
         if not replacement_profile:
             return await ctx.respond("Sub profile not found", ephemeral=True)
 
-        if player_profile not in mogi.players:
+        if player_profile not in ctx.mogi.players:
             return await ctx.respond("Player not in the mogi", ephemeral=True)
 
-        if replacement_profile in mogi.players:
+        if replacement_profile in ctx.mogi.players:
             return await ctx.respond("Sub is already in the mogi.", ephemeral=True)
 
-        mogi.players = recurse_replace(
-            mogi.players, player_profile, replacement_profile
+        ctx.mogi.players = recurse_replace(
+            ctx.mogi.players, player_profile, replacement_profile
         )
-        mogi.teams = recurse_replace(mogi.teams, player_profile, replacement_profile)
+        ctx.mogi.teams = recurse_replace(
+            ctx.mogi.teams, player_profile, replacement_profile
+        )
 
-        mogi.subs.append(replacement_profile)
+        ctx.mogi.subs.append(replacement_profile)
 
         await ctx.respond(
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
@@ -80,22 +77,20 @@ class sub_manager(commands.Cog):
     @is_mogi_open()
     async def remove_sub(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         player_name: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
-
         player_profile = search_player(player_name)
 
         if not player_profile:
             return await ctx.respond("Player profile not found", ephemeral=True)
 
-        if player_profile not in mogi.subs:
+        if player_profile not in ctx.mogi.subs:
             return await ctx.respond("Player not in the sub list", ephemeral=True)
 
-        mogi.subs.remove(player_profile)
+        ctx.mogi.subs.remove(player_profile)
 
         await ctx.respond(f"{player_profile.name} won't be listed as sub.")
 
@@ -105,22 +100,20 @@ class sub_manager(commands.Cog):
     @is_mogi_open()
     async def add_sub(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         player_name: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
-
         player_profile = search_player(player_name)
 
         if not player_profile:
             return await ctx.respond("Player profile not found", ephemeral=True)
 
-        if player_profile in mogi.subs:
+        if player_profile in ctx.mogi.subs:
             return await ctx.respond("Player already in the sub list", ephemeral=True)
 
-        mogi.subs.append(player_profile)
+        ctx.mogi.subs.append(player_profile)
 
         await ctx.respond(f"{player_profile.name} is now listed as sub.")
 

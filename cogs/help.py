@@ -1,4 +1,4 @@
-from discord import slash_command, Option, ApplicationContext, Color
+from discord import slash_command, ApplicationContext, Color
 from discord.ext import commands
 from utils.command_helpers.info_embed_factory import create_embed
 
