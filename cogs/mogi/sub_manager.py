@@ -7,7 +7,11 @@ from models.MogiModel import Mogi
 from utils.command_helpers.find_player import search_player
 from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players
-from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
+from utils.command_helpers.checks import (
+    is_mogi_open,
+    is_mogi_in_progress,
+    is_mogi_manager,
+)
 
 
 def recurse_replace(space, player, sub):
@@ -26,8 +30,9 @@ class sub_manager(commands.Cog):
     )
 
     @replacement.command(name="sub")
-    @is_mogi_open()
+    @is_mogi_manager()
     @is_mogi_in_progress()
+    @is_mogi_open()
     async def sub(
         self,
         ctx: ApplicationContext,
@@ -70,7 +75,10 @@ class sub_manager(commands.Cog):
         name="remove_sub",
         description="Remove a player from the sub list. Will let them lose MMR.",
     )
-    async def sub(
+    @is_mogi_manager()
+    @is_mogi_in_progress()
+    @is_mogi_open()
+    async def remove_sub(
         self,
         ctx: ApplicationContext,
         player_name: str = Option(
@@ -92,7 +100,10 @@ class sub_manager(commands.Cog):
         await ctx.respond(f"{player_profile.name} won't be listed as sub.")
 
     @replacement.command(name="add_sub", description="Add a player to the sub list.")
-    async def sub(
+    @is_mogi_manager()
+    @is_mogi_in_progress()
+    @is_mogi_open()
+    async def add_sub(
         self,
         ctx: ApplicationContext,
         player_name: str = Option(
