@@ -2,9 +2,10 @@ from discord import slash_command, SlashCommandGroup, Option, ApplicationContext
 from discord.utils import get
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
+from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.btn_factory import create_button_view
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
-from utils.data.mogi_manager import mogi_manager
 
 from config import GUILD_IDS
 
@@ -23,14 +24,13 @@ class start(commands.Cog):
     @start.command(name="vote", guild_ids=GUILD_IDS)
     @is_mogi_not_in_progress()
     @is_mogi_open()
-    async def vote(self, ctx: ApplicationContext):
-        mogi = mogi_manager.get_mogi(ctx.channel.id)
+    async def vote(self, ctx: MogiApplicationContext):
 
         # not enough players
-        if len(mogi.players) < 0:  # DEBUG: remember to change this in production
+        if len(ctx.mogi.players) < 0:  # DEBUG: remember to change this in production
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
-        if len(mogi.players) > 12:
+        if len(ctx.mogi.players) > 12:
             return await ctx.respond("Cant start with more than 12 players")
         # user not in the mogi
         if not self.INMOGI_ROLE in ctx.user.roles:
@@ -38,35 +38,33 @@ class start(commands.Cog):
                 "You can't start a mogi you aren't in", ephemeral=True
             )
 
-        mogi.isVoting = True
+        ctx.mogi.isVoting = True
 
-        view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], mogi)
+        view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
         message = await ctx.respond(
-            f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in mogi.players])}||",
+            f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in ctx.mogi.players])}||",
             view=view,
         )
         response = await message.original_response()
-        mogi.voting_message_id = response.id
+        ctx.mogi.voting_message_id = response.id
 
     @start.command(name="force", guild_ids=GUILD_IDS)
     async def force(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "6v6"]),
     ):
-        mogi = mogi_manager.get_mogi(ctx.channel.id)
-
         # no mogi open
-        if not mogi:
+        if not ctx.mogi:
             return await ctx.respond("No open mogi in this channel", ephemeral=True)
         # mogi already started
-        if mogi.isPlaying or mogi.isVoting:
+        if ctx.mogi.isPlaying or ctx.mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
 
-        mogi.play(int(format[0]) if format[0].isnumeric() else 1)
+        ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
 
         lineup = ""
-        for i, team in enumerate(mogi.teams):
+        for i, team in enumerate(ctx.mogi.teams):
             lineup += (
                 f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
             )
