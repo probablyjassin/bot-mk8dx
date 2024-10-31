@@ -5,7 +5,6 @@ from models.CustomMogiContext import MogiApplicationContext
 
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import (
-    is_mogi_open,
     is_mogi_in_progress,
     is_mogi_manager,
 )
@@ -29,7 +28,6 @@ class sub_manager(commands.Cog):
     @replacement.command(name="sub")
     @is_mogi_manager()
     @is_mogi_in_progress()
-    @is_mogi_open()
     async def sub(
         self,
         ctx: MogiApplicationContext,
@@ -74,7 +72,6 @@ class sub_manager(commands.Cog):
     )
     @is_mogi_manager()
     @is_mogi_in_progress()
-    @is_mogi_open()
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,
@@ -97,7 +94,6 @@ class sub_manager(commands.Cog):
     @replacement.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_manager()
     @is_mogi_in_progress()
-    @is_mogi_open()
     async def add_sub(
         self,
         ctx: MogiApplicationContext,

@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
-from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
+from utils.command_helpers.checks import is_mogi_not_in_progress
 
 
 class close_mogi(commands.Cog):
@@ -12,7 +12,6 @@ class close_mogi(commands.Cog):
 
     @slash_command(name="close", description="Close a mogi")
     @is_mogi_not_in_progress()
-    @is_mogi_open()
     async def close(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 

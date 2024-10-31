@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.btn_factory import create_button_view
-from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
+from utils.command_helpers.checks import is_mogi_not_in_progress
 
 from config import GUILD_IDS
 
@@ -22,7 +22,6 @@ class start(commands.Cog):
 
     @start.command(name="vote", guild_ids=GUILD_IDS)
     @is_mogi_not_in_progress()
-    @is_mogi_open()
     async def vote(self, ctx: MogiApplicationContext):
 
         # not enough players

@@ -17,7 +17,6 @@ from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
 from utils.command_helpers.checks import (
-    is_mogi_open,
     is_mogi_in_progress,
     is_mogi_manager,
 )
@@ -35,9 +34,8 @@ class calculations(commands.Cog):
     )
 
     @points.command(name="collect", description="Collect points from tablestring")
-    @is_mogi_open()
-    @is_mogi_in_progress()
     @is_mogi_manager()
+    @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 
@@ -99,21 +97,12 @@ class calculations(commands.Cog):
                 "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
             )
 
-        # DEBUG: remove this in prod
-        print(f"All MMRs: {all_player_mmrs}")
-        print(f"Summed Points: {ctx.mogi.collected_points}")
-        print(
-            f"Placements Points: {get_placements_from_scores(ctx.mogi.collected_points)}"
-        )
-        print(f"MMR Changes: {ctx.mogi.mmr_results_by_group}")
-
         file = File(create_table(ctx.mogi), filename="table.png")
         await ctx.respond(content="# Results", file=file)
 
     @points.command(name="reset", description="Reset collected points")
-    @is_mogi_open()
-    @is_mogi_in_progress()
     @is_mogi_manager()
+    @is_mogi_in_progress()
     async def reset(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 
@@ -129,9 +118,8 @@ class calculations(commands.Cog):
     # TODO: permissions on all commands
 
     @points.command(name="apply", description="Apply MMR changes")
-    @is_mogi_open()
-    @is_mogi_in_progress()
     @is_mogi_manager()
+    @is_mogi_in_progress()
     async def apply(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 

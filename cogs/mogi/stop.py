@@ -3,7 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.command_helpers.checks import is_mogi_open, is_mogi_in_progress
+from utils.command_helpers.checks import is_mogi_in_progress
 
 from config import GUILD_IDS
 
@@ -19,7 +19,6 @@ class stop(commands.Cog):
 
     @slash_command(name="stop", description="Halt the current mogi")
     @is_mogi_in_progress()
-    @is_mogi_open()
     async def stop(self, ctx: MogiApplicationContext):
 
         # user not in the mogi

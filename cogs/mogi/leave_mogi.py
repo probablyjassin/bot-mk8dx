@@ -3,7 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
+from utils.command_helpers.checks import is_mogi_not_in_progress
 from utils.data.mogi_manager import mogi_manager
 
 import asyncio
@@ -16,7 +16,6 @@ class leave_mogi(commands.Cog):
 
     @slash_command(name="leave", description="Leave this mogi")
     @is_mogi_not_in_progress()
-    @is_mogi_open()
     async def leave(self, ctx: MogiApplicationContext):
         async with self.leave_semaphore:
             if not [

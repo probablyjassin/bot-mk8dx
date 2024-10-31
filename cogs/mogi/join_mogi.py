@@ -2,7 +2,7 @@ from discord import slash_command
 from discord.utils import get
 from discord.ext import commands
 
-from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
+from utils.command_helpers.checks import is_mogi_not_in_progress
 
 from utils.data.database import db_players, db_archived
 
@@ -20,7 +20,6 @@ class join_mogi(commands.Cog):
 
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
-    @is_mogi_open()
     async def join(self, ctx: MogiApplicationContext):
         async with self.join_semaphore:
             # check if player already in mogi
