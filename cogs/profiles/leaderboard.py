@@ -121,8 +121,14 @@ class leaderboard(commands.Cog):
         buffer.seek(0)
 
         file = File(buffer, filename="leaderboard-table.png")
+
+        class MyView(discord.ui.View):
+            def __init__(self):
+                super().__init__(timeout=None)  # Timeout set to None to keep the view persistent
+                self.add_item(discord.ui.Button(label="View on Website", style=discord.ButtonStyle.link, url=f"https://mk8dx-yuzu.github.io/"))
+
         await ctx.respond(
-            file=file
+            file=file, view=MyView()
         )
 
 
