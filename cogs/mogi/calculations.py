@@ -70,9 +70,11 @@ class calculations(commands.Cog):
         )
 
         # obtain the placements from the collected points
-        placements = list(
-            get_placements_from_scores(ctx.mogi.collected_points).values()
-        )
+        placements = []
+        for score in ctx.mogi.collected_points:
+            placements.append(
+                get_placements_from_scores(ctx.mogi.collected_points)[score]
+            )
 
         # break down names and mmrs of all players
         all_player_mmrs = [player.mmr for player in ctx.mogi.players]
