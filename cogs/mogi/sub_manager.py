@@ -74,10 +74,22 @@ class sub_manager(commands.Cog):
         self,
         ctx: ApplicationContext,
         player_name: str = Option(
-            str, name="player", description="Player that needs a sub."
+            str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        pass
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
+
+        player_profile = search_player(player_name)
+
+        if not player_profile:
+            return await ctx.respond("Player profile not found", ephemeral=True)
+
+        if player_profile not in mogi.subs:
+            return await ctx.respond("Player not in the sub list", ephemeral=True)
+
+        mogi.subs.remove(player_profile)
+
+        await ctx.respond(f"{player_profile.name} won't be listed as sub.")
 
 
 def setup(bot: commands.Bot):
