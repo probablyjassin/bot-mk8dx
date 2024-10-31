@@ -88,6 +88,10 @@ class leaderboard(commands.Cog):
                         "props": [("border", "none")],
                     },
                     {
+                        "selector": "caption",
+                        "props": [("background-color", "rgba(21, 21, 40, 1)"), ("color", "rgba(202, 202, 227, 1)"), ("text-align", "left"), ("font-size", "16px"), ("font-weight", "bold"), ("padding", "7px")],
+                    },
+                    {
                         "selector": "th",
                         "props": [("border", "1px solid rgba(14, 14, 27, 1)")],
                     },
@@ -110,7 +114,7 @@ class leaderboard(commands.Cog):
                         ],
                     },
                 ]
-            ),
+            ).set_caption(f"## Leaderboard sorted by {sort} (Page {page_index})"),
             buffer,
             dpi=200,
         )
@@ -118,7 +122,7 @@ class leaderboard(commands.Cog):
 
         file = File(buffer, filename="leaderboard-table.png")
         await ctx.respond(
-            content=f"## Leaderboard sorted by {sort} (page {page_index})", file=file
+            file=file
         )
 
 
