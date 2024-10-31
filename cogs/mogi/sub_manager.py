@@ -91,6 +91,28 @@ class sub_manager(commands.Cog):
 
         await ctx.respond(f"{player_profile.name} won't be listed as sub.")
 
+    @replacement.command(name="add_sub", description="Add a player to the sub list.")
+    async def sub(
+        self,
+        ctx: ApplicationContext,
+        player_name: str = Option(
+            str, name="player", description="username | @ mention | discord_id"
+        ),
+    ):
+        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
+
+        player_profile = search_player(player_name)
+
+        if not player_profile:
+            return await ctx.respond("Player profile not found", ephemeral=True)
+
+        if player_profile in mogi.subs:
+            return await ctx.respond("Player already in the sub list", ephemeral=True)
+
+        mogi.subs.append(player_profile)
+
+        await ctx.respond(f"{player_profile.name} is now listed as sub.")
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(sub_manager(bot))
