@@ -3,7 +3,7 @@ import random
 from discord import SlashCommandGroup, ApplicationContext
 from discord.ext import commands
 
-from models.MogiModel import Mogi
+from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
 
@@ -15,9 +15,8 @@ class debugging(commands.Cog):
     debug = SlashCommandGroup(name="debug", description="Debugging commands")
 
     @debug.command(name="current_mogi", description="print the mogi for this channel")
-    async def current_mogi(self, ctx: ApplicationContext):
-        mogi = mogi_manager.get_mogi(ctx.channel.id)
-        await ctx.respond(f"Current Mogi: \n{mogi}")
+    async def current_mogi(self, ctx: MogiApplicationContext):
+        await ctx.respond(f"Current Mogi: \n{ctx.mogi}")
 
     @debug.command(name="all_mogis", description="print the mogi registry")
     async def all_mogis(self, ctx: ApplicationContext):
@@ -28,8 +27,7 @@ class debugging(commands.Cog):
         raise Exception("This is a test command error")
 
     @debug.command(name="test_player", description="add a dummy player to the mogi")
-    async def test_player(self, ctx: ApplicationContext):
-        mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
+    async def test_player(self, ctx: MogiApplicationContext):
 
         dummy_names = ["spamton", "jordan", "mrboost", "bruv"]
         dummy: PlayerProfile = PlayerProfile(
@@ -39,7 +37,7 @@ class debugging(commands.Cog):
             discord_id=000000000000000000,
             history=[],
         )
-        mogi.players.append(dummy)
+        ctx.mogi.players.append(dummy)
         await ctx.respond(f"Added {dummy.name} to the mogi")
 
 
