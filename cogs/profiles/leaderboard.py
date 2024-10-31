@@ -3,6 +3,7 @@ import dataframe_image as dfi
 from pymongo import DESCENDING
 from io import BytesIO
 
+import discord
 from discord import slash_command, Option, ApplicationContext, Color, File
 from discord.ext import commands
 
@@ -122,13 +123,13 @@ class leaderboard(commands.Cog):
 
         file = File(buffer, filename="leaderboard-table.png")
 
-        class MyView(discord.ui.View):
+        class WebsiteLinkView(discord.ui.View):
             def __init__(self):
                 super().__init__(timeout=None)  # Timeout set to None to keep the view persistent
                 self.add_item(discord.ui.Button(label="View on Website", style=discord.ButtonStyle.link, url=f"https://mk8dx-yuzu.github.io/"))
 
         await ctx.respond(
-            file=file, view=MyView()
+            file=file, view=WebsiteLinkView()
         )
 
 
