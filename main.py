@@ -5,6 +5,7 @@ from discord.ext import commands
 
 from logger import setup_logger
 from config import DISCORD_TOKEN
+from models.CustomMogiContext import MogiApplicationContext
 
 logger = setup_logger(__name__)
 
@@ -20,6 +21,9 @@ class YuzuLoungeBot(commands.Bot):
 
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
+
+    async def get_application_context(self, interaction, cls=MogiApplicationContext):
+        return await super().get_application_context(interaction, cls=cls)
 
     async def close(self):
         for name, cog in self.cogs.items():

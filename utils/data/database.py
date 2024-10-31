@@ -6,10 +6,13 @@ This module is responsible for connecting to the MongoDB database.
 """
 
 import atexit
-from main import logger
 
 from pymongo import MongoClient
 from config import MONGO_URI, LOUNGE_DB
+
+from logger import setup_logger
+
+logger = setup_logger(__name__)
 
 
 client = MongoClient(MONGO_URI)
