@@ -1,13 +1,12 @@
-from discord import slash_command, ApplicationContext
+from discord import slash_command
 from discord.utils import get
 from discord.ext import commands
 
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 
 from utils.data.database import db_players, db_archived
-from utils.data.mogi_manager import mogi_manager
 
-from models.MogiModel import Mogi
+from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from bson.int64 import Int64
@@ -22,16 +21,17 @@ class join_mogi(commands.Cog):
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
     @is_mogi_open()
-    async def join(self, ctx: ApplicationContext):
+    async def join(self, ctx: MogiApplicationContext):
         async with self.join_semaphore:
-            mogi: Mogi = mogi_manager.get_mogi(ctx.channel.id)
             # check if player already in mogi
             if [
-                player for player in mogi.players if player.discord_id == ctx.author.id
+                player
+                for player in ctx.mogi.players
+                if player.discord_id == ctx.author.id
             ]:
                 return await ctx.respond("You're already in this mogi.")
             # check if mogi full
-            if len(mogi.players) >= mogi.player_cap:
+            if len(ctx.mogi.players) >= ctx.mogi.player_cap:
                 return await ctx.respond("This mogi is full.")
 
             # fetch player record
@@ -53,10 +53,10 @@ class join_mogi(commands.Cog):
                     "You're temporarily inable to join mogis.", ephemeral=True
                 )
 
-            mogi.players.append(player)
+            ctx.mogi.players.append(player)
             await ctx.user.add_roles(get(ctx.guild.roles, name="InMogi"))
             await ctx.respond(
-                f"{ctx.author.mention} has joined the mogi!\n{len(mogi.players)} players are in!"
+                f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
 
