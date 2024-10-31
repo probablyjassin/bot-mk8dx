@@ -30,11 +30,11 @@ class stop(commands.Cog):
 
         ctx.mogi.stop()
         if ctx.mogi.voting_message_id:
-            print(ctx.mogi.voting_message_id)
             vote_msg: Message = await ctx.channel.fetch_message(
                 ctx.mogi.voting_message_id
             )
-            await vote_msg.delete()
+            if vote_msg:
+                await vote_msg.delete()
         await ctx.respond("Mogi has been stopped")
 
 
