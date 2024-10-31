@@ -17,7 +17,7 @@
 curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/main/docker-compose.yml
 ```
 
-- make sure the .env is present
+- make sure the `.env` is present
 
 ```bash
 docker compose up -d
