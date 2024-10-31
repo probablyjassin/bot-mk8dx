@@ -41,7 +41,7 @@ class leaderboard(commands.Cog):
         tabledata = {
             "Placement": placements,
             "Player": [player["name"] for player in data],
-            "Rank": [getRankByMMR(player["mmr"]) for player in data],
+            "Rank": [getRankByMMR(player["mmr"]).name for player in data],
             "MMR": [player["mmr"] for player in data],
             "Wins": [player["wins"] for player in data],
             "Losses": [player["losses"] for player in data],
