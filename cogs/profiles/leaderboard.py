@@ -1,11 +1,11 @@
-from discord import slash_command, Option, ApplicationContext, Color, File
-from discord.ext import commands
-from utils.data.database import db_players
-from utils.maths.ranks import getRankByMMR
 import pandas as pd
 import dataframe_image as dfi
-import math
-from matplotlib import colors
+
+from discord import slash_command, Option, ApplicationContext, Color, File
+from discord.ext import commands
+
+from utils.data.database import db_players
+from utils.maths.ranks import getRankByMMR
 
 
 class leaderboard(commands.Cog):
