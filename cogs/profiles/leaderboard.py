@@ -1,3 +1,4 @@
+from pymongo import DESCENDING
 import pandas as pd
 import dataframe_image as dfi
 
@@ -38,10 +39,7 @@ class leaderboard(commands.Cog):
         placements = [i + skip_count + 1 for i in range(10)]
 
         data = list(
-            db_players.find()
-            .sort(sort.lower(), pymongo.DESCENDING)
-            .skip(skip_count)
-            .limit(10)
+            db_players.find().sort(sort.lower(), DESCENDING).skip(skip_count).limit(10)
         )
 
         tabledata = {
