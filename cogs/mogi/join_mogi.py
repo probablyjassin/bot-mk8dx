@@ -49,7 +49,9 @@ class join_mogi(commands.Cog):
 
             # if suspended
             if player.suspended:
-                return await ctx.respond("You're temporarily inable to join mogis.")
+                return await ctx.respond(
+                    "You're temporarily inable to join mogis.", ephemeral=True
+                )
 
             mogi.players.append(player)
             await ctx.user.add_roles(get(ctx.guild.roles, name="InMogi"))
