@@ -1,5 +1,4 @@
-from discord import Activity, ActivityType, Streaming
-from discord.ext import commands, tasks
+from discord.ext import commands
 
 from logger import setup_logger, highlight
 from utils.data.state import state_manager
@@ -7,6 +6,7 @@ from utils.data.state import state_manager
 logger = setup_logger(__name__)
 
 
+# BUG: can't i put this in main?
 class ready(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
