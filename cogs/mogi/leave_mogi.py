@@ -1,10 +1,8 @@
-from discord import slash_command, ApplicationContext
+from discord import slash_command
 from discord.utils import get
 from discord.ext import commands
 
-from models.MogiModel import Mogi
 from models.CustomMogiContext import MogiApplicationContext
-
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 from utils.data.mogi_manager import mogi_manager
 
