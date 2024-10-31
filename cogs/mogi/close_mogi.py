@@ -16,8 +16,6 @@ class close_mogi(commands.Cog):
     async def close(self, ctx: ApplicationContext):
         await ctx.interaction.response.defer()
 
-        mogi = mogi_manager.get_mogi(ctx.channel.id)
-
         close_confirm_message = "{} don't close the mogi unless it fully finished. \nClosing will remove all players and discard any points.\n **Are you sure?**".format(
             ctx.author.mention
         )
@@ -25,6 +23,7 @@ class close_mogi(commands.Cog):
         if await confirmation(ctx, close_confirm_message):
             mogi_manager.destroy_mogi(ctx.channel.id)
             return await ctx.respond("# This channel's Mogi has been closed.")
+
         await ctx.respond("Cancelled.")
 
 
