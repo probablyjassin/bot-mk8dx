@@ -25,7 +25,7 @@ class leaderboard(commands.Cog):
             choices=["MMR", "Wins", "Losses", "Winrate %"],
             default="MMR",
         ),
-        page=Option(
+        page_index=Option(
             int,
             name="page",
             description="Page number, default is 1",
@@ -33,18 +33,23 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
+        max_players = db_players.count_documents({})
 
-        page_index = page
-        skip_count = 10 * (page_index - 1)  # Number of entries to skip
-        placements = [i + skip_count + 1 for i in range(10)]
+        page_index = page_index if page_index > 0 else 1
+        max_pages = -(-max_players // 10)
+
+        page_index = page_index if page_index <= max_pages else max_pages
+
+        skip_count = 10 * (page_index - 1)
+        skip_count = skip_count if skip_count < max_players else max_players - 10
+        skip_count = skip_count if skip_count >= 0 else 0
 
         data = list(
             db_players.find().sort(sort.lower(), DESCENDING).skip(skip_count).limit(10)
         )
 
-        keys = ["name", "mmr", "wins", "losses"]
         tabledata = {
-            "Placement": placements,
+            "Placement": [i + skip_count + 1 for i in range(len(data))],
             "Player": [],
             "Rank": [],
             "MMR": [],
@@ -108,7 +113,7 @@ class leaderboard(commands.Cog):
 
         file = File("leaderboard-table.png")
         await ctx.respond(
-            content=f"## Leaderboard sorted by {sort} (page {page})", file=file
+            content=f"## Leaderboard sorted by {sort} (page {page_index})", file=file
         )
 
 
