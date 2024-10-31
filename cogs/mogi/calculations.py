@@ -64,11 +64,6 @@ class calculations(commands.Cog):
         except ValueError as e:
             return await ctx.respond("Invalid tablestring format.")
 
-        print(f"Collected points: {ctx.mogi.collected_points}")
-        print(
-            f"Placements from scores: {get_placements_from_scores(ctx.mogi.collected_points)}"
-        )
-
         # obtain the placements from the collected points
         placements = []
         for score in ctx.mogi.collected_points:
@@ -85,11 +80,6 @@ class calculations(commands.Cog):
             placements,
             ctx.mogi.format,
         )
-        print(f"all_player_mmrs: {all_player_mmrs}")
-        print(f"placements: {placements}")
-        print(f"format: {ctx.mogi.format}")
-
-        print(f"results: {results}")
 
         # apply custom mmr scaling
         results = [
