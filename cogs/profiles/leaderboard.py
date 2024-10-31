@@ -1,11 +1,12 @@
 from discord import slash_command, Option, ApplicationContext, Color, File
 from discord.ext import commands
-from utils.data.database import players
+from utils.data.database import db_players
 from utils.maths.ranks import getRankByMMR
 import pandas as pd
 import dataframe_image as dfi
 import math
 from matplotlib import colors
+
 
 class leaderboard(commands.Cog):
     def __init__(self, bot):
@@ -22,21 +23,26 @@ class leaderboard(commands.Cog):
             required=False,
             choices=["MMR", "Wins", "Losses", "Winrate %"],
             default="MMR",
-            ),
+        ),
         page=Option(
             int,
             name="page",
             description="Page number, default is 1",
             required=False,
             default=1,
-            ),
-        ):
+        ),
+    ):
 
         page_index = page
-        skip_count = 10 * (page_index - 1) # Number of entries to skip
+        skip_count = 10 * (page_index - 1)  # Number of entries to skip
         placements = [i + skip_count + 1 for i in range(10)]
 
-        data = list(players.find().sort(sort.lower(), pymongo.DESCENDING).skip(skip_count).limit(10))
+        data = list(
+            db_players.find()
+            .sort(sort.lower(), pymongo.DESCENDING)
+            .skip(skip_count)
+            .limit(10)
+        )
 
         tabledata = {
             "Placement": placements,
@@ -45,7 +51,10 @@ class leaderboard(commands.Cog):
             "MMR": [player["mmr"] for player in data],
             "Wins": [player["wins"] for player in data],
             "Losses": [player["losses"] for player in data],
-            "Winrate %": [round(player["wins"] / (player["wins"] + player["losses"]) * 100, 2) for player in data]
+            "Winrate %": [
+                round(player["wins"] / (player["wins"] + player["losses"]) * 100, 2)
+                for player in data
+            ],
         }
 
         df = pd.DataFrame(tabledata).set_index("Placement")
@@ -71,11 +80,17 @@ class leaderboard(commands.Cog):
                     },
                     {
                         "selector": "tr:nth-child(even)",
-                        "props": [("background-color", "rgba(21, 21, 40, 1)"), ("color", "rgba(202, 202, 227, 1)")],
+                        "props": [
+                            ("background-color", "rgba(21, 21, 40, 1)"),
+                            ("color", "rgba(202, 202, 227, 1)"),
+                        ],
                     },
                     {
                         "selector": "tr:nth-child(odd)",
-                        "props": [("background-color", "rgba(15, 15, 28, 1)"), ("color", "rgba(202, 202, 227, 1)")],
+                        "props": [
+                            ("background-color", "rgba(15, 15, 28, 1)"),
+                            ("color", "rgba(202, 202, 227, 1)"),
+                        ],
                     },
                 ]
             ),
@@ -83,9 +98,10 @@ class leaderboard(commands.Cog):
             filename="leaderboard-table.png",
         )
 
-        file = File("leaderboard-table.png");
-        await ctx.respond(content=f"## Leaderboard sorted by {sort} (page {page})", file=file)
-
+        file = File("leaderboard-table.png")
+        await ctx.respond(
+            content=f"## Leaderboard sorted by {sort} (page {page})", file=file
+        )
 
 
 def setup(bot: commands.Bot):
