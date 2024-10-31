@@ -46,7 +46,7 @@ class leaderboard(commands.Cog):
         skip_count = skip_count if skip_count >= 0 else 0
 
         data = list(
-            db_players.find().sort(sort.lower(), DESCENDING).skip(skip_count).limit(10)
+            db_players.find().skip(skip_count).limit(10)
         )
 
         tabledata = {
@@ -72,7 +72,7 @@ class leaderboard(commands.Cog):
             tabledata["Winrate %"].append(winrate)
 
         df = pd.DataFrame(tabledata).set_index("Placement")
-        # df = df.sort_values(by="MMR", ascending=False)
+        df = df.sort_values(by=sort, ascending=False)
 
         # Format the Winrate to display only two decimal places
         df["Winrate %"] = df["Winrate %"].map("{:.2f}".format)
