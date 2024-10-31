@@ -1,9 +1,8 @@
-from discord import slash_command, SlashCommandGroup, Option, ApplicationContext
+from discord import SlashCommandGroup, Option
 from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.btn_factory import create_button_view
 from utils.command_helpers.checks import is_mogi_open, is_mogi_not_in_progress
 
