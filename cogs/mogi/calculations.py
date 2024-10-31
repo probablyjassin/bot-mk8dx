@@ -2,7 +2,6 @@ import math
 
 from discord import (
     SlashCommandGroup,
-    ApplicationContext,
     ChannelType,
     Thread,
     File,
@@ -10,7 +9,6 @@ from discord import (
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from models.MogiModel import Mogi
 from utils.data.mogi_manager import mogi_manager
 
 from utils.maths.mmr_algorithm import calculate_mmr
