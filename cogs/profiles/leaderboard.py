@@ -45,9 +45,7 @@ class leaderboard(commands.Cog):
         skip_count = skip_count if skip_count < max_players else max_players - 10
         skip_count = skip_count if skip_count >= 0 else 0
 
-        data = list(
-            db_players.find().skip(skip_count).limit(10)
-        )
+        data = list(db_players.find().skip(skip_count).limit(10))
 
         tabledata = {
             "Placement": [i + skip_count + 1 for i in range(len(data))],
@@ -71,8 +69,11 @@ class leaderboard(commands.Cog):
             winrate = round(wins / (wins + losses) * 100, 2) if wins + losses > 0 else 0
             tabledata["Winrate %"].append(winrate)
 
-        df = pd.DataFrame(tabledata).set_index("Placement")
+        df = pd.DataFrame(tabledata)
         df = df.sort_values(by=sort, ascending=False)
+
+        df["Placement"] = range(skip_count + 1, skip_count + len(df) + 1)
+        df = df.set_index("Placement")
 
         # Format the Winrate to display only two decimal places
         df["Winrate %"] = df["Winrate %"].map("{:.2f}".format)
