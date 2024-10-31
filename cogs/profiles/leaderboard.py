@@ -114,7 +114,7 @@ class leaderboard(commands.Cog):
                         ],
                     },
                 ]
-            ).set_caption(f"Leaderboard sorted by {sort} (Page {page_index})"),
+            ).set_caption(f"Leaderboard sorted by {sort} | Page {page_index}"),
             buffer,
             dpi=200,
         )
