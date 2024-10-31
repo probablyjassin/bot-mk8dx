@@ -1,26 +1,11 @@
 from discord import slash_command, Option, ApplicationContext, Color, File
 from discord.ext import commands
 from utils.data.database import players
+from utils.maths.ranks import getRankByMMR
 import pandas as pd
 import dataframe_image as dfi
 import math
 from matplotlib import colors
-
-def calcRank(mmr):
-    ranks = [
-        {"name": "Wood", "range": (-math.inf, 1)},
-        {"name": "Bronze", "range": (2, 1499)},
-        {"name": "Silver", "range": (1400, 2999)},
-        {"name": "Gold", "range": (3000, 5099)},
-        {"name": "Platinum", "range": (5100, 6999)},
-        {"name": "Diamond", "range": (7000, 9499)},
-        {"name": "Master", "range": (9500, math.inf)},
-    ]
-    for range_info in ranks:
-        start, end = range_info["range"]
-        if start <= mmr <= end:
-            return range_info["name"]
-    return "---"
 
 class leaderboard(commands.Cog):
     def __init__(self, bot):
@@ -56,7 +41,7 @@ class leaderboard(commands.Cog):
         tabledata = {
             "Placement": placements,
             "Player": [player["name"] for player in data],
-            "Rank": [calcRank(player["mmr"]) for player in data],
+            "Rank": [getRankByMMR(player["mmr"]) for player in data],
             "MMR": [player["mmr"] for player in data],
             "Wins": [player["wins"] for player in data],
             "Losses": [player["losses"] for player in data],
