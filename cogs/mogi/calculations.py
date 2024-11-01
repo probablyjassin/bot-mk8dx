@@ -1,6 +1,6 @@
 import math
 
-from discord import SlashCommandGroup, ChannelType, Thread, File, Message
+from discord import SlashCommandGroup, ChannelType, Thread, File
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -100,8 +100,7 @@ class calculations(commands.Cog):
         file = File(create_table(ctx.mogi), filename="table.png")
         message = await ctx.respond(content="# Results", file=file)
 
-        response = await message.original_response()
-        ctx.mogi.table_message_id = response.id
+        ctx.mogi.table_message_id = message.id
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
