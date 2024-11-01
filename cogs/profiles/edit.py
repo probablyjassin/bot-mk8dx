@@ -6,6 +6,7 @@ from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from utils.data.database import db_players
 from utils.command_helpers.find_player import search_player
+from utils.command_helpers.checks import is_moderator
 
 
 class edit(commands.Cog):
@@ -15,6 +16,7 @@ class edit(commands.Cog):
     edit = SlashCommandGroup(name="edit", description="Suspend or unsuspend players")
 
     @edit.command(name="mmr", description="Add MMR to a player")
+    @is_moderator()
     async def mmr(
         self,
         ctx: ApplicationContext,
@@ -50,6 +52,7 @@ class edit(commands.Cog):
         )
 
     @edit.command(name="username", description="Change a player's username")
+    @is_moderator()
     async def username(
         self,
         ctx: ApplicationContext,

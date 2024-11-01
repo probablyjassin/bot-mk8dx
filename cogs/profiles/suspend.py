@@ -3,6 +3,7 @@ from discord.ext import commands
 
 from models.PlayerModel import PlayerProfile
 from utils.command_helpers.find_player import search_player
+from utils.command_helpers.checks import is_moderator
 
 
 class suspend(commands.Cog):
@@ -14,6 +15,7 @@ class suspend(commands.Cog):
     )
 
     @suspension.command(name="add", description="Suspend a player")
+    @is_moderator()
     async def suspend_add(
         self,
         ctx: ApplicationContext,
@@ -31,6 +33,7 @@ class suspend(commands.Cog):
         await ctx.respond(f"Suspended <@{player.discord_id}>")
 
     @suspension.command(name="remove", description="Unsuspend a player")
+    @is_moderator()
     async def suspend_remove(
         self,
         ctx: ApplicationContext,
