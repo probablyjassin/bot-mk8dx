@@ -32,6 +32,9 @@ class calculations(commands.Cog):
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):
+        if ctx.mogi.collected_points:
+            return await ctx.respond("Already collected points.")
+
         await ctx.response.defer()
 
         # Create a thread to collect points
