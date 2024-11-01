@@ -60,6 +60,10 @@ class PlayerProfile:
             {"$set": {attr_name: value}},
         )
 
+    def refresh(self):
+        data = db_players.find_one({"_id": self._id})
+        self.__dict__.update(PlayerProfile.from_dict(data).__dict__)
+
     @property
     def id(self):
         return self._id
