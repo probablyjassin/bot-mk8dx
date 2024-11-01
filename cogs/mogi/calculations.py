@@ -122,8 +122,6 @@ class calculations(commands.Cog):
 
         await ctx.respond("Points have been reset.")
 
-    # TODO: permissions on all commands
-
     @points.command(name="apply", description="Apply MMR changes")
     @is_mogi_manager()
     @is_mogi_in_progress()
