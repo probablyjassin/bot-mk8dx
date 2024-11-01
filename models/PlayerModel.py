@@ -1,8 +1,7 @@
 from dataclasses import dataclass
-from utils.data.database import db_players
-
+from bson.objectid import ObjectId
 from bson.int64 import Int64
-from bson import ObjectId
+from utils.data.database import db_players
 
 
 @dataclass
@@ -22,11 +21,11 @@ class PlayerProfile:
     """
 
     _id: ObjectId
-    name: str
-    discord_id: Int64
-    mmr: int
-    history: list[int]
-    joined: int | None = None
+    _name: str
+    _discord_id: Int64
+    _mmr: int
+    _history: list[int]
+    _joined: int | None = None
 
     _disconnects: int | None = None
     _inactive: bool | None = None
@@ -34,67 +33,105 @@ class PlayerProfile:
 
     def __init__(
         self,
-        _id: ObjectId,
-        name: str,
-        discord_id: Int64,
-        mmr: int,
-        history: list[int],
-        joined: int | None = None,
-        disconnects: int | None = None,
-        inactive: bool | None = None,
-        suspended: bool | None = None,
+        _id,
+        name,
+        discord_id,
+        mmr,
+        history,
+        joined=None,
+        disconnects=None,
+        inactive=None,
+        suspended=None,
     ):
         self._id = _id
-        self.name = name
-        self.discord_id = discord_id
-        self.mmr = mmr
-        self.history = history
-        self.joined = joined
+        self._name = name
+        self._discord_id = discord_id
+        self._mmr = mmr
+        self._history = history
+        self._joined = joined
         self._disconnects = disconnects
         self._inactive = inactive
         self._suspended = suspended
 
-    def __repr__(self):
-        return (
-            f"PlayerProfile(name={self.name!r}, discord_id={self.discord_id!r}, "
-            f"mmr={self.mmr!r}, history=[ {len(self.history)} entries ], joined={self.joined!r}, "
-            f"disconnects={self._disconnects!r}, inactive={self._inactive!r}, suspended={self._suspended!r})"
+    # Methods
+
+    def update_attribute(self, attr_name, value):
+        setattr(self, f"_{attr_name}", value)
+        db_players.update_one(
+            {"_id": self._id},
+            {"$set": {attr_name: value}},
         )
+
+    def refresh(self):
+        data = db_players.find_one({"_id": self._id})
+        self.__dict__.update(PlayerProfile.from_dict(data).__dict__)
+
+    # Properties
+
+    # ID (read-only)
+    @property
+    def id(self):
+        return self._id
+
+    # Name
+    @property
+    def name(self):
+        return self._name
+
+    @name.setter
+    def name(self, value):
+        self.update_attribute("name", value)
+
+    # Discord ID (read-only)
+    @property
+    def discord_id(self):
+        return self._discord_id
+
+    # MMR
+    @property
+    def mmr(self):
+        return self._mmr
+
+    @mmr.setter
+    def mmr(self, value):
+        self.update_attribute("mmr", value)
+
+    # History (has different setter)
+    @property
+    def history(self):
+        return self._history
+
+    def append_history(self, value):
+        self._history.append(value)
+        db_players.update_one(
+            {"_id": self._id},
+            {"$push": {"history": value}},
+        )
+
+    # Joined (read-only)
+    @property
+    def joined(self):
+        return self._joined
 
     # Disconnects
     @property
-    def disconnects(self) -> int | None:
-        return self._disconnects
-
-    @disconnects.getter
-    def disconnects(self) -> int | None:
+    def disconnects(self):
         return self._disconnects
 
     @disconnects.setter
-    def disconnects(self, value: int | None):
-        self._disconnects = value
-        db_players.update_one(
-            {"_id": self._id},
-            ({"$set": {"disconnects": value}}),
-        )
+    def disconnects(self, value):
+        self.update_attribute("disconnects", value)
 
     # Inactive
     @property
-    def inactive(self) -> bool | None:
-        return self._inactive
-
-    @inactive.getter
-    def inactive(self) -> bool | None:
+    def inactive(self):
         return self._inactive
 
     @inactive.setter
-    def inactive(self, value: bool | None):
-        self._inactive = value
-        db_players.update_one(
-            {"_id": self._id},
-            ({"$set": {"suspended": value}}),
-        )
+    def inactive(self, value):
+        self.update_attribute("inactive", value)
 
+    # Custom deleter
     @inactive.deleter
     def inactive(self):
         self._inactive = None
@@ -105,33 +142,31 @@ class PlayerProfile:
 
     # Suspended
     @property
-    def suspended(self) -> bool | None:
-        return self._suspended
-
-    @suspended.getter
-    def suspended(self) -> bool | None:
+    def suspended(self):
         return self._suspended
 
     @suspended.setter
-    def suspended(self, value: bool | None):
-        self._suspended = value
+    def suspended(self, value):
+        self.update_attribute("suspended", value)
+
+    # Custom deleter
+    @suspended.deleter
+    def inactive(self):
+        self._suspended = None
         db_players.update_one(
             {"_id": self._id},
-            (
-                {"$set": {"suspended": value}}
-                if value
-                else {"$unset": {"suspended": ""}}
-            ),
+            {"$unset": {"suspended": ""}},
         )
 
+    # Dict methods
     def to_dict(self) -> dict:
         return {
             "_id": str(self._id),
-            "name": self.name,
-            "discord_id": self.discord_id,
-            "mmr": self.mmr,
-            "history": self.history,
-            "joined": self.joined,
+            "name": self._name,
+            "discord_id": self._discord_id,
+            "mmr": self._mmr,
+            "history": self._history,
+            "joined": self._joined,
             "disconnects": self._disconnects,
             "inactive": self._inactive,
             "suspended": self._suspended,

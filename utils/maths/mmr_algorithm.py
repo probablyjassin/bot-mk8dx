@@ -68,7 +68,3 @@ def calculate_mmr(mmrs: list[int], ranking: list[int], team_size: int) -> list[i
         """ delta_str = str(delta) if delta < 0 else "+" + str(delta) """
 
     return mmr_deltas
-
-
-# [1231, 7645, 8567, 2342]
-# [23, -43]
