@@ -96,14 +96,17 @@ class PlayerProfile:
     def mmr(self, value):
         self.update_attribute("mmr", value)
 
-    # History
+    # History (has different setter)
     @property
     def history(self):
         return self._history
 
-    @history.setter
-    def history(self, value):
-        self.update_attribute("history", value)
+    def append_history(self, value):
+        self._history.append(value)
+        db_players.update_one(
+            {"_id": self._id},
+            {"$push": {"history": value}},
+        )
 
     # Joined (read-only)
     @property
