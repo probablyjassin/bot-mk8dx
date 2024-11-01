@@ -138,17 +138,10 @@ class calculations(commands.Cog):
         await apply_mmr(ctx.mogi)
         await ctx.send("Applied MMR changes ✅")
         await update_roles(ctx, ctx.mogi)
-        ctx.mogi.finish()
 
-        if await confirmation(
-            ctx,
-            "{}, the mogi is ready to be closed. Would you like to?".format(
-                ctx.author.mention
-            ),
-        ):
-            mogi_manager.destroy_mogi(ctx.channel.id)
-            return await ctx.respond("# This channel's Mogi is finished and closed.")
-        await ctx.respond("Held mogi open.")
+        ctx.mogi.finish()
+        mogi_manager.destroy_mogi(ctx.channel.id)
+        return await ctx.respond("# This channel's Mogi is finished and closed.")
 
 
 def setup(bot: commands.Bot):
