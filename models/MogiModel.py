@@ -24,6 +24,7 @@ class Mogi:
         placements_by_group (`list[int]`): A list of placements in order of teams/players.
         mmr_results_by_group (`list[int]`): A list of MMR results in order of teams/players.
         voting_message_id (`int | None`): The ID of the message that has the voting. Stored to be able to delete it if /stop is used. Default is None.
+        table_message_id (`int | None`): The ID of the message that has the table. Stored to be able to delete it if /points reset is used. Default is None.
         voters (`list[int]`): A list of the discord IDs of those players who have voted for a format.
         votes (`dict[str, int]`): A dictionary of the number of votes each format got.
         team_tags (`list[str]`): A list of team tags.
@@ -54,6 +55,7 @@ class Mogi:
     collected_points: list[int] = field(default_factory=lambda: [])
     placements_by_group: list[int] = field(default_factory=lambda: [])
     mmr_results_by_group: list[int] = field(default_factory=lambda: [])
+    table_message_id: int | None = None
 
     voting_message_id: int | None = None
     voters: list[int] = field(default_factory=lambda: [])
