@@ -1,11 +1,6 @@
 import math
 
-from discord import (
-    SlashCommandGroup,
-    ChannelType,
-    Thread,
-    File,
-)
+from discord import SlashCommandGroup, ChannelType, Thread, File
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -37,6 +32,9 @@ class calculations(commands.Cog):
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):
+        if ctx.mogi.collected_points:
+            return await ctx.respond("Already collected points.")
+
         await ctx.response.defer()
 
         # Create a thread to collect points
@@ -100,7 +98,9 @@ class calculations(commands.Cog):
             )
 
         file = File(create_table(ctx.mogi), filename="table.png")
-        await ctx.respond(content="# Results", file=file)
+        message = await ctx.respond(content="# Results", file=file)
+
+        ctx.mogi.table_message_id = message.id
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
@@ -114,10 +114,12 @@ class calculations(commands.Cog):
         ctx.mogi.collected_points.clear()
         ctx.mogi.placements_by_group.clear()
         ctx.mogi.mmr_results_by_group.clear()
+        try:
+            await (await ctx.channel.fetch_message(ctx.mogi.table_message_id)).delete()
+        except Exception:
+            pass
 
         await ctx.respond("Points have been reset.")
-
-    # TODO: permissions on all commands
 
     @points.command(name="apply", description="Apply MMR changes")
     @is_mogi_manager()
@@ -136,17 +138,10 @@ class calculations(commands.Cog):
         await apply_mmr(ctx.mogi)
         await ctx.send("Applied MMR changes ✅")
         await update_roles(ctx, ctx.mogi)
-        ctx.mogi.finish()
 
-        if await confirmation(
-            ctx,
-            "{}, the mogi is ready to be closed. Would you like to?".format(
-                ctx.author.mention
-            ),
-        ):
-            mogi_manager.destroy_mogi(ctx.channel.id)
-            return await ctx.respond("# This channel's Mogi is finished and closed.")
-        await ctx.respond("Held mogi open.")
+        ctx.mogi.finish()
+        mogi_manager.destroy_mogi(ctx.channel.id)
+        return await ctx.respond("# This channel's Mogi is finished and closed.")
 
 
 def setup(bot: commands.Bot):
