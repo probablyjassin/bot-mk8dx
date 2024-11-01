@@ -53,8 +53,10 @@ class PlayerProfile:
         self._inactive = inactive
         self._suspended = suspended
 
-    def _update_attribute(self, attr_name, value):
-        setattr(self, attr_name, value)
+    # Methods
+
+    def update_attribute(self, attr_name, value):
+        setattr(self, f"_{attr_name}", value)
         db_players.update_one(
             {"_id": self._id},
             {"$set": {attr_name: value}},
@@ -64,78 +66,69 @@ class PlayerProfile:
         data = db_players.find_one({"_id": self._id})
         self.__dict__.update(PlayerProfile.from_dict(data).__dict__)
 
+    # Properties
+
+    # ID (read-only)
     @property
     def id(self):
         return self._id
 
-    @id.setter
-    def id(self, value):
-        self._id = value
-
+    # Name
     @property
     def name(self):
         return self._name
 
     @name.setter
     def name(self, value):
-        self._name = value
+        self.update_attribute("name", value)
 
+    # Discord ID (read-only)
     @property
     def discord_id(self):
         return self._discord_id
 
-    @discord_id.setter
-    def discord_id(self, value):
-        self._discord_id = value
-
+    # MMR
     @property
     def mmr(self):
         return self._mmr
 
     @mmr.setter
     def mmr(self, value):
-        self._mmr = value
+        self.update_attribute("mmr", value)
 
+    # History
     @property
     def history(self):
         return self._history
 
     @history.setter
     def history(self, value):
-        self._history = value
+        self.update_attribute("history", value)
 
+    # Joined (read-only)
     @property
     def joined(self):
         return self._joined
 
-    @joined.setter
-    def joined(self, value):
-        self._joined = value
-
+    # Disconnects
     @property
     def disconnects(self):
         return self._disconnects
 
     @disconnects.setter
     def disconnects(self, value):
-        self._disconnects = value
-        db_players.update_one(
-            {"_id": self._id},
-            ({"$set": {"disconnects": value}}),
-        )
+        self.update_attribute("disconnects", value)
 
+    # Inactive
     @property
     def inactive(self):
         return self._inactive
 
     @inactive.setter
     def inactive(self, value):
-        self._inactive = value
-        db_players.update_one(
-            {"_id": self._id},
-            ({"$set": {"suspended": value}}),
-        )
+        self.update_attribute("inactive", value)
 
+    # Custom deleter
     @inactive.deleter
     def inactive(self):
         self._inactive = None
@@ -144,22 +137,25 @@ class PlayerProfile:
             {"$unset": {"inactive": ""}},
         )
 
+    # Suspended
     @property
     def suspended(self):
         return self._suspended
 
     @suspended.setter
     def suspended(self, value):
-        self._suspended = value
+        self.update_attribute("suspended", value)
+
+    # Custom deleter
+    @suspended.deleter
+    def inactive(self):
+        self._suspended = None
         db_players.update_one(
             {"_id": self._id},
-            (
-                {"$set": {"suspended": value}}
-                if value
-                else {"$unset": {"suspended": ""}}
-            ),
+            {"$unset": {"suspended": ""}},
         )
 
+    # Dict methods
     def to_dict(self) -> dict:
         return {
             "_id": str(self._id),
