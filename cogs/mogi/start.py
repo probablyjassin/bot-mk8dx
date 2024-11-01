@@ -4,7 +4,10 @@ from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.btn_factory import create_button_view
-from utils.command_helpers.checks import is_mogi_not_in_progress
+from utils.command_helpers.checks import (
+    is_mogi_not_in_progress,
+    is_mogi_manager,
+)
 
 from config import GUILD_IDS
 
@@ -47,6 +50,8 @@ class start(commands.Cog):
         ctx.mogi.voting_message_id = response.id
 
     @start.command(name="force", guild_ids=GUILD_IDS)
+    @is_mogi_manager()
+    @is_mogi_not_in_progress()
     async def force(
         self,
         ctx: MogiApplicationContext,
