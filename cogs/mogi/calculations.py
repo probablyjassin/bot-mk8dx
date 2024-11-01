@@ -1,11 +1,6 @@
 import math
 
-from discord import (
-    SlashCommandGroup,
-    ChannelType,
-    Thread,
-    File,
-)
+from discord import SlashCommandGroup, ChannelType, Thread, File, Message
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -100,7 +95,10 @@ class calculations(commands.Cog):
             )
 
         file = File(create_table(ctx.mogi), filename="table.png")
-        await ctx.respond(content="# Results", file=file)
+        message = await ctx.respond(content="# Results", file=file)
+
+        response = await message.original_response()
+        ctx.mogi.table_message_id = response.id
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
@@ -114,6 +112,10 @@ class calculations(commands.Cog):
         ctx.mogi.collected_points.clear()
         ctx.mogi.placements_by_group.clear()
         ctx.mogi.mmr_results_by_group.clear()
+        try:
+            await (await ctx.channel.fetch_message(ctx.mogi.table_message_id)).delete()
+        except Exception:
+            pass
 
         await ctx.respond("Points have been reset.")
 
