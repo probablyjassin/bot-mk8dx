@@ -1,6 +1,5 @@
 from discord import (
     slash_command,
-    ApplicationContext,
     Option,
     ButtonStyle,
     Embed,
@@ -9,6 +8,7 @@ from discord import (
 from discord.ui import View, Button
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
 
@@ -26,7 +26,7 @@ class player(commands.Cog):
     @slash_command(name="player", description="Show a player and their stats")
     async def player(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         searched_name: str = Option(
             str,
             name="name",

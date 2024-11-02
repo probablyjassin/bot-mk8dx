@@ -1,6 +1,7 @@
-from discord import slash_command, ApplicationContext
+from discord import slash_command
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import is_mogi_not_in_progress
@@ -12,7 +13,7 @@ class close_mogi(commands.Cog):
 
     @slash_command(name="close", description="Close a mogi")
     @is_mogi_not_in_progress()
-    async def close(self, ctx: ApplicationContext):
+    async def close(self, ctx: MogiApplicationContext):
         await ctx.interaction.response.defer()
 
         close_confirm_message = "{} don't close the mogi unless it fully finished. \nClosing will remove all players and discard any points.\n **Are you sure?**".format(

@@ -1,9 +1,11 @@
 from pymongo import ReturnDocument
 
-from discord import SlashCommandGroup, ApplicationContext, Option
+from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
+
 from utils.data.database import db_players
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_moderator
@@ -19,7 +21,7 @@ class edit(commands.Cog):
     @is_moderator()
     async def mmr(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         searched_player: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),
@@ -55,7 +57,7 @@ class edit(commands.Cog):
     @is_moderator()
     async def username(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         searched_player: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),

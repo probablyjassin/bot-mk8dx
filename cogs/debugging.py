@@ -1,6 +1,6 @@
 import random
 
-from discord import SlashCommandGroup, ApplicationContext
+from discord import SlashCommandGroup
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -19,11 +19,11 @@ class debugging(commands.Cog):
         await ctx.respond(f"Current Mogi: \n{ctx.mogi}")
 
     @debug.command(name="all_mogis", description="print the mogi registry")
-    async def all_mogis(self, ctx: ApplicationContext):
+    async def all_mogis(self, ctx: MogiApplicationContext):
         await ctx.respond(f"Mogi Registry: \n{mogi_manager.read_registry()}")
 
     @debug.command(name="throw_error", description="throw an error")
-    async def throw_error(self, ctx: ApplicationContext):
+    async def throw_error(self, ctx: MogiApplicationContext):
         raise Exception("This is a test command error")
 
     @debug.command(name="test_player", description="add a dummy player to the mogi")

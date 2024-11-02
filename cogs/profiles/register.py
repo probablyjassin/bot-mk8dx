@@ -1,9 +1,11 @@
-from discord import slash_command, ApplicationContext, Member
+from discord import slash_command, Member
 from discord.utils import get
 from discord.ext import commands
 
-from logger import setup_logger
+from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players, db_archived
+
+from logger import setup_logger
 from config import GUILD_IDS, REGISTER_CHANNEL_ID
 
 from bson.int64 import Int64
@@ -27,7 +29,7 @@ class register(commands.Cog):
         description="Register for playing in Lounge",
         guild_ids=GUILD_IDS,
     )
-    async def register(self, ctx: ApplicationContext):
+    async def register(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
         if ctx.channel_id != self.REGISTER_CHANNEL.id:

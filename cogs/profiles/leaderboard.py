@@ -1,12 +1,12 @@
+from io import BytesIO
 import pandas as pd
 import dataframe_image as dfi
-from pymongo import DESCENDING
-from io import BytesIO
 
 import discord
-from discord import slash_command, Option, ApplicationContext, Color, File
+from discord import slash_command, Option, File
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players
 from utils.maths.ranks import getRankByMMR
 
@@ -18,7 +18,7 @@ class leaderboard(commands.Cog):
     @slash_command(name="leaderboard", description="Show the leaderboard")
     async def leaderboard(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         sort=Option(
             str,
             name="sort",
@@ -90,7 +90,14 @@ class leaderboard(commands.Cog):
                     },
                     {
                         "selector": "caption",
-                        "props": [("background-color", "rgba(21, 21, 40, 1)"), ("color", "rgba(202, 202, 227, 1)"), ("text-align", "left"), ("font-size", "16px"), ("font-weight", "bold"), ("padding", "7px")],
+                        "props": [
+                            ("background-color", "rgba(21, 21, 40, 1)"),
+                            ("color", "rgba(202, 202, 227, 1)"),
+                            ("text-align", "left"),
+                            ("font-size", "16px"),
+                            ("font-weight", "bold"),
+                            ("padding", "7px"),
+                        ],
                     },
                     {
                         "selector": "th",
@@ -125,12 +132,18 @@ class leaderboard(commands.Cog):
 
         class WebsiteLinkView(discord.ui.View):
             def __init__(self):
-                super().__init__(timeout=None)  # Timeout set to None to keep the view persistent
-                self.add_item(discord.ui.Button(label="View on Website", style=discord.ButtonStyle.link, url=f"https://mk8dx-yuzu.github.io/"))
+                super().__init__(
+                    timeout=None
+                )  # Timeout set to None to keep the view persistent
+                self.add_item(
+                    discord.ui.Button(
+                        label="View on Website",
+                        style=discord.ButtonStyle.link,
+                        url=f"https://mk8dx-yuzu.github.io/",
+                    )
+                )
 
-        await ctx.respond(
-            file=file, view=WebsiteLinkView()
-        )
+        await ctx.respond(file=file, view=WebsiteLinkView())
 
 
 def setup(bot: commands.Bot):
