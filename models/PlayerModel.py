@@ -120,14 +120,28 @@ class PlayerProfile:
 
     @disconnects.setter
     def disconnects(self, value):
+        if value == 0:
+            del self.disconnects
         self.update_attribute("disconnects", value)
 
-    def add_disconnect(self):
-        self._disconnects += 1
+    @disconnects.deleter
+    def disconnects(self):
+        self._disconnects = None
         db_players.update_one(
             {"_id": self._id},
-            {"$inc": {"disconnects": 1}},
+            {"$unset": {"disconnects": ""}},
         )
+
+    def add_disconnect(self):
+        db_players.update_one(
+            {"_id": self._id},
+            (
+                {"$inc": {"disconnects": 1}}
+                if self._disconnects
+                else {"$set": {"disconnects": 1}}
+            ),
+        )
+        self._disconnects = self._disconnects + 1 if self._disconnects else 1
 
     # Inactive
     @property
