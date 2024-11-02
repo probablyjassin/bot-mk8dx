@@ -68,10 +68,10 @@ class register(commands.Cog):
             db_players.insert_one(
                 {
                     "name": username,
-                    "mmr": 2000,
                     "discord_id": Int64(member.id),
-                    "joined": round(time.time()),
+                    "mmr": 2000,
                     "history": [],
+                    "joined": round(time.time()),
                 },
             )
         except:

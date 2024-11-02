@@ -64,7 +64,7 @@ class PlayerProfile:
 
     def refresh(self):
         data = db_players.find_one({"_id": self._id})
-        self.__dict__.update(PlayerProfile.from_dict(data).__dict__)
+        self.__dict__.update(PlayerProfile.from_json(data).__dict__)
 
     # Properties
 
@@ -159,7 +159,7 @@ class PlayerProfile:
         )
 
     # Dict methods
-    def to_dict(self) -> dict:
+    def to_json(self) -> dict:
         return {
             "_id": str(self._id),
             "name": self._name,
@@ -172,8 +172,13 @@ class PlayerProfile:
             "suspended": self._suspended,
         }
 
+    def to_mongo(self) -> dict:
+        self_json = self.to_json()
+        self_json["_id"] = self._id
+        return self_json
+
     @classmethod
-    def from_dict(cls, data: dict):
+    def from_json(cls, data: dict):
         instance = cls(
             _id=ObjectId(data["_id"]),
             name=data["name"],

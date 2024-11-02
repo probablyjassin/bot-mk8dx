@@ -197,7 +197,7 @@ class Mogi:
         self.finished_at = round(time.time())
         self.archive_mogi_data()
 
-    def to_dict(self) -> dict:
+    def to_json(self) -> dict:
         """
         Converts the Mogi instance to a dictionary.
         Returns:
@@ -207,9 +207,9 @@ class Mogi:
             "channel_id": self.channel_id,
             "player_cap": self.player_cap,
             "format": self.format,
-            "players": [player.to_dict() for player in self.players],
-            "teams": [[player.to_dict() for player in team] for team in self.teams],
-            "subs": [sub.to_dict() for sub in self.subs],
+            "players": [player.to_json() for player in self.players],
+            "teams": [[player.to_json() for player in team] for team in self.teams],
+            "subs": [sub.to_json() for sub in self.subs],
             "isVoting": self.isVoting,
             "isPlaying": self.isPlaying,
             "isFinished": self.isFinished,
@@ -226,7 +226,7 @@ class Mogi:
         }
 
     @classmethod
-    def from_dict(cls, data: dict) -> "Mogi":
+    def from_json(cls, data: dict) -> "Mogi":
         """
         Creates a Mogi instance from a dictionary.
         Args:
@@ -239,13 +239,13 @@ class Mogi:
             player_cap=data.get("player_cap", 12),
             format=data.get("format"),
             players=[
-                PlayerProfile.from_dict(player) for player in data.get("players", [])
+                PlayerProfile.from_json(player) for player in data.get("players", [])
             ],
             teams=[
-                [PlayerProfile.from_dict(player) for player in team]
+                [PlayerProfile.from_json(player) for player in team]
                 for team in data.get("teams", [])
             ],
-            subs=[PlayerProfile.from_dict(sub) for sub in data.get("subs", [])],
+            subs=[PlayerProfile.from_json(sub) for sub in data.get("subs", [])],
             isVoting=data.get("isVoting", False),
             isPlaying=data.get("isPlaying", False),
             isFinished=data.get("isFinished", False),
