@@ -122,6 +122,7 @@ class PlayerProfile:
     def disconnects(self, value):
         if value == 0:
             del self.disconnects
+            return
         self.update_attribute("disconnects", value)
 
     @disconnects.deleter
