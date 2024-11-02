@@ -24,6 +24,10 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, errors.CheckFailure):
             return
 
+        # ignore command not found errors
+        if isinstance(error, commands.errors.CommandNotFound):
+            return
+
         # handle every other error
         error_logger.error(
             f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}",
@@ -38,7 +42,7 @@ class ErrorHandler(commands.Cog):
                     description=f"An error occurred in {ctx.channel.mention} by {ctx.author.mention}",
                     fields={"Command": ctx.command, "Error": str(error)},
                     color=Color.red(),
-                    inline=True
+                    inline=True,
                 )
             )
 
@@ -66,7 +70,7 @@ class ErrorHandler(commands.Cog):
                         "Error": str(error),
                     },
                     color=Color.red(),
-                    inline=True
+                    inline=True,
                 )
             )
 
