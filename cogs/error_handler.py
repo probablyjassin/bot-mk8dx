@@ -25,10 +25,6 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, errors.CheckFailure):
             return
 
-        # ignore command not found errors
-        if isinstance(error, commands.errors.CommandNotFound):
-            return
-
         # handle every other error
         error_logger.error(
             f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}",
@@ -48,6 +44,14 @@ class ErrorHandler(commands.Cog):
             )
 
         await ctx.respond(DEFAULT_ERROR_MESSAGE, ephemeral=True)
+
+    @commands.Cog.listener()
+    async def on_command_error(
+        self, ctx: commands.Context, error: commands.CommandError
+    ):
+        # ignore command not found errors
+        if isinstance(error, commands.errors.CommandNotFound):
+            return
 
     # BUG: Actually test this, make it wave InteractionResponded error:
     @commands.Cog.listener()
