@@ -122,6 +122,13 @@ class PlayerProfile:
     def disconnects(self, value):
         self.update_attribute("disconnects", value)
 
+    def add_disconnect(self):
+        self._disconnects += 1
+        db_players.update_one(
+            {"_id": self._id},
+            {"$inc": {"disconnects": 1}},
+        )
+
     # Inactive
     @property
     def inactive(self):
