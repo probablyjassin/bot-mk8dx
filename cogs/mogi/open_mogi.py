@@ -1,6 +1,7 @@
-from discord import slash_command, ApplicationContext
+from discord import slash_command
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 
 
@@ -9,7 +10,7 @@ class open_mogi(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="open", description="Open a mogi")
-    async def open(self, ctx: ApplicationContext):
+    async def open(self, ctx: MogiApplicationContext):
         try:
             mogi_manager.create_mogi(ctx.channel.id)
             await ctx.respond("# Started a new mogi! \n Use /join to participate!")

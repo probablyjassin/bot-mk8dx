@@ -1,6 +1,7 @@
-from discord import Interaction, ApplicationContext, DiscordException, errors, Color
+from discord import Interaction, DiscordException, errors, Color
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.info_embed_factory import create_embed
 from logger import setup_logger
 
@@ -18,7 +19,7 @@ class ErrorHandler(commands.Cog):
 
     @commands.Cog.listener()
     async def on_application_command_error(
-        self, ctx: ApplicationContext, error: DiscordException
+        self, ctx: MogiApplicationContext, error: DiscordException
     ):
         # predicate check failures get handled in the command, ignore them here
         if isinstance(error, errors.CheckFailure):
@@ -38,7 +39,7 @@ class ErrorHandler(commands.Cog):
                     description=f"An error occurred in {ctx.channel.mention} by {ctx.author.mention}",
                     fields={"Command": ctx.command, "Error": str(error)},
                     color=Color.red(),
-                    inline=True
+                    inline=True,
                 )
             )
 
@@ -66,7 +67,7 @@ class ErrorHandler(commands.Cog):
                         "Error": str(error),
                     },
                     color=Color.red(),
-                    inline=True
+                    inline=True,
                 )
             )
 

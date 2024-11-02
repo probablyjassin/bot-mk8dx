@@ -1,12 +1,13 @@
-from discord import ApplicationContext, Member
+from discord import Member
 from discord.utils import get
 
+from models.CustomMogiContext import MogiApplicationContext
 from models.MogiModel import Mogi
 from utils.maths.ranks import getRankByMMR
 
 
 async def update_roles(
-    ctx: ApplicationContext,
+    ctx: MogiApplicationContext,
     mogi: Mogi,
 ):
     """

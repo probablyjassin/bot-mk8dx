@@ -1,8 +1,9 @@
-from discord import SlashCommandGroup, ApplicationContext, Option
+from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
-from utils.data.database import db_players, db_archived
+
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_manager, is_moderator
 
@@ -19,7 +20,7 @@ class disconnects(commands.Cog):
     @is_mogi_manager()
     async def disconnects_add(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         searched_player: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),
@@ -39,7 +40,7 @@ class disconnects(commands.Cog):
     @is_moderator()
     async def disconnects_set(
         self,
-        ctx: ApplicationContext,
+        ctx: MogiApplicationContext,
         searched_player: str = Option(
             str, name="player", description="username | @ mention | discord_id"
         ),

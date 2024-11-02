@@ -1,5 +1,7 @@
-from discord import slash_command, ApplicationContext, Color
+from discord import slash_command, Color
 from discord.ext import commands
+
+from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.info_embed_factory import create_embed
 
 help_fields = {
@@ -21,7 +23,7 @@ class help(commands.Cog):
         self.bot: commands.Bot = bot
 
     @slash_command(name="help", description="A summary of most of the commands to help")
-    async def help(self, ctx: ApplicationContext):
+    async def help(self, ctx: MogiApplicationContext):
         embed = create_embed(
             "Help",
             "Here you can find a brief summary of common commands.",
