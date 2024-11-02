@@ -1,14 +1,17 @@
 from bson.int64 import Int64
-from utils.data.database import db_players
+from utils.data.database import db_players, db_archived
 from models.PlayerModel import PlayerProfile
 
 
-def search_player(search_query: str | Int64) -> PlayerProfile | None:
+def search_player(
+    search_query: str | Int64, from_archive: bool = False
+) -> PlayerProfile | None:
     """
     Allow searching by both name and discord_id/mention. Performs both searches.
     """
+    target_collection = db_players if not from_archive else db_archived
 
-    potential_player = db_players.find_one(
+    potential_player = target_collection.find_one(
         {
             "$or": [
                 {"name": search_query},
