@@ -17,6 +17,7 @@ class BotState:
             json.dump(
                 {id: mogis[id].to_json() for id in mogis.keys()},
                 backup,
+                indent=4,
             )
 
     def save(self):
@@ -25,6 +26,7 @@ class BotState:
             json.dump(
                 {id: mogis[id].to_json() for id in mogis.keys()},
                 saved,
+                indent=4,
             )
 
     def load_backup(self):
