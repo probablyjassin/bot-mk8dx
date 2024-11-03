@@ -1,5 +1,6 @@
 import discord
 from utils.data.mogi_manager import mogi_manager
+from models.MogiModel import Mogi
 
 
 class MogiApplicationContext(discord.ApplicationContext):
@@ -24,4 +25,4 @@ class MogiApplicationContext(discord.ApplicationContext):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.mogi = mogi_manager.get_mogi(self.channel.id)
+        self.mogi: Mogi = mogi_manager.get_mogi(self.channel.id)
