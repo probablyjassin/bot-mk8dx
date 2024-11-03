@@ -73,6 +73,19 @@ def is_mogi_open():
     return commands.check(predicate)
 
 
+def is_in_mogi():
+    async def predicate(ctx: MogiApplicationContext):
+        return await check(
+            ctx=ctx,
+            condition=(
+                ctx.author.id in [player.discord_id for player in ctx.mogi.players]
+            ),
+            error_message="You're not in this mogi.",
+        )
+
+    return commands.check(predicate)
+
+
 def is_mogi_in_progress():
     async def predicate(ctx: MogiApplicationContext):
         return await check(
