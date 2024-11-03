@@ -1,3 +1,4 @@
+from discord import ChannelType
 from discord.ext import commands
 from discord.utils import get
 
@@ -9,7 +10,7 @@ async def check(
     condition: bool,
     error_message: str = "You're not allowed to use this command.",
 ):
-    if condition:
+    if not ctx.channel.type == ChannelType.private and condition:
         return True
     else:
         await ctx.respond(error_message, ephemeral=True)

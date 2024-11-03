@@ -17,9 +17,9 @@ class edit(commands.Cog):
 
     edit = SlashCommandGroup(name="edit", description="Suspend or unsuspend players")
 
-    @edit.command(name="mmr", description="Add MMR to a player")
+    @edit.command(name="add_mmr", description="Add MMR to a player")
     @is_moderator()
-    async def mmr(
+    async def add_mmr(
         self,
         ctx: MogiApplicationContext,
         searched_player: str = Option(
@@ -31,8 +31,7 @@ class edit(commands.Cog):
             name="history",
             description="Include in history",
             required=False,
-            default="False",
-            choices=["True", "False"],
+            default=False,
         ),
     ):
         player: PlayerProfile = search_player(searched_player)
@@ -44,7 +43,7 @@ class edit(commands.Cog):
             {"_id": player._id},
             {
                 "$inc": {"mmr": delta_mmr},
-                "$push": {"history": delta_mmr} if isHistory == "True" else {},
+                "$push": {"history": delta_mmr} if isHistory else {},
             },
             return_document=ReturnDocument.AFTER,
         )

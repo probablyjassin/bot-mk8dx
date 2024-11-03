@@ -25,6 +25,10 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, errors.CheckFailure):
             return
 
+        # ignore errors in DMs, bot is not meant to be used there
+        if not getattr(ctx.channel, "name", False):
+            return await ctx.respond("Don't use this bot in DMs")
+
         # handle every other error
         error_logger.error(
             f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}",
