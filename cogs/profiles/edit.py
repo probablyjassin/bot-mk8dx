@@ -17,9 +17,9 @@ class edit(commands.Cog):
 
     edit = SlashCommandGroup(name="edit", description="Suspend or unsuspend players")
 
-    @edit.command(name="mmr", description="Add MMR to a player")
+    @edit.command(name="add_mmr", description="Add MMR to a player")
     @is_moderator()
-    async def mmr(
+    async def add_mmr(
         self,
         ctx: MogiApplicationContext,
         searched_player: str = Option(
