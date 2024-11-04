@@ -51,7 +51,7 @@ class list_mogi(commands.Cog):
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
                 list_of_players = "\n".join(
                     [
-                        (f"{i+1}. <@{player.discord_id}>")
+                        (f"`{i+1}.` <@{player.discord_id}>")
                         for i, player in enumerate(ctx.mogi.players)
                     ]
                 )
@@ -61,7 +61,7 @@ class list_mogi(commands.Cog):
                 for i, team in enumerate(ctx.mogi.teams):
                     list_of_players += f"{ctx.mogi.team_tags[i]}\n"
                     list_of_players += "\n".join(
-                        [(f"• <@{player.name}>") for player in team]
+                        [(f"• <@{player.discord_id}>") for player in team]
                     )
                     list_of_players += "\n\n"
 
@@ -73,9 +73,9 @@ class list_mogi(commands.Cog):
                 list_of_players = "\n".join(
                     [
                         (
-                            f"{i+1}. {player.name}"
+                            f"`{i+1}.` {player.name}"
                             if context != "mmr"
-                            else f"{i+1}. {player.name} ({player.mmr})"
+                            else f"`{i+1}.` {player.name} ({player.mmr})"
                         )
                         for i, player in enumerate(ctx.mogi.players)
                     ]
@@ -84,7 +84,7 @@ class list_mogi(commands.Cog):
             # Teams
             else:
                 for i, team in enumerate(ctx.mogi.teams):
-                    list_of_players += f"{ctx.mogi.team_tags[i]}\n"
+                    list_of_players += f"### {ctx.mogi.team_tags[i]}\n"
                     list_of_players += "\n".join(
                         [
                             (
@@ -103,11 +103,9 @@ class list_mogi(commands.Cog):
             ), min(ctx.mogi.players, key=lambda x: x.mmr)
 
             list_of_players += (
-                f"""\n
-                    Average MMR: {round( sum( [player.mmr for player in ctx.mogi.players] ) / len(ctx.mogi.players) )}
-                    Highest MMR: {max_mmr_player.name}: {max_mmr_player.mmr}
-                    Lowest MMR: {min_mmr_player.name}: {min_mmr_player.mmr}
-                """
+                f"\n-# Average MMR: {round( sum( [player.mmr for player in ctx.mogi.players] ) / len(ctx.mogi.players) )} \n"
+                f"-# Highest MMR: {max_mmr_player.name}: {max_mmr_player.mmr} \n"
+                f"-# Lowest MMR: {min_mmr_player.name}: {min_mmr_player.mmr} \n"
                 if context == "mmr"
                 else ""
             )
