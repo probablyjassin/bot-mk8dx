@@ -62,7 +62,7 @@ class player(commands.Cog):
             )
 
         player_rank: Rank = Rank.getRankByMMR(player.mmr)
-        embed.add_field(name="Rank", value=f"{player_rank.rankname}")
+        embed.add_field(name="Rank", value=player_rank.rankname)
 
         player_wins = len([delta for delta in player.history if delta >= 0])
         player_losses = len([delta for delta in player.history if delta < 0])
