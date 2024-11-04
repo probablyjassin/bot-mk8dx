@@ -8,7 +8,7 @@ from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players
-from utils.maths.ranks import getRankByMMR
+from models.RankModel import Rank
 
 
 class leaderboard(commands.Cog):
@@ -63,7 +63,7 @@ class leaderboard(commands.Cog):
             losses = len([delta for delta in player["history"] if delta < 0])
 
             tabledata["Player"].append(player["name"])
-            tabledata["Rank"].append(getRankByMMR(player["mmr"]).name)
+            tabledata["Rank"].append(Rank.getRankByMMR(player["mmr"]).rankname)
             tabledata["MMR"].append(player["mmr"])
             tabledata["Wins"].append(wins)
             tabledata["Losses"].append(losses)

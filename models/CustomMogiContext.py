@@ -1,9 +1,18 @@
 import discord
+from discord.utils import get
+
 from utils.data.mogi_manager import mogi_manager
+from models.MogiModel import Mogi
+
+from config import GUILD_IDS
 
 
 class MogiApplicationContext(discord.ApplicationContext):
-    """## `discord.ApplicationContext` but with the `mogi` attribute:
+    """## `discord.ApplicationContext` with custom Lounge attributes:
+    - `mogi`: `Mogi` object of the channel
+    - `main_guild`: `discord.Guild` object of the main guild
+    - `inmogi_role`: `discord.Role` object of the InMogi role
+    - `get_lounge_role(name: str)`: method to get a role by name
 
     Represents a Discord application command interaction context.
 
@@ -24,4 +33,11 @@ class MogiApplicationContext(discord.ApplicationContext):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.mogi = mogi_manager.get_mogi(self.channel.id)
+
+        self.mogi: Mogi = mogi_manager.get_mogi(self.channel.id)
+
+        self.main_guild: discord.Guild = get(self.bot.guilds, id=GUILD_IDS[0])
+        self.inmogi_role: discord.Role = get(self.main_guild.roles, name="InMogi")
+
+    def get_lounge_role(self, name: str) -> discord.Role:
+        return get(self.main_guild.roles, name=name)

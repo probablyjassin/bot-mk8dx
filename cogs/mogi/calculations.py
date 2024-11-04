@@ -15,7 +15,6 @@ from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_manager,
 )
-from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
 
