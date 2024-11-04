@@ -71,7 +71,7 @@ class team_tags(commands.Cog):
 
         for i, team in enumerate(ctx.mogi.teams):
             for player in team:
-                await get(ctx.guild.members, id=int(player.strip("<@!>"))).add_roles(
+                await get(ctx.guild.members, id=player.discord_id).add_roles(
                     all_team_roles[i]
                 )
         await ctx.respond("Assigned team roles")
@@ -81,6 +81,10 @@ class team_tags(commands.Cog):
     @is_in_mogi()
     async def unapply_roles(self, ctx: MogiApplicationContext):
         all_team_roles = [get(ctx.guild.roles, name=f"Team {i+1}") for i in range(5)]
+
+        if len(all_team_roles[0].members) == 0:
+            return await ctx.respond("Team roles aren't assigned to anyone.")
+
         for role in all_team_roles:
             for member in role.members:
                 await member.remove_roles(role)
