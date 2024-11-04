@@ -4,7 +4,7 @@ from models.PlayerModel import PlayerProfile
 
 
 def search_player(
-    search_query: str | Int64, from_archive: bool = False
+    search_query: str | Int64 | int, from_archive: bool = False
 ) -> PlayerProfile | None:
     """
     Allow searching by both name and discord_id/mention. Performs both searches.
