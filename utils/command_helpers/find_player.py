@@ -17,8 +17,8 @@ def search_player(
                 {"name": search_query},
                 {
                     "discord_id": (
-                        search_query
-                        if isinstance(search_query, Int64)
+                        Int64(search_query)
+                        if isinstance(search_query, Int64 | int)
                         else (
                             Int64(search_query.strip("<@!>"))
                             if search_query.strip("<@!>").isdigit()
