@@ -4,6 +4,7 @@ from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
 
+from utils.command_helpers.command_groups import manage
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_not_in_progress
 
@@ -12,7 +13,7 @@ class kick(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(name="remove")
+    @manage.command(name="remove")
     @is_mogi_not_in_progress()
     async def remove(
         self,
