@@ -1,5 +1,4 @@
 from discord import SlashCommandGroup, Option
-from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext

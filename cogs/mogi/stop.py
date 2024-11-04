@@ -1,11 +1,8 @@
 from discord import slash_command, Message
-from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.checks import is_mogi_in_progress
-
-from config import GUILD_IDS
 
 
 class stop(commands.Cog):
