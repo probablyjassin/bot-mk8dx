@@ -30,7 +30,7 @@ class leave_mogi(commands.Cog):
                 for player in ctx.mogi.players
                 if player.discord_id != ctx.author.id
             ]
-            await ctx.user.remove_roles(get(ctx.guild.roles, name="InMogi"))
+            await ctx.user.remove_roles(ctx.inmogi_role)
             if len(ctx.mogi.players) == 0:
                 mogi_manager.destroy_mogi(ctx.channel.id)
                 return await ctx.respond("# This mogi has been closed.")
