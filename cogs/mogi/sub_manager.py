@@ -62,6 +62,13 @@ class sub_manager(commands.Cog):
 
         ctx.mogi.subs.append(replacement_profile)
 
+        await (await ctx.guild.fetch_member(player_profile.discord_id)).remove_roles(
+            ctx.inmogi_role
+        )
+        await (await ctx.guild.fetch_member(replacement_profile.discord_id)).add_roles(
+            ctx.inmogi_role
+        )
+
         await ctx.respond(
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )

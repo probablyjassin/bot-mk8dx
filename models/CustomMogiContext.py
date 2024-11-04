@@ -8,7 +8,11 @@ from config import GUILD_IDS
 
 
 class MogiApplicationContext(discord.ApplicationContext):
-    """## `discord.ApplicationContext` but with the `mogi` attribute:
+    """## `discord.ApplicationContext` with custom Lounge attributes:
+    - `mogi`: `Mogi` object of the channel
+    - `main_guild`: `discord.Guild` object of the main guild
+    - `inmogi_role`: `discord.Role` object of the InMogi role
+    - `get_lounge_role(name: str)`: method to get a role by name
 
     Represents a Discord application command interaction context.
 

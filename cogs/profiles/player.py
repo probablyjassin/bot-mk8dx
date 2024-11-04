@@ -11,9 +11,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
-
 from utils.command_helpers.find_player import search_player
-from utils.maths.ranks import getRankByMMR
 
 from datetime import datetime
 from bson.int64 import Int64
@@ -63,8 +61,8 @@ class player(commands.Cog):
                 value=f"{datetime.fromtimestamp(player.joined).strftime('%b %d %Y')}",
             )
 
-        player_rank: Rank = getRankByMMR(player.mmr)
-        embed.add_field(name="Rank", value=f"{player_rank.name}")
+        player_rank: Rank = Rank.getRankByMMR(player.mmr)
+        embed.add_field(name="Rank", value=player_rank.rankname)
 
         player_wins = len([delta for delta in player.history if delta >= 0])
         player_losses = len([delta for delta in player.history if delta < 0])

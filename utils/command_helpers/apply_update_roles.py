@@ -3,7 +3,7 @@ from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
 from models.MogiModel import Mogi
-from utils.maths.ranks import getRankByMMR
+from models.RankModel import Rank
 
 
 async def update_roles(
@@ -26,14 +26,14 @@ async def update_roles(
             await ctx.send(f"Excluded {discord_member.mention} because they subbed")
             continue
 
-        current_rank = getRankByMMR(player.mmr)
-        new_rank = getRankByMMR(
+        current_rank = Rank.getRankByMMR(player.mmr)
+        new_rank = Rank.getRankByMMR(
             player.mmr + mogi.mmr_results_by_group[mogi.players.index(player)]
         )
 
         if current_rank != new_rank:
 
-            await ctx.send(f"{discord_member.mention} is now in {new_rank.name}")
+            await ctx.send(f"{discord_member.mention} is now in {new_rank.rankname}")
 
             await discord_member.remove_roles(
                 ctx.get_lounge_role(f"Lounge - {current_rank}")
