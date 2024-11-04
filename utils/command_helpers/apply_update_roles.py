@@ -36,8 +36,6 @@ async def update_roles(
             await ctx.send(f"{discord_member.mention} is now in {new_rank.name}")
 
             await discord_member.remove_roles(
-                get(ctx.guild.roles, name=f"Lounge - {current_rank}")
+                ctx.get_lounge_role(f"Lounge - {current_rank}")
             )
-            await discord_member.add_roles(
-                get(ctx.guild.roles, name=f"Lounge - {new_rank}")
-            )
+            await discord_member.add_roles(ctx.get_lounge_role(f"Lounge - {new_rank}"))

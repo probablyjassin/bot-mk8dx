@@ -61,9 +61,11 @@ class register(commands.Cog):
             )
 
         member: Member = ctx.user
-        if get(self.MAIN_GUILD.roles, name="Lounge Player") in member.roles:
+        if ctx.get_lounge_role("Lounge Player") in member.roles:
             return await ctx.respond(
-                "You already have the Lounge Player role even though you don't have a player profile. Please ask a moderator for help.",
+                "You already have the Lounge Player role"
+                "even though you don't have a player profile."
+                "Ask a moderator for help.",
                 ephemeral=True,
             )
         try:
@@ -81,8 +83,8 @@ class register(commands.Cog):
                 "Some error occured creating your player record. Please ask a moderator.",
                 ephemeral=True,
             )
-        await member.add_roles(get(self.MAIN_GUILD.roles, name="Lounge Player"))
-        await member.add_roles(get(self.MAIN_GUILD.roles, name="Lounge - Silver"))
+        await member.add_roles(ctx.get_lounge_role("Lounge Player"))
+        await member.add_roles(ctx.get_lounge_role("Lounge - Silver"))
         await ctx.respond(
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=False,
