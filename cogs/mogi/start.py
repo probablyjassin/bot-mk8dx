@@ -16,11 +16,6 @@ class start(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.MAIN_GUILD = get(self.bot.guilds, id=GUILD_IDS[0])
-        self.INMOGI_ROLE = get(self.MAIN_GUILD.roles, name="InMogi")
-
     start = SlashCommandGroup(name="start", description="Start a mogi")
 
     @start.command(name="vote", guild_ids=GUILD_IDS)
@@ -34,7 +29,7 @@ class start(commands.Cog):
         if len(ctx.mogi.players) > 12:
             return await ctx.respond("Cant start with more than 12 players")
         # user not in the mogi
-        if not self.INMOGI_ROLE in ctx.user.roles:
+        if not ctx.inmogi_role in ctx.user.roles:
             return await ctx.respond(
                 "You can't start a mogi you aren't in", ephemeral=True
             )

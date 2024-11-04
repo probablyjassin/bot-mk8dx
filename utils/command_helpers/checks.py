@@ -23,7 +23,7 @@ def is_mogi_manager():
             ctx=ctx,
             condition=(
                 ctx.author.guild_permissions.is_superset(
-                    get(ctx.guild.roles, name="Mogi Manager").permissions
+                    ctx.get_lounge_role("Mogi Manager").permissions
                 )
             ),
             error_message="You're not allowed to use this command.",
@@ -38,7 +38,7 @@ def is_moderator():
             ctx=ctx,
             condition=(
                 ctx.author.guild_permissions.is_superset(
-                    get(ctx.guild.roles, name="Moderator").permissions
+                    ctx.get_lounge_role("Moderator").permissions
                 )
             ),
             error_message="You're not allowed to use this command.",
@@ -53,7 +53,7 @@ def is_admin():
             ctx=ctx,
             condition=(
                 ctx.author.guild_permissions.is_superset(
-                    get(ctx.guild.roles, name="Admin").permissions
+                    ctx.get_lounge_role("Admin").permissions
                 )
             ),
             error_message="You're not allowed to use this command.",
