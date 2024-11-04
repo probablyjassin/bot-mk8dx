@@ -30,7 +30,7 @@ class team_tags(commands.Cog):
         if ctx.mogi.format == 1:
             return await ctx.respond("This command is not available in FFA mogis.")
 
-        player: PlayerProfile = search_player(ctx.interaction.id)
+        player: PlayerProfile = search_player(ctx.interaction.user.id)
 
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
             0
