@@ -2,7 +2,7 @@ from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.command_helpers.btn_factory import create_button_view
+from utils.command_helpers.vote_factory import create_button_view
 from utils.command_helpers.checks import (
     is_mogi_not_in_progress,
     is_mogi_manager,
