@@ -1,4 +1,4 @@
-from discord import slash_command, Option
+from discord import slash_command, Option, AllowedMentions
 from discord.ext import commands
 
 from utils.command_helpers.checks import is_mogi_open
@@ -18,7 +18,7 @@ class list_mogi(commands.Cog):
             name="context",
             description="extra context to give the list",
             required=False,
-            choices=["tablestring", "mmr"],
+            choices=["tablestring", "usernames", "mmr"],
         ),
     ):
         if len(ctx.mogi.players) == 0:
@@ -26,12 +26,16 @@ class list_mogi(commands.Cog):
 
         list_of_players = ""
 
+        # Tablestring
         if context == "tablestring":
 
+            # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
                 list_of_players = "\n\n".join(
                     [f"{player.name} +" for player in ctx.mogi.players]
                 )
+
+            # Teams
             else:
                 for i, team in enumerate(ctx.mogi.teams):
                     list_of_players += f"{ctx.mogi.team_tags[i]}\n"
@@ -40,8 +44,31 @@ class list_mogi(commands.Cog):
                     )
                     list_of_players += "\n\n"
 
+        # Usernames
+        elif context == "usernames":
+
+            # FFA
+            if ctx.mogi.format == 1 or ctx.mogi.format == None:
+                list_of_players = "\n".join(
+                    [
+                        (f"{i+1}. <@{player.discord_id}>")
+                        for i, player in enumerate(ctx.mogi.players)
+                    ]
+                )
+
+            # Teams
+            else:
+                for i, team in enumerate(ctx.mogi.teams):
+                    list_of_players += f"{ctx.mogi.team_tags[i]}\n"
+                    list_of_players += "\n".join(
+                        [(f"• <@{player.name}>") for player in team]
+                    )
+                    list_of_players += "\n\n"
+
+        # Normal and MMR
         else:
 
+            # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
                 list_of_players = "\n".join(
                     [
@@ -54,6 +81,7 @@ class list_mogi(commands.Cog):
                     ]
                 )
 
+            # Teams
             else:
                 for i, team in enumerate(ctx.mogi.teams):
                     list_of_players += f"{ctx.mogi.team_tags[i]}\n"
@@ -69,6 +97,7 @@ class list_mogi(commands.Cog):
                     )
                     list_of_players += "\n\n"
 
+            # MMR info at the end
             max_mmr_player, min_mmr_player = max(
                 ctx.mogi.players, key=lambda x: x.mmr
             ), min(ctx.mogi.players, key=lambda x: x.mmr)
@@ -83,7 +112,10 @@ class list_mogi(commands.Cog):
                 else ""
             )
 
-        await ctx.respond(f"Players in this mogi:\n{list_of_players}")
+        await ctx.respond(
+            f"Players in this mogi:\n{list_of_players}",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
 
 def setup(bot: commands.Bot):
