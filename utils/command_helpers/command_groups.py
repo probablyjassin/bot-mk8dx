@@ -1,5 +1,9 @@
 from discord import SlashCommandGroup
 
+start = SlashCommandGroup(
+    name="start", description="Start a mogi. Start voting or force (for mogi managers)"
+)
+
 manage = SlashCommandGroup(
     "manage", "Commands for mogi managers to manage players and such."
 )
