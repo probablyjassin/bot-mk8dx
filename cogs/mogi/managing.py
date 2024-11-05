@@ -1,33 +1,72 @@
-from discord import SlashCommandGroup, Option
+from discord import Option, AllowedMentions
 from discord.ext import commands
 
+from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
 
+from utils.maths.replace import recurse_replace
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
+    is_mogi_not_in_progress,
     is_mogi_manager,
+    is_moderator,
 )
 
-
-def recurse_replace(space, player, sub):
-    if isinstance(space, list):
-        return [recurse_replace(item, player, sub) for item in space]
-    else:
-        return sub if space == player else space
+from utils.command_helpers.command_groups import manage, replacement
 
 
-class sub_manager(commands.Cog):
+class managing(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    replacement = SlashCommandGroup(
-        name="replacement", description="Substitute a player"
-    )
+    @manage.command(name="add", description="Add a player to the current mogi")
+    @is_mogi_not_in_progress()
+    @is_moderator()
+    async def add_player(
+        self,
+        ctx: MogiApplicationContext,
+        player: str = Option(
+            str, name="player", description="username | @ mention | discord_id"
+        ),
+    ):
+        player_profile: PlayerProfile = search_player(player)
+
+        if not player_profile:
+            return await ctx.respond("Player profile not found", ephemeral=True)
+
+        # player already in the mogi
+        if player_profile in ctx.mogi.players:
+            return await ctx.respond("Player is already in the mogi", ephemeral=True)
+
+        ctx.mogi.players.append(ctx.user)
+        await ctx.respond(f"{ctx.user.mention} joined the mogi! (against their will)")
+
+    @manage.command(name="remove")
+    @is_mogi_not_in_progress()
+    @is_mogi_manager()
+    async def remove(
+        self,
+        ctx: MogiApplicationContext,
+        player: str = Option(
+            str, name="player", description="The player to remove from the mogi."
+        ),
+    ):
+        player: PlayerProfile = search_player(player)
+        if not player or player not in ctx.mogi.players:
+            return await ctx.respond("Player not in mogi or not found.")
+
+        ctx.mogi.players.remove(player)
+        await ctx.interaction.user.remove_roles(ctx.inmogi_role)
+
+        await ctx.respond(
+            f"<@{player.discord_id}> got removed from the mogi.",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
     @replacement.command(name="sub")
-    @is_mogi_manager()
     @is_mogi_in_progress()
+    @is_mogi_manager()
     async def sub(
         self,
         ctx: MogiApplicationContext,
@@ -77,8 +116,8 @@ class sub_manager(commands.Cog):
         name="remove_sub",
         description="Remove a player from the sub list. Will let them lose MMR.",
     )
-    @is_mogi_manager()
     @is_mogi_in_progress()
+    @is_moderator()
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,
@@ -96,11 +135,14 @@ class sub_manager(commands.Cog):
 
         ctx.mogi.subs.remove(player_profile)
 
-        await ctx.respond(f"{player_profile.name} won't be listed as sub.")
+        await ctx.respond(
+            f"<@{player_profile.discord_id}> won't be listed as sub.",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
     @replacement.command(name="add_sub", description="Add a player to the sub list.")
-    @is_mogi_manager()
     @is_mogi_in_progress()
+    @is_moderator()
     async def add_sub(
         self,
         ctx: MogiApplicationContext,
@@ -118,8 +160,11 @@ class sub_manager(commands.Cog):
 
         ctx.mogi.subs.append(player_profile)
 
-        await ctx.respond(f"{player_profile.name} is now listed as sub.")
+        await ctx.respond(
+            f"<@{player_profile.name}> is now listed as sub.",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(sub_manager(bot))
+    bot.add_cog(managing(bot))
