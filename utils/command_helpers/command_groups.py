@@ -1,7 +1,7 @@
 from discord import SlashCommandGroup
 
 start = SlashCommandGroup(
-    name="start", description="Start a mogi. Start voting or force (for mogi managers)"
+    name="start", description="Start a mogi. Start voting or force (for mogi managers)."
 )
 
 manage = SlashCommandGroup(
@@ -10,4 +10,8 @@ manage = SlashCommandGroup(
 
 replacement = manage.create_subgroup(
     "replacement", "Substitute a player who can't play anymore."
+)
+
+points = SlashCommandGroup(
+    name="points", description="Commands for point collection and mmr calculation."
 )
