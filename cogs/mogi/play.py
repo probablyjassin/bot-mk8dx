@@ -1,23 +1,25 @@
-from discord import SlashCommandGroup, Option
+from discord import slash_command, SlashCommandGroup, Message, Option
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.vote_factory import create_button_view
 from utils.command_helpers.checks import (
+    is_mogi_in_progress,
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
 
-from config import GUILD_IDS
 
-
-class start(commands.Cog):
+class stop(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    start = SlashCommandGroup(name="start", description="Start a mogi")
+    start = SlashCommandGroup(
+        name="start",
+        description="Start a mogi. Start voting or force (for mogi managers).",
+    )
 
-    @start.command(name="vote", guild_ids=GUILD_IDS)
+    @start.command(name="vote")
     @is_mogi_not_in_progress()
     async def vote(self, ctx: MogiApplicationContext):
 
@@ -43,9 +45,9 @@ class start(commands.Cog):
         response = await message.original_response()
         ctx.mogi.voting_message_id = response.id
 
-    @start.command(name="force", guild_ids=GUILD_IDS)
-    @is_mogi_manager()
+    @start.command(name="force")
     @is_mogi_not_in_progress()
+    @is_mogi_manager()
     async def force(
         self,
         ctx: MogiApplicationContext,
@@ -68,6 +70,25 @@ class start(commands.Cog):
 
         await ctx.respond(f"Mogi started!\n{lineup}")
 
+    @slash_command(name="stop", description="Halt the current mogi")
+    @is_mogi_in_progress()
+    async def stop(self, ctx: MogiApplicationContext):
+
+        # user not in the mogi
+        if not ctx.inmogi_role in ctx.user.roles:
+            return await ctx.respond(
+                "You can't stop a mogi you aren't in", ephemeral=True
+            )
+
+        ctx.mogi.stop()
+        if ctx.mogi.voting_message_id:
+            vote_msg: Message = await ctx.channel.fetch_message(
+                ctx.mogi.voting_message_id
+            )
+            if vote_msg:
+                await vote_msg.delete()
+        await ctx.respond("Mogi has been stopped")
+
 
 def setup(bot: commands.Bot):
-    bot.add_cog(start(bot))
+    bot.add_cog(stop(bot))

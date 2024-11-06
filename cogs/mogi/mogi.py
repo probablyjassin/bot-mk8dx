@@ -7,9 +7,17 @@ from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import is_mogi_not_in_progress
 
 
-class close_mogi(commands.Cog):
+class mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+
+    @slash_command(name="open", description="Open a mogi")
+    async def open(self, ctx: MogiApplicationContext):
+        try:
+            mogi_manager.create_mogi(ctx.channel.id)
+            await ctx.respond("# Started a new mogi! \n Use /join to participate!")
+        except ValueError:
+            await ctx.respond("A Mogi for this channel is already open.")
 
     @slash_command(name="close", description="Close a mogi")
     @is_mogi_not_in_progress()
@@ -28,4 +36,4 @@ class close_mogi(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(close_mogi(bot))
+    bot.add_cog(mogi(bot))

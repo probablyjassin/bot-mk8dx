@@ -11,12 +11,12 @@ from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
+from utils.command_helpers.apply_update_roles import update_roles
+from utils.command_helpers.wait_for import get_awaited_message
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_manager,
 )
-from utils.command_helpers.apply_update_roles import update_roles
-from utils.command_helpers.wait_for import get_awaited_message
 
 
 class calculations(commands.Cog):
@@ -24,7 +24,7 @@ class calculations(commands.Cog):
         self.bot: commands.Bot = bot
 
     points = SlashCommandGroup(
-        name="points", description="commands for mmr calculations"
+        name="points", description="Commands for point collection and mmr calculation."
     )
 
     @points.command(name="collect", description="Collect points from tablestring")
