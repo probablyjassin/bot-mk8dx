@@ -106,7 +106,7 @@ class player(commands.Cog):
         )
 
         embed.set_thumbnail(
-            url=f"https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/ranks/{player_rank.name.lower()}.webp"
+            url=f"https://raw.githubusercontent.com/mk8dx-yuzu/ranks/refs/heads/main/{player_rank.rankname}.png"
         )
 
         await ctx.respond(f"# {player.name} - overview", embed=embed, view=PlayerView())
