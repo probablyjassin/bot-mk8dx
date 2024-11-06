@@ -1,4 +1,4 @@
-from discord import Option, AllowedMentions
+from discord import Option, AllowedMentions, SlashCommandGroup
 from discord.ext import commands
 
 from models.PlayerModel import PlayerProfile
@@ -13,12 +13,17 @@ from utils.command_helpers.checks import (
     is_moderator,
 )
 
-from utils.command_helpers.command_groups import manage, replacement
-
 
 class managing(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+
+    manage = SlashCommandGroup(
+        "manage", "Commands for mogi managers to manage players and such."
+    )
+    replacement = manage.create_subgroup(
+        "replacement", "Substitute a player who can't play anymore."
+    )
 
     @manage.command(name="add", description="Add a player to the current mogi")
     @is_mogi_not_in_progress()

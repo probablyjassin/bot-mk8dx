@@ -5,7 +5,6 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from utils.command_helpers.command_groups import team
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_in_progress, is_in_mogi
 
@@ -13,6 +12,10 @@ from utils.command_helpers.checks import is_mogi_in_progress, is_in_mogi
 class team_tags(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+
+    team = SlashCommandGroup(
+        name="team", description="Edit Team tags and apply/remove roles"
+    )
 
     @team.command(name="tag", description="set a tag for your own team")
     @is_mogi_in_progress()

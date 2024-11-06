@@ -1,9 +1,8 @@
-from discord import slash_command, Message, Option
+from discord import slash_command, SlashCommandGroup, Message, Option
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.vote_factory import create_button_view
-from utils.command_helpers.command_groups import start
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
@@ -14,6 +13,11 @@ from utils.command_helpers.checks import (
 class stop(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+
+    start = SlashCommandGroup(
+        name="start",
+        description="Start a mogi. Start voting or force (for mogi managers).",
+    )
 
     @start.command(name="vote")
     @is_mogi_not_in_progress()
