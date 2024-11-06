@@ -29,6 +29,11 @@ That's it! The bot uses [docker watchtower](https://github.com/containrrr/watcht
 
 # Season 3 of MK8DX-Lounge on Yuzu Online!
 
+<!-- Toggle one of these to your liking -->
+<img width="1920" alt="MK8DX-Lounge Season 3 Summary" src="https://github.com/user-attachments/assets/35ab3a13-1696-41ff-9869-e1f5a0ceee40">
+<!-- <img width="1920" alt="MK8DX-Lounge Season 3 Banner" src="https://github.com/user-attachments/assets/561c885e-aaa1-4130-a0c2-d0e9f46a8ccb"> -->
+
+
 We're happy to present the next season of Lounge to you!
 There is tons of new things we prepared for you all
 
