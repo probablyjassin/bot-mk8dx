@@ -24,3 +24,67 @@ docker compose up -d
 ```
 
 That's it! The bot uses [docker watchtower](https://github.com/containrrr/watchtower) to automatically restart the bot when the docker image gets updated!
+
+
+
+# Season 3 of MK8DX-Lounge on Yuzu Online!
+
+We're happy to present the next season of Lounge to you!
+There is tons of new things we prepared for you all
+
+### MMR reset
+As with every new season, your MMR gets rolled back to some point.
+You will start the new season at the starting MMR of the rank below you, while you can't drop lower than 2500MMR.
+And of course, players below 2000MMR get reset back to that starting point!
+
+Examples:
+```diff
+bruv:
+- 8210MMR (Diamond Rank)
++ 5100MMR (Platinum Rank)
+
+darling:
+- 2097MMR (Silver Rank)
++ 2000MMR (Silver Rank)
+
+woodlover:
+- 1MMR (Wood Rank)
++ 2000MMR (Silver Rank)
+```
+
+### Teams is back!
+Teams haven't been working for the past few weeks, but now we've brought them back, fully functional and better than ever!
+This is because, we now have an algorithm that finds the most fair teams by player MMR!
+
+### /status and /room
+The /status command that used to just say whether or not a mogi is open or not, and how many players are in, got completely overhauled!
+It's now more detailed with what is actually going on right now.
+
+**And it now displays how many people are on the Yuzu Lounge server!** 
+
+Together with this, there is also **/room** now, which lets you see the amount of players and the most played game on EU Main!
+
+### Full Bot rewrite
+The bot for playing mogis got a massive overhaul, both from the outside and the inside! 
+I completely rewrote it to bring you tons of bugfixes and other improvements. 
+We're calling it **Lounge8dx** now and touched up it's user profile.
+
+The tables for MMR results and the leaderboard (new, sleek, modern colors)
+
+### Better DC and waiting handling
+We're now limiting how long people can take to join a started mogi (exceptions may apply) to improve the flow of the sessions.
+DCs are now better documented as well, to target their reasons and help fix them!
+
+### New Rank Icons
+Thanks to Dalos we have new, fresh looking icons for Ranks, enjoy!
+
+### For Mogi Managers:
+Collecting points is way easier now!
+Instead of up to 4 fragile modal windows, you now just feed the bot your tablestring you already used on Lorenzis Table Maker anyway!
+
+**And coming soon:**
+Ujuj is working on a visual reader for tables! When this is ready, this process will be even easier for you!
+
+---
+
+#### That's it! Now enjoy Season 3 of MK8DX-Lounge on Yuzu Online!
