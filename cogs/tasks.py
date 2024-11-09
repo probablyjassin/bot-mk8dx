@@ -55,8 +55,8 @@ class tasks(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": list(db_players.find()),
-            "mogis": list(db_mogis.find()),
+            "players": list(db_players.find({}, {"_id": 0})),
+            "mogis": list(db_mogis.find({}, {"_id": 0})),
         }
 
         with open(backup_filename, "w") as backup_file:
