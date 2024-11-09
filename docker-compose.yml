@@ -6,6 +6,7 @@ services:
     volumes:
       - ./state:/app/state
       - ./logs:/app/logs
+      - ./backups:/app/backups
     env_file:
       - .env
 

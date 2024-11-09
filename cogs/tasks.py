@@ -1,9 +1,14 @@
+import os
+import time
 import random
+import json
+from datetime import datetime, timedelta
 
 from discord import Activity, ActivityType, Streaming
 from discord.ext import commands, tasks
 
 from utils.data.state import state_manager
+from utils.data.database import db_players, db_mogis
 
 
 class tasks(commands.Cog):
@@ -14,6 +19,7 @@ class tasks(commands.Cog):
     async def on_ready(self):
         self.change_activity.start()
         self.manage_state.start()
+        self.daily_db_backup.start()
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
@@ -35,6 +41,35 @@ class tasks(commands.Cog):
     @tasks.loop(seconds=5)
     async def manage_state(self):
         state_manager.backup()
+
+    @tasks.loop(time=time(hour=0))
+    async def daily_db_backup(self):
+        backup_folder = "./backups"
+        date_format = "%d-%m-%Y"
+
+        if not os.path.exists(backup_folder):
+            os.makedirs(backup_folder)
+
+        # Create the backup file
+        backup_filename = os.path.join(
+            backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
+        )
+        backup_data = {
+            "players": list(db_players.find()),
+            "mogis": list(db_mogis.find()),
+        }
+
+        with open(backup_filename, "w") as backup_file:
+            json.dump(backup_data, backup_file, indent=4)
+
+        # Remove backups older than 3 days
+        for filename in os.listdir(backup_folder):
+            file_path = os.path.join(backup_folder, filename)
+            if os.path.isfile(file_path):
+                file_date_str = filename.split("_")[1].split(".")[0]
+                file_date = datetime.strptime(file_date_str, date_format)
+                if datetime.now() - file_date > timedelta(days=3):
+                    os.remove(file_path)
 
 
 def setup(bot: commands.Bot):

@@ -21,8 +21,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
-# Add volume for data
+# Add volumes for data
 VOLUME /app/state
 VOLUME /app/logs
+VOLUME /app/backups
 
 CMD ["python", "-u", "main.py"]
