@@ -42,7 +42,7 @@ class tasks(commands.Cog):
     async def manage_state(self):
         state_manager.backup()
 
-    @tasks.loop(time=time(hour=0))
+    @tasks.loop(hours=24)
     async def daily_db_backup(self):
         backup_folder = "./backups"
         date_format = "%d-%m-%Y"
