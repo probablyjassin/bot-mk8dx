@@ -39,6 +39,8 @@ class rooms(commands.Cog):
     async def status(self, ctx: MogiApplicationContext):
         room: Room = get_room_info("lounge")
 
+        data = {}
+
         if not ctx.mogi:
             title = "No mogi"
         elif not ctx.mogi.isPlaying:
@@ -46,15 +48,13 @@ class rooms(commands.Cog):
         else:
             title = f"{len(ctx.mogi.players)} players already playing right now"
 
+        if ctx.mogi:
+            data["Players"] = f"{len(ctx.mogi.players)}/12"
+
+        data["On Server"] = f"{len(room.players)}/12"
+
         await ctx.respond(
-            embed=create_embed(
-                title=title,
-                description=None,
-                fields={
-                    "Players": f"{len(ctx.mogi.players)}/12",
-                    "On Server": f"{len(room.players)}/12",
-                },
-            )
+            embed=create_embed(title=title, description=None, fields=data)
         )
 
 
