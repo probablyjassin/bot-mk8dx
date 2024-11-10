@@ -97,7 +97,9 @@ class calculations(commands.Cog):
             )
 
         file = File(create_table(ctx.mogi), filename="table.png")
-        message = await ctx.respond(content="# Results", file=file)
+        message = await ctx.results_channel.send(content="# Results", file=file)
+
+        await ctx.respond("Results got posted in the results channel.")
 
         ctx.mogi.table_message_id = message.id
 
