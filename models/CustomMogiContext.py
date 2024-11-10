@@ -4,7 +4,7 @@ from discord.utils import get
 from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
 
-from config import GUILD_IDS
+from config import GUILD_IDS, RESULTS_CHANNEL_ID, REGISTER_CHANNEL_ID
 
 
 class MogiApplicationContext(discord.ApplicationContext):
@@ -38,6 +38,13 @@ class MogiApplicationContext(discord.ApplicationContext):
 
         self.main_guild: discord.Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: discord.Role = get(self.main_guild.roles, name="InMogi")
+
+        self.register_channel: discord.TextChannel = get(
+            self.main_guild.text_channels, id=REGISTER_CHANNEL_ID
+        )
+        self.results_channel: discord.TextChannel = get(
+            self.main_guild.text_channels, id=RESULTS_CHANNEL_ID
+        )
 
     def get_lounge_role(self, name: str) -> discord.Role:
         return get(self.main_guild.roles, name=name)

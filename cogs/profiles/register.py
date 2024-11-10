@@ -6,7 +6,6 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players, db_archived
 
 from logger import setup_logger
-from config import GUILD_IDS, REGISTER_CHANNEL_ID
 
 from bson.int64 import Int64
 import time
@@ -19,20 +18,14 @@ class register(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @commands.Cog.listener()
-    async def on_ready(self):
-        self.MAIN_GUILD = get(self.bot.guilds, id=GUILD_IDS[0])
-        self.REGISTER_CHANNEL = get(self.MAIN_GUILD.channels, id=REGISTER_CHANNEL_ID)
-
     @slash_command(
         name="register",
         description="Register for playing in Lounge",
-        guild_ids=GUILD_IDS,
     )
     async def register(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
-        if ctx.channel_id != self.REGISTER_CHANNEL.id:
+        if ctx.channel_id != ctx.register_channel.id:
             return await ctx.respond(
                 "You're not in the right channel for this command.", ephemeral=True
             )
