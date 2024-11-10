@@ -30,7 +30,7 @@ class mogi(commands.Cog):
 
         if await confirmation(ctx, close_confirm_message):
             for player in ctx.mogi.players:
-                (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
+                await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
                     ctx.inmogi_role
                 )
 
