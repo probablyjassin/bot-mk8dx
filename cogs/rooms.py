@@ -22,7 +22,8 @@ class rooms(commands.Cog):
             "Players": f"{len(room.players)}/{room.maxPlayers}",
         }
 
-        if common_game := room.most_popular_game():
+        common_game = room.most_popular_game()
+        if common_game:
             info[f"{common_game[0]} people are playing"] = common_game[1]
 
         await ctx.respond(
