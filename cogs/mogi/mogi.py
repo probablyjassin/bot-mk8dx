@@ -19,7 +19,7 @@ class mogi(commands.Cog):
         except ValueError:
             await ctx.respond("A Mogi for this channel is already open.")
 
-    @slash_command(name="close", description="Close a mogi")
+    @slash_command(name="close", description="Close this channel's mogi")
     @is_mogi_not_in_progress()
     async def close(self, ctx: MogiApplicationContext):
         await ctx.interaction.response.defer()
