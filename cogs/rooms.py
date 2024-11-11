@@ -6,7 +6,7 @@ from discord.ext import commands
 from models.RoomModel import Room
 from models.CustomMogiContext import MogiApplicationContext
 
-from utils.data.roombrowser import get_room_info
+from utils.data.roombrowser import get_room_info, ServerType
 from utils.command_helpers.info_embed_factory import create_embed
 
 
@@ -16,7 +16,7 @@ class rooms(commands.Cog):
 
     @slash_command(name="room", description="Get info on people playing on EU Main")
     async def room(self, ctx: MogiApplicationContext):
-        room: Room = get_room_info("main")
+        room: Room = get_room_info(ServerType.MAIN)
 
         info = {
             "Players": f"{len(room.players)}/{room.maxPlayers}",
@@ -38,7 +38,7 @@ class rooms(commands.Cog):
 
     @slash_command(name="status", description="Get the status of the current mogi")
     async def status(self, ctx: MogiApplicationContext):
-        room: Room = get_room_info("lounge")
+        room: Room = get_room_info(ServerType.LOUNGE)
 
         data = {}
 
