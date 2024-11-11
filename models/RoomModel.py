@@ -17,7 +17,7 @@ class Room:
     preferredGameId: int
     preferredGameName: str
 
-    def most_popular_game(self) -> tuple[int, str]:
+    def most_popular_game(self) -> tuple[int, str] | None:
         game_count = {}
         for player in self.players:
             game_name = player["gameName"]
@@ -25,5 +25,5 @@ class Room:
                 game_count[game_name] += 1
             else:
                 game_count[game_name] = 1
-        most_popular = max(game_count, key=game_count.get)
+        most_popular = max(game_count, key=game_count.get) if game_count else None
         return game_count[most_popular], most_popular
