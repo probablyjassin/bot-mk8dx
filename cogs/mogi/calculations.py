@@ -100,7 +100,7 @@ class calculations(commands.Cog):
         ctx.mogi.results_date = time.strftime("%d%m%y")
         file = File(create_table(ctx.mogi), filename="table.png")
         message = await ctx.results_channel.send(
-            content=f"# Results - {time.strftime("%d.%m.%y")}", file=file
+            content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
         )
 
         await ctx.respond("Results got posted in the results channel.")
