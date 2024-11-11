@@ -25,5 +25,5 @@ class Room:
                 game_count[game_name] += 1
             else:
                 game_count[game_name] = 1
-        most_popular = max(game_count, key=game_count.get) if game_count else None
-        return game_count[most_popular], most_popular
+        most_popular = max(game_count, key=game_count.get)
+        return (game_count[most_popular], most_popular) if game_count else None
