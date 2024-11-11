@@ -71,6 +71,39 @@ class edit(commands.Cog):
 
         await ctx.respond(f"Changed <@{player.discord_id}>'s username to {new_name}")
 
+    @edit.command(name="delete", description="Delete a player's profile")
+    @is_moderator()
+    async def delete(
+        self,
+        ctx: MogiApplicationContext,
+        searched_player: str = Option(
+            str, name="player", description="username | @ mention | discord_id"
+        ),
+        try_remove_roles: bool = Option(
+            bool, name="try_remove_roles", description="Try removing Lounge roles"
+        ),
+    ):
+        player: PlayerProfile = search_player(searched_player)
+
+        if not player:
+            await ctx.respond("Couldn't find that player")
+
+        db_players.delete_one({"_id": player._id})
+
+        if try_remove_roles:
+            discord_member = await ctx.guild.fetch_member(player.discord_id)
+            if not discord_member:
+                return await ctx.respond(
+                    f"Deleted <@{player.discord_id}>'s profile (couldn't find user to remove roles from)"
+                )
+            for role in discord_member.roles:
+                if "Lounge -" in role.name:
+                    await discord_member.remove_roles(role)
+                if "InMogi" in role.name:
+                    await discord_member.remove_roles(role)
+
+        await ctx.respond(f"Deleted <@{player.discord_id}>'s profile and removed roles")
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(edit(bot))
