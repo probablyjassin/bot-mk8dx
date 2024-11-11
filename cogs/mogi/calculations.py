@@ -1,4 +1,5 @@
 import math
+import time
 
 from discord import SlashCommandGroup, ChannelType, Thread, File
 from discord.ext import commands
@@ -95,9 +96,12 @@ class calculations(commands.Cog):
             return await ctx.respond(
                 "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
             )
-
+        # Store the date of the results
+        ctx.mogi.results_date = time.strftime("%d%m%y")
         file = File(create_table(ctx.mogi), filename="table.png")
-        message = await ctx.results_channel.send(content="# Results", file=file)
+        message = await ctx.results_channel.send(
+            content=f"# Results - {time.strftime("%d.%m.%y")}", file=file
+        )
 
         await ctx.respond("Results got posted in the results channel.")
 
