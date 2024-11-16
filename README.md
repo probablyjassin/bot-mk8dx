@@ -57,6 +57,10 @@ woodlover:
 + 2000MMR (Silver Rank)
 ```
 
+### Full MMR History
+We now store your entire history of mogis, not just the latest 30!
+This gives you move insight into your developements.
+
 ### Teams is back!
 Teams haven't been working for the past few weeks, but now we've brought them back, fully functional and better than ever!
 This is because, we now have an algorithm that finds the most fair teams by player MMR!
