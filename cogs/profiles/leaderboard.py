@@ -1,4 +1,5 @@
 from io import BytesIO
+from pymongo import DESCENDING
 import pandas as pd
 import dataframe_image as dfi
 
@@ -46,7 +47,27 @@ class leaderboard(commands.Cog):
         skip_count = skip_count if skip_count < max_players else max_players - 10
         skip_count = skip_count if skip_count >= 0 else 0
 
-        data = list(db_players.find().skip(skip_count).limit(10))
+        if sort == "MMR":
+            data = list(
+                db_players.find().sort("mmr", DESCENDING).skip(skip_count).limit(10)
+            )
+        else:
+            data = list(db_players.find())
+            for player in data:
+                player["Wins"] = len(
+                    [delta for delta in player["history"] if delta >= 0]
+                )
+                player["Losses"] = len(
+                    [delta for delta in player["history"] if delta < 0]
+                )
+                player["Winrate %"] = (
+                    round(player["Wins"] / (player["Wins"] + player["Losses"]) * 100, 2)
+                    if player["Wins"] + player["Losses"] > 0
+                    else 0
+                )
+
+            data.sort(key=lambda x: x[sort], reverse=True)
+            data = data[skip_count : skip_count + 10]
 
         tabledata = {
             "Placement": [i + skip_count + 1 for i in range(len(data))],
