@@ -19,11 +19,15 @@ async def update_roles(
     for player in mogi.players:
         discord_member: Member = get(ctx.guild.members, id=int(player.discord_id))
         if not discord_member:
-            await ctx.send(f"Skipped {player.name}, couldn't find member in server.")
+            await ctx.results_channel.send(
+                f"Skipped {player.name}, couldn't find member in server."
+            )
             continue
 
         if player in mogi.subs:
-            await ctx.send(f"Excluded {discord_member.mention} because they subbed")
+            await ctx.results_channel.send(
+                f"Excluded {discord_member.mention} because they subbed"
+            )
             continue
 
         current_rank = Rank.getRankByMMR(player.mmr)
@@ -40,4 +44,6 @@ async def update_roles(
                 ctx.get_lounge_role(f"Lounge - {new_rank.rankname}")
             )
 
-            await ctx.send(f"{discord_member.mention} is now in {new_rank.rankname}")
+            await ctx.results_channel.send(
+                f"{discord_member.mention} is now in {new_rank.rankname}"
+            )
