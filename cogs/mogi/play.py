@@ -89,6 +89,25 @@ class stop(commands.Cog):
                 await vote_msg.delete()
         await ctx.respond("Mogi has been stopped")
 
+    @slash_command(name="votes", description="Remind players to vote")
+    @is_mogi_in_progress()
+    async def votes(self, ctx: MogiApplicationContext):
+
+        if not ctx.mogi.voting_message_id:
+            return await ctx.respond("No vote found")
+
+        if len(ctx.mogi.players) == ctx.mogi.voters:
+            return await ctx.respond("All players have voted")
+
+        hasnt_voted = []
+        for player in ctx.mogi.players:
+            if player.discord_id not in ctx.mogi.voters:
+                hasnt_voted.append(player)
+
+        voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+
+        await ctx.respond(f"{'\n'.join(hasnt_voted)}\n\n{voting_message.jump_url}\nVote above!", ephemeral=True)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(stop(bot))
