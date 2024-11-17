@@ -82,7 +82,9 @@ class register(commands.Cog):
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=False,
         )
-        lounge_logger.info(f"{member.display_name} registered as {username}")
+        lounge_logger.info(
+            f"{member.display_name} registered as {username}", ephemeral=True
+        )
 
 
 def setup(bot: commands.Bot):
