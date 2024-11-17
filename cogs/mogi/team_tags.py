@@ -60,6 +60,8 @@ class team_tags(commands.Cog):
     @is_mogi_in_progress()
     @is_in_mogi()
     async def apply_roles(self, ctx: MogiApplicationContext):
+        await ctx.defer()
+
         if ctx.mogi.format == 1:
             return await ctx.respond("This command is not available in FFA mogis.")
 
@@ -80,6 +82,8 @@ class team_tags(commands.Cog):
     @is_mogi_in_progress()
     @is_in_mogi()
     async def unapply_roles(self, ctx: MogiApplicationContext):
+        await ctx.defer()
+
         all_team_roles = [get(ctx.guild.roles, name=f"Team {i+1}") for i in range(5)]
 
         if len(all_team_roles[0].members) == 0:
