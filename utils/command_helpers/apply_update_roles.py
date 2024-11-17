@@ -30,16 +30,14 @@ async def update_roles(
         new_rank = Rank.getRankByMMR(
             player.mmr + mogi.mmr_results_by_group[mogi.players.index(player)]
         )
-        await ctx.send(
-            f"{discord_member.display_name} is currently in {current_rank.rankname}"
-        )
-        await ctx.send(f"{discord_member.display_name} will be in {new_rank.rankname}")
 
-        if current_rank != new_rank:
-
-            await ctx.send(f"{discord_member.mention} is now in {new_rank.rankname}")
+        if current_rank.rankname != new_rank.rankname:
 
             await discord_member.remove_roles(
                 ctx.get_lounge_role(f"Lounge - {current_rank}")
             )
-            await discord_member.add_roles(ctx.get_lounge_role(f"Lounge - {new_rank}"))
+            await discord_member.add_roles(
+                ctx.get_lounge_role(f"Lounge - {new_rank.rankname}")
+            )
+
+            await ctx.send(f"{discord_member.mention} is now in {new_rank.rankname}")
