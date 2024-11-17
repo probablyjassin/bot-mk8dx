@@ -105,8 +105,11 @@ class stop(commands.Cog):
                 hasnt_voted.append(player)
 
         voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+        not_voted_str = "\n".join(hasnt_voted)
 
-        await ctx.respond(f"{'\n'.join(hasnt_voted)}\n\n{voting_message.jump_url}\nVote above!", ephemeral=True)
+        await ctx.respond(
+            f"{not_voted_str}\n\n{voting_message.jump_url}\nVote above!", ephemeral=True
+        )
 
 
 def setup(bot: commands.Bot):
