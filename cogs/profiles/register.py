@@ -80,11 +80,9 @@ class register(commands.Cog):
         await member.add_roles(ctx.get_lounge_role("Lounge - Silver"))
         await ctx.respond(
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
-            ephemeral=False,
+            ephemeral=True,
         )
-        lounge_logger.info(
-            f"{member.display_name} registered as {username}", ephemeral=True
-        )
+        lounge_logger.info(f"{member.display_name} registered as {username}")
 
 
 def setup(bot: commands.Bot):
