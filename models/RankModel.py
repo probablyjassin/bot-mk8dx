@@ -15,7 +15,7 @@ class Rank(Enum):
 
     WOOD = ("Wood", (-math.inf, 1))
     BRONZE = ("Bronze", (2, 1499))
-    SILVER = ("Silver", (1400, 2999))
+    SILVER = ("Silver", (1500, 2999))
     GOLD = ("Gold", (3000, 5099))
     PLATINUM = ("Platinum", (5100, 6999))
     DIAMOND = ("Diamond", (7000, 9499))
