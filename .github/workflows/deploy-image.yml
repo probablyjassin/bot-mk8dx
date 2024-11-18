@@ -28,6 +28,14 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Delete old package versions
+        uses: actions/delete-package-versions@v5
+        with:
+          package-name: mk8dx-yuzu-bot 
+          package-type: docker
+          token: ${{ secrets.FOR_CACHE_REPO_PAT }}
+          min-versions-to-keep: 3
+
       - name: Check for existing cache
         id: cache-check
         uses: actions/cache@v4
