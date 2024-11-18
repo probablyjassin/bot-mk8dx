@@ -35,7 +35,6 @@ jobs:
           package-type: docker
           token: ${{ secrets.FOR_CACHE_REPO_PAT }}
           min-versions-to-keep: 3
-          num-old-versions-to-delete: 50
 
       - name: Check for existing cache
         id: cache-check
