@@ -31,9 +31,9 @@ async def button_callback(
 
         # respond
         await interaction.respond(f"Voted for {label}", ephemeral=True)
-        await interaction.channel.send(
+        """ await interaction.channel.send(
             f"-# Debug: {interaction.user.name} voted for {label}"
-        )
+        ) """
 
         # check if vote is decided
         all_vote_counts = sorted(mogi.votes.values(), reverse=True)
