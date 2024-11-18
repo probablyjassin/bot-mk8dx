@@ -102,7 +102,7 @@ class stop(commands.Cog):
         hasnt_voted = []
         for player in ctx.mogi.players:
             if player.discord_id not in ctx.mogi.voters:
-                hasnt_voted.append(player)
+                hasnt_voted.append(f"<@{player.discord_id}>")
 
         voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
         not_voted_str = "\n".join(hasnt_voted)
