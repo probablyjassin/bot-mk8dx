@@ -31,6 +31,9 @@ async def button_callback(
 
         # respond
         await interaction.respond(f"Voted for {label}", ephemeral=True)
+        await interaction.channel.send(
+            f"-# Debug: {interaction.user.name} voted for {label}"
+        )
 
         # check if vote is decided
         if not (len(mogi.voters) >= len(mogi.players)) or not (
