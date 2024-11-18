@@ -15,9 +15,12 @@
 
 ```bash
 curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/main/docker-compose.yml
+curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/main/example.env
 ```
 
-- make sure the `.env` is present
+- comlpete the `example.env` with real values
+- rename `example.env` to `.env`
+
 
 ```bash
 docker compose up -d
