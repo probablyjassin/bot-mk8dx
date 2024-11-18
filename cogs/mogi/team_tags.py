@@ -79,7 +79,6 @@ class team_tags(commands.Cog):
         await ctx.respond("Assigned team roles")
 
     @team.command(name="unapply_roles", description="remove team roles")
-    @is_in_mogi()
     async def unapply_roles(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
