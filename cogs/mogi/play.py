@@ -107,8 +107,17 @@ class stop(commands.Cog):
         voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
         not_voted_str = "\n".join(hasnt_voted)
 
+        votes_str = "\n".join(
+            [
+                f"{format}: {amount}"
+                for format, amount in ctx.mogi.votes.items()
+                if amount > 0
+            ]
+        )
+
         await ctx.respond(
-            f"{not_voted_str}\n\n{voting_message.jump_url}\nVote above!", ephemeral=True
+            f"{not_voted_str}\n\n{votes_str}\n\n{voting_message.jump_url}\nVote above!",
+            ephemeral=True,
         )
 
 
