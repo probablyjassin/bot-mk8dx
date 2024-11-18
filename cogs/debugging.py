@@ -7,7 +7,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
-from utils.command_helpers.checks import is_admin, is_mogi_not_in_progress
+from utils.command_helpers.checks import is_admin, is_moderator, is_mogi_not_in_progress
 
 
 class debugging(commands.Cog):
@@ -20,6 +20,18 @@ class debugging(commands.Cog):
     @is_admin()
     async def current_mogi(self, ctx: MogiApplicationContext):
         await ctx.respond(f"Current Mogi: \n{ctx.mogi}")
+
+    @debug.command(name="votes", description="check the votes for the current mogi")
+    @is_moderator()
+    async def votes(self, ctx: MogiApplicationContext):
+        votes_str = "\n".join(
+            [
+                f"{format}: {amount}"
+                for format, amount in ctx.mogi.votes.items()
+                if amount > 0
+            ]
+        )
+        await ctx.respond(f"Votes: \n{votes_str}", ephemeral=True)
 
     @debug.command(name="all_mogis", description="print the mogi registry")
     @is_admin()
