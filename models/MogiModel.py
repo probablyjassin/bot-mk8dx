@@ -1,5 +1,6 @@
 import time
 from dataclasses import dataclass, field
+from bson import ObjectId
 
 from models.PlayerModel import PlayerProfile
 
@@ -262,4 +263,29 @@ class Mogi:
             started_at=data.get("started_at"),
             finished_at=data.get("finished_at"),
             disconnections=data.get("disconnections", 0),
+        )
+
+
+@dataclass
+class MogiHistoryData:
+    started_at: int
+    finished_at: int
+    player_ids: list[int]
+    format: int
+    subs: int
+    results: list[int]
+    disconnections: int
+    _id: ObjectId = field(default_factory=lambda: ObjectId())
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "MogiHistoryData":
+        return cls(
+            _id=ObjectId(data["_id"]),
+            started_at=data["started_at"],
+            finished_at=data["finished_at"],
+            player_ids=data["player_ids"],
+            format=data["format"],
+            subs=data["subs"],
+            results=data["results"],
+            disconnections=data["disconnections"],
         )

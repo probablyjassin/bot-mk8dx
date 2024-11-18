@@ -27,7 +27,7 @@ class help(commands.Cog):
         embed = create_embed(
             "Help",
             "Here you can find a brief summary of common commands.",
-            "https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/favicon/ms-icon-310x310.png",
+            "https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
             help_fields,
             {
                 "text": "Yuzu Online",

@@ -3,6 +3,7 @@ This module is responsible for connecting to the MongoDB database.
 #### Exports:
     db_players: Collection object
     db_archived: Collection object  
+    db_mogis: Collection object
 """
 
 import atexit

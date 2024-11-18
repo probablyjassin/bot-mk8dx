@@ -102,7 +102,7 @@ class player(commands.Cog):
 
         embed.set_author(
             name="Yuzu-Lounge",
-            icon_url="https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/favicon/android-icon-192x192.png",
+            icon_url="https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
         )
 
         embed.set_thumbnail(
