@@ -31,10 +31,11 @@ jobs:
       - name: Delete old package versions
         uses: actions/delete-package-versions@v5
         with:
-          package-name: mk8dx-yuzu-bot 
+          package-name: probablyjassin/bot-mk8dx
           package-type: docker
           token: ${{ secrets.FOR_CACHE_REPO_PAT }}
           min-versions-to-keep: 3
+          num-old-versions-to-delete: 100
 
       - name: Check for existing cache
         id: cache-check
