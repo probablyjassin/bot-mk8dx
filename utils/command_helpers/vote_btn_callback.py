@@ -36,10 +36,14 @@ async def button_callback(
         )
 
         # check if vote is decided
-        if not (len(mogi.voters) >= len(mogi.players)) or not (
-            mogi.votes[max(mogi.votes, key=mogi.votes.get)]
-            >= math.floor(len(mogi.players) / 2) + 1
-        ):
+        all_vote_counts = sorted(mogi.votes.values(), reverse=True)
+        second_highest_votes = all_vote_counts[1] if len(all_vote_counts) > 1 else 0
+
+        isDecided = len(mogi.voters) >= len(mogi.players) or max(
+            mogi.votes.values()
+        ) > (second_highest_votes + (len(mogi.players) - len(mogi.voters)))
+
+        if not isDecided:
             return
 
         # get winning format
