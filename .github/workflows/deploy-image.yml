@@ -31,7 +31,7 @@ jobs:
       - name: Delete old package versions
         uses: actions/delete-package-versions@v5
         with:
-          package-name: probablyjassin/bot-mk8dx
+          package-name: ghcr.io/probablyjassin/mk8dx-yuzu-bot
           package-type: docker
           token: ${{ secrets.FOR_CACHE_REPO_PAT }}
           min-versions-to-keep: 3
