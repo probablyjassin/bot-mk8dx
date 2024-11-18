@@ -66,8 +66,8 @@ class stats(commands.Cog):
             "Average DCs per Mogi": f"{average_disconnections:.1f}",
             "Most DCs in a Mogi": f"{max([mogi.disconnections for mogi in all_mogis])}",
             "Average Subs needed per Mogi": f"{average_subs:.1f}",
-            "Largest Gain": f"{max(all_results_ever)}",
-            "Largest Loss": f"{min(all_results_ever)}",
+            "Average Players per Mogi": f"{sum([len(mogi.player_ids) for mogi in all_mogis]) / len(all_mogis):.1f}",
+            "Biggest MMR Changes": f"Gain: {max(all_results_ever)}\n Loss: {min(all_results_ever)}",
             "How often do we play which format?": "\n".join(
                 [f"{key}: {formats_dict[key]}" for key in formats_dict.keys()]
             ),
