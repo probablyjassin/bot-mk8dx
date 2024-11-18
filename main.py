@@ -39,7 +39,7 @@ bot = YuzuLoungeBot(
     intents=intents,
     status=discord.Status.online,
     activity=discord.Streaming(
-        name="ones and zeroes", url="https://www.youtube.com/watch?v=xvFZjo5PgG0"
+        name="bytes for booting...", url="https://www.youtube.com/watch?v=xvFZjo5PgG0"
     ),
 )
 
