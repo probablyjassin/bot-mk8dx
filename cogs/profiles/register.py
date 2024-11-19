@@ -23,7 +23,7 @@ class register(commands.Cog):
         description="Register for playing in Lounge",
     )
     async def register(self, ctx: MogiApplicationContext):
-        await ctx.defer()
+        await ctx.defer(ephemeral=True)
 
         if ctx.channel_id != ctx.register_channel.id:
             return await ctx.respond(
@@ -78,7 +78,6 @@ class register(commands.Cog):
             )
         await member.add_roles(ctx.get_lounge_role("Lounge Player"))
         await member.add_roles(ctx.get_lounge_role("Lounge - Silver"))
-        await ctx.send("Cooking...")
         await ctx.respond(
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=True,
