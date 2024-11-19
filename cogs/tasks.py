@@ -2,7 +2,7 @@ import os
 import time
 import random
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, time, timedelta
 
 from discord import Activity, ActivityType, Streaming
 from discord.ext import commands, tasks
@@ -42,7 +42,7 @@ class tasks(commands.Cog):
     async def manage_state(self):
         state_manager.backup()
 
-    @tasks.loop(hours=24)
+    @tasks.loop(time=time(hour=12, minute=0))
     async def daily_db_backup(self):
         backup_folder = "./backups"
         date_format = "%d-%m-%Y"
