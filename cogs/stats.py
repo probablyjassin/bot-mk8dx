@@ -79,8 +79,8 @@ class stats(commands.Cog):
             "https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
             fields,
             {
-                "text": "Yuzu Online",
-                "icon_url": ctx.guild.icon.url,
+                "text": ctx.guild.name,
+                "icon_url": ctx.guild.icon.url if ctx.guild.icon else None,
             },
             color=Color.dark_magenta(),
         )
