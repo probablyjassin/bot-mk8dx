@@ -10,10 +10,6 @@ from discord.ext import commands, tasks
 from utils.data.state import state_manager
 from utils.data.database import db_players, db_mogis
 
-from logger import setup_logger
-
-lounge_logger = setup_logger(__name__, "backups.log", console=False)
-
 
 class tasks(commands.Cog):
     def __init__(self, bot):
@@ -48,9 +44,6 @@ class tasks(commands.Cog):
 
     @tasks.loop(time=time(hour=21, minute=0, second=0, tzinfo=timezone.utc))
     async def daily_db_backup(self):
-        print("Creating daily database backup...")
-        lounge_logger.info("Creating daily database backup...")
-
         backup_folder = "./backups"
         date_format = "%d-%m-%Y"
 
