@@ -80,7 +80,7 @@ class stats(commands.Cog):
             fields,
             {
                 "text": ctx.guild.name,
-                "icon_url": ctx.guild.icon.url if ctx.guild.icon else None,
+                "icon_url": ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None,
             },
             color=Color.dark_magenta(),
         )
