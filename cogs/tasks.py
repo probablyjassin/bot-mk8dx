@@ -42,13 +42,12 @@ class tasks(commands.Cog):
     async def manage_state(self):
         state_manager.backup()
 
-    @tasks.loop(time=time(hour=21, minute=0, second=0, tzinfo=timezone.utc))
+    @tasks.loop(time=time(hour=22, minute=0, second=0, tzinfo=timezone.utc))
     async def daily_db_backup(self):
-        backup_folder = "./backups"
+        backup_folder = "backups"
         date_format = "%d-%m-%Y"
 
-        if not os.path.exists(backup_folder):
-            os.makedirs(backup_folder)
+        os.makedirs(backup_folder, exist_ok=True)
 
         # Create the backup file
         backup_filename = os.path.join(
