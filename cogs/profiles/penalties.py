@@ -44,23 +44,24 @@ class penalties(commands.Cog):
     async def tax(
         self,
         ctx: MogiApplicationContext,
-        searched_player=Option(str, "Player to collect penalties from"),
+        player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player: PlayerProfile = search_player(searched_player)
-        mrboost: PlayerProfile = search_player("mrboost")
+        player_profile: PlayerProfile = search_player(player)
+        penalty_holder: PlayerProfile = search_player(self.bot.user.id)
 
         for mogi in list(mogi_manager.mogi_registry.values()):
-            if player in mogi.players:
+            if player_profile in mogi.players:
                 return await ctx.respond(
-                    f"Can't change MMR of <@{player.discord_id}> while they are in a mogi"
+                    f"Can't change MMR of <@{player_profile.discord_id}> while they are in a mogi",
+                    allowed_mentions=AllowedMentions.none(),
                 )
 
-        player.mmr = player.mmr - abs(mmr)
-        mrboost.mmr = mrboost.mmr + abs(mmr)
+        player_profile.mmr = player_profile.mmr - abs(mmr)
+        penalty_holder.mmr = penalty_holder.mmr + abs(mmr)
 
         await ctx.respond(
-            f"Collected penalties from <@{player.discord_id}>",
+            f"Collected penalties from <@{player_profile.discord_id}>",
             allowed_mentions=AllowedMentions.none(),
         )
 
