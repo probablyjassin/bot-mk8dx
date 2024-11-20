@@ -135,6 +135,7 @@ class Mogi:
         self.voters.clear()
         self.isVoting = False
         self.isPlaying = False
+        self.format = None
         self.teams.clear()
 
         self.isFinished = False
