@@ -50,7 +50,7 @@ class penalties(commands.Cog):
         mrboost: PlayerProfile = search_player("mrboost")
 
         player.mmr = player.mmr - abs(mmr)
-        mrboost.mmr += mrboost.mmr + abs(mmr)
+        mrboost.mmr = mrboost.mmr + abs(mmr)
 
         await ctx.respond("Penalties collected")
 
