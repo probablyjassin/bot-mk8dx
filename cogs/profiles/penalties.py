@@ -1,4 +1,4 @@
-from discord import slash_command, Embed, Option
+from discord import slash_command, Embed, Option, AllowedMentions
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -59,7 +59,10 @@ class penalties(commands.Cog):
         player.mmr = player.mmr - abs(mmr)
         mrboost.mmr = mrboost.mmr + abs(mmr)
 
-        await ctx.respond("Penalties collected")
+        await ctx.respond(
+            f"Collected penalties from <@{player.discord_id}>",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
 
 def setup(bot: commands.Bot):
