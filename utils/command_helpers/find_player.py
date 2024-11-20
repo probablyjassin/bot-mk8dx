@@ -7,6 +7,7 @@ def search_player(
     search_query: str | Int64 | int, from_archive: bool = False
 ) -> PlayerProfile | None:
     """
+    ## Search for a player in the database.
     Allow searching by both name and discord_id/mention. Performs both searches.
     """
     target_collection = db_players if not from_archive else db_archived
