@@ -18,7 +18,7 @@ def search_player(
                 {
                     "name": (
                         search_query.lower()
-                        if isinstance(str, search_query)
+                        if isinstance(search_query, str)
                         else search_query
                     )
                 },
