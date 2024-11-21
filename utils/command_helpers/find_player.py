@@ -15,7 +15,13 @@ def search_player(
     potential_player = target_collection.find_one(
         {
             "$or": [
-                {"name": search_query.lower()},
+                {
+                    "name": (
+                        search_query.lower()
+                        if isinstance(str, search_query)
+                        else search_query
+                    )
+                },
                 {
                     "discord_id": (
                         Int64(search_query)
