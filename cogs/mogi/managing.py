@@ -21,9 +21,6 @@ class managing(commands.Cog):
     manage = SlashCommandGroup(
         "manage", "Commands for mogi managers to manage players and such."
     )
-    replacement = manage.create_subgroup(
-        "replacement", "Substitute a player who can't play anymore."
-    )
 
     @manage.command(name="add", description="Add a player to the current mogi")
     @is_mogi_not_in_progress()
@@ -71,7 +68,7 @@ class managing(commands.Cog):
             allowed_mentions=AllowedMentions.none(),
         )
 
-    @replacement.command(
+    @manage.command(
         name="sub", description="Substitute a player who can't play anymore."
     )
     @is_mogi_in_progress()
@@ -121,7 +118,7 @@ class managing(commands.Cog):
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )
 
-    @replacement.command(
+    @manage.command(
         name="remove_sub",
         description="Remove a player from the sub list. Will let them lose MMR.",
     )
@@ -149,7 +146,7 @@ class managing(commands.Cog):
             allowed_mentions=AllowedMentions.none(),
         )
 
-    @replacement.command(name="add_sub", description="Add a player to the sub list.")
+    @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
     @is_moderator()
     async def add_sub(

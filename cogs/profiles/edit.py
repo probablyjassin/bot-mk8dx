@@ -6,6 +6,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
+from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_moderator
@@ -35,6 +36,12 @@ class edit(commands.Cog):
         ),
     ):
         player: PlayerProfile = search_player(searched_player)
+
+        for mogi in list(mogi_manager.mogi_registry.values()):
+            if player in mogi.players:
+                return await ctx.respond(
+                    f"Can't change MMR of <@{player.discord_id}> while they are in a mogi"
+                )
 
         if not player:
             await ctx.respond("Couldn't find that player")

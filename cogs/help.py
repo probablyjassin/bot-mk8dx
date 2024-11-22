@@ -30,8 +30,8 @@ class help(commands.Cog):
             "https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
             help_fields,
             {
-                "text": "Yuzu Online",
-                "icon_url": ctx.guild.icon.url,
+                "text": ctx.guild.name,
+                "icon_url": ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None,
             },
             color=Color.blue(),
             inline=False,

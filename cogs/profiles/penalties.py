@@ -1,9 +1,10 @@
-from discord import slash_command, Embed, Option
+from discord import slash_command, Embed, Option, AllowedMentions
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
+from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_moderator
 
@@ -43,16 +44,26 @@ class penalties(commands.Cog):
     async def tax(
         self,
         ctx: MogiApplicationContext,
-        searched_player=Option(str, "Player to collect penalties from"),
+        player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player: PlayerProfile = search_player(searched_player)
-        mrboost: PlayerProfile = search_player("mrboost")
+        player_profile: PlayerProfile = search_player(player)
+        penalty_holder: PlayerProfile = search_player(self.bot.user.id)
 
-        player.mmr = player.mmr - abs(mmr)
-        mrboost.mmr += mrboost.mmr + abs(mmr)
+        for mogi in list(mogi_manager.mogi_registry.values()):
+            if player_profile in mogi.players:
+                return await ctx.respond(
+                    f"Can't change MMR of <@{player_profile.discord_id}> while they are in a mogi",
+                    allowed_mentions=AllowedMentions.none(),
+                )
 
-        await ctx.respond("Penalties collected")
+        player_profile.mmr = player_profile.mmr - abs(mmr)
+        penalty_holder.mmr = penalty_holder.mmr + abs(mmr)
+
+        await ctx.respond(
+            f"Collected penalties from <@{player_profile.discord_id}>",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
 
 def setup(bot: commands.Bot):

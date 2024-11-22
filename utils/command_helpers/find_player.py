@@ -7,6 +7,7 @@ def search_player(
     search_query: str | Int64 | int, from_archive: bool = False
 ) -> PlayerProfile | None:
     """
+    ## Search for a player in the database.
     Allow searching by both name and discord_id/mention. Performs both searches.
     """
     target_collection = db_players if not from_archive else db_archived
@@ -14,7 +15,13 @@ def search_player(
     potential_player = target_collection.find_one(
         {
             "$or": [
-                {"name": search_query},
+                {
+                    "name": (
+                        search_query.lower()
+                        if isinstance(search_query, str)
+                        else search_query
+                    )
+                },
                 {
                     "discord_id": (
                         Int64(search_query)
