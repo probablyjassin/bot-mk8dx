@@ -80,16 +80,14 @@ class stats(commands.Cog):
             fields,
             {
                 "text": ctx.guild.name,
-                "icon_url": ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None,
+                "icon_url": (
+                    ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None
+                ),
             },
             color=Color.dark_magenta(),
         )
 
         await ctx.respond(embed=embed)
-
-    @slash_command(name="mogis", description="Show all mogis for the current season")
-    async def mogis(self, ctx: MogiApplicationContext):
-        await ctx.respond(list((db_mogis.find())))
 
 
 def setup(bot: commands.Bot):
