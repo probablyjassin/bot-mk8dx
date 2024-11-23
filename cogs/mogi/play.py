@@ -109,7 +109,6 @@ class stop(commands.Cog):
 
         await ctx.respond(
             f"{not_voted_str}\n\n{voting_message.jump_url}\nVote above!",
-            ephemeral=True,
         )
 
 
