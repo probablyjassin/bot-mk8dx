@@ -97,7 +97,7 @@ class participation(commands.Cog):
                             until=utcnow() + datetime.timedelta(minutes=2),
                             reason="Spamming mogi commands",
                         )
-            del self.last_join[ctx.author.id]
+                del self.last_join[ctx.author.id]
 
 
 def setup(bot: commands.Bot):
