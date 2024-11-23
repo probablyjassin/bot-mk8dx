@@ -1,5 +1,5 @@
 from discord import slash_command
-from discord.utils import get
+from discord.utils import get, utcnow
 from discord.ext import commands
 
 from utils.command_helpers.checks import is_mogi_not_in_progress
@@ -12,6 +12,7 @@ from models.PlayerModel import PlayerProfile
 
 from bson.int64 import Int64
 import asyncio
+import time, datetime
 
 
 class participation(commands.Cog):
@@ -19,6 +20,8 @@ class participation(commands.Cog):
         self.bot: commands.Bot = bot
         self.join_semaphore = asyncio.Semaphore(1)
         self.leave_semaphore = asyncio.Semaphore(1)
+
+        self.last_join: dict[int, int] = {}
 
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
@@ -60,6 +63,8 @@ class participation(commands.Cog):
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
+            self.last_join[ctx.author.id] = time.time()
+
     @slash_command(name="leave", description="Leave this mogi")
     @is_mogi_not_in_progress()
     async def leave(self, ctx: MogiApplicationContext):
@@ -83,6 +88,16 @@ class participation(commands.Cog):
             await ctx.respond(
                 f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
+
+            if user_id := self.last_join.get(ctx.author.id):
+                if time.time() - self.last_join[ctx.author.id] < 5:
+                    await ctx.send(f"<@{user_id}>, don't do that")
+                    if discord_user := get(ctx.guild.members, id=user_id):
+                        await discord_user.timeout(
+                            until=utcnow() + datetime.timedelta(minutes=2),
+                            reason="Spamming mogi commands",
+                        )
+            del self.last_join[ctx.author.id]
 
 
 def setup(bot: commands.Bot):
