@@ -93,7 +93,7 @@ class stop(commands.Cog):
     @is_mogi_in_progress()
     async def votes(self, ctx: MogiApplicationContext):
 
-        if not ctx.mogi.voting_message_id:
+        if not ctx.mogi.voting_message_id or not ctx.mogi.isVoting:
             return await ctx.respond("No vote found")
 
         if len(ctx.mogi.players) == ctx.mogi.voters:
