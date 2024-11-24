@@ -89,7 +89,7 @@ class participation(commands.Cog):
                 f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
-            if self.last_join.get(str(ctx.author.id)):
+            if self.last_join.get(str(ctx.author.id), None):
                 if time.time() - self.last_join[str(ctx.author.id)] < 5:
                     await ctx.send(f"<@{ctx.author.id}>, don't do that")
                     if discord_user := get(ctx.guild.members, id=ctx.author.id):
@@ -97,7 +97,7 @@ class participation(commands.Cog):
                             until=utcnow() + datetime.timedelta(minutes=5),
                             reason="Spamming mogi commands",
                         )
-                del self.last_join[ctx.author.id]
+                del self.last_join[str(ctx.author.id)]
 
 
 def setup(bot: commands.Bot):
