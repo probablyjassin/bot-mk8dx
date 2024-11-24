@@ -21,7 +21,7 @@ class participation(commands.Cog):
         self.join_semaphore = asyncio.Semaphore(1)
         self.leave_semaphore = asyncio.Semaphore(1)
 
-        self.last_join: dict[int, int] = {}
+        self.last_join: dict[str, int] = {}
 
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
@@ -63,7 +63,7 @@ class participation(commands.Cog):
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
-            self.last_join[ctx.author.id] = time.time()
+            self.last_join[str(ctx.author.id)] = time.time()
 
     @slash_command(name="leave", description="Leave this mogi")
     @is_mogi_not_in_progress()
@@ -89,12 +89,12 @@ class participation(commands.Cog):
                 f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
-            if user_id := self.last_join.get(ctx.author.id):
-                if time.time() - self.last_join[ctx.author.id] < 5:
-                    await ctx.send(f"<@{user_id}>, don't do that")
-                    if discord_user := get(ctx.guild.members, id=user_id):
+            if self.last_join.get(str(ctx.author.id)):
+                if time.time() - self.last_join[str(ctx.author.id)] < 5:
+                    await ctx.send(f"<@{ctx.author.id}>, don't do that")
+                    if discord_user := get(ctx.guild.members, id=ctx.author.id):
                         await discord_user.timeout(
-                            until=utcnow() + datetime.timedelta(minutes=2),
+                            until=utcnow() + datetime.timedelta(minutes=5),
                             reason="Spamming mogi commands",
                         )
                 del self.last_join[ctx.author.id]
