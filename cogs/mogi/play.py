@@ -82,11 +82,12 @@ class stop(commands.Cog):
 
         ctx.mogi.stop()
         if ctx.mogi.voting_message_id:
-            vote_msg: Message = await ctx.channel.fetch_message(
-                ctx.mogi.voting_message_id
-            )
-            if vote_msg:
-                await vote_msg.delete()
+            try:
+                await (
+                    await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+                ).delete()
+            except:
+                pass
         await ctx.respond("Mogi has been stopped")
 
     @slash_command(name="votes", description="Remind players to vote")
