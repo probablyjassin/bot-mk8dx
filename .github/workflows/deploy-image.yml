@@ -40,8 +40,8 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.FOR_CACHE_REPO_PAT }}
         run: |
-          if gh cache list --repo probablyjassin/bot-mk8dx | grep -q 'buildx'; then
-            gh cache delete --all --repo probablyjassin/bot-mk8dx
+          if gh cache list --repo ${{ github.repository }} | grep -q 'buildx'; then
+            gh cache delete --all --repo ${{ github.repository }}
           else
             echo "No caches to delete."
           fi
@@ -78,6 +78,6 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/probablyjassin/mk8dx-yuzu-bot:latest
+          tags: ghcr.io/${{ github.repository }}:latest
           cache-from: type=local,src=/tmp/.buildx-cache
           cache-to: type=local,dest=/tmp/.buildx-cache
