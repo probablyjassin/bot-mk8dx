@@ -1,7 +1,7 @@
 services:
   bot:
-    container_name: mk8dx-yuzu-bot
-    image: ghcr.io/probablyjassin/mk8dx-yuzu-bot:latest
+    container_name: mk8dx-bot
+    image: ghcr.io/probablyjassin/bot-mk8dx:latest
     restart: unless-stopped
     volumes:
       - ./state:/app/state
