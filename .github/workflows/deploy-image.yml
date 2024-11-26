@@ -55,22 +55,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Delete old package versions
-        uses: actions/delete-package-versions@v5
-        with:
-          # Name of the package.
-          # Required
-          package-name: mk8dx-yuzu-bot
-
+          #- name: Delete old package versions
+          #  uses: actions/delete-package-versions@v5
+          #  with:
+          #    # Name of the package.
+          #    # Required
+          #    package-name: mk8dx-yuzu-bot
+          #
           # Type of the package. Can be one of docker (v4 or older), container (v5 or newer), maven, npm, nuget, or rubygems.
           # Required
-          package-type: container
-
+          #package-type: container
+          #
           # The number of latest versions to keep.
           # This cannot be specified with `num-old-versions-to-delete`. By default, `min-versions-to-keep` takes precedence over `num-old-versions-to-delete`.
           # When set to 0, all deletable versions will be deleted.
           # When set greater than 0, all deletable package versions except the specified number will be deleted.
-          min-versions-to-keep: 1
+          #min-versions-to-keep: 1
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
