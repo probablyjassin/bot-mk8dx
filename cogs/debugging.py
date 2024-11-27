@@ -7,6 +7,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
+from utils.data.state import state_manager
 from utils.command_helpers.checks import is_admin, is_moderator, is_mogi_not_in_progress
 
 
@@ -58,6 +59,12 @@ class debugging(commands.Cog):
         )
         ctx.mogi.players.append(dummy)
         await ctx.respond(f"Added {dummy.name} to the mogi")
+
+    @debug.command(name="load_state", description="Load state")
+    @is_admin()
+    async def load_state(self, ctx: MogiApplicationContext):
+        state_manager.load_saved()
+        await ctx.respond("State loaded")
 
 
 def setup(bot: commands.Bot):
