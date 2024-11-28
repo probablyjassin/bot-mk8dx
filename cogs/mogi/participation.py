@@ -82,12 +82,6 @@ class participation(commands.Cog):
                 if player.discord_id != ctx.author.id
             ]
             await ctx.user.remove_roles(ctx.inmogi_role)
-            if len(ctx.mogi.players) == 0:
-                mogi_manager.destroy_mogi(ctx.channel.id)
-                return await ctx.respond("# This mogi has been closed.")
-            await ctx.respond(
-                f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
-            )
 
             if self.last_join.get(str(ctx.author.id), None):
                 if time.time() - self.last_join[str(ctx.author.id)] < 5:
@@ -98,6 +92,13 @@ class participation(commands.Cog):
                             reason="Spamming mogi commands",
                         )
                 del self.last_join[str(ctx.author.id)]
+
+            if len(ctx.mogi.players) == 0:
+                mogi_manager.destroy_mogi(ctx.channel.id)
+                return await ctx.respond("# This mogi has been closed.")
+            await ctx.respond(
+                f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
+            )
 
 
 def setup(bot: commands.Bot):
