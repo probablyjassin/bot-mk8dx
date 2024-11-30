@@ -66,6 +66,16 @@ class debugging(commands.Cog):
         state_manager.load_saved()
         await ctx.respond("State loaded")
 
+    @debug.command(name="perms", description="perms test")
+    @is_admin()
+    async def perms(self, ctx: MogiApplicationContext):
+        await ctx.respond(
+            f"Your perms: {ctx.author.guild_permissions.value}"
+            f"Admin role: {ctx.get_lounge_role("Admin").permissions.value}"
+            f"Moderator role: {ctx.get_lounge_role("Moderator").permissions.value}"
+            f"Mogi Manager role: {ctx.get_lounge_role("Mogi Manager").permissions.value}"
+        )
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(debugging(bot))
