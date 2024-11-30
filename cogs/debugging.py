@@ -71,9 +71,9 @@ class debugging(commands.Cog):
     async def perms(self, ctx: MogiApplicationContext):
         await ctx.respond(
             f"Your perms: {ctx.author.guild_permissions.value}"
-            f"Admin role: {ctx.get_lounge_role("Admin").permissions.value}"
-            f"Moderator role: {ctx.get_lounge_role("Moderator").permissions.value}"
-            f"Mogi Manager role: {ctx.get_lounge_role("Mogi Manager").permissions.value}"
+            f"Admin role: {ctx.get_lounge_role('Admin').permissions.value}"
+            f"Moderator role: {ctx.get_lounge_role('Moderator').permissions.value}"
+            f"Mogi Manager role: {ctx.get_lounge_role('Mogi Manager').permissions.value}"
         )
 
 
