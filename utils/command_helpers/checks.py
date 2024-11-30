@@ -41,7 +41,7 @@ def is_moderator():
                     ctx.get_lounge_role("Moderator").permissions
                 )
             ),
-            error_message="You're not allowed to use this command.",
+            error_message=f"You're not allowed to use this command. Debug Your Top Role:{ctx.author.top_role}",
         )
 
     return commands.check(predicate)
