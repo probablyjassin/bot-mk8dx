@@ -22,7 +22,7 @@ def is_mogi_manager():
         return await check(
             ctx=ctx,
             condition=(
-                ctx.author.guild_permissions.is_superset(
+                ctx.author.top_role.permissions.is_superset(
                     ctx.get_lounge_role("Mogi Manager").permissions
                 )
             ),
@@ -37,7 +37,7 @@ def is_moderator():
         return await check(
             ctx=ctx,
             condition=(
-                ctx.author.guild_permissions.is_superset(
+                ctx.author.top_role.permissions.is_superset(
                     ctx.get_lounge_role("Moderator").permissions
                 )
             ),
@@ -52,7 +52,7 @@ def is_admin():
         return await check(
             ctx=ctx,
             condition=(
-                ctx.author.guild_permissions.is_superset(
+                ctx.author.top_role.permissions.is_superset(
                     ctx.get_lounge_role("Admin").permissions
                 )
             ),
