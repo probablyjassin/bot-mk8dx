@@ -1,11 +1,12 @@
-from discord import ChannelType
+from discord import ChannelType, Member, Role
 from discord.ext import commands
 from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
+from enum import Enum
 
 
-async def check(
+async def _check(
     ctx: MogiApplicationContext,
     condition: bool,
     error_message: str = "You're not allowed to use this command.",
@@ -17,15 +18,28 @@ async def check(
         return False
 
 
+class LoungeRole(Enum):
+    ADMIN = ("Admin", 3)
+    MODERATOR = ("Moderator", 2)
+    MOGI_MANAGER = ("Mogi Manager", 1)
+
+
+def _is_at_least_role(ctx: MogiApplicationContext, role: LoungeRole) -> bool:
+    min_level = role.value[1]
+    for lounge_role in LoungeRole:
+        if (
+            ctx.get_lounge_role(lounge_role.value[0]) in ctx.author.roles
+            and lounge_role.value[1] >= min_level
+        ):
+            return True
+    return False
+
+
 def is_mogi_manager():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
-            condition=(
-                ctx.author.top_role.permissions.is_superset(
-                    ctx.get_lounge_role("Mogi Manager").permissions
-                )
-            ),
+            condition=_is_at_least_role(ctx, LoungeRole.MOGI_MANAGER),
             error_message="You're not allowed to use this command.",
         )
 
@@ -34,14 +48,9 @@ def is_mogi_manager():
 
 def is_moderator():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
-            condition=(
-                ctx.author.top_role.permissions.is_superset(
-                    ctx.get_lounge_role("Moderator").permissions
-                    or ctx.author.top_role >= ctx.get_lounge_role("Moderator")
-                )
-            ),
+            condition=_is_at_least_role(ctx, LoungeRole.MODERATOR),
             error_message=f"You're not allowed to use this command. Debug Your Top Role:{ctx.author.top_role}",
         )
 
@@ -50,13 +59,9 @@ def is_moderator():
 
 def is_admin():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
-            condition=(
-                ctx.author.top_role.permissions.is_superset(
-                    ctx.get_lounge_role("Admin").permissions
-                )
-            ),
+            condition=_is_at_least_role(ctx, LoungeRole.ADMIN),
             error_message="You're not allowed to use this command.",
         )
 
@@ -65,7 +70,7 @@ def is_admin():
 
 def is_mogi_open():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
             condition=(ctx.mogi != None),
             error_message="No open Mogi in this channel.",
@@ -76,7 +81,7 @@ def is_mogi_open():
 
 def is_in_mogi():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
             condition=(
                 ctx.author.id in [player.discord_id for player in ctx.mogi.players]
@@ -89,7 +94,7 @@ def is_in_mogi():
 
 def is_mogi_in_progress():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
             condition=ctx.mogi
             and (
@@ -103,7 +108,7 @@ def is_mogi_in_progress():
 
 def is_mogi_not_in_progress():
     async def predicate(ctx: MogiApplicationContext):
-        return await check(
+        return await _check(
             ctx=ctx,
             condition=ctx.mogi
             and (
