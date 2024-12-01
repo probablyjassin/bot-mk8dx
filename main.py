@@ -4,7 +4,7 @@ import discord
 from discord.ext import commands
 
 from logger import setup_logger
-from config import DISCORD_TOKEN
+from config import DISCORD_TOKEN, LOG_CHANNEL_ID
 from models.CustomMogiContext import MogiApplicationContext
 
 logger = setup_logger(__name__)
@@ -26,6 +26,8 @@ class YuzuLoungeBot(commands.Bot):
         return await super().get_application_context(interaction, cls=cls)
 
     async def close(self):
+        if channel := self.get_channel(LOG_CHANNEL_ID):
+            await channel.send("🔄 Bot is shutting down...")
         for name, cog in self.cogs.items():
             cog._eject(self)
             print(f"Ejected {name}")
