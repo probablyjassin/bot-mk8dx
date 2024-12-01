@@ -2,6 +2,7 @@ from discord.ext import commands
 
 from logger import setup_logger, highlight
 from utils.data.state import state_manager
+from config import LOG_CHANNEL_ID
 
 logger = setup_logger(__name__)
 
@@ -22,6 +23,7 @@ class ready(commands.Cog):
         """
         )
         state_manager.load_backup()
+        await (await self.bot.fetch_channel(LOG_CHANNEL_ID)).send("🟢 Bot is online!")
 
         print("Guilds:")
         for guild in self.bot.guilds:
