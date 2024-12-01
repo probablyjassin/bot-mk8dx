@@ -39,6 +39,7 @@ def is_moderator():
             condition=(
                 ctx.author.top_role.permissions.is_superset(
                     ctx.get_lounge_role("Moderator").permissions
+                    or ctx.author.top_role >= ctx.get_lounge_role("Moderator")
                 )
             ),
             error_message=f"You're not allowed to use this command. Debug Your Top Role:{ctx.author.top_role}",
