@@ -1,6 +1,5 @@
-from discord import ChannelType, Member, Role
+from discord import ChannelType
 from discord.ext import commands
-from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
 from enum import Enum
