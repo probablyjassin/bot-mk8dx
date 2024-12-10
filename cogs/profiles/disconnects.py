@@ -25,7 +25,17 @@ class disconnects(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = next(
+            (
+                p
+                for p in ctx.mogi.players
+                if p.discord_id == searched_player
+                or p.username.lower() == searched_player.lower()
+            ),
+            None,
+        )
+        if not player:
+            player = search_player(searched_player)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
@@ -46,7 +56,17 @@ class disconnects(commands.Cog):
         ),
         amount: int = Option(int, name="amount", description="amount of disconnects"),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = next(
+            (
+                p
+                for p in ctx.mogi.players
+                if p.discord_id == searched_player
+                or p.username.lower() == searched_player.lower()
+            ),
+            None,
+        )
+        if not player:
+            player = search_player(searched_player)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
