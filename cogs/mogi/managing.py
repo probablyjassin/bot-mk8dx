@@ -61,7 +61,9 @@ class managing(commands.Cog):
             return await ctx.respond("Player not in mogi or not found.")
 
         ctx.mogi.players.remove(player)
-        await ctx.interaction.user.remove_roles(ctx.inmogi_role)
+        await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
+            ctx.inmogi_role
+        )
 
         await ctx.respond(
             f"<@{player.discord_id}> got removed from the mogi.",
