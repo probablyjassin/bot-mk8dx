@@ -32,12 +32,7 @@ class disconnects(commands.Cog):
 
         if player in ctx.mogi.players:
             player: PlayerProfile = next(
-                (
-                    p
-                    for p in ctx.mogi.players
-                    if p.discord_id == searched_player
-                    or p.name == searched_player.lower()
-                ),
+                (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
                 None,
             )
 
