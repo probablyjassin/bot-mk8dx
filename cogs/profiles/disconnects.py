@@ -25,20 +25,21 @@ class disconnects(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = next(
-            (
-                p
-                for p in ctx.mogi.players
-                if p.discord_id == searched_player
-                or p.username.lower() == searched_player.lower()
-            ),
-            None,
-        )
-        if not player:
-            player = search_player(searched_player)
+        player = search_player(searched_player)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
+
+        if player in ctx.mogi.players:
+            player: PlayerProfile = next(
+                (
+                    p
+                    for p in ctx.mogi.players
+                    if p.discord_id == searched_player
+                    or p.name == searched_player.lower()
+                ),
+                None,
+            )
 
         player.add_disconnect()
 
