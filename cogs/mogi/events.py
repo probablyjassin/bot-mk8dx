@@ -8,12 +8,12 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players
 from utils.command_helpers.checks import is_mogi_open, is_moderator
 
-event = SlashCommandGroup(name="event", description="Event commands")
-
 
 class events(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+
+    event = SlashCommandGroup(name="event", description="Event commands")
 
     @event.command(
         name="give_mmr", description="Give MMR to all players in the current mogi"
