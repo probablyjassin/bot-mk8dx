@@ -6,7 +6,7 @@ from pymongo import UpdateOne
 from models.CustomMogiContext import MogiApplicationContext
 
 from utils.data.database import db_players
-from utils.command_helpers.checks import is_mogi_open
+from utils.command_helpers.checks import is_mogi_open, is_moderator
 
 event = SlashCommandGroup(name="event", description="Event commands")
 
@@ -18,6 +18,7 @@ class events(commands.Cog):
     @event.command(
         name="give_mmr", description="Give MMR to all players in the current mogi"
     )
+    @is_moderator()
     @is_mogi_open()
     async def give_mmr(
         self,
