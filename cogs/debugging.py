@@ -1,14 +1,19 @@
 import random
 from bson import ObjectId
 
-from discord import SlashCommandGroup
+from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
-from utils.command_helpers.checks import is_admin, is_moderator, is_mogi_not_in_progress
+from utils.command_helpers.checks import (
+    is_admin,
+    is_moderator,
+    is_mogi_manager,
+    is_mogi_not_in_progress,
+)
 
 
 class debugging(commands.Cog):
@@ -74,6 +79,16 @@ class debugging(commands.Cog):
             f"Admin role: {ctx.get_lounge_role('Admin').permissions.value}"
             f"Moderator role: {ctx.get_lounge_role('Moderator').permissions.value}"
             f"Mogi Manager role: {ctx.get_lounge_role('Mogi Manager').permissions.value}"
+        )
+
+    @debug.command(name="player_cap", description="change the player cap")
+    @is_mogi_manager()
+    async def player_cap(
+        self, ctx: MogiApplicationContext, cap: int = Option(int, "The new player cap")
+    ):
+        ctx.mogi.player_cap = cap
+        await ctx.respond(
+            f"Updated the player cap for this mogi to {ctx.mogi.player_cap}"
         )
 
 
