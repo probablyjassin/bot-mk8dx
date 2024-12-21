@@ -1,12 +1,12 @@
 from discord import slash_command, Option, SlashCommandGroup
 from discord.ext import commands
 
-import pymongo
 from pymongo import UpdateOne
 
 from models.CustomMogiContext import MogiApplicationContext
 
 from utils.data.database import db_players
+from utils.command_helpers.checks import is_mogi_open
 
 event = SlashCommandGroup(name="event", description="Event commands")
 
@@ -18,11 +18,17 @@ class events(commands.Cog):
     @event.command(
         name="give_mmr", description="Give MMR to all players in the current mogi"
     )
+    @is_mogi_open()
     async def give_mmr(
         self,
         ctx: MogiApplicationContext,
         amount: int = Option(int, "amount of mmr to give"),
     ):
+        if len(ctx.mogi.players) == 0:
+            return await ctx.respond("No players in the mogi")
+
+        await ctx.defer()
+
         all_player_names = [player.name for player in ctx.mogi.players]
         all_player_mmrs = [player.mmr for player in ctx.mogi.players]
         all_player_new_mmrs = [
