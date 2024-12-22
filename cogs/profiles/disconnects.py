@@ -30,7 +30,7 @@ class disconnects(commands.Cog):
         if not player:
             return await ctx.respond("Couldn't find that player")
 
-        if player in ctx.mogi.players:
+        if ctx.mogi and player in ctx.mogi.players:
             player: PlayerProfile = next(
                 (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
                 None,
@@ -57,7 +57,7 @@ class disconnects(commands.Cog):
         if not player:
             return await ctx.respond("Couldn't find that player")
 
-        if player in ctx.mogi.players:
+        if ctx.mogi and player in ctx.mogi.players:
             player: PlayerProfile = next(
                 (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
                 None,
