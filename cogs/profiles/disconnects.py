@@ -7,6 +7,8 @@ from models.PlayerModel import PlayerProfile
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_manager, is_moderator
 
+from utils.data.database import db_players
+
 
 class disconnects(commands.Cog):
     def __init__(self, bot):
@@ -68,6 +70,26 @@ class disconnects(commands.Cog):
         await ctx.respond(
             f"Set <@{player.discord_id}>'s DC count to {player.disconnects}"
         )
+
+    @disconnects.command(
+        name="list", description="Show the top 3 players with the most DCs"
+    )
+    async def disconnects_list(self, ctx: MogiApplicationContext):
+
+        players = sorted(
+            list(db_players.find({"disconnects": {"$gt": 0}})),
+            key=lambda p: p["disconnects"],
+            reverse=True,
+        )[:3]
+
+        players_str = "\n".join(
+            [
+                f"<@{player["discord_id"]}>: {player["disconnects"]}"
+                for player in players
+            ]
+        )
+
+        await ctx.respond(f"Top 3 players with the most DCs: \n{players_str}")
 
 
 def setup(bot: commands.Bot):
