@@ -1,4 +1,4 @@
-from discord import SlashCommandGroup, Option
+from discord import SlashCommandGroup, Option, AllowedMentions
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -89,7 +89,10 @@ class disconnects(commands.Cog):
             ]
         )
 
-        await ctx.respond(f"Top 3 players with the most DCs: \n{players_str}")
+        await ctx.respond(
+            f"Top 3 players with the most DCs: \n{players_str}",
+            allowed_mentions=AllowedMentions.none(),
+        )
 
 
 def setup(bot: commands.Bot):
