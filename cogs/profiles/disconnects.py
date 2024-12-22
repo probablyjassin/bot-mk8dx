@@ -84,7 +84,7 @@ class disconnects(commands.Cog):
 
         players_str = "\n".join(
             [
-                f"<@{player["discord_id"]}>: {player["disconnects"]}"
+                f"<@{player['discord_id']}>: {player['disconnects']}"
                 for player in players
             ]
         )
