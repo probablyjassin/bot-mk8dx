@@ -34,7 +34,7 @@ class MogiApplicationContext(discord.ApplicationContext):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.mogi: Mogi = mogi_manager.get_mogi(self.channel.id)
+        self.mogi: Mogi | None = mogi_manager.get_mogi(self.channel.id)
 
         self.main_guild: discord.Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: discord.Role = get(self.main_guild.roles, name="InMogi")
