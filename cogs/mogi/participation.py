@@ -58,7 +58,7 @@ class participation(commands.Cog):
                 )
 
             ctx.mogi.players.append(player)
-            await ctx.user.add_roles(ctx.inmogi_role)
+            await ctx.user.add_roles(ctx.inmogi_role, ctx.reopening_role)
             await ctx.respond(
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
@@ -81,7 +81,7 @@ class participation(commands.Cog):
                 for player in ctx.mogi.players
                 if player.discord_id != ctx.author.id
             ]
-            await ctx.user.remove_roles(ctx.inmogi_role)
+            await ctx.user.remove_roles(ctx.inmogi_role, ctx.reopening_role)
 
             if self.last_join.get(str(ctx.author.id), None):
                 if time.time() - self.last_join[str(ctx.author.id)] < 5:
