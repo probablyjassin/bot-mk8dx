@@ -6,7 +6,7 @@ from models.PlayerModel import PlayerProfile
 
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.find_player import search_player
-from utils.command_helpers.checks import is_moderator
+from utils.command_helpers.checks import is_mogi_manager
 
 
 class penalties(commands.Cog):
@@ -40,7 +40,7 @@ class penalties(commands.Cog):
         name="tax",
         description="Collect MMR for penalties",
     )
-    @is_moderator()
+    @is_mogi_manager()
     async def tax(
         self,
         ctx: MogiApplicationContext,
