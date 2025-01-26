@@ -13,6 +13,7 @@ from utils.data.state import state_manager
 from utils.data.database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
+from main import logger
 
 
 class tasks(commands.Cog):
@@ -28,8 +29,8 @@ class tasks(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def ping_healthcheck(self):
+        logger.info("Pinging healthcheck...")
         requests.get(HEALTHCHECK_URL)
-        # print("Pinging healthcheck...")
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
