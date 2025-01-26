@@ -3,7 +3,7 @@ import time
 import random
 import json
 
-# import requests
+import requests
 from datetime import datetime, timezone, time, timedelta
 
 from discord import Activity, ActivityType, Streaming
