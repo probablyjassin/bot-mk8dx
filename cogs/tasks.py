@@ -14,6 +14,8 @@ from utils.data.database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
 
+requests.get("https://google.com")
+
 
 class tasks(commands.Cog):
     def __init__(self, bot):
