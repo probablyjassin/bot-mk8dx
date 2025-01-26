@@ -2,7 +2,8 @@ import os
 import time
 import random
 import json
-import requests
+
+# import requests
 from datetime import datetime, timezone, time, timedelta
 
 from discord import Activity, ActivityType, Streaming
@@ -20,14 +21,14 @@ class tasks(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        self.ping_healthcheck.start()
+        """self.ping_healthcheck.start()"""
         self.change_activity.start()
         self.manage_state.start()
         self.daily_db_backup.start()
 
-    @tasks.loop(seconds=60)
+    """ @tasks.loop(seconds=60)
     async def ping_healthcheck(self):
-        requests.get(HEALTHCHECK_URL)
+        requests.get(HEALTHCHECK_URL) """
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
