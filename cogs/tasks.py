@@ -28,8 +28,8 @@ class tasks(commands.Cog):
 
     @tasks.loop(seconds=60)
     async def ping_healthcheck(self):
-        """requests.get(HEALTHCHECK_URL)"""
-        print("Pinging healthcheck...")
+        requests.get(HEALTHCHECK_URL)
+        # print("Pinging healthcheck...")
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
