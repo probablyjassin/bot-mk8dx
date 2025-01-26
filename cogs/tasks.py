@@ -14,8 +14,6 @@ from utils.data.database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
 
-requests.get(HEALTHCHECK_URL)
-
 
 class tasks(commands.Cog):
     def __init__(self, bot):
@@ -28,9 +26,10 @@ class tasks(commands.Cog):
         self.manage_state.start()
         self.daily_db_backup.start()
 
-    """ @tasks.loop(seconds=60)
+    @tasks.loop(seconds=60)
     async def ping_healthcheck(self):
-        requests.get(HEALTHCHECK_URL) """
+        """requests.get(HEALTHCHECK_URL)"""
+        print("Pinging healthcheck...")
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
