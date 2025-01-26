@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     chromium \
     chromium-driver \
     git \
+    python3-cairo \
     && rm -rf /var/lib/apt/lists/*
 
 # Setup project and install dependencies
