@@ -2,6 +2,7 @@ import os
 import time
 import random
 import json
+import requests
 from datetime import datetime, timezone, time, timedelta
 
 from discord import Activity, ActivityType, Streaming
@@ -10,6 +11,8 @@ from discord.ext import commands, tasks
 from utils.data.state import state_manager
 from utils.data.database import db_players, db_mogis
 
+from config import HEALTHCHECK_URL
+
 
 class tasks(commands.Cog):
     def __init__(self, bot):
@@ -17,9 +20,14 @@ class tasks(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
+        self.ping_healthcheck.start()
         self.change_activity.start()
         self.manage_state.start()
         self.daily_db_backup.start()
+
+    @tasks.loop(seconds=60)
+    async def ping_healthcheck(self):
+        requests.get(HEALTHCHECK_URL)
 
     @tasks.loop(seconds=15)
     async def change_activity(self):

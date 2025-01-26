@@ -5,6 +5,8 @@ load_dotenv()
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
+HEALTHCHECK_URL = os.getenv("HEALTHCHECK_URL")
+
 MONGO_URI = os.getenv("MONGO_URI")
 LOUNGE_DB = os.getenv("LOUNGE_DB")
 
