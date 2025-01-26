@@ -21,7 +21,7 @@ class tasks(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        """self.ping_healthcheck.start()"""
+        self.ping_healthcheck.start()
         self.change_activity.start()
         self.manage_state.start()
         self.daily_db_backup.start()
