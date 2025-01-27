@@ -27,10 +27,10 @@ class tasks(commands.Cog):
         self.manage_state.start()
         self.daily_db_backup.start()
 
-    @tasks.loop(seconds=60)
-    async def ping_healthcheck(self):
-        logger.info("Pinging healthcheck...")
-        requests.get(HEALTHCHECK_URL)
+    # @tasks.loop(seconds=60)
+    # async def ping_healthcheck(self):
+    #     logger.info("Pinging healthcheck...")
+    #     requests.get(HEALTHCHECK_URL)
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
