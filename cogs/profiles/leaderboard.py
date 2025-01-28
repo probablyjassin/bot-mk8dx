@@ -146,7 +146,7 @@ class leaderboard(commands.Cog):
             ).set_caption(f"Leaderboard sorted by {sort} | Page {page_index}"),
             buffer,
             dpi=200,
-            table_conversion="html2image",
+            table_conversion="matplotlib",
         )
         buffer.seek(0)
 
