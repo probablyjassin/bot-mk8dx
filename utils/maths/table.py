@@ -82,7 +82,7 @@ def create_table(mogi: Mogi) -> BytesIO:
             subset=["Change"],
         ),
         buffer,
-        table_conversion="playwright",
+        table_conversion="playwright_async",
     )
 
     buffer.seek(0)
