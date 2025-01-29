@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord
+git+https://github.com/Pycord-Development/pycord.git@dbd9f1bcc75524d757cce45fbc43009e53aed251
 python-dotenv
 aiohttp
 pymongo
