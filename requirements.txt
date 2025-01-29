@@ -7,3 +7,4 @@ colorlog
 matplotlib
 dataframe_image
 pandas
+playwright
