@@ -82,7 +82,7 @@ def create_table(mogi: Mogi) -> BytesIO:
             subset=["Change"],
         ),
         buffer,
-        table_conversion="matplotlib",
+        table_conversion="playwright",
     )
 
     buffer.seek(0)
