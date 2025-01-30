@@ -28,8 +28,11 @@ class debugging(commands.Cog):
         await ctx.respond(f"Current Mogi: \n{ctx.mogi}")
 
     @debug.command(name="votes", description="check the votes for the current mogi")
-    @is_moderator()
+    @is_mogi_manager()
     async def votes(self, ctx: MogiApplicationContext):
+        if ctx.interaction.user.id not in ctx.mogi.voters:
+            return await ctx.respond("You have not voted yet", ephemeral=True)
+
         votes_str = "\n".join(
             [
                 f"{format}: {amount}"
