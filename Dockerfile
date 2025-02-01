@@ -1,4 +1,4 @@
-FROM selenium/standalone-chrome
+FROM selenium/standalone-chrome:latest
 
 # Metadata
 LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8dx"
