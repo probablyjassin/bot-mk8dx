@@ -1,4 +1,4 @@
-FROM zenika/alpine-chrome:latest
+FROM python:3.10-slim
 
 # Metadata
 LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8dx"
@@ -7,7 +7,10 @@ LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
-    git
+    chromium \
+    chromium-driver \
+    git \
+    && rm -rf /var/lib/apt/lists/*
 
 # Setup project and install dependencies
 WORKDIR /app
