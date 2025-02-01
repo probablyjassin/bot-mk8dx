@@ -1,4 +1,4 @@
-FROM python:3.10-slim
+FROM selenium/standalone-chrome
 
 # Metadata
 LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8dx"
@@ -15,8 +15,7 @@ WORKDIR /app
 
 COPY requirements.txt /app
 
-RUN pip install --no-cache-dir -r requirements.txt && \
-    playwright install chromium
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 
