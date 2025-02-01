@@ -7,8 +7,7 @@ LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+    git
 
 # Setup project and install dependencies
 WORKDIR /app
