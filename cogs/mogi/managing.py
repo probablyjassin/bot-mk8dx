@@ -47,7 +47,7 @@ class managing(commands.Cog):
         )
 
         await ctx.respond(
-            f"<@{player_profile.discord_id}> joined the mogi! (against their will)",
+            f"<@{player_profile.discord_id}> joined the mogi! (against their will)"
         )
 
     @manage.command(name="remove", description="Remove a player from the current mogi")
