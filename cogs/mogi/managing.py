@@ -42,6 +42,10 @@ class managing(commands.Cog):
             return await ctx.respond("Player is already in the mogi", ephemeral=True)
 
         ctx.mogi.players.append(player_profile)
+        await (await ctx.guild.fetch_member(player_profile.discord_id)).add_roles(
+            ctx.inmogi_role, ctx.reopening_role
+        )
+
         await ctx.respond(
             f"<@{player_profile.discord_id}> joined the mogi! (against their will)"
         )
