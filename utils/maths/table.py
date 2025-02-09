@@ -7,7 +7,7 @@ from matplotlib import colors
 from models.MogiModel import Mogi
 
 
-def create_table(mogi: Mogi) -> BytesIO:
+async def create_table(mogi: Mogi) -> BytesIO:
 
     all_player_names = [player.name for player in mogi.players]
     all_player_mmrs = [player.mmr for player in mogi.players]
@@ -34,7 +34,7 @@ def create_table(mogi: Mogi) -> BytesIO:
         df = df.sort_values(by="Pos.", ascending=True)
 
     buffer = BytesIO()
-    dfi.export(
+    await dfi.export_async(
         df.style.set_table_styles(
             [
                 {
@@ -82,6 +82,7 @@ def create_table(mogi: Mogi) -> BytesIO:
             subset=["Change"],
         ),
         buffer,
+        table_conversion="playwright_async",
     )
 
     buffer.seek(0)

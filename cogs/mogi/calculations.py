@@ -98,7 +98,7 @@ class calculations(commands.Cog):
             )
         # Store the date of the results
         ctx.mogi.results_date = time.strftime("%d%m%y")
-        file = File(create_table(ctx.mogi), filename="table.png")
+        file = File(await create_table(ctx.mogi), filename="table.png")
         message = await ctx.results_channel.send(
             content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
         )

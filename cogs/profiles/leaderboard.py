@@ -102,7 +102,7 @@ class leaderboard(commands.Cog):
 
         buffer = BytesIO()
 
-        dfi.export(
+        await dfi.export_async(
             df.style.set_table_styles(
                 [
                     {
@@ -146,6 +146,7 @@ class leaderboard(commands.Cog):
             ).set_caption(f"Leaderboard sorted by {sort} | Page {page_index}"),
             buffer,
             dpi=200,
+            table_conversion="playwright_async",
         )
         buffer.seek(0)
 
