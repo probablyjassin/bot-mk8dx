@@ -173,7 +173,7 @@ class PlayerProfile:
 
     # Custom deleter
     @suspended.deleter
-    def inactive(self):
+    def suspended(self):
         self._suspended = None
         db_players.update_one(
             {"_id": self._id},
