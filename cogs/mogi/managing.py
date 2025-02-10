@@ -43,7 +43,7 @@ class managing(commands.Cog):
 
         ctx.mogi.players.append(player_profile)
         await (await ctx.guild.fetch_member(player_profile.discord_id)).add_roles(
-            ctx.inmogi_role, ctx.reopening_role
+            ctx.inmogi_role
         )
 
         await ctx.respond(
