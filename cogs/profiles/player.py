@@ -97,6 +97,9 @@ class player(commands.Cog):
         if getattr(player, "inactive", None):
             embed.add_field(name="Inactive", value="Account marked for inactivity")
 
+        if getattr(player, "suspended", None):
+            embed.add_field(name="Suspended", value="Account suspended from Lounge")
+
         if getattr(player, "disconnects", None):
             embed.add_field(name="DCd", value=f"{player.disconnects} times")
 
