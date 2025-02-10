@@ -38,7 +38,6 @@ class MogiApplicationContext(discord.ApplicationContext):
 
         self.main_guild: discord.Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: discord.Role = get(self.main_guild.roles, name="InMogi")
-        self.reopening_role: discord.Role = get(self.main_guild.roles, name="Reopening")
 
         self.register_channel: discord.TextChannel = get(
             self.main_guild.text_channels, id=REGISTER_CHANNEL_ID

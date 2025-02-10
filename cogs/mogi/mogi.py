@@ -31,7 +31,7 @@ class mogi(commands.Cog):
         if await confirmation(ctx, close_confirm_message):
             for player in ctx.mogi.players:
                 await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
-                    ctx.inmogi_role, ctx.reopening_role
+                    ctx.inmogi_role
                 )
 
             mogi_manager.destroy_mogi(ctx.mogi.channel_id)
