@@ -13,10 +13,8 @@ async def create_table(mogi: Mogi) -> BytesIO:
     all_player_mmrs = [player.mmr for player in mogi.players]
 
     all_player_new_mmrs = [
-        (
-            all_player_mmrs[i] + mogi.mmr_results_by_group[i]
-            if all_player_mmrs[i] + mogi.mmr_results_by_group[i] >= 1
-            else 1
+        max(
+            (1, all_player_mmrs[i] + mogi.mmr_results_by_group[i]),
         )
         for i in range(len(mogi.players))
     ]
