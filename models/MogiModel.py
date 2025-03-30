@@ -151,6 +151,7 @@ class Mogi:
         all_points = {}
 
         for line in tablestring.split("\n"):
+            line = line.replace("|", "+")
             for player in self.players:
                 if player.name in line:
                     parts = [part.split("+") for part in line.split()]
