@@ -5,6 +5,8 @@ from discord.ui import Button, View
 from models.MogiModel import Mogi
 from utils.command_helpers.vote_btn_callback import button_callback
 
+import random
+
 
 def get_button_style(format: int, player_count: int) -> discord.ButtonStyle:
     if player_count % format == 0 and player_count > format:
@@ -24,7 +26,7 @@ def create_button(label: str, mogi: Mogi) -> Button:
     button = Button(
         label=label,
         style=get_button_style(FORMAT_BUTTON_INT, len(mogi.players)),
-        custom_id=label.lower(),
+        custom_id=label.lower() + str(random.random),
     )
     button.callback = custom_callback
     return button
