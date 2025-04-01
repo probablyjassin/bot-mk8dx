@@ -26,7 +26,7 @@ def create_button(label: str, mogi: Mogi) -> Button:
     button = Button(
         label=label,
         style=get_button_style(FORMAT_BUTTON_INT, len(mogi.players)),
-        custom_id=label.lower() + str(random.random),
+        custom_id=label.lower(),
     )
     button.callback = custom_callback
     return button
