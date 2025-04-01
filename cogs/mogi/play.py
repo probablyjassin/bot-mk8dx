@@ -38,7 +38,7 @@ class stop(commands.Cog):
         ctx.mogi.isVoting = True
 
         # april fools
-        view = create_button_view(["FFA", "5v5"], ctx.mogi)
+        view = create_button_view(["FFA"], ctx.mogi)
         message = await ctx.respond(
             f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in ctx.mogi.players])}||",
             view=view,

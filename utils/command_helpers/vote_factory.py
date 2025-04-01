@@ -17,7 +17,6 @@ def get_button_style(format: int, player_count: int) -> discord.ButtonStyle:
 def create_button(label: str, mogi: Mogi) -> Button:
 
     FORMAT_BUTTON_INT = int(label.lower()[0]) if label.lower()[0].isnumeric() else 1
-    FORMAT_BUTTON_INT = 1
 
     async def custom_callback(interaction: Interaction):
         await button_callback(
