@@ -13,6 +13,7 @@ from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
 
+from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.command_helpers.checks import (
@@ -154,6 +155,7 @@ class calculations(commands.Cog):
                 await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
                     ctx.inmogi_role
                 )
+            await remove_team_roles(ctx=ctx)
             mogi_manager.destroy_mogi(ctx.channel.id)
             return await ctx.respond("# This channel's Mogi is finished and closed.")
 
