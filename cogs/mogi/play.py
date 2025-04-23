@@ -75,8 +75,11 @@ class stop(commands.Cog):
     @is_mogi_in_progress()
     async def stop(self, ctx: MogiApplicationContext):
 
-        # user not in the mogi
-        if not ctx.inmogi_role in ctx.user.roles:
+        # user not in the mogi (except for mogi managers)
+        if (
+            not ctx.inmogi_role in ctx.user.roles
+            and ctx.get_lounge_role("Mogi Manager") not in ctx.user.roles
+        ):
             return await ctx.respond(
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
