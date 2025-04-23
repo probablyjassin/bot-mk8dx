@@ -115,7 +115,7 @@ def is_mogi_not_in_progress():
                 and (not ctx.mogi.isPlaying)
                 or (ctx.mogi.isFinished)
             ),
-            error_message="The mogi is either not in progress or has already finished calculations.",
+            error_message="The mogi is either still in progress or hasn't finished calculations yet.",
         )
 
     return commands.check(predicate)
