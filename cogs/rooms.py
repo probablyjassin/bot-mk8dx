@@ -18,6 +18,14 @@ class rooms(commands.Cog):
     async def room(self, ctx: MogiApplicationContext):
         room: Room = get_room_info(ServerType.MAIN)
 
+        if not room:
+            return await ctx.respond(
+                embed=create_embed(
+                    title="Room not found",
+                    description="The room browser may be temporarily unavailable.",
+                )
+            )
+
         info = {
             "Players": f"{len(room.players)}/{room.maxPlayers}",
         }
@@ -39,6 +47,14 @@ class rooms(commands.Cog):
     @slash_command(name="status", description="Get the status of the current mogi")
     async def status(self, ctx: MogiApplicationContext):
         room: Room = get_room_info(ServerType.LOUNGE)
+
+        if not room:
+            return await ctx.respond(
+                embed=create_embed(
+                    title="Room not found",
+                    description="The room browser may be temporarily unavailable.",
+                )
+            )
 
         data = {}
 
