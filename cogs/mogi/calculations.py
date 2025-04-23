@@ -1,5 +1,6 @@
 import math
 import time
+import asyncio
 
 from discord import SlashCommandGroup, ChannelType, Thread, File
 from discord.ext import commands
@@ -23,6 +24,8 @@ from utils.command_helpers.checks import (
 class calculations(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+        self.apply_semaphore = asyncio.Semaphore(1)
+        self.collect_semaphore = asyncio.Semaphore(1)
 
     points = SlashCommandGroup(
         name="points", description="Commands for point collection and mmr calculation."
@@ -32,80 +35,81 @@ class calculations(commands.Cog):
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):
-        if ctx.mogi.collected_points:
-            return await ctx.respond("Already collected points.")
+        async with self.collect_semaphore:
+            if ctx.mogi.collected_points:
+                return await ctx.respond("Already collected points.")
 
-        await ctx.response.defer()
+            await ctx.response.defer()
 
-        # Create a thread to collect points
-        points_collection_thread: Thread = await ctx.channel.create_thread(
-            name=f"collecting-points-{ctx.author.name}",
-            type=ChannelType.public_thread,
-        )
-        await points_collection_thread.send(
-            f"{ctx.author.mention}, send the tablestring from `/l context:tablestring` to collect points from it."
-        )
-
-        # Wait for the tablestring to be sent in the thread
-        tablestring: str = await get_awaited_message(
-            self.bot, ctx, points_collection_thread
-        )
-
-        # clean up by deleting the thread
-        await points_collection_thread.delete()
-        if not tablestring:
-            return
-
-        # Collect the points to the mogi
-        try:
-            ctx.mogi.collect_points(tablestring)
-        except ValueError as e:
-            return await ctx.respond("Invalid tablestring format.")
-
-        # obtain the placements from the collected points
-        placements = []
-        for score in ctx.mogi.collected_points:
-            placements.append(
-                get_placements_from_scores(ctx.mogi.collected_points)[score]
+            # Create a thread to collect points
+            points_collection_thread: Thread = await ctx.channel.create_thread(
+                name=f"collecting-points-{ctx.author.name}",
+                type=ChannelType.public_thread,
+            )
+            await points_collection_thread.send(
+                f"{ctx.author.mention}, send the tablestring from `/l context:tablestring` to collect points from it."
             )
 
-        # break down names and mmrs of all players
-        all_player_mmrs = [player.mmr for player in ctx.mogi.players]
-
-        # Calculate MMR results
-        results = calculate_mmr(
-            all_player_mmrs,
-            placements,
-            ctx.mogi.format,
-        )
-
-        # apply custom mmr scaling
-        results = [
-            math.ceil(rating * 1.2) if rating > 0 else rating for rating in results
-        ]
-
-        # store the results in the mogi, extended for every player
-        for delta in results:
-            ctx.mogi.mmr_results_by_group.extend([delta] * ctx.mogi.format)
-
-        # Store the Placements in order of Players/Teams
-        for place in placements:
-            ctx.mogi.placements_by_group.extend([place] * ctx.mogi.format)
-
-        if not len(ctx.mogi.mmr_results_by_group) == len(ctx.mogi.players):
-            return await ctx.respond(
-                "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
+            # Wait for the tablestring to be sent in the thread
+            tablestring: str = await get_awaited_message(
+                self.bot, ctx, points_collection_thread
             )
-        # Store the date of the results
-        ctx.mogi.results_date = time.strftime("%d%m%y")
-        file = File(await create_table(ctx.mogi), filename="table.png")
-        message = await ctx.results_channel.send(
-            content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
-        )
 
-        await ctx.respond("Results got posted in the results channel.")
+            # clean up by deleting the thread
+            await points_collection_thread.delete()
+            if not tablestring:
+                return
 
-        ctx.mogi.table_message_id = message.id
+            # Collect the points to the mogi
+            try:
+                ctx.mogi.collect_points(tablestring)
+            except ValueError as e:
+                return await ctx.respond("Invalid tablestring format.")
+
+            # obtain the placements from the collected points
+            placements = []
+            for score in ctx.mogi.collected_points:
+                placements.append(
+                    get_placements_from_scores(ctx.mogi.collected_points)[score]
+                )
+
+            # break down names and mmrs of all players
+            all_player_mmrs = [player.mmr for player in ctx.mogi.players]
+
+            # Calculate MMR results
+            results = calculate_mmr(
+                all_player_mmrs,
+                placements,
+                ctx.mogi.format,
+            )
+
+            # apply custom mmr scaling
+            results = [
+                math.ceil(rating * 1.2) if rating > 0 else rating for rating in results
+            ]
+
+            # store the results in the mogi, extended for every player
+            for delta in results:
+                ctx.mogi.mmr_results_by_group.extend([delta] * ctx.mogi.format)
+
+            # Store the Placements in order of Players/Teams
+            for place in placements:
+                ctx.mogi.placements_by_group.extend([place] * ctx.mogi.format)
+
+            if not len(ctx.mogi.mmr_results_by_group) == len(ctx.mogi.players):
+                return await ctx.respond(
+                    "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
+                )
+            # Store the date of the results
+            ctx.mogi.results_date = time.strftime("%d%m%y")
+            file = File(await create_table(ctx.mogi), filename="table.png")
+            message = await ctx.results_channel.send(
+                content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
+            )
+
+            await ctx.respond("Results got posted in the results channel.")
+
+            ctx.mogi.table_message_id = message.id
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
@@ -130,27 +134,28 @@ class calculations(commands.Cog):
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def apply(self, ctx: MogiApplicationContext):
-        await ctx.response.defer()
+        async with self.apply_semaphore:
+            await ctx.response.defer()
 
-        if not ctx.mogi.mmr_results_by_group:
-            return await ctx.respond("No results to apply or already applied")
+            if not ctx.mogi.mmr_results_by_group:
+                return await ctx.respond("No results to apply or already applied")
 
-        if not len(ctx.mogi.mmr_results_by_group) == len(ctx.mogi.players):
-            return await ctx.respond(
-                "Something has gone seriously wrong, players and results don't add up. Use /debug to find the issue and contact a moderator."
-            )
+            if not len(ctx.mogi.mmr_results_by_group) == len(ctx.mogi.players):
+                return await ctx.respond(
+                    "Something has gone seriously wrong, players and results don't add up. Use /debug to find the issue and contact a moderator."
+                )
 
-        await apply_mmr(ctx.mogi)
-        await ctx.send("Applied MMR changes ✅")
-        await update_roles(ctx, ctx.mogi)
+            await apply_mmr(ctx.mogi)
+            await ctx.send("Applied MMR changes ✅")
+            await update_roles(ctx, ctx.mogi)
 
-        ctx.mogi.finish()
-        for player in ctx.mogi.players:
-            await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
-                ctx.inmogi_role
-            )
-        mogi_manager.destroy_mogi(ctx.channel.id)
-        return await ctx.respond("# This channel's Mogi is finished and closed.")
+            ctx.mogi.finish()
+            for player in ctx.mogi.players:
+                await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
+                    ctx.inmogi_role
+                )
+            mogi_manager.destroy_mogi(ctx.channel.id)
+            return await ctx.respond("# This channel's Mogi is finished and closed.")
 
 
 def setup(bot: commands.Bot):
