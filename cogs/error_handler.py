@@ -57,7 +57,6 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.errors.CommandNotFound):
             return
 
-    # BUG: Actually test this, make it wave InteractionResponded error:
     @commands.Cog.listener()
     async def on_interaction_error(
         self, interaction: Interaction, error: DiscordException
