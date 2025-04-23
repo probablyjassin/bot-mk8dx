@@ -59,25 +59,6 @@ class participation(commands.Cog):
                     "You're temporarily inable to join mogis.", ephemeral=True
                 )
 
-            # april fools
-            reasons = [
-                "Too much fun detected.",
-                "Too many wins detected.",
-                "Too many losses detected.",
-                "Too much skill detected.",
-                "Too much skillissue detected.",
-                "Because I said so.",
-            ]
-            if random.random() < 0.3:
-                await ctx.respond(
-                    f"You failed to join the mogi.\nReason: {random.choice(reasons)}\nPlease try again in 3 minutes.",
-                )
-                await ctx.user.timeout(
-                    until=utcnow() + datetime.timedelta(minutes=3),
-                    reason="April fools",
-                )
-                return
-
             ctx.mogi.players.append(player)
             await ctx.user.add_roles(ctx.inmogi_role)
             await ctx.respond(
