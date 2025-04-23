@@ -5,7 +5,7 @@ from models.MogiModel import Mogi
 
 
 async def apply_team_roles(ctx: MogiApplicationContext | Interaction, mogi: Mogi):
-    if ctx.mogi.format == 1:
+    if mogi.format == 1:
         return
 
     all_team_roles = [get(ctx.guild.roles, name=f"Team {i+1}") for i in range(5)]
