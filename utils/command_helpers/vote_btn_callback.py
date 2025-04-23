@@ -5,6 +5,7 @@ import asyncio
 from discord import Interaction
 
 from models.MogiModel import Mogi
+from utils.command_helpers.team_roles import apply_team_roles
 
 voters_lock = asyncio.Lock()
 
@@ -67,6 +68,7 @@ async def button_callback(
 
         # start playing mogi
         mogi.play(MOGI_FORMAT)
+        await apply_team_roles(ctx=interaction)
 
         lineup = ""
         for i, team in enumerate(mogi.teams):

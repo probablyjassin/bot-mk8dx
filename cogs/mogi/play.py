@@ -1,5 +1,6 @@
 from discord import slash_command, SlashCommandGroup, Message, Option
 from discord.ext import commands
+from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.vote_factory import create_button_view
@@ -8,6 +9,7 @@ from utils.command_helpers.checks import (
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
+from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 
 
 class stop(commands.Cog):
@@ -71,6 +73,9 @@ class stop(commands.Cog):
 
         await ctx.respond(f"Mogi started!\n{lineup}")
 
+        # apply team roles
+        await apply_team_roles(ctx=ctx)
+
     @slash_command(name="stop", description="Halt the current mogi")
     @is_mogi_in_progress()
     async def stop(self, ctx: MogiApplicationContext):
@@ -93,6 +98,9 @@ class stop(commands.Cog):
             except:
                 pass
         await ctx.respond("Mogi has been stopped")
+
+        # remove all team roles
+        await remove_team_roles(ctx=ctx)
 
     @slash_command(name="votes", description="Remind players to vote")
     @is_mogi_in_progress()

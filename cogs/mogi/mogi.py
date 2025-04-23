@@ -1,10 +1,12 @@
 from discord import slash_command
 from discord.ext import commands
+from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import is_mogi_not_in_progress
+from utils.command_helpers.team_roles import remove_team_roles
 
 
 class mogi(commands.Cog):
@@ -45,6 +47,9 @@ class mogi(commands.Cog):
                 )
 
             mogi_manager.destroy_mogi(ctx.mogi.channel_id)
+
+            # remove all team roles
+            await remove_team_roles(ctx=ctx)
             return await ctx.respond("# This channel's Mogi has been closed.")
 
         await ctx.respond("Cancelled.")
