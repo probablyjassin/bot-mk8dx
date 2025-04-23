@@ -3,8 +3,10 @@ import os
 import discord
 from discord.ext import commands
 
-from logger import setup_logger
+from logger import setup_logger, highlight
 from config import DISCORD_TOKEN, LOG_CHANNEL_ID
+
+from utils.data.state import state_manager
 from models.CustomMogiContext import MogiApplicationContext
 
 logger = setup_logger(__name__)
@@ -21,6 +23,23 @@ class YuzuLoungeBot(commands.Bot):
 
     def __init__(self, *args, **kwargs):
         return super().__init__(*args, **kwargs)
+
+    async def on_ready(self):
+        logger.info(f"Logged into Discord")
+        logger.info(f"Latency: {self.latency*1000:.2f}ms")
+        print(
+            f"""
+            {highlight(self.user)}
+            ID: {highlight(self.user.id)}
+        """
+        )
+        state_manager.load_backup()
+        await (await self.fetch_channel(LOG_CHANNEL_ID)).send("🟢 Bot is online!")
+
+        print("Guilds:")
+        for guild in self.guilds:
+            print(guild.name)
+        print("--------")
 
     async def get_application_context(self, interaction, cls=MogiApplicationContext):
         return await super().get_application_context(interaction, cls=cls)
