@@ -73,7 +73,7 @@ class stop(commands.Cog):
         await ctx.respond(f"Mogi started!\n{lineup}")
 
         # apply team roles
-        await apply_team_roles(ctx=ctx)
+        await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
 
     @slash_command(name="stop", description="Halt the current mogi")
     @is_mogi_in_progress()

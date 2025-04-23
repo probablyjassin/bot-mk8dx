@@ -68,7 +68,7 @@ async def button_callback(
 
         # start playing mogi
         mogi.play(MOGI_FORMAT)
-        await apply_team_roles(ctx=interaction)
+        await apply_team_roles(ctx=interaction, mogi=mogi)
 
         lineup = ""
         for i, team in enumerate(mogi.teams):
