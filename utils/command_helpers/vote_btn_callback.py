@@ -68,7 +68,6 @@ async def button_callback(
 
         # start playing mogi
         mogi.play(MOGI_FORMAT)
-        await apply_team_roles(ctx=interaction, mogi=mogi)
 
         lineup = ""
         for i, team in enumerate(mogi.teams):
@@ -76,6 +75,8 @@ async def button_callback(
                 f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
             )
 
-        return await interaction.message.channel.send(
+        await interaction.message.channel.send(
             f"# Mogi starting!\n## Format: {FORMAT_STR}\n### Lineup:\n{lineup}"
         )
+
+        await apply_team_roles(ctx=interaction, mogi=mogi)
