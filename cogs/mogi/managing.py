@@ -68,14 +68,14 @@ class managing(commands.Cog):
 
         # only try to edit roles if player is on server
         try:
-            user = ctx.guild.fetch_member(player.discord_id)
+            user = await ctx.guild.fetch_member(player.discord_id)
             if not user:
                 raise Exception("User not found")
 
             # remove the role
-            await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
-                ctx.inmogi_role
-            )
+            if ctx.inmogi_role in user.roles:
+                await user.remove_roles(ctx.inmogi_role, reason="Removed from Mogi")
+
         except Exception:
             await ctx.send(
                 f"Player {player.name} not on this server anymore, skipping role removal."
