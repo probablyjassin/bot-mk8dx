@@ -75,7 +75,7 @@ class team_tags(commands.Cog):
         for i, team in enumerate(ctx.mogi.teams):
             for player in team:
                 await get(ctx.guild.members, id=player.discord_id).add_roles(
-                    all_team_roles[i]
+                    all_team_roles[i], reason="/apply_roles"
                 )
         await ctx.respond("Assigned team roles")
 
@@ -91,7 +91,7 @@ class team_tags(commands.Cog):
 
         for role in all_team_roles:
             for member in role.members:
-                await member.remove_roles(role)
+                await member.remove_roles(role, reason="/unapply_roles")
         await ctx.respond("Removed team roles")
 
 

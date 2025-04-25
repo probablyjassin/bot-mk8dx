@@ -30,6 +30,6 @@ async def remove_team_roles(ctx: MogiApplicationContext | Interaction):
 
     for role in all_team_roles:
         for member in role.members:
-            await member.remove_roles(role)
+            await member.remove_roles(role, reason="Team roles removed")
 
     await ctx.channel.send("Removed team roles")

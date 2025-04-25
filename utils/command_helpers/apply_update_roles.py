@@ -38,10 +38,12 @@ async def update_roles(
         if current_rank.rankname != new_rank.rankname:
 
             await discord_member.remove_roles(
-                ctx.get_lounge_role(f"Lounge - {current_rank.rankname}")
+                ctx.get_lounge_role(f"Lounge - {current_rank.rankname}"),
+                reason="MMR change",
             )
             await discord_member.add_roles(
-                ctx.get_lounge_role(f"Lounge - {new_rank.rankname}")
+                ctx.get_lounge_role(f"Lounge - {new_rank.rankname}"),
+                reason="MMR change",
             )
 
             await ctx.results_channel.send(
