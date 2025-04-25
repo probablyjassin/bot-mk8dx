@@ -152,9 +152,10 @@ class calculations(commands.Cog):
 
             ctx.mogi.finish()
             for player in ctx.mogi.players:
-                await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
-                    ctx.inmogi_role
-                )
+                user = await ctx.guild.fetch_member(player.discord_id)
+                if ctx.inmogi_role in user.roles:
+                    await user.remove_roles(ctx.inmogi_role, reason="Mogi finished")
+
             await remove_team_roles(ctx=ctx)
             mogi_manager.destroy_mogi(ctx.channel.id)
             return await ctx.respond("# This channel's Mogi is finished and closed.")
