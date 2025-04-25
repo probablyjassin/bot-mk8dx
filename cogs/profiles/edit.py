@@ -105,9 +105,9 @@ class edit(commands.Cog):
                 )
             for role in discord_member.roles:
                 if "Lounge -" in role.name:
-                    await discord_member.remove_roles(role)
+                    await discord_member.remove_roles(role, reason="Deleted profile")
                 if "InMogi" in role.name:
-                    await discord_member.remove_roles(role)
+                    await discord_member.remove_roles(role, reason="Deleted profile")
 
         await ctx.respond(f"Deleted <@{player.discord_id}>'s profile and removed roles")
 
