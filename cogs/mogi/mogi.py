@@ -42,9 +42,9 @@ class mogi(commands.Cog):
                         f"Player {player.name} not on this server anymore, skipping role removal."
                     )
                 # remove the role
-                await (await ctx.guild.fetch_member(player.discord_id)).remove_roles(
-                    ctx.inmogi_role
-                )
+                user = await ctx.guild.fetch_member(player.discord_id)
+                if ctx.inmogi_role in user.roles:
+                    await user.remove_roles(ctx.inmogi_role, reason="Mogi closed")
 
             mogi_manager.destroy_mogi(ctx.mogi.channel_id)
 
