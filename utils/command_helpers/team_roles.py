@@ -17,7 +17,7 @@ async def apply_team_roles(ctx: MogiApplicationContext | Interaction, mogi: Mogi
     for i, team in enumerate(mogi.teams):
         for player in team:
             await get(ctx.guild.members, id=player.discord_id).add_roles(
-                all_team_roles[i]
+                all_team_roles[i], reason="Team roles applied"
             )
     await ctx.channel.send("Assigned team roles")
 
