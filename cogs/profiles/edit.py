@@ -37,26 +37,35 @@ class edit(commands.Cog):
     ):
         player: PlayerProfile = search_player(searched_player)
 
-        for mogi in list(mogi_manager.mogi_registry.values()):
-            if player in mogi.players:
-                return await ctx.respond(
-                    f"Can't change MMR of <@{player.discord_id}> while they are in a mogi"
-                )
-
         if not player:
             await ctx.respond("Couldn't find that player")
 
-        new = db_players.find_one_and_update(
-            {"_id": player._id},
-            {
-                "$inc": {"mmr": delta_mmr},
-                "$push": {"history": delta_mmr} if isHistory else {},
-            },
-            return_document=ReturnDocument.AFTER,
-        )
+        # Check if player is in a mogi in another channel
+        for mogi in mogi_manager.mogi_registry.values():
+            if player_profile in mogi.players and mogi.channel_id != ctx.channel.id:
+                return await ctx.respond(
+                    f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."
+                )
+
+        # Use the player profile instance from the mogi the player is in right of (if applicable)
+        if ctx.mogi and player_profile in ctx.mogi.players:
+            player_profile: PlayerProfile = next(
+                (
+                    p
+                    for p in ctx.mogi.players
+                    if p.discord_id == player_profile.discord_id
+                ),
+                None,
+            )
+
+        new_mmr = player.mmr + delta_mmr
+        player.mmr = new_mmr
+
+        if isHistory:
+            player.append_history(delta_mmr)
 
         await ctx.respond(
-            f"Changed by {delta_mmr}:\n Updated <@{player.discord_id}> MMR to {new['mmr']}"
+            f"Changed by {delta_mmr}:\n Updated <@{player.discord_id}> MMR to {new_mmr}"
         )
 
     @edit.command(name="username", description="Change a player's username")
