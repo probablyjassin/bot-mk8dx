@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from config import LOG_CHANNEL_ID
 
 
-class disconnects(commands.Cog):
+class dcs(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -21,4 +21,4 @@ class disconnects(commands.Cog):
 
 
 def setup(bot: commands.Bot) -> None:
-    bot.add_cog(disconnects(bot))
+    bot.add_cog(dcs(bot))
