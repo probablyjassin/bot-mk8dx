@@ -17,7 +17,9 @@ class dcs(commands.Cog):
 
         if message.content.lower().endswith("dc"):
             error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
-            await error_channel.send("Test: @InMogi pinged in a message")
+            await error_channel.send(
+                f"Test: @InMogi pinged in <#{message.channel.id}>: {message.content}"
+            )
 
 
 def setup(bot: commands.Bot) -> None:
