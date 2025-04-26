@@ -16,13 +16,27 @@ class dcs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
-        if message.author.bot or message.channel.id != LOG_CHANNEL_ID:
+        if message.author.bot:
             return
 
+        # if the message pings InMogi and contains "dc"
+        if not (
+            get(message.role_mentions, name="InMogi")
+            and "dc" in message.content.lower()
+        ):
+            return
+
+        # if the message is in a channel with an open Mogi that is playing
+        mogi: Mogi = mogi_manager.get_mogi(message.channel.id)
+        if not mogi or not mogi.isPlaying:
+            return
+
+        # grab inmogi role
         inmogi_role: Role = get(
             get(self.bot.guilds, id=GUILD_IDS[0]).roles, name="InMogi"
         )
 
+        # callback if player DCd
         async def yes_button_callback(interaction: Interaction):
             if interaction.user.id != message.author.id:
                 return await interaction.response.send_message(
@@ -35,35 +49,31 @@ class dcs(commands.Cog):
                 view=None,
             )
 
+        # callback if player did not DC
         async def no_button_callback(interaction: Interaction):
             await question.delete()
 
-        if (
-            get(message.role_mentions, name="InMogi")
-            and "dc" in message.content.lower()
+        # ask the player if they DCd
+        if player := next(
+            (p for p in mogi.players if p.discord_id == message.author.id), None
         ):
-            if mogi := mogi_manager.get_mogi(message.channel.id):
-                if player := next(
-                    (p for p in mogi.players if p.discord_id == message.author.id), None
-                ):
-                    if mogi.isPlaying and message.channel.id == LOG_CHANNEL_ID:
-                        view = View()
-                        yes_button = Button(
-                            label="Yes",
-                            custom_id="y",
-                        )
-                        no_button = Button(
-                            label="No",
-                            custom_id="n",
-                        )
-                        yes_button.callback = yes_button_callback
-                        no_button.callback = no_button_callback
-                        view.add_item(yes_button)
-                        view.add_item(no_button)
-                        question = await message.channel.send(
-                            content=f"Did you DC? <@{message.author.id}>",
-                            view=view,
-                        )
+            view = View()
+            yes_button = Button(
+                label="Yes",
+                custom_id="y",
+            )
+            no_button = Button(
+                label="No",
+                custom_id="n",
+            )
+            yes_button.callback = yes_button_callback
+            no_button.callback = no_button_callback
+            view.add_item(yes_button)
+            view.add_item(no_button)
+            question = await message.channel.send(
+                content=f"Did you DC? <@{message.author.id}>",
+                view=view,
+            )
 
 
 def setup(bot: commands.Bot) -> None:
