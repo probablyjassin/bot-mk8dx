@@ -6,6 +6,8 @@ from discord.ext import commands
 from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
 
+from config import GUILD_IDS
+
 
 class dcs(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
