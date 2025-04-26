@@ -56,12 +56,23 @@ class penalties(commands.Cog):
         if not penalty_holder:
             return await ctx.respond("Couldn't find mrboost")
 
-        for mogi in list(mogi_manager.mogi_registry.values()):
-            if player_profile in mogi.players:
+        # Check if player is in a mogi in another channel
+        for mogi in mogi_manager.mogi_registry.values():
+            if player_profile in mogi.players and mogi.channel_id != ctx.channel.id:
                 return await ctx.respond(
-                    f"Can't change MMR of <@{player_profile.discord_id}> while they are in a mogi",
-                    allowed_mentions=AllowedMentions.none(),
+                    f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."
                 )
+
+        # Use the player profile instance from the mogi the player is in right of (if applicable)
+        if ctx.mogi and player_profile in ctx.mogi.players:
+            player_profile: PlayerProfile = next(
+                (
+                    p
+                    for p in ctx.mogi.players
+                    if p.discord_id == player_profile.discord_id
+                ),
+                None,
+            )
 
         player_profile.mmr = player_profile.mmr - abs(mmr)
         penalty_holder.mmr = penalty_holder.mmr + abs(mmr)
