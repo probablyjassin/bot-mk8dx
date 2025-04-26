@@ -126,7 +126,7 @@ class managing(commands.Cog):
 
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.mogi_registry.values():
-            if player_profile in mogi.players:
+            if replacement_profile in mogi.players:
                 return await ctx.respond(
                     f"The player to sub is already in a mogi in <#{mogi.channel_id}>"
                 )
