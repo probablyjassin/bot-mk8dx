@@ -50,6 +50,12 @@ class penalties(commands.Cog):
         player_profile: PlayerProfile = search_player(player)
         penalty_holder: PlayerProfile = search_player(self.bot.user.id)
 
+        if not player_profile:
+            return await ctx.respond("Couldn't find that player")
+
+        if not penalty_holder:
+            return await ctx.respond("Couldn't find mrboost")
+
         for mogi in list(mogi_manager.mogi_registry.values()):
             if player_profile in mogi.players:
                 return await ctx.respond(
