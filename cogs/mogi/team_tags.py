@@ -6,7 +6,12 @@ from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from utils.command_helpers.find_player import search_player
-from utils.command_helpers.checks import is_mogi_in_progress, is_in_mogi, is_moderator
+from utils.command_helpers.checks import (
+    is_mogi_in_progress,
+    is_in_mogi,
+    is_moderator,
+    is_mogi_manager,
+)
 
 
 class team_tags(commands.Cog):
@@ -57,9 +62,8 @@ class team_tags(commands.Cog):
         await ctx.respond(f"Updated Team {teamnumber}'s tag to {tag}")
 
     @team.command(name="apply_roles", description="assign team roles")
-    @is_moderator()
+    @is_mogi_manager()
     @is_mogi_in_progress()
-    @is_in_mogi()
     async def apply_roles(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
