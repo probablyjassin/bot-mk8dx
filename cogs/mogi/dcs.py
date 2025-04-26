@@ -15,7 +15,7 @@ class dcs(commands.Cog):
         if message.author.bot:
             return
 
-        if "@InMogi" in message.content:
+        if message.content.lower().endswith(" dc"):
             error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
             error_channel.send("Test: @InMogi pinged in a message")
 
