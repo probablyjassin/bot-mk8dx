@@ -4,6 +4,7 @@ from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
 
+from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import (
@@ -40,6 +41,13 @@ class managing(commands.Cog):
         # player already in the mogi
         if player_profile in ctx.mogi.players:
             return await ctx.respond("Player is already in the mogi", ephemeral=True)
+
+        # Check if player is in a mogi in another channel
+        for mogi in mogi_manager.mogi_registry.values():
+            if player_profile in mogi.players:
+                return await ctx.respond(
+                    f"This player is already in a mogi in <#{mogi.channel_id}>"
+                )
 
         ctx.mogi.players.append(player_profile)
         await (await ctx.guild.fetch_member(player_profile.discord_id)).add_roles(
@@ -115,6 +123,13 @@ class managing(commands.Cog):
 
         if replacement_profile in ctx.mogi.players:
             return await ctx.respond("Sub is already in the mogi.", ephemeral=True)
+
+        # Check if player is in a mogi in another channel
+        for mogi in mogi_manager.mogi_registry.values():
+            if player_profile in mogi.players:
+                return await ctx.respond(
+                    f"The player to sub is already in a mogi in <#{mogi.channel_id}>"
+                )
 
         ctx.mogi.players = recurse_replace(
             ctx.mogi.players, player_profile, replacement_profile

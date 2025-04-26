@@ -36,6 +36,12 @@ class participation(commands.Cog):
                 if player.discord_id == ctx.author.id
             ]:
                 return await ctx.respond("You're already in this mogi.")
+            # Check if player is in a mogi in another channel
+            for mogi in mogi_manager.mogi_registry.values():
+                if player in mogi.players and mogi.channel_id != ctx.channel.id:
+                    return await ctx.respond(
+                        f"You're already in a mogi in <#{mogi.channel_id}>"
+                    )
             # check if mogi full
             if len(ctx.mogi.players) >= ctx.mogi.player_cap:
                 return await ctx.respond("This mogi is full.")
