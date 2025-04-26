@@ -32,7 +32,10 @@ class stop(commands.Cog):
         if len(ctx.mogi.players) > 12:
             return await ctx.respond("Cant start with more than 12 players")
         # user not in the mogi
-        if not ctx.inmogi_role in ctx.user.roles:
+        if (
+            not ctx.inmogi_role in ctx.user.roles
+            and ctx.get_lounge_role("Mogi Manager") not in ctx.user.roles
+        ):
             return await ctx.respond(
                 "You can't start a mogi you aren't in", ephemeral=True
             )
