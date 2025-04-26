@@ -30,7 +30,7 @@ class dcs(commands.Cog):
                     ephemeral=True,
                 )
             player.add_disconnect()
-            await message.channel.send(
+            await interaction.response.send_message(
                 content=f"<@{player.discord_id}> DCd {inmogi_role.mention}! \nAdded to counter (now {player.disconnects})",
                 view=None,
             )
