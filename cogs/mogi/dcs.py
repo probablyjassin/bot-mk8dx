@@ -1,7 +1,10 @@
-from discord import Role, Message
+from discord import Message, Interaction, Role
+from discord.ui import View, Button
 from discord.utils import get
 from discord.ext import commands
 
+from utils.data.mogi_manager import mogi_manager
+from models.MogiModel import Mogi
 from models.CustomMogiContext import MogiApplicationContext
 
 from config import GUILD_IDS, LOG_CHANNEL_ID
@@ -16,10 +19,34 @@ class dcs(commands.Cog):
         if message.author.bot:
             return
 
-        if "dc" in message.content.lower():
-            error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
-            await error_channel.send(
-                f"Test: @InMogi pinged in <#{message.channel.id}>: {message.content}"
+        inmogi_role: Role = get(get(self.bot.guilds, id=GUILD_IDS[0]), name="InMogi")
+
+        if (
+            get(message.role_mentions, name="InMogi")
+            and "dc" in message.content.lower()
+        ):
+            if mogi := mogi_manager.get_mogi(message.channel.id):
+                if player := next(
+                    (p for p in mogi.players if p.discord_id == message.author.id), None
+                ):
+                    if mogi.isPlaying and message.channel.id == LOG_CHANNEL_ID:
+                        view = View()
+                        button = Button(
+                            label="Yes",
+                            custom_id="y",
+                        )
+                        button.callback = button_callback
+                        view.add_item(button)
+                        await message.channel.send(
+                            content=f"Did you DC? <@{message.author.id}>",
+                            view=view,
+                        )
+
+        async def button_callback(interaction: Interaction):
+            player.add_disconnect()
+            await message.channel.send(
+                content=f"<@{player.discord_id}> DCd {inmogi_role.mention}, added to counter (now {player.disconnects})",
+                view=None,
             )
 
 
