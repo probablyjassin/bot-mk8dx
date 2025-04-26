@@ -16,13 +16,8 @@ class dcs(commands.Cog):
         if message.author.bot:
             return
 
-        inmogi_role: Role = get(
-            get(self.bot.guilds, id=GUILD_IDS[0]).roles, name="InMogi"
-        )
-
-        if (
-            message.content.lower().endswith("dc")
-            and f"<#{inmogi_role.id}>" in message.content
+        if message.content.lower().endswith("dc") and get(
+            message.role_mentions, name="InMogi"
         ):
             error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
             await error_channel.send(
