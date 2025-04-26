@@ -5,9 +5,6 @@ from discord.ext import commands
 
 from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
-from models.CustomMogiContext import MogiApplicationContext
-
-from config import GUILD_IDS, LOG_CHANNEL_ID
 
 
 class dcs(commands.Cog):
