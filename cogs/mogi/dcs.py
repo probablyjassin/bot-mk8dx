@@ -24,13 +24,16 @@ class dcs(commands.Cog):
         )
 
         async def button_callback(interaction: Interaction):
+            if interaction.user.id != message.author.id:
+                return await interaction.response.send_message(
+                    content="This is not for you",
+                    ephemeral=True,
+                )
             player.add_disconnect()
             await message.channel.send(
-                content=f"<@{player.discord_id}> DCd {inmogi_role.mention}, added to counter (now {player.disconnects})",
+                content=f"<@{player.discord_id}> DCd {inmogi_role.mention}! \nAdded to counter (now {player.disconnects})",
                 view=None,
             )
-
-        await message.channel.send(message.role_mentions)
 
         if (
             get(message.role_mentions, name="InMogi")
