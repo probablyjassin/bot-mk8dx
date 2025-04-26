@@ -49,7 +49,7 @@ class debugging(commands.Cog):
     async def throw_error(self, ctx: MogiApplicationContext):
         raise Exception("This is a test command error")
 
-    @debug.command(name="test_player", description="add a dummy player to the mogi")
+    """ @debug.command(name="test_player", description="add a dummy player to the mogi")
     @is_mogi_not_in_progress()
     @is_admin()
     async def test_player(self, ctx: MogiApplicationContext):
@@ -63,7 +63,7 @@ class debugging(commands.Cog):
             history=[],
         )
         ctx.mogi.players.append(dummy)
-        await ctx.respond(f"Added {dummy.name} to the mogi")
+        await ctx.respond(f"Added {dummy.name} to the mogi") """
 
     @debug.command(name="load_state", description="Load state")
     @is_admin()
