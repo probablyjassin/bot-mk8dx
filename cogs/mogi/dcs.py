@@ -23,7 +23,7 @@ class dcs(commands.Cog):
             get(self.bot.guilds, id=GUILD_IDS[0]).roles, name="InMogi"
         )
 
-        async def button_callback(interaction: Interaction):
+        async def yes_button_callback(interaction: Interaction):
             if interaction.user.id != message.author.id:
                 return await interaction.response.send_message(
                     content="This is not for you",
@@ -35,6 +35,9 @@ class dcs(commands.Cog):
                 view=None,
             )
 
+        async def no_button_callback(interaction: Interaction):
+            await question.delete()
+
         if (
             get(message.role_mentions, name="InMogi")
             and "dc" in message.content.lower()
@@ -45,13 +48,19 @@ class dcs(commands.Cog):
                 ):
                     if mogi.isPlaying and message.channel.id == LOG_CHANNEL_ID:
                         view = View()
-                        button = Button(
+                        yes_button = Button(
                             label="Yes",
                             custom_id="y",
                         )
-                        button.callback = button_callback
-                        view.add_item(button)
-                        await message.channel.send(
+                        no_button = Button(
+                            label="No",
+                            custom_id="n",
+                        )
+                        yes_button.callback = yes_button_callback
+                        no_button.callback = no_button_callback
+                        view.add_item(yes_button)
+                        view.add_item(no_button)
+                        question = await message.channel.send(
                             content=f"Did you DC? <@{message.author.id}>",
                             view=view,
                         )
