@@ -50,6 +50,11 @@ class dcs(commands.Cog):
 
         # callback if player did not DC
         async def no_button_callback(interaction: Interaction):
+            if interaction.user.id != message.author.id:
+                return await interaction.response.send_message(
+                    content="This is not for you",
+                    ephemeral=True,
+                )
             await question.delete()
 
         # ask the player if they DCd
