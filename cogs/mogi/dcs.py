@@ -19,7 +19,9 @@ class dcs(commands.Cog):
         if message.author.bot:
             return
 
-        inmogi_role: Role = get(get(self.bot.guilds, id=GUILD_IDS[0]), name="InMogi")
+        inmogi_role: Role = get(
+            get(self.bot.guilds, id=GUILD_IDS[0]).roles, name="InMogi"
+        )
 
         if (
             get(message.role_mentions, name="InMogi")
