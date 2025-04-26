@@ -16,12 +16,21 @@ class dcs(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
-        if message.author.bot:
+        if message.author.bot or message.channel.id != LOG_CHANNEL_ID:
             return
 
         inmogi_role: Role = get(
             get(self.bot.guilds, id=GUILD_IDS[0]).roles, name="InMogi"
         )
+
+        async def button_callback(interaction: Interaction):
+            player.add_disconnect()
+            await message.channel.send(
+                content=f"<@{player.discord_id}> DCd {inmogi_role.mention}, added to counter (now {player.disconnects})",
+                view=None,
+            )
+
+        await message.channel.send(message.role_mentions)
 
         if (
             get(message.role_mentions, name="InMogi")
@@ -43,13 +52,6 @@ class dcs(commands.Cog):
                             content=f"Did you DC? <@{message.author.id}>",
                             view=view,
                         )
-
-        async def button_callback(interaction: Interaction):
-            player.add_disconnect()
-            await message.channel.send(
-                content=f"<@{player.discord_id}> DCd {inmogi_role.mention}, added to counter (now {player.disconnects})",
-                view=None,
-            )
 
 
 def setup(bot: commands.Bot) -> None:
