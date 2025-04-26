@@ -11,14 +11,14 @@ class dcs(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-        self.inmogi_role: Role = get(
-            get(self.bot.guilds, id=GUILD_IDS[0]), name="InMogi"
-        )
-
     @commands.Cog.listener()
     async def on_message(self, message: Message) -> None:
         if message.author.bot:
             return
+
+        self.inmogi_role: Role = get(
+            get(self.bot.guilds, id=GUILD_IDS[0]), name="InMogi"
+        )
 
         if (
             message.content.lower().endswith("dc")
