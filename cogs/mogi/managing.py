@@ -146,7 +146,7 @@ class managing(commands.Cog):
 
         replacement_user = await ctx.guild.fetch_member(replacement_profile.discord_id)
         if ctx.inmogi_role in replacement_user.roles:
-            await player_user.add_roles(ctx.inmogi_role, reason="Subbed in")
+            await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
         await ctx.respond(
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
