@@ -1,6 +1,4 @@
-from pymongo import ReturnDocument
-
-from discord import SlashCommandGroup, Option
+from discord import SlashCommandGroup, Option, Member
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -107,7 +105,9 @@ class edit(commands.Cog):
         db_players.delete_one({"_id": player._id})
 
         if try_remove_roles:
-            discord_member = await ctx.guild.fetch_member(player.discord_id)
+            discord_member: Member | None = await ctx.guild.get_member(
+                player.discord_id
+            )
             if not discord_member:
                 return await ctx.respond(
                     f"Deleted <@{player.discord_id}>'s profile (couldn't find user to remove roles from)"

@@ -33,17 +33,8 @@ class mogi(commands.Cog):
         if await confirmation(ctx, close_confirm_message):
             for player in ctx.mogi.players:
                 # only try to edit roles if player is on server
-                try:
-                    user = ctx.guild.fetch_member(player.discord_id)
-                    if not user:
-                        raise Exception("User not found")
-                except Exception:
-                    await ctx.send(
-                        f"Player {player.name} not on this server anymore, skipping role removal."
-                    )
-                # remove the role
-                user = await ctx.guild.fetch_member(player.discord_id)
-                if ctx.inmogi_role in user.roles:
+                user = await ctx.guild.get_member(player.discord_id)
+                if user and ctx.inmogi_role in user.roles:
                     await user.remove_roles(ctx.inmogi_role, reason="Mogi closed")
 
             mogi_manager.destroy_mogi(ctx.mogi.channel_id)
