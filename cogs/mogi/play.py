@@ -1,4 +1,4 @@
-from discord import slash_command, SlashCommandGroup, Message, Option
+from discord import slash_command, SlashCommandGroup, AllowedMentions, Option
 from discord.ext import commands
 from discord.utils import get
 
@@ -44,8 +44,9 @@ class stop(commands.Cog):
 
         view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
         message = await ctx.respond(
-            f"Voting start!\n ||{''.join([f'<@{player.discord_id}>' for player in ctx.mogi.players])}||",
+            f"Voting start!\n {ctx.inmogi_role.mention}",
             view=view,
+            allowed_mentions=AllowedMentions(roles=True),
         )
         response = await message.original_response()
         ctx.mogi.voting_message_id = response.id
