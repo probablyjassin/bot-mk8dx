@@ -1,18 +1,13 @@
-import random
-from bson import ObjectId
-
-from discord import SlashCommandGroup, Option
+from discord import SlashCommandGroup, Option, AllowedMentions
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
 from utils.command_helpers.checks import (
     is_admin,
     is_moderator,
     is_mogi_manager,
-    is_mogi_not_in_progress,
 )
 
 
@@ -73,7 +68,9 @@ class debugging(commands.Cog):
 
     @debug.command(name="inmogi")
     async def inmogi(self, ctx: MogiApplicationContext):
-        await ctx.respond(f"<@&{ctx.inmogi_role.id}>")
+        await ctx.respond(
+            f"<@&{ctx.inmogi_role.id}>", allow_mentions=AllowedMentions.roles
+        )
 
     @debug.command(name="perms", description="perms test")
     @is_admin()
