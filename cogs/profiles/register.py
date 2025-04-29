@@ -1,4 +1,4 @@
-from discord import slash_command, Member
+from discord import slash_command, Member, User
 from discord.utils import get
 from discord.ext import commands
 
@@ -53,7 +53,7 @@ class register(commands.Cog):
                 ephemeral=True,
             )
 
-        member: Member = ctx.user
+        member: Member | User = ctx.user
         if ctx.get_lounge_role("Lounge Player") in member.roles:
             return await ctx.respond(
                 "You already have the Lounge Player role"

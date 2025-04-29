@@ -152,7 +152,12 @@ class calculations(commands.Cog):
 
             ctx.mogi.finish()
             for player in ctx.mogi.players:
-                user = await ctx.guild.fetch_member(player.discord_id)
+                user = await ctx.guild.get_member(player.discord_id)
+                if not user:
+                    await ctx.send(
+                        f"<@{player.discord_id}> not found, skipping role removal"
+                    )
+                    continue
                 if ctx.inmogi_role in user.roles:
                     await user.remove_roles(ctx.inmogi_role, reason="Mogi finished")
 

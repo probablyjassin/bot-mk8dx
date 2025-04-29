@@ -1,4 +1,4 @@
-from discord import Option, AllowedMentions, SlashCommandGroup
+from discord import Option, AllowedMentions, SlashCommandGroup, Member
 from discord.ext import commands
 
 from models.PlayerModel import PlayerProfile
@@ -50,9 +50,9 @@ class managing(commands.Cog):
                 )
 
         ctx.mogi.players.append(player_profile)
-        await (await ctx.guild.fetch_member(player_profile.discord_id)).add_roles(
-            ctx.inmogi_role, reason="Added to Mogi"
-        )
+        member: Member | None = await ctx.guild.get_member(player_profile.discord_id)
+        if member:
+            await member.add_roles(ctx.inmogi_role, reason="Added to Mogi")
 
         await ctx.respond(
             f"<@{player_profile.discord_id}> joined the mogi! (against their will)"
@@ -74,20 +74,11 @@ class managing(commands.Cog):
 
         ctx.mogi.players.remove(player)
 
-        # only try to edit roles if player is on server
-        try:
-            user = await ctx.guild.fetch_member(player.discord_id)
-            if not user:
-                raise Exception("User not found")
+        user: Member | None = await ctx.guild.get_member(player.discord_id)
 
-            # remove the role
-            if ctx.inmogi_role in user.roles:
-                await user.remove_roles(ctx.inmogi_role, reason="Removed from Mogi")
-
-        except Exception:
-            await ctx.send(
-                f"Player {player.name} not on this server anymore, skipping role removal."
-            )
+        # remove the role
+        if user and ctx.inmogi_role in user.roles:
+            await user.remove_roles(ctx.inmogi_role, reason="Removed from Mogi")
 
         await ctx.respond(
             f"<@{player.discord_id}> got removed from the mogi.",
@@ -140,12 +131,16 @@ class managing(commands.Cog):
 
         ctx.mogi.subs.append(replacement_profile)
 
-        player_user = await ctx.guild.fetch_member(player_profile.discord_id)
-        if ctx.inmogi_role in player_user.roles:
+        player_user: Member | None = await ctx.guild.get_member(
+            player_profile.discord_id
+        )
+        if player_user and ctx.inmogi_role in player_user.roles:
             await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
 
-        replacement_user = await ctx.guild.fetch_member(replacement_profile.discord_id)
-        if ctx.inmogi_role not in replacement_user.roles:
+        replacement_user: Member | None = await ctx.guild.get_member(
+            replacement_profile.discord_id
+        )
+        if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
         await ctx.respond(
