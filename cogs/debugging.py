@@ -69,7 +69,7 @@ class debugging(commands.Cog):
     @debug.command(name="inmogi")
     async def inmogi(self, ctx: MogiApplicationContext):
         await ctx.respond(
-            f"<@&{ctx.inmogi_role.id}>", allow_mentions=AllowedMentions.roles
+            f"<@&{ctx.inmogi_role.id}>", allowed_mentions=AllowedMentions.roles
         )
 
     @debug.command(name="perms", description="perms test")
