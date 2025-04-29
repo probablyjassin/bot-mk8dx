@@ -1,4 +1,5 @@
 from bson.int64 import Int64
+from discord import Guild, Member
 from utils.data.database import db_players, db_archived
 from models.PlayerModel import PlayerProfile
 
@@ -37,3 +38,12 @@ def search_player(
         }
     )
     return PlayerProfile(**potential_player) if potential_player else None
+
+
+async def get_guild_member(guild: Guild, id: int) -> Member | None:
+    member: Member | None = None
+    try:
+        member = await guild.fetch_member(id)
+    except:
+        pass
+    return member
