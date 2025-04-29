@@ -145,7 +145,7 @@ class managing(commands.Cog):
             await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
 
         replacement_user = await ctx.guild.fetch_member(replacement_profile.discord_id)
-        if ctx.inmogi_role in replacement_user.roles:
+        if ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
         await ctx.respond(
