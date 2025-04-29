@@ -46,9 +46,9 @@ class debugging(commands.Cog):
     @is_admin()
     async def all_mogis(self, ctx: MogiApplicationContext):
         await ctx.respond(
-            f"There are currently {len(mogi_manager.read_registry())} mogis\n:"
+            f"There are currently {len(mogi_manager.read_registry())} mogis:\n"
             + "\n".join(
-                f"<#{mogi.channel_id}>: {len(mogi.players)} {mogi.format}"
+                f"<#{mogi.channel_id}>: {len(mogi.players)} | {mogi.format}"
                 for mogi in mogi_manager.read_registry().values()
             )
         )
