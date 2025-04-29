@@ -7,6 +7,7 @@ from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import is_mogi_not_in_progress
 from utils.command_helpers.team_roles import remove_team_roles
+from utils.command_helpers.find_player import get_guild_member
 
 
 class mogi(commands.Cog):
@@ -33,7 +34,7 @@ class mogi(commands.Cog):
         if await confirmation(ctx, close_confirm_message):
             for player in ctx.mogi.players:
                 # only try to edit roles if player is on server
-                user = await ctx.guild.get_member(player.discord_id)
+                user = await get_guild_member(ctx.guild, player.discord_id)
                 if user and ctx.inmogi_role in user.roles:
                     await user.remove_roles(ctx.inmogi_role, reason="Mogi closed")
 

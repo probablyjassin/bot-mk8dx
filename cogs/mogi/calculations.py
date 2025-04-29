@@ -16,6 +16,7 @@ from utils.maths.apply import apply_mmr
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
+from utils.command_helpers.find_player import get_guild_member
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_manager,
@@ -152,7 +153,7 @@ class calculations(commands.Cog):
 
             ctx.mogi.finish()
             for player in ctx.mogi.players:
-                user = await ctx.guild.get_member(player.discord_id)
+                user = await get_guild_member(ctx.guild, player.discord_id)
                 if not user:
                     await ctx.send(
                         f"<@{player.discord_id}> not found, skipping role removal"

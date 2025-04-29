@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
-from utils.command_helpers.find_player import search_player
+from utils.command_helpers.find_player import search_player, get_guild_member
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
@@ -50,7 +50,9 @@ class managing(commands.Cog):
                 )
 
         ctx.mogi.players.append(player_profile)
-        member: Member | None = await ctx.guild.get_member(player_profile.discord_id)
+        member: Member | None = await get_guild_member(
+            ctx.guild, player_profile.discord_id
+        )
         if member:
             await member.add_roles(ctx.inmogi_role, reason="Added to Mogi")
 
@@ -74,7 +76,7 @@ class managing(commands.Cog):
 
         ctx.mogi.players.remove(player)
 
-        user: Member | None = await ctx.guild.get_member(player.discord_id)
+        user: Member | None = await get_guild_member(ctx.guild, player.discord_id)
 
         # remove the role
         if user and ctx.inmogi_role in user.roles:
@@ -131,14 +133,14 @@ class managing(commands.Cog):
 
         ctx.mogi.subs.append(replacement_profile)
 
-        player_user: Member | None = await ctx.guild.get_member(
-            player_profile.discord_id
+        player_user: Member | None = await get_guild_member(
+            ctx.guild, player_profile.discord_id
         )
         if player_user and ctx.inmogi_role in player_user.roles:
             await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
 
-        replacement_user: Member | None = await ctx.guild.get_member(
-            replacement_profile.discord_id
+        replacement_user: Member | None = await get_guild_member(
+            ctx.guild, player_profile.discord_id
         )
         if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
