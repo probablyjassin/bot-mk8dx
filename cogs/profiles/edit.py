@@ -6,7 +6,7 @@ from models.PlayerModel import PlayerProfile
 
 from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players
-from utils.command_helpers.find_player import search_player
+from utils.command_helpers.find_player import search_player, get_guild_member
 from utils.command_helpers.checks import is_moderator
 
 
@@ -33,9 +33,9 @@ class edit(commands.Cog):
             default=False,
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player_profile: PlayerProfile = search_player(searched_player)
 
-        if not player:
+        if not player_profile:
             await ctx.respond("Couldn't find that player")
 
         # Check if player is in a mogi in another channel
@@ -56,14 +56,14 @@ class edit(commands.Cog):
                 None,
             )
 
-        new_mmr = player.mmr + delta_mmr
-        player.mmr = new_mmr
+        new_mmr = player_profile.mmr + delta_mmr
+        player_profile.mmr = new_mmr
 
         if isHistory:
-            player.append_history(delta_mmr)
+            player_profile.append_history(delta_mmr)
 
         await ctx.respond(
-            f"Changed by {delta_mmr}:\n Updated <@{player.discord_id}> MMR to {new_mmr}"
+            f"Changed by {delta_mmr}:\n Updated <@{player_profile.discord_id}> MMR to {new_mmr}"
         )
 
     @edit.command(name="username", description="Change a player's username")
@@ -105,8 +105,8 @@ class edit(commands.Cog):
         db_players.delete_one({"_id": player._id})
 
         if try_remove_roles:
-            discord_member: Member | None = await ctx.guild.get_member(
-                player.discord_id
+            discord_member: Member | None = await get_guild_member(
+                ctx.guild, player.discord_id
             )
             if not discord_member:
                 return await ctx.respond(
