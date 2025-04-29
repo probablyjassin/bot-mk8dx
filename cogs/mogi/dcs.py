@@ -1,4 +1,4 @@
-from discord import Message, Interaction, Role
+from discord import Message, Interaction, Role, AllowedMentions
 from discord.ui import View, Button
 from discord.utils import get
 from discord.ext import commands
@@ -46,6 +46,7 @@ class dcs(commands.Cog):
             await interaction.response.send_message(
                 content=f"<@{player.discord_id}> DCd {inmogi_role.mention}! \nAdded to counter (now {player.disconnects})",
                 view=None,
+                allowed_mentions=AllowedMentions(roles=True),
             )
 
         # callback if player did not DC
