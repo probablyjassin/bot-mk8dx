@@ -22,14 +22,7 @@ class debugging(commands.Cog):
     @debug.command(name="current_mogi", description="print the mogi for this channel")
     @is_admin()
     async def current_mogi(self, ctx: MogiApplicationContext):
-        mogi_data = {
-            "id": str(ctx.mogi.id),
-            "format": ctx.mogi.format,
-            "status": ctx.mogi.status,
-            "players": len(ctx.mogi.players),
-            "player_cap": ctx.mogi.player_cap,
-            "votes": ctx.mogi.votes,
-        }
+        mogi_data = ctx.mogi.to_json()
         await ctx.respond(
             file=File(
                 fp=io.StringIO(json.dumps(mogi_data, indent=2)),
