@@ -1,4 +1,6 @@
-from discord import SlashCommandGroup, Option, AllowedMentions
+import io, json
+
+from discord import SlashCommandGroup, Option, AllowedMentions, File
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -20,7 +22,20 @@ class debugging(commands.Cog):
     @debug.command(name="current_mogi", description="print the mogi for this channel")
     @is_admin()
     async def current_mogi(self, ctx: MogiApplicationContext):
-        await ctx.respond(f"Current Mogi: \n{ctx.mogi}")
+        mogi_data = {
+            "id": str(ctx.mogi.id),
+            "format": ctx.mogi.format,
+            "status": ctx.mogi.status,
+            "players": len(ctx.mogi.players),
+            "player_cap": ctx.mogi.player_cap,
+            "votes": ctx.mogi.votes,
+        }
+        await ctx.respond(
+            file=File(
+                fp=io.StringIO(json.dumps(mogi_data, indent=2)),
+                filename="mogi_data.json",
+            )
+        )
 
     @debug.command(name="votes", description="check the votes for the current mogi")
     @is_moderator()
@@ -34,10 +49,16 @@ class debugging(commands.Cog):
         )
         await ctx.respond(f"Votes: \n{votes_str}", ephemeral=True)
 
-    @debug.command(name="all_mogis", description="print the mogi registry")
+    @debug.command(name="list_mogis", description="print the mogi registry")
     @is_admin()
     async def all_mogis(self, ctx: MogiApplicationContext):
-        await ctx.respond(f"Mogi Registry: \n{mogi_manager.read_registry()}")
+        await ctx.respond(
+            f"There are currently {len(mogi_manager.read_registry())} mogis\n:"
+            + "\n".join(
+                f"<#{mogi.channel_id}>: {len(mogi.players)} {mogi.format}"
+                for mogi in mogi_manager.read_registry().values()
+            )
+        )
 
     @debug.command(name="throw_error", description="throw an error")
     @is_admin()
