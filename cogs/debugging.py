@@ -6,6 +6,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
+from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import (
     is_admin,
     is_moderator,
@@ -29,6 +30,21 @@ class debugging(commands.Cog):
                 filename="mogi_data.json",
             )
         )
+
+    @debug.command(name="destroy_mogi")
+    @is_admin()
+    async def destroy_mogi(self, ctx: MogiApplicationContext):
+        if not mogi_manager.get_mogi(ctx.channel.id):
+            return await ctx.respond("No mogi exists for this channel")
+
+        if await confirmation(
+            ctx,
+            f"Are you sure you want to wipe the entire state of the mogi in <#{ctx.channel.id}>",
+        ):
+            mogi_manager.destroy_mogi(ctx.channel.id)
+            return await ctx.respond("# This mogi has been closed.")
+
+        await ctx.respond("Canceled")
 
     @debug.command(name="votes", description="check the votes for the current mogi")
     @is_moderator()
