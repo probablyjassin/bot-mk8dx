@@ -44,7 +44,7 @@ class mogi(commands.Cog):
             await remove_team_roles(ctx=ctx)
             return await ctx.respond("# This channel's Mogi has been closed.")
 
-        await ctx.respond("Cancelled.")
+        await ctx.respond("Canceled")
 
 
 def setup(bot: commands.Bot):
