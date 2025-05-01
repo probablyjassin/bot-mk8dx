@@ -34,6 +34,8 @@ class debugging(commands.Cog):
     @debug.command(name="destroy_mogi")
     @is_admin()
     async def destroy_mogi(self, ctx: MogiApplicationContext):
+        await ctx.response.defer()
+
         if not mogi_manager.get_mogi(ctx.channel.id):
             return await ctx.respond("No mogi exists for this channel")
 
