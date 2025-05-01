@@ -43,7 +43,11 @@ def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
         View: A View object containing the created buttons.
     """
 
-    view = View()
+    class VoteButtonView(View):
+        def __init__(self):
+            super().__init__(timeout=None)
+
+    view = VoteButtonView()
     for label in button_labels:
         view.add_item(create_button(label, mogi))
     return view
