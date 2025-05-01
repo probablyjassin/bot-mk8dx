@@ -24,7 +24,10 @@ async def update_roles(
             )
             continue
 
-        if player in mogi.subs:
+        if (
+            player in mogi.subs
+            and mogi.mmr_results_by_group[mogi.players.index(player)] < 0
+        ):
             await ctx.results_channel.send(
                 f"Excluded {discord_member.mention} because they subbed"
             )
