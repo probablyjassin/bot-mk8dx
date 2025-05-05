@@ -65,11 +65,16 @@ class mogi(commands.Cog):
         if mogi_manager.get_mogi(to_channel.id):
             return await ctx.respond("A mogi in the target channel is already open")
 
-        await ctx.send(ctx.mogi.channel_id)
-        await ctx.send("current mogi id => new channel's id")
+        current_mogi_channel_id: int = ctx.mogi.channel_id
+
+        await ctx.send(f"<#{current_mogi_channel_id}> => {to_channel.mention}")
+        mogi_manager.mogi_registry[to_channel.id] = mogi_manager.mogi_registry[
+            current_mogi_channel_id
+        ]
         ctx.mogi.channel_id = to_channel.id
+        del mogi_manager.mogi_registry[current_mogi_channel_id]
         await ctx.respond(
-            f"new current channel mogi id: {ctx.mogi.channel_id if ctx.mogi else 'no mogi here'}",
+            f"# This mogi has been moved to {ctx.mogi.channel_id}",
         )
 
 
