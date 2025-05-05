@@ -67,9 +67,9 @@ class mogi(commands.Cog):
 
         await ctx.send(ctx.mogi.channel_id)
         await ctx.send("current mogi id => new channel's id")
+        ctx.mogi.channel_id = to_channel.id
         await ctx.respond(
-            "new current channel mogi id:",
-            ctx.mogi.channel_id if ctx.mogi else "no mogi here",
+            f"new current channel mogi id: {ctx.mogi.channel_id if ctx.mogi else 'no mogi here'}",
         )
 
 
