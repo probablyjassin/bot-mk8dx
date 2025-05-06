@@ -19,7 +19,7 @@ def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 
     player_discord_members: list[Member] = [
-        get(ctx.guild.members, player.discord_id) for player in mogi.players
+        get(ctx.guild.members, id=player.discord_id) for player in mogi.players
     ]
     for member in player_discord_members:
         for role in REGION_ROLES:
