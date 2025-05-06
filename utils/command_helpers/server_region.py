@@ -6,7 +6,11 @@ from models.RoomModel import Room
 from utils.data.mogi_manager import mogi_manager
 from models.CustomMogiContext import MogiApplicationContext
 
-from config import ROOMS
+from config import ROOMS_CONFIG
+
+ROOMS: list[Room] = [
+    Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
+]
 
 
 def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
