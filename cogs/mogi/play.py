@@ -3,7 +3,7 @@ from discord.ext import commands
 from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.command_helpers.vote_factory import create_button_view
+from utils.command_helpers.vote_factory import create_vote_button_view
 from utils.command_helpers.checks import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
@@ -42,7 +42,7 @@ class stop(commands.Cog):
 
         ctx.mogi.isVoting = True
 
-        view = create_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
+        view = create_vote_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
         message = await ctx.respond(
             f"Voting start!\n {ctx.inmogi_role.mention}",
             view=view,

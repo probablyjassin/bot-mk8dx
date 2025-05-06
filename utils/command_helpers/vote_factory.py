@@ -3,7 +3,10 @@ from discord import Interaction
 from discord.ui import Button, View
 
 from models.MogiModel import Mogi
-from utils.command_helpers.vote_btn_callback import format_vote_button_callback, server_vote_button_callback
+from utils.command_helpers.vote_btn_callback import (
+    format_vote_button_callback,
+    server_vote_button_callback,
+)
 
 import random
 
@@ -31,6 +34,7 @@ def create_format_vote_button(label: str, mogi: Mogi) -> Button:
     button.callback = custom_callback
     return button
 
+
 # WIP
 def create_server_vote_button(label: str, mogi: Mogi) -> Button:
     async def custom_callback(interaction: Interaction):
@@ -47,7 +51,7 @@ def create_server_vote_button(label: str, mogi: Mogi) -> Button:
     return button
 
 
-def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
+def create_vote_button_view(button_labels: list[str], mogi: Mogi) -> View:
     """
     Creates a View object with buttons based on the provided labels and Mogi instance.
     These buttons each have a callback function with the complex logic for starting the mogi if needed.
@@ -64,6 +68,6 @@ def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
 
     view = VoteButtonView()
     for label in button_labels:
-        view.add_item(create_format_vote_button(label, mogi)) 
+        view.add_item(create_format_vote_button(label, mogi))
 
     return view
