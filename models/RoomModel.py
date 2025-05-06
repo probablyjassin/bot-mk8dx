@@ -1,4 +1,7 @@
+import requests
 from dataclasses import dataclass
+
+from config import YUZU_API_URL
 
 
 @dataclass
@@ -29,3 +32,25 @@ class Room:
             return None
         most_popular = max(game_count, key=game_count.get)
         return (game_count[most_popular], most_popular)
+
+    @classmethod
+    def from_address(cls, address: str, port: int) -> "Room | None":
+        try:
+            data: dict = (requests.get(f"http://{YUZU_API_URL}/lobby")).json()
+            servers: list[dict] = data.get("rooms", [])
+
+            potential_rooms = [
+                room
+                for room in servers
+                if room["address"] == address
+                and room["port"] == port
+            ]
+
+            if potential_rooms:
+                return cls(**potential_rooms[0])
+            else:
+                return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"An error occurred: {e}")
+            return None
