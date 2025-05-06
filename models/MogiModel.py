@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from bson import ObjectId
 
 from models.PlayerModel import PlayerProfile
+from models.RoomModel import Room
 
 from utils.data.database import db_mogis
 from utils.maths.teams_algorithm import distribute_players_to_teams
@@ -15,6 +16,7 @@ class Mogi:
     #### Attributes:
         channel_id (`int`): Integer ID of the channel where the Mogi lives.
         format (`int | None`): Integer representing the format of the Mogi (e.g., FFA, 2v2, etc.). Is `None` when the mogi hasn't started.
+        room (`Room | None`): NOT_IMPLEMENTED_YET: Room object representing the Yuzu Server the mogi is played on. Is `None` when the mogi hasn't started.
         players (`list[PlayerProfile]`): List of player profiles participating in the Mogi.
         teams (`list[list[PlayerProfile]]`): List of List for every team with their players. In FFA, each sublist has only one player.
         subs (`list[PlayerProfile]`): A list of those players who are playing as sub for someone else.
@@ -44,6 +46,7 @@ class Mogi:
     channel_id: int
     player_cap: int = 12
     format: int | None = None
+    room: Room | None = None
 
     players: list[PlayerProfile] = field(default_factory=lambda: [])
     teams: list[list[PlayerProfile]] = field(default_factory=lambda: [])
