@@ -29,49 +29,21 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Check for existing cache
-        id: cache-check
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.ref }}-${{ hashFiles('Dockerfile', 'requirements.txt') }}
-
-      - name: Delete old caches if no cache found
-        if: steps.cache-check.outputs.cache-hit != 'true'
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          if gh cache list --repo ${{ github.repository }} | grep -q 'buildx'; then
-            gh cache delete --all --repo ${{ github.repository }}
-          else
-            echo "No caches to delete."
-          fi
-
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: |
-            /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.ref }}-${{ hashFiles('Dockerfile', 'requirements.txt')  }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
       - name: Delete old package versions
         uses: actions/delete-package-versions@v5
         with:
-          # Name of the package.
-          # Required
           package-name: ${{ github.event.repository.name }}
-
-          # Type of the package. Can be one of docker (v4 or older), container (v5 or newer), maven, npm, nuget, or rubygems.
-          # Required
           package-type: container
-
-          # The number of latest versions to keep.
-          # This cannot be specified with `num-old-versions-to-delete`. By default, `min-versions-to-keep` takes precedence over `num-old-versions-to-delete`.
-          # When set to 0, all deletable versions will be deleted.
-          # When set greater than 0, all deletable package versions except the specified number will be deleted.
           min-versions-to-keep: 1
+
+      # Add cache layers
+      - name: Cache Docker layers
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -80,5 +52,13 @@ jobs:
           push: true
           platforms: linux/amd64,linux/arm64
           tags: ghcr.io/${{ github.repository }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache
+            type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # Temp fix for cache size growth
+      - name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
