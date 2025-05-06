@@ -213,7 +213,7 @@ class Mogi:
             "channel_id": self.channel_id,
             "player_cap": self.player_cap,
             "format": self.format,
-            "room": self.room.to_json(),
+            "room": self.room.to_json() if self.room else None,
             "players": [player.to_json() for player in self.players],
             "teams": [[player.to_json() for player in team] for team in self.teams],
             "subs": [sub.to_json() for sub in self.subs],
