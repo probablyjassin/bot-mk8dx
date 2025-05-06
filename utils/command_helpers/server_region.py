@@ -1,6 +1,7 @@
-from discord import Member, Role
+from discord import Member, Role, Interaction
 from discord.utils import get
 
+from models.MogiModel import Mogi
 from models.RoomModel import Room
 from utils.data.mogi_manager import mogi_manager
 from models.CustomMogiContext import MogiApplicationContext
@@ -8,13 +9,13 @@ from models.CustomMogiContext import MogiApplicationContext
 from config import ROOMS
 
 
-def get_best_server(ctx: MogiApplicationContext) -> Room | None:
+def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
     REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 
     player_discord_members: list[Member] = [
-        get(ctx.guild.members, player.discord_id) for player in ctx.mogi.players
+        get(ctx.guild.members, player.discord_id) for player in mogi.players
     ]
     for member in player_discord_members:
         for role in REGION_ROLES:

@@ -6,6 +6,7 @@ from discord import Interaction
 
 from models.MogiModel import Mogi
 from utils.command_helpers.team_roles import apply_team_roles
+from utils.command_helpers.server_region import get_best_server
 
 voters_lock = asyncio.Lock()
 
@@ -75,8 +76,14 @@ async def format_vote_button_callback(
                 f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
             )
 
+        # chose the best server to play on
+        best_server = get_best_server(ctx=interaction, mogi=mogi)
+
         await interaction.message.channel.send(
             f"# Mogi starting!\n## Format: {FORMAT_STR}\n### Lineup:\n{lineup}"
+        )
+        await interaction.message.channel.send(
+            f"-# not implemented yet: best server by region roles: {best_server.name}"
         )
 
         await apply_team_roles(ctx=interaction, mogi=mogi)
