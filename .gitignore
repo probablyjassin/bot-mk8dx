@@ -135,3 +135,6 @@ tests
 state/
 logs/
 backups/
+
+# custom config files
+room.config.json
