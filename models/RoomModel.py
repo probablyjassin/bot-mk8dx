@@ -54,3 +54,38 @@ class Room:
         except requests.exceptions.RequestException as e:
             print(f"An error occurred: {e}")
             return None
+
+    def to_json(self) -> dict:
+        return {
+            "address": self.address,
+            "description": self.description,
+            "externalGuid": self.externalGuid,
+            "hasPassword": self.hasPassword,
+            "id": self.id,
+            "maxPlayers": self.maxPlayers,
+            "name": self.name,
+            "netVersion": self.netVersion,
+            "owner": self.owner,
+            "players": self.players,
+            "port": self.port,
+            "preferredGameId": self.preferredGameId,
+            "preferredGameName": self.preferredGameName,
+        }
+
+    @classmethod
+    def from_json(cls, json_data: dict) -> "Room":
+        return cls(
+            address=json_data["address"],
+            description=json_data["description"],
+            externalGuid=json_data["externalGuid"],
+            hasPassword=json_data["hasPassword"],
+            id=json_data["id"],
+            maxPlayers=json_data["maxPlayers"],
+            name=json_data["name"],
+            netVersion=json_data["netVersion"],
+            owner=json_data["owner"],
+            players=json_data["players"],
+            port=json_data["port"],
+            preferredGameId=json_data["preferredGameId"],
+            preferredGameName=json_data["preferredGameName"],
+        )
