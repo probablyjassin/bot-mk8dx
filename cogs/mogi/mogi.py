@@ -74,7 +74,7 @@ class mogi(commands.Cog):
         ctx.mogi.channel_id = to_channel.id
         del mogi_manager.mogi_registry[current_mogi_channel_id]
         await ctx.respond(
-            f"# This mogi has been moved to {ctx.mogi.channel_id}",
+            f"# This mogi has been moved to <#{ctx.mogi.channel_id}>",
         )
 
 
