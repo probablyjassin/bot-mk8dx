@@ -1,6 +1,6 @@
 import io, json
 
-from config import ROOMS
+from config import ROOMS_CONFIG
 
 from discord import SlashCommandGroup, Option, AllowedMentions, File
 from discord.ext import commands
@@ -75,17 +75,22 @@ class debugging(commands.Cog):
             )
         )
 
-    @debug.command(name="set_server", description="chose the yuzu server for the current mogi")
+    @debug.command(
+        name="set_server", description="chose the yuzu server for the current mogi"
+    )
     @is_admin()
-    async def set_server(self, ctx: MogiApplicationContext, server = Option(
-        str,
-        name="server",
-        required=True,
-        choices=[room['name'] for room in ROOMS],
+    async def set_server(
+        self,
+        ctx: MogiApplicationContext,
+        server=Option(
+            str,
+            name="server",
+            required=True,
+            choices=[room["name"] for room in ROOMS_CONFIG],
         ),
     ):
-        server = [room for room in ROOMS if room['name'] == server][0]
-        room_obj = Room.from_address(server['address'], server['port'])
+        server = [room for room in ROOMS_CONFIG if room["name"] == server][0]
+        room_obj = Room.from_address(server["address"], server["port"])
         ctx.mogi.room = room_obj
         await ctx.respond(f"Set the server to:\n{server}")
         await ctx.send(room_obj)
