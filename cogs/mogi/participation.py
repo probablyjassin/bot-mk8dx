@@ -113,6 +113,7 @@ class participation(commands.Cog):
                 f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
 
+    # WIP
     @slash_command(name="password", description="Get the password for the yuzu server for this mogi")
     @is_admin()
     @is_mogi_in_progress()

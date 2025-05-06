@@ -33,6 +33,7 @@ class Room:
         most_popular = max(game_count, key=game_count.get)
         return (game_count[most_popular], most_popular)
 
+    # WIP
     @classmethod
     def from_address(cls, address: str, port: int) -> "Room | None":
         try:

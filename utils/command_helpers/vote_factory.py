@@ -3,7 +3,7 @@ from discord import Interaction
 from discord.ui import Button, View
 
 from models.MogiModel import Mogi
-from utils.command_helpers.vote_btn_callback import button_callback
+from utils.command_helpers.vote_btn_callback import format_vote_button_callback, server_vote_button_callback
 
 import random
 
@@ -14,18 +14,33 @@ def get_button_style(format: int, player_count: int) -> discord.ButtonStyle:
     return discord.ButtonStyle.gray
 
 
-def create_button(label: str, mogi: Mogi) -> Button:
+def create_format_vote_button(label: str, mogi: Mogi) -> Button:
 
     FORMAT_BUTTON_INT = int(label.lower()[0]) if label.lower()[0].isnumeric() else 1
 
     async def custom_callback(interaction: Interaction):
-        await button_callback(
+        await format_vote_button_callback(
             interaction, mogi=mogi, FORMAT_BUTTON_INT=FORMAT_BUTTON_INT, label=label
         )
 
     button = Button(
         label=label,
         style=get_button_style(FORMAT_BUTTON_INT, len(mogi.players)),
+        custom_id=label.lower(),
+    )
+    button.callback = custom_callback
+    return button
+
+# WIP
+def create_server_vote_button(label: str, mogi: Mogi) -> Button:
+    async def custom_callback(interaction: Interaction):
+        await server_vote_button_callback(
+            interaction, mogi=mogi, FORMAT_BUTTON_INT=0, label=label
+        )
+
+    button = Button(
+        label=label,
+        style=get_button_style(0, len(mogi.players)),
         custom_id=label.lower(),
     )
     button.callback = custom_callback
@@ -49,5 +64,5 @@ def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
 
     view = VoteButtonView()
     for label in button_labels:
-        view.add_item(create_button(label, mogi))
+        view.add_item(create_format_vote_button)
     return view
