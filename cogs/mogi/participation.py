@@ -2,7 +2,7 @@ from discord import slash_command
 from discord.utils import get, utcnow
 from discord.ext import commands
 
-from utils.command_helpers.checks import is_mogi_not_in_progress
+from utils.command_helpers.checks import is_mogi_in_progress, is_mogi_not_in_progress, is_admin
 
 from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players, db_archived
@@ -112,6 +112,15 @@ class participation(commands.Cog):
             await ctx.respond(
                 f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
+
+    @slash_command(name="password", description="Get the password for the yuzu server for this mogi")
+    @is_admin()
+    @is_mogi_in_progress()
+    async def password(self, ctx: MogiApplicationContext):
+        if not ctx.mogi.room:
+            await ctx.respond("This mogi doesn't have a server assigned yet.")
+
+        await ctx.respond("Not implemented yet.")
 
 
 def setup(bot: commands.Bot):
