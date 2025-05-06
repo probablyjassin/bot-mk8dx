@@ -7,9 +7,9 @@ services:
       - ./state:/app/state
       - ./logs:/app/logs
       - ./backups:/app/backups
+      - ./room.config.json:/app/room.config.json
     env_file:
       - .env
-
   # Uncomment to enable watchtower (if not already existant on the host)
   #watchtower:
   #  image: containrrr/watchtower
