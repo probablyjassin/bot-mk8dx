@@ -64,5 +64,6 @@ def create_button_view(button_labels: list[str], mogi: Mogi) -> View:
 
     view = VoteButtonView()
     for label in button_labels:
-        view.add_item(create_format_vote_button)
+        view.add_item(create_format_vote_button(label, mogi)) 
+
     return view
