@@ -1,7 +1,19 @@
-import os
+import os, json
 from dotenv import load_dotenv
 
 load_dotenv()
+
+if not os.path.exists(".env"):
+    print("Error: '.env' file does not exist. Exiting...")
+    exit(1)
+if not os.path.exists("room.config.json"):
+    print("Error: 'room.config.json' file does not exist. Exiting...")
+    exit(1)
+
+ROOMS = []
+with open("room.config.json") as f:
+    ROOMS = json.load(f)
+
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
