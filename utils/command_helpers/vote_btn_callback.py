@@ -10,7 +10,7 @@ from utils.command_helpers.team_roles import apply_team_roles
 voters_lock = asyncio.Lock()
 
 
-async def button_callback(
+async def format_vote_button_callback(
     interaction: Interaction, mogi: Mogi, FORMAT_BUTTON_INT, label
 ):
     await interaction.response.defer()
@@ -80,3 +80,8 @@ async def button_callback(
         )
 
         await apply_team_roles(ctx=interaction, mogi=mogi)
+
+
+# WIP
+async def server_vote_button_callback():
+    pass
