@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from models.RoomModel import Room
-
 if not os.path.exists(".env"):
     print("Error: '.env' file does not exist. Exiting...")
     exit(1)
@@ -15,10 +13,6 @@ if not os.path.exists("room.config.json"):
 ROOMS_CONFIG = []
 with open("room.config.json") as f:
     ROOMS_CONFIG = json.load(f)
-
-ROOMS: list[Room] = [
-    Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
-]
 
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")

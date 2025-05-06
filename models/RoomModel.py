@@ -43,8 +43,7 @@ class Room:
             potential_rooms = [
                 room
                 for room in servers
-                if room["address"] == address
-                and room["port"] == port
+                if room["address"] == address and room["port"] == port
             ]
 
             if potential_rooms:
