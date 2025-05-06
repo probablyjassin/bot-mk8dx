@@ -62,7 +62,9 @@ class rooms(commands.Cog):
         if ctx.mogi:
             data["Players"] = f"{len(ctx.mogi.players)}/12"
 
-        data["On Server"] = f"{len(room.players)}/12" if room else "unavailable"
+        data[room.name if room else "Server"] = (
+            f"{len(room.players)}/12" if room else "unavailable"
+        )
 
         await ctx.respond(
             embed=create_embed(title=title, description=None, fields=data)
