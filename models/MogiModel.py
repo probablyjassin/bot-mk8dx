@@ -245,7 +245,7 @@ class Mogi:
             channel_id=data["channel_id"],
             player_cap=data.get("player_cap", 12),
             format=data.get("format"),
-            room=Room.from_json(data.get("room")),
+            room=Room.from_json(data.get("room", None)),
             players=[
                 PlayerProfile.from_json(player) for player in data.get("players", [])
             ],

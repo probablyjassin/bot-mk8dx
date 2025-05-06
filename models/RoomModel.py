@@ -73,19 +73,23 @@ class Room:
         }
 
     @classmethod
-    def from_json(cls, json_data: dict) -> "Room":
-        return cls(
-            address=json_data["address"],
-            description=json_data["description"],
-            externalGuid=json_data["externalGuid"],
-            hasPassword=json_data["hasPassword"],
-            id=json_data["id"],
-            maxPlayers=json_data["maxPlayers"],
-            name=json_data["name"],
-            netVersion=json_data["netVersion"],
-            owner=json_data["owner"],
-            players=json_data["players"],
-            port=json_data["port"],
-            preferredGameId=json_data["preferredGameId"],
-            preferredGameName=json_data["preferredGameName"],
+    def from_json(cls, json_data: dict | None) -> "Room | None":
+        return (
+            cls(
+                address=json_data["address"],
+                description=json_data["description"],
+                externalGuid=json_data["externalGuid"],
+                hasPassword=json_data["hasPassword"],
+                id=json_data["id"],
+                maxPlayers=json_data["maxPlayers"],
+                name=json_data["name"],
+                netVersion=json_data["netVersion"],
+                owner=json_data["owner"],
+                players=json_data["players"],
+                port=json_data["port"],
+                preferredGameId=json_data["preferredGameId"],
+                preferredGameName=json_data["preferredGameName"],
+            )
+            if json_data
+            else None
         )
