@@ -1,9 +1,13 @@
 import io, json
 
+from config import ROOMS
+
 from discord import SlashCommandGroup, Option, AllowedMentions, File
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
+from models.RoomModel import Room
+
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
 from utils.command_helpers.confirm import confirmation
@@ -71,10 +75,20 @@ class debugging(commands.Cog):
             )
         )
 
-    @debug.command(name="throw_error", description="throw an error")
+    @debug.command(name="set_server", description="chose the yuzu server for the current mogi")
     @is_admin()
-    async def throw_error(self, ctx: MogiApplicationContext):
-        raise Exception("This is a test command error")
+    async def set_server(self, ctx: MogiApplicationContext, server = Option(
+        str,
+        name="server",
+        required=True,
+        choices=[room['name'] for room in ROOMS],
+        ),
+    ):
+        server = [room for room in ROOMS if room['name'] == server][0]
+        room_obj = Room.from_address(server['address'], server['port'])
+        ctx.mogi.room = room_obj
+        await ctx.respond(f"Set the server to:\n{server}")
+        await ctx.send(room_obj)
 
     """ @debug.command(name="test_player", description="add a dummy player to the mogi")
     @is_mogi_not_in_progress()
