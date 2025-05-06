@@ -1,14 +1,14 @@
 from discord import Member, Role
 from discord.utils import get
 
-from models.MogiModel import Mogi
+from models.RoomModel import Room
 from utils.data.mogi_manager import mogi_manager
 from models.CustomMogiContext import MogiApplicationContext
 
 from config import ROOMS
 
 
-def get_best_server(ctx: MogiApplicationContext):
+def get_best_server(ctx: MogiApplicationContext) -> Room | None:
     REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
