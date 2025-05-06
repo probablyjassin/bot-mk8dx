@@ -1,12 +1,12 @@
 [
     {
         "name": "Yuzu Server 1",
-        "host": "192.168.1.1",
+        "address": "192.168.1.1",
         "port": 3000
     },
     {
         "name": "Yuzu Server 2",
-        "host": "192.168.1.2",
+        "address": "192.168.1.2",
         "port": 3001
     }
 ]
