@@ -1,9 +1,10 @@
-from discord import slash_command, Member, User
+from discord import slash_command, Member, User, Option
 from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.database import db_players, db_archived
+from utils.command_helpers.server_region import REGIONS
 
 from logger import setup_logger
 
@@ -22,7 +23,17 @@ class register(commands.Cog):
         name="register",
         description="Register for playing in Lounge",
     )
-    async def register(self, ctx: MogiApplicationContext):
+    async def register(
+        self,
+        ctx: MogiApplicationContext,
+        region: str = Option(
+            str,
+            name="region",
+            description="Where you're playing from. We use this to find the overall best server to play on.",
+            required=True,
+            choices=REGIONS,
+        ),
+    ):
         await ctx.defer(ephemeral=True)
 
         if ctx.channel_id != ctx.register_channel.id:
@@ -87,6 +98,11 @@ class register(commands.Cog):
             ephemeral=True,
         )
         lounge_logger.info(f"{member.display_name} registered as {username}")
+
+        # add region role if applicable
+        for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
+            if region == role.name and role not in ctx.user.roles:
+                ctx.user.add_roles(role)
 
 
 def setup(bot: commands.Bot):
