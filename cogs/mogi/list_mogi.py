@@ -76,7 +76,7 @@ class list_mogi(commands.Cog):
                 players.sort(key=lambda x: x.mmr, reverse=True)
 
             # FFA
-            if ctx.mogi.format == 1 or ctx.mogi.format == None:
+            if ctx.mogi.format == 1 or ctx.mogi.format in [None, 1]:
                 list_of_players = "\n".join(
                     [
                         (
