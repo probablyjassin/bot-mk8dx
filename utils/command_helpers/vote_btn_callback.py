@@ -70,25 +70,29 @@ async def format_vote_button_callback(
         # start playing mogi
         mogi.play(MOGI_FORMAT)
 
+        # Create the lineup message by teams
         lineup = ""
         for i, team in enumerate(mogi.teams):
             lineup += (
                 f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
             )
 
-        # chose the best server to play on
-        best_server = get_best_server(ctx=interaction, mogi=mogi)
-
+        # Send the lineup, show the mogi has started
         await interaction.message.channel.send(
             f"# Mogi starting!\n## Format: {FORMAT_STR}\n### Lineup:\n{lineup}"
         )
+
+        # chose the best server to play on
+        best_server = get_best_server(ctx=interaction, mogi=mogi)
         await interaction.message.channel.send(
             f"-# not implemented yet: best server by region roles: {best_server.name}"
         )
 
+        # apply team roles (if applicable)
         await apply_team_roles(ctx=interaction, mogi=mogi)
 
 
-# WIP
-async def server_vote_button_callback():
+# WIP: probably removing this if servers are decided by roles not by votes
+""" async def server_vote_button_callback():
     pass
+ """

@@ -5,13 +5,13 @@ from discord.ui import Button, View
 from models.MogiModel import Mogi
 from utils.command_helpers.vote_btn_callback import (
     format_vote_button_callback,
-    server_vote_button_callback,
+    # server_vote_button_callback,
 )
 
 import random
 
 
-def get_button_style(format: int, player_count: int) -> discord.ButtonStyle:
+def get_vote_button_style(format: int, player_count: int) -> discord.ButtonStyle:
     if player_count % format == 0 and player_count > format:
         return discord.ButtonStyle.blurple
     return discord.ButtonStyle.gray
@@ -28,15 +28,15 @@ def create_format_vote_button(label: str, mogi: Mogi) -> Button:
 
     button = Button(
         label=label,
-        style=get_button_style(FORMAT_BUTTON_INT, len(mogi.players)),
+        style=get_vote_button_style(FORMAT_BUTTON_INT, len(mogi.players)),
         custom_id=label.lower(),
     )
     button.callback = custom_callback
     return button
 
 
-# WIP
-def create_server_vote_button(label: str, mogi: Mogi) -> Button:
+# WIP: probably removing this if servers are decided by roles not by votes
+""" def create_server_vote_button(label: str, mogi: Mogi) -> Button:
     async def custom_callback(interaction: Interaction):
         await server_vote_button_callback(
             interaction, mogi=mogi, FORMAT_BUTTON_INT=0, label=label
@@ -48,7 +48,7 @@ def create_server_vote_button(label: str, mogi: Mogi) -> Button:
         custom_id=label.lower(),
     )
     button.callback = custom_callback
-    return button
+    return button """
 
 
 def create_vote_button_view(button_labels: list[str], mogi: Mogi) -> View:
