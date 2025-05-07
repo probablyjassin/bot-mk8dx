@@ -2,10 +2,9 @@ from discord import slash_command
 from discord.utils import get, utcnow
 from discord.ext import commands
 
+from utils.command_helpers.server_region import REGIONS
 from utils.command_helpers.checks import (
-    is_mogi_in_progress,
     is_mogi_not_in_progress,
-    is_admin,
 )
 
 from utils.data.mogi_manager import mogi_manager
@@ -80,6 +79,15 @@ class participation(commands.Cog):
             )
 
             self.last_join[str(ctx.author.id)] = time.time()
+
+            # WIP: while transitioning: remind people to add a region role
+            for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
+                if role in ctx.user.roles:
+                    return
+            await ctx.send(
+                "It seems like you don't have a region role yet. Go to <#1128146332683612241> to grab one.",
+                ephemeral=True,
+            )
 
     @slash_command(name="leave", description="Leave this mogi")
     @is_mogi_not_in_progress()
