@@ -45,7 +45,7 @@ class archive(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player, archive_only=True)
+        player: PlayerProfile = search_player(searched_player, archived_only=True)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
