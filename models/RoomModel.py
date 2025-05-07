@@ -6,6 +6,37 @@ from config import YUZU_API_URL
 
 @dataclass
 class Room:
+    """Represents a yuzu server/room.
+    This class handles servers used for mogis, including room properties
+    and player information.
+    Attributes:
+        address (str): The IP address of the room server.
+        description (str): A description of the room.
+        externalGuid (str): External unique identifier for the room.
+        hasPassword (bool): Whether the room is password protected.
+        id (str): Unique identifier for the room.
+        maxPlayers (int): Maximum number of players allowed in the room.
+        name (str): Name of the room.
+        netVersion (int): Network protocol version.
+        owner (str): Name or identifier of the room owner.
+        players (list[dict]): List of players currently in the room.
+        port (int): Port number used by the room server.
+        preferredGameId (int): ID of the preferred game for this room.
+        preferredGameName (str): Name of the preferred game for this room.
+    Methods:
+        most_popular_game() -> tuple[int, str] | None:
+            Returns the count and name of the most played game in the room.
+            Returns None if no players are present.
+        from_address(address: str, port: int) -> Room | None:
+            Creates a Room instance from server address and port.
+            Returns None if room is not found or on connection error.
+        to_json() -> dict:
+            Converts the Room instance to a JSON-compatible dictionary.
+        from_json(json_data: dict | None) -> Room | None:
+            Creates a Room instance from JSON data.
+            Returns None if json_data is None.
+    """
+
     address: str
     description: str
     externalGuid: str
