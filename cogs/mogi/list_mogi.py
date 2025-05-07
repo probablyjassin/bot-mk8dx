@@ -72,11 +72,11 @@ class list_mogi(commands.Cog):
             players = ctx.mogi.players[:]
 
             # MMR: Sort players as well (only in FFA)
-            if context == "mmr" and ctx.mogi.format == 1:
+            if context == "mmr" and ctx.mogi.format in [None, 1]:
                 players.sort(key=lambda x: x.mmr, reverse=True)
 
             # FFA
-            if ctx.mogi.format == 1 or ctx.mogi.format in [None, 1]:
+            if ctx.mogi.format in [None, 1]:
                 list_of_players = "\n".join(
                     [
                         (
