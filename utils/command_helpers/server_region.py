@@ -41,7 +41,7 @@ def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
         "Oceania": "EU",
     }
 
-    available_rooms = ROOMS
+    available_rooms = ROOMS[:]
     for mogi in mogi_manager.read_registry().values():
         if mogi.room:
             available_rooms.remove(mogi.room)
