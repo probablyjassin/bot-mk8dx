@@ -33,7 +33,7 @@ class player(commands.Cog):
         ),
     ):
         player: PlayerProfile = search_player(
-            searched_name or Int64(ctx.author.id), with_archive=True
+            searched_name or Int64(ctx.author.id), with_archived=True
         )
 
         if not player:
@@ -102,7 +102,7 @@ class player(commands.Cog):
         if getattr(player, "suspended", None):
             embed.add_field(name="Suspended", value="Account suspended from Lounge")
 
-        if search_player(player.discord_id, archive_only=True):
+        if search_player(player.discord_id, archived_only=True):
             embed.add_field(name="Archived", value="Account is not active")
 
         if getattr(player, "disconnects", None):

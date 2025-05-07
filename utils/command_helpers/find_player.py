@@ -7,14 +7,14 @@ from models.PlayerModel import PlayerProfile
 
 def search_player(
     search_query: str | Int64 | int,
-    with_archive: bool = False,
-    archive_only: bool = False,
+    with_archived: bool = False,
+    archived_only: bool = False,
 ) -> PlayerProfile | None:
     """
     ## Search for a player in the database.
     Allow searching by both name and discord_id/mention. Performs both searches.
     """
-    target_collection = db_players if not archive_only else db_archived
+    target_collection = db_players if not archived_only else db_archived
 
     query_criteria = {
         "$or": [
@@ -40,8 +40,8 @@ def search_player(
     }
 
     pipeline = []
-    if not archive_only and with_archive:
-        pipeline.append({"$unionWith": {"coll": "archive"}})
+    if with_archived and not archived_only:
+        pipeline.append({"$unionWith": {"coll": "archived"}})
     pipeline.extend([{"$match": query_criteria}, {"$limit": 1}])
 
     potential_player = next(target_collection.aggregate(pipeline), None)
