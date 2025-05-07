@@ -67,6 +67,13 @@ class list_mogi(commands.Cog):
 
         # Normal and MMR
         else:
+            # create new independant arrays to sort them
+            # (original player and teams arrays may never be tampered with)
+            players = ctx.mogi.players[:]
+
+            # MMR: Sort players as well (only in FFA)
+            if context == "mmr" and ctx.mogi.format == 1:
+                players.sort(key=lambda x: x.mmr, reverse=True)
 
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
@@ -77,7 +84,7 @@ class list_mogi(commands.Cog):
                             if context != "mmr"
                             else f"`{i+1}.` {player.name} ({player.mmr})"
                         )
-                        for i, player in enumerate(ctx.mogi.players)
+                        for i, player in enumerate(players)
                     ]
                 )
 
@@ -98,12 +105,12 @@ class list_mogi(commands.Cog):
                     list_of_players += "\n\n"
 
             # MMR info at the end
-            max_mmr_player, min_mmr_player = max(
-                ctx.mogi.players, key=lambda x: x.mmr
-            ), min(ctx.mogi.players, key=lambda x: x.mmr)
+            max_mmr_player, min_mmr_player = max(players, key=lambda x: x.mmr), min(
+                players, key=lambda x: x.mmr
+            )
 
             list_of_players += (
-                f"\n-# Average MMR: {round( sum( [player.mmr for player in ctx.mogi.players] ) / len(ctx.mogi.players) )} \n"
+                f"\n-# Average MMR: {round( sum( [player.mmr for player in players] ) / len(players) )} \n"
                 f"-# Highest MMR: {max_mmr_player.name}: {max_mmr_player.mmr} \n"
                 f"-# Lowest MMR: {min_mmr_player.name}: {min_mmr_player.mmr} \n"
                 if context == "mmr"
