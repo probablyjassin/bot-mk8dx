@@ -84,7 +84,7 @@ class participation(commands.Cog):
             for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
                 if role in ctx.user.roles:
                     return
-            await ctx.send(
+            await ctx.send_followup(
                 "It seems like you don't have a region role yet. Go to <#1128146332683612241> to grab one.",
                 ephemeral=True,
             )
