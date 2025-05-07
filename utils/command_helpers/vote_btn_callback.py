@@ -87,6 +87,7 @@ async def format_vote_button_callback(
         await interaction.message.channel.send(
             f"-# not implemented yet: best server by region roles: {best_server.name}"
         )
+        mogi.room = best_server
 
         # apply team roles (if applicable)
         await apply_team_roles(ctx=interaction, mogi=mogi)
