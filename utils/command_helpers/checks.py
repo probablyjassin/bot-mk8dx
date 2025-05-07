@@ -25,7 +25,7 @@ class LoungeRole(Enum):
 
 def _is_at_least_role(ctx: MogiApplicationContext, role: LoungeRole) -> bool:
     """
-    ## Internal functino for command checkers that checks if the user has a sufficient role in the hierarchy
+    ## Internal function for command checkers that checks if the user has a sufficient role in the hierarchy
     `ctx.get_lounge_role(lounge_role.value[0]) in ctx.author.roles and lounge_role.value[1] >= min_level`
     """
     min_level = role.value[1]
@@ -64,7 +64,7 @@ def is_moderator():
         return await _check(
             ctx=ctx,
             condition=_is_at_least_role(ctx, LoungeRole.MODERATOR),
-            error_message=f"You're not allowed to use this command. Debug Your Top Role:{ctx.author.top_role}",
+            error_message=f"You're not allowed to use this command.",
         )
 
     return commands.check(predicate)
@@ -133,7 +133,7 @@ def is_mogi_in_progress():
             and (
                 ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)
             ),
-            error_message="The mogi is either not in progress or has already finished calculations.",
+            error_message="The mogi is either not open, not in progress or already finished and is about to be closed.",
         )
 
     return commands.check(predicate)
@@ -154,7 +154,7 @@ def is_mogi_not_in_progress():
                 and (not ctx.mogi.isPlaying)
                 or (ctx.mogi.isFinished)
             ),
-            error_message="The mogi is either still in progress or hasn't finished calculations yet.",
+            error_message="The mogi is either not open, still in progress or hasn't finished calculations yet.",
         )
 
     return commands.check(predicate)
