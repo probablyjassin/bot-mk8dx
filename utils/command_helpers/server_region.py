@@ -32,12 +32,23 @@ def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
         region for region, score in regions_dict.items() if score == max_score
     ][0]
 
+    region_to_server = {
+        "Europe": "EU",
+        "North America": "NA",
+        "South America": "NA",
+        "Africa": "EU",
+        "Asia": "EU",
+        "Oceania": "EU",
+    }
+
     available_rooms = ROOMS
     for mogi in mogi_manager.read_registry().values():
         if mogi.room:
             available_rooms.remove(mogi.room)
 
-    room_candidates = [room for room in available_rooms if best_region in room.name]
+    room_candidates = [
+        room for room in available_rooms if region_to_server[best_region] in room.name
+    ]
 
     return (
         room_candidates[0]
