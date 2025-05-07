@@ -28,7 +28,7 @@ class password(commands.Cog):
             return await ctx.respond(
                 f"Couldn't find your player profile, make sure you're registered in <#{REGISTER_CHANNEL_ID}> or contact a moderator."
             )
-        if player not in ctx.mogi:
+        if player not in ctx.mogi.players:
             return await ctx.respond(
                 f"You're not in this mogi. If it hasn't started yet, you can join. <#{REGISTER_CHANNEL_ID}>"
             )
