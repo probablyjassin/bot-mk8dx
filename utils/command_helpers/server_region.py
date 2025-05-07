@@ -12,9 +12,10 @@ ROOMS: list[Room] = [
     Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
 ]
 
+REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
+
 
 def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
-    REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 
