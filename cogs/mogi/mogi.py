@@ -2,12 +2,15 @@ from discord import slash_command, Option, TextChannel
 from discord.ext import commands
 from discord.utils import get
 
+from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
+
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.checks import is_mogi_not_in_progress, is_mogi_open, is_admin
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.find_player import get_guild_member
+from utils.command_helpers.find_player import search_player
 
 
 class mogi(commands.Cog):
@@ -26,6 +29,15 @@ class mogi(commands.Cog):
     @is_mogi_not_in_progress()
     async def close(self, ctx: MogiApplicationContext):
         await ctx.interaction.response.defer()
+
+        player: PlayerProfile | None = search_player(ctx.user.id)
+        if not player:
+            return await ctx.respond("Couldn't find your Profile")
+        if (
+            player not in ctx.mogi.players
+            and ctx.get_lounge_role("Mogi Manager") not in ctx.user.roles
+        ):
+            return await ctx.respond("You're not in this mogi")
 
         close_confirm_message = "{} don't close the mogi unless it fully finished. \nClosing will remove all players and discard any points.\n **Are you sure?**".format(
             ctx.author.mention
