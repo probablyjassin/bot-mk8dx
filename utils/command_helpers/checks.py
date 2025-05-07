@@ -24,6 +24,10 @@ class LoungeRole(Enum):
 
 
 def _is_at_least_role(ctx: MogiApplicationContext, role: LoungeRole) -> bool:
+    """
+    ## Internal functino for command checkers that checks if the user has a sufficient role in the hierarchy
+    `ctx.get_lounge_role(lounge_role.value[0]) in ctx.author.roles and lounge_role.value[1] >= min_level`
+    """
     min_level = role.value[1]
     for lounge_role in LoungeRole:
         if (
@@ -35,6 +39,11 @@ def _is_at_least_role(ctx: MogiApplicationContext, role: LoungeRole) -> bool:
 
 
 def is_mogi_manager():
+    """
+    ## Command checker that requires the user to be at least Mogi Manager
+    `_is_at_least_role(ctx, LoungeRole.MOGI_MANAGER)`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -46,6 +55,11 @@ def is_mogi_manager():
 
 
 def is_moderator():
+    """
+    ## Command checker that requires the user to be at least Moderator
+    `_is_at_least_role(ctx, LoungeRole.MODERATOR)`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -57,6 +71,11 @@ def is_moderator():
 
 
 def is_admin():
+    """
+    ## Command checker that requires the user to be Admin
+    `_is_at_least_role(ctx, LoungeRole.ADMIN)`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -68,6 +87,11 @@ def is_admin():
 
 
 def is_mogi_open():
+    """
+    ## Command checker that requires a mogi to exist in the current channel
+    `ctx.mogi != None`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -79,6 +103,11 @@ def is_mogi_open():
 
 
 def is_in_mogi():
+    """
+    ## Command checker that requires the user to be in the channel's mogi
+    `ctx.author.id in [player.discord_id for player in ctx.mogi.players]`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -92,6 +121,11 @@ def is_in_mogi():
 
 
 def is_mogi_in_progress():
+    """
+    ## Command checker that requires the channel's mogi to be in progress
+    `ctx.mogi and (ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished))`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
@@ -106,6 +140,11 @@ def is_mogi_in_progress():
 
 
 def is_mogi_not_in_progress():
+    """
+    ## Command checker that requires the channel's mogi not to be in progress
+    `ctx.mogi and (not ctx.mogi.isVoting and (not ctx.mogi.isPlaying) or (ctx.mogi.isFinished))`
+    """
+
     async def predicate(ctx: MogiApplicationContext):
         return await _check(
             ctx=ctx,
