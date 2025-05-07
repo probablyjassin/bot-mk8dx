@@ -8,10 +8,12 @@ from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.command_helpers.find_player import search_player, get_guild_member
 from utils.command_helpers.checks import (
+    is_mogi_open,
     is_mogi_in_progress,
     is_mogi_not_in_progress,
     is_mogi_manager,
     is_moderator,
+    is_admin,
 )
 
 
@@ -148,6 +150,36 @@ class managing(commands.Cog):
         await ctx.respond(
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )
+
+    @manage.command(
+        name="swap",
+        description="Swap two players in the mogi with one another (for teams)",
+    )
+    @is_admin()
+    @is_mogi_open()
+    async def swap(
+        self,
+        ctx: MogiApplicationContext,
+        player1: str = Option(str, name="player1", description="first player"),
+        player2: str = Option(str, name="player2", description="second player"),
+    ):
+        first_player: PlayerProfile | str = search_player(player1) or player1
+        second_player: PlayerProfile | str = search_player(player2) or player1
+        for player in [first_player, second_player]:
+            if isinstance(player, str):
+                return await ctx.respond(f"{player} not found")
+
+        ctx.mogi.players = recurse_replace(ctx.mogi.players, first_player, None)
+        ctx.mogi.players = recurse_replace(
+            ctx.mogi.players, second_player, first_player
+        )
+        ctx.mogi.players = recurse_replace(ctx.mogi.players, None, second_player)
+
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, first_player, None)
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, second_player, first_player)
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, None, second_player)
+
+        await ctx.respond(f"Swapped {first_player.name} with {second_player.name}")
 
     @manage.command(
         name="remove_sub",
