@@ -15,6 +15,7 @@ class password(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
+    # WIP
     @slash_command(
         name="password", description="Get the password for the server your mogi uses."
     )
