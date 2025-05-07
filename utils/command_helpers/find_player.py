@@ -39,9 +39,10 @@ def search_player(
         ]
     }
 
-    pipeline = [{"$match": query_criteria}, {"$limit": 1}]
+    pipeline = []
     if not archive_only and with_archive:
         pipeline.append({"$unionWith": {"coll": "archive"}})
+    pipeline.extend([{"$match": query_criteria}, {"$limit": 1}])
 
     potential_player = next(target_collection.aggregate(pipeline), None)
 
