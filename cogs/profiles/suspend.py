@@ -25,7 +25,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = search_player(searched_player, with_archived=True)
 
         if not player:
             await ctx.respond("Couldn't find that player")
@@ -43,7 +43,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = search_player(searched_player, with_archived=True)
 
         if not player:
             await ctx.respond("Couldn't find that player")
