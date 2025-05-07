@@ -32,7 +32,9 @@ class player(commands.Cog):
             required=False,
         ),
     ):
-        player: PlayerProfile = search_player(searched_name or Int64(ctx.author.id))
+        player: PlayerProfile = search_player(
+            searched_name or Int64(ctx.author.id), with_archive=True
+        )
 
         if not player:
             return await ctx.respond("Couldn't find that player")
