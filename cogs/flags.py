@@ -75,5 +75,5 @@ class flags(commands.Cog):
         await ctx.respond(embed=embed, view=FlagsView(self.debug_flags))
 
 
-async def setup(bot: commands.Bot):
-    await bot.add_cog(flags(bot))
+def setup(bot: commands.Bot):
+    bot.add_cog(flags(bot))
