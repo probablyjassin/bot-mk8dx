@@ -15,7 +15,7 @@ ROOMS: list[Room] = [
 REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
 
 
-def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
+async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 
@@ -31,6 +31,13 @@ def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
     best_region = [
         region for region, score in regions_dict.items() if score == max_score
     ][0]
+
+    # DEBUG
+    debug_str = ""
+    for key in regions_dict.keys():
+        debug_str += f"{key}: {regions_dict[key]} | "
+    await ctx.message.channel.send(f"-# for debugging: {debug_str}")
+    # -----
 
     region_to_server = {
         "Europe": "EU",
