@@ -10,6 +10,7 @@ from utils.command_helpers.checks import (
     is_mogi_manager,
 )
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
+from utils.data.flags import debug_feature_flags
 
 
 class stop(commands.Cog):
@@ -26,7 +27,7 @@ class stop(commands.Cog):
     async def vote(self, ctx: MogiApplicationContext):
 
         # not enough players
-        if len(ctx.mogi.players) < 6:
+        if len(ctx.mogi.players) < 6 or debug_feature_flags["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -65,6 +66,9 @@ class stop(commands.Cog):
         # mogi already started
         if ctx.mogi.isPlaying or ctx.mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
+        # not enough players
+        if len(ctx.mogi.players) < 6 or debug_feature_flags["no_min_players"]:
+            return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
 
