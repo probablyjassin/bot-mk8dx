@@ -11,8 +11,6 @@ from models.CustomMogiContext import MogiApplicationContext
 
 logger = setup_logger(__name__)
 
-intents = discord.Intents.all()
-
 
 class YuzuLoungeBot(commands.Bot):
     """
@@ -62,7 +60,7 @@ bot = YuzuLoungeBot(
     command_prefix=".",
     case_insensitive=True,
     help_command=None,
-    intents=intents,
+    intents=discord.Intents.all(),
     status=discord.Status.online,
     activity=discord.Streaming(
         name="bytes for booting...", url="https://www.youtube.com/watch?v=xvFZjo5PgG0"
