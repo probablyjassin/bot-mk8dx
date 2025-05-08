@@ -52,6 +52,10 @@ class YuzuLoungeBot(commands.Bot):
             print(f"Ejected {name}")
         await super().close()
 
+    async def on_application_command(self, ctx: MogiApplicationContext):
+        """Runs before every slash command"""
+        logger.info(f"Debug: /{ctx.command.qualified_name} used in {ctx.channel.name}")
+
 
 bot = YuzuLoungeBot(
     command_prefix=".",
