@@ -45,6 +45,7 @@ class tasks(commands.Cog):
             Activity(type=ActivityType.playing, name="Mario Kart Wii"),
             Activity(type=ActivityType.playing, name="Retro Rewind"),
             Activity(type=ActivityType.playing, name="on Wii Rainbow Road"),
+            Activity(type=ActivityType.playing, name="Mario Kart World"),
             Activity(type=ActivityType.watching, name="Shroomless tutorials"),
             Activity(type=ActivityType.watching, name="DK Summit gapcut tutorials"),
         ]
