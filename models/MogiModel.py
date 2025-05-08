@@ -6,7 +6,10 @@ from models.PlayerModel import PlayerProfile
 from models.RoomModel import Room
 
 from utils.data.database import db_mogis
-from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
+from utils.maths.teams_algorithm import (
+    teams_alg_distribute_by_order_kevnkkm,
+    teams_alg_random,
+)
 
 
 @dataclass
