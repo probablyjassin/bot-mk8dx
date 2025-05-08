@@ -56,8 +56,6 @@ def teams_alg_random(
     :param team_size: Number of players per team.
     :return: List of teams with distributed players.
     """
-    random_players = random.shuffle(players_in_mogi)
-    return [
-        random_players[i : i + team_size]
-        for i in range(0, len(random_players), team_size)
-    ]
+    players = players_in_mogi.copy()
+    random.shuffle(players)
+    return [players[i : i + team_size] for i in range(0, len(players), team_size)]
