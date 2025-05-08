@@ -54,7 +54,8 @@ class YuzuLoungeBot(commands.Bot):
 
     async def on_application_command(self, ctx: MogiApplicationContext):
         """Runs before every slash command"""
-        logger.info(f"Debug: /{ctx.command.qualified_name} used in {ctx.channel.name}")
+        # Defer the response to get 3 minutes instead of 30 seconds
+        await ctx.defer()
 
 
 bot = YuzuLoungeBot(
