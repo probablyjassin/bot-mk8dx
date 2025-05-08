@@ -6,10 +6,11 @@ import json
 import requests
 from datetime import datetime, timezone, time, timedelta
 
-from discord import Activity, ActivityType, Streaming
+from discord import Activity, ActivityType, Status
 from discord.ext import commands, tasks
 
 from utils.data.state import state_manager
+from utils.data.mogi_manager import mogi_manager
 from utils.data.database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
@@ -34,6 +35,10 @@ class tasks(commands.Cog):
 
     @tasks.loop(seconds=15)
     async def change_activity(self):
+        status = Status.online
+        for mogi in mogi_manager.read_registry().values():
+            if mogi.isPlaying:
+                status = Status.do_not_disturb
         activities = [
             Activity(type=ActivityType.listening, name="DK Summit OST"),
             Activity(type=ActivityType.listening, name="Mario Kart 8 Menu Music"),
@@ -43,7 +48,9 @@ class tasks(commands.Cog):
             Activity(type=ActivityType.watching, name="Shroomless tutorials"),
             Activity(type=ActivityType.watching, name="DK Summit gapcut tutorials"),
         ]
-        await self.bot.change_presence(activity=random.choice(activities))
+        await self.bot.change_presence(
+            status=status, activity=random.choice(activities)
+        )
 
     @tasks.loop(seconds=5)
     async def manage_state(self):
