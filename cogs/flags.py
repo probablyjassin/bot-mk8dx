@@ -13,7 +13,7 @@ class flags(commands.Cog):
             "test3": False,
         }
 
-    @slash_command(name="flags", description="Manage debug flags")
+    """ @slash_command(name="flags", description="Manage debug flags")
     async def flags(self, interaction: Interaction):
         """Displays and allows toggling of debug flags."""
         embed = Embed(title="Debug Flags", color=Color.blue())
@@ -77,7 +77,7 @@ class FlagButtons(View):
         for item in self.children:
             item.disabled = True
         if self.message:
-            await self.message.edit(view=self)
+            await self.message.edit(view=self) """
 
 
 async def setup(bot: commands.Bot):
