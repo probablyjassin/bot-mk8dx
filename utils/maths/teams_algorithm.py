@@ -1,3 +1,4 @@
+import random
 from models.PlayerModel import PlayerProfile
 
 
@@ -38,3 +39,25 @@ def teams_alg_distribute_by_order_kevnkkm(
                 reverse = False
 
     return teams
+
+
+def teams_alg_random(
+    players_in_mogi: list[PlayerProfile], team_size: int
+) -> list[list[PlayerProfile]]:
+    """
+    Randomly distribute players to teams.\n
+    Literally just randomness.\n
+    Why are you still reading this docstring, there's nothing to it.\n
+    Look, I'll show you the code right here cuz it's that short:\n
+    `random_players = random.shuffle(players_in_mogi)` \n
+    `return [random_players[i:i + team_size] for i in range(0, len(random_players), team_size)]`
+
+    :param players_in_mogi: Array of the players in the mogi.
+    :param team_size: Number of players per team.
+    :return: List of teams with distributed players.
+    """
+    random_players = random.shuffle(players_in_mogi)
+    return [
+        random_players[i : i + team_size]
+        for i in range(0, len(random_players), team_size)
+    ]
