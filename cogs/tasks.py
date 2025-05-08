@@ -42,10 +42,6 @@ class tasks(commands.Cog):
             Activity(type=ActivityType.playing, name="on Wii Rainbow Road"),
             Activity(type=ActivityType.watching, name="Shroomless tutorials"),
             Activity(type=ActivityType.watching, name="DK Summit gapcut tutorials"),
-            Streaming(
-                name="ones and zeroes",
-                url="https://www.youtube.com/watch?v=xvFZjo5PgG0&autoplay=1",
-            ),
         ]
         await self.bot.change_presence(activity=random.choice(activities))
 
