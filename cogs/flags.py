@@ -1,4 +1,4 @@
-from discord import slash_command, Interaction, Embed, ButtonStyle, Color, Client
+from discord import slash_command, Interaction, Embed, ButtonStyle, Color
 from discord.ext import commands
 from discord.ui import View, Button
 
