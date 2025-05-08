@@ -95,6 +95,18 @@ class debugging(commands.Cog):
         await ctx.respond(f"Set the server to:\n{server}")
         await ctx.send(room_obj)
 
+    @debug.command(name="list_servers")
+    @is_admin()
+    async def list_servers(self, ctx: MogiApplicationContext):
+        await ctx.defer()
+        rooms: list[Room] = [
+            Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
+        ]
+        msg = ""
+        for room in rooms:
+            msg += f"{room.name}\n"
+        await ctx.respond(msg)
+
     """ @debug.command(name="test_player", description="add a dummy player to the mogi")
     @is_mogi_not_in_progress()
     @is_admin()
