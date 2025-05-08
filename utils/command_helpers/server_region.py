@@ -50,7 +50,7 @@ async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
 
     available_rooms = ROOMS[:]
     for mogi in mogi_manager.read_registry().values():
-        if mogi.room:
+        if mogi.room and mogi.room in available_rooms:
             available_rooms.remove(mogi.room)
 
     room_candidates = [
