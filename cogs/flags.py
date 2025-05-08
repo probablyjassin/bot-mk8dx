@@ -2,6 +2,10 @@ from discord import slash_command, Interaction, Embed, ButtonStyle, Color
 from discord.ext import commands
 from discord.ui import View, Button
 
+from utils.data.flags import debug_feature_flags
+
+from models.CustomMogiContext import MogiApplicationContext
+
 
 class FlagButton(Button):
     def __init__(self, flag_name: str, is_enabled: bool):
@@ -31,7 +35,7 @@ class FlagButton(Button):
         )
 
         # Update embed
-        embed = Embed(title="Bot Flags", color=Color.blue())
+        embed = Embed(title="Debug/Feature Flags", color=Color.blue())
         for flag, value in cog.debug_flags.items():
             embed.add_field(
                 name=flag, value="✅ ON" if value else "❌ OFF", inline=True
@@ -52,11 +56,7 @@ class FlagsView(View):
 class flags(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.debug_flags = {
-            "test1": False,
-            "test2": False,
-            "test3": False,
-        }
+        self.debug_flags = debug_feature_flags
 
     @slash_command(name="flags", description="View and toggle bot flags")
     async def show_flags(self, ctx):
