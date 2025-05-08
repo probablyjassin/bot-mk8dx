@@ -1,7 +1,7 @@
 from models.PlayerModel import PlayerProfile
 
 
-def distribute_players_to_teams(
+def teams_alg_distribute_by_order_kevnkkm(
     players_in_mogi: list[PlayerProfile], team_size: int
 ) -> list[list[PlayerProfile]]:
     """
