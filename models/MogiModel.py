@@ -6,7 +6,7 @@ from models.PlayerModel import PlayerProfile
 from models.RoomModel import Room
 
 from utils.data.database import db_mogis
-from utils.maths.teams_algorithm import distribute_players_to_teams
+from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
 
 
 @dataclass
@@ -112,7 +112,7 @@ class Mogi:
                 self.teams.append([player])
 
         else:
-            self.teams = distribute_players_to_teams(self.players, format_int)
+            self.teams = teams_alg_distribute_by_order_kevnkkm(self.players, format_int)
             # important: we put players in the new order determined by the team-making
             self.players = [player for team in self.teams for player in team]
 
