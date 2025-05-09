@@ -10,6 +10,9 @@ from utils.data.state import state_manager
 from models.CustomMogiContext import MogiApplicationContext
 
 logger = setup_logger(__name__)
+from cogs.error_handler import error_logger
+
+SAFE_MODE = False
 
 
 class YuzuLoungeBot(commands.Bot):
@@ -67,8 +70,7 @@ bot = YuzuLoungeBot(
     ),
 )
 
-
-def main():
+def load_cogs():
     print("----Loading extensions----")
     for root, dirs, files in os.walk("./cogs"):
         for file in files:
@@ -80,6 +82,22 @@ def main():
                 bot.load_extension(extension)
                 print(f"Loaded {extension}")
     logger.debug("*Finished loading extensions*")
+
+def load_safe_mode():
+    try:
+        bot.load_extension("utils.command_helpers.safemode_cog")
+        logger.info("Loaded safemode_cog successfully.")
+    except Exception as e:
+        logger.error(f"Failed to load safemode_cog: {e}")
+        error_logger.error(f"Failed to load safemode_cog: {e}")
+
+def main():
+    try:
+        load_cogs()
+    except Exception as e:
+        logger.error(f"Failed to load extensions, starting in safe mode.")
+        error_logger.error(f"Failed to load extensions: {e}")
+        load_safe_mode()
 
     bot.run(DISCORD_TOKEN)
 
