@@ -84,6 +84,9 @@ def load_cogs():
     logger.debug("*Finished loading extensions*")
 
 def load_safe_mode():
+    for name, cog in list(bot.cogs.items()):
+        bot.unload_extension(cog.__module__)
+        print(f"Unloaded {name}")
     try:
         bot.load_extension("utils.command_helpers.safemode_cog")
         logger.info("Loaded safemode_cog successfully.")
