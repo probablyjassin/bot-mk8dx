@@ -81,6 +81,20 @@ class edit(commands.Cog):
         if not player:
             await ctx.respond("Couldn't find that player")
 
+        # Check if player is in a mogi in another channel
+        for mogi in mogi_manager.mogi_registry.values():
+            if player in mogi.players and mogi.channel_id != ctx.channel.id:
+                return await ctx.respond(
+                    f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."
+                )
+
+        # Use the player profile instance from the mogi the player is in right of (if applicable)
+        if ctx.mogi and player in ctx.mogi.players:
+            player: PlayerProfile = next(
+                (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
+                None,
+            )
+
         db_players.update_one({"_id": player._id}, ({"$set": {"name": new_name}}))
 
         await ctx.respond(f"Changed <@{player.discord_id}>'s username to {new_name}")
