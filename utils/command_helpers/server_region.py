@@ -57,11 +57,11 @@ async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
         debug_str += f"{key}: {regions_dict[key]} | "
     debug_str += "\n\n"
     for room in ROOMS:
-        debug_str += f"+ {room.name}\n"
+        debug_str += f"-# + {room.name}\n"
     debug_str += "\n\n"
     for room in available_rooms:
-        debug_str += f"# {room.name}\n"
-    await ctx.message.channel.send(f"-# for debugging:\n{debug_str}")
+        debug_str += f"-# {room.name}\n"
+    await ctx.message.channel.send(f"-# for debugging:\n-# {debug_str}")
     # -----
 
     return (
