@@ -18,15 +18,16 @@ curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/ma
 curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/main/example.env
 ```
 
-- comlpete the `example.env` with real values
+- comlpete the `example.env` and `room.example.config` with real values
 - rename `example.env` to `.env`
+- rename `room.example.config` to `room.config`
 
 
 ```bash
 docker compose up -d
 ```
 
-That's it! The bot uses [docker watchtower](https://github.com/containrrr/watchtower) to automatically restart the bot when the docker image gets updated!
+That's it! Uncomment the [docker watchtower](https://github.com/containrrr/watchtower) section in the `docker-compose.yml` to automatically fetch updates to restart the bot when changes are detected!
 
 
 
