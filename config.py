@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ROOMS_CONFIG = []
-with open("room.config.json") as f:
+with open("room.config") as f:
     ROOMS_CONFIG = json.load(f)
 
 
