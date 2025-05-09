@@ -1,5 +1,6 @@
 from discord import ApplicationContext, slash_command
 from discord.ext import commands
+from discord.utils import get
 
 from config import LOG_CHANNEL_ID
 
@@ -12,6 +13,7 @@ class safemode_cog(commands.Cog):
         print("Safe Mode is ready.")
         log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
         await log_channel.send("⚠️Bot failed to start up. Safe Mode is active.")
+        await log_channel.send(get(log_channel.guild.roles, name="Admin").mention)
 
     @commands.Cog.listener()
     async def on_application_command(self, ctx: ApplicationContext):
