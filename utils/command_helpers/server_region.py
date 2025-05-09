@@ -32,13 +32,6 @@ async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
         region for region, score in regions_dict.items() if score == max_score
     ][0]
 
-    # DEBUG
-    debug_str = ""
-    for key in regions_dict.keys():
-        debug_str += f"{key}: {regions_dict[key]} | "
-    await ctx.message.channel.send(f"-# for debugging: {debug_str}")
-    # -----
-
     region_to_server = {
         "Europe": "EU",
         "North America": "NA",
@@ -51,11 +44,25 @@ async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
     available_rooms = ROOMS[:]
     for mogi in mogi_manager.read_registry().values():
         if mogi.room and mogi.room in available_rooms:
+            print(mogi.room)
             available_rooms.remove(mogi.room)
 
     room_candidates = [
         room for room in available_rooms if region_to_server[best_region] in room.name
     ]
+
+    # DEBUG
+    debug_str = ""
+    for key in regions_dict.keys():
+        debug_str += f"{key}: {regions_dict[key]} | "
+    debug_str += "\n\n"
+    for room in ROOMS:
+        debug_str += f"+ {room.name}\n"
+    debug_str += "\n\n"
+    for room in available_rooms:
+        debug_str += f"# {room.name}\n"
+    await ctx.message.channel.send(f"-# for debugging:\n{debug_str}")
+    # -----
 
     return (
         room_candidates[0]
