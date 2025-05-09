@@ -27,7 +27,7 @@ curl -O https://raw.githubusercontent.com/probablyjassin/bot-mk8dx/refs/heads/ma
 docker compose up -d
 ```
 
-That's it! The bot uses [docker watchtower](https://github.com/containrrr/watchtower) to automatically restart the bot when the docker image gets updated!
+That's it! Uncomment the [docker watchtower](https://github.com/containrrr/watchtower) section in the `docker-compose.yml` to automatically fetch updates to restart the bot when changes are detected!
 
 
 
