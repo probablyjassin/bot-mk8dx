@@ -17,7 +17,7 @@ class safemode_cog(commands.Cog):
     async def on_application_command(self, ctx: ApplicationContext):
         return await ctx.respond("The bot couldn't start up properly. The admins are notified and will fix this in just a few minutes.")
     
-    # Catch common commands to prevent 'unknown interaction' error and instead show the error message
+    # Catch common commands to prevent 'unknown interaction' error
     @slash_command(name="join")
     async def join(self, ctx: ApplicationContext):
         return
