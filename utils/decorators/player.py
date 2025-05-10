@@ -7,7 +7,11 @@ from utils.data.data_manager import data_manager, archive_type
 from utils.data.mogi_manager import mogi_manager
 
 
-def with_player(assert_not_in_mogi: bool = True, assert_not_suspended: bool = True):
+def with_player(
+    assert_in_mogi: bool = False,
+    assert_not_in_mogi: bool = False,
+    assert_not_suspended: bool = False,
+):
     """
     Decorator that checks if the player exists in database and adds them to the function parameters.
 
@@ -27,13 +31,19 @@ def with_player(assert_not_in_mogi: bool = True, assert_not_suspended: bool = Tr
     def decorator(func):
         @wraps(func)
         async def wrapper(self, ctx: MogiApplicationContext, *args, **kwargs):
-            # Check if player is already in a mogi (including in another channel)
+            # Make sure the player is in the mogi
+            if assert_in_mogi:
+                if not ctx.user.id in [
+                    mogi_player.id for mogi_player in ctx.mogi.players
+                ]:
+                    return await ctx.respond("You're not in this mogi")
+            # Make sure player is not already in a mogi (including in another channel)
             if assert_not_in_mogi:
                 for mogi in mogi_manager.mogi_registry.values():
                     for player in mogi.players:
                         if player.discord_id == ctx.author.id:
                             if mogi.channel_id == ctx.channel.id:
-                                return await ctx.respond("You're already in this mogi.")
+                                return await ctx.respond("You're already in this mogi")
                             return await ctx.respond(
                                 f"You're already in a mogi in <#{mogi.channel_id}>"
                             )
