@@ -37,6 +37,7 @@ class DataManager:
         pass
 
     def find_player(
+        self,
         query: int | Int64 | str,
         archive: archive_type = archive_type.NO,
     ) -> PlayerProfile | None:
@@ -69,6 +70,7 @@ class DataManager:
         return PlayerProfile(**potential_player) if potential_player else None
 
     def get_all_player_profiles(
+        self,
         archive: archive_type = archive_type.NO,
         with_id: bool = False,
     ) -> list[PlayerProfile] | list[dict] | None:
@@ -80,6 +82,7 @@ class DataManager:
         ]
 
     def get_all_player_entries(
+        self,
         archive: archive_type = archive_type.NO,
         with_id: bool = False,
         only_field: player_field | None = None,
@@ -92,7 +95,7 @@ class DataManager:
 
         return list(db_players.find(archive.value, projection))
 
-    def create_new_player(username: str, discord_id: int, join_time: int) -> None:
+    def create_new_player(self, username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
             {
                 "name": username,
@@ -104,7 +107,7 @@ class DataManager:
         )
 
     def get_leaderboard(
-        page_index: int, sort: sort_type = sort_type.MMR
+        self, page_index: int, sort: sort_type = sort_type.MMR
     ) -> list[dict] | None:
         total_player_count = db_players.count_documents({})
 
@@ -194,19 +197,20 @@ class DataManager:
 
         return list(db_players.aggregate(pipeline))
 
-    def delete_player(query: int | Int64 | str):
+    def delete_player(self, query: int | Int64 | str):
         pass
 
-    def get_all_mogis(with_id: bool = False) -> list[MogiHistoryData]:
+    def get_all_mogis(self, with_id: bool = False) -> list[MogiHistoryData]:
         return [
             MogiHistoryData.from_dict(mogi)
             for mogi in list(db_mogis.find({}, {"_id": 0} if with_id else {}))
         ]
 
-    def get_all_mogi_entries(with_id: bool = False) -> list[dict]:
+    def get_all_mogi_entries(self, with_id: bool = False) -> list[dict]:
         return list(db_mogis.find({}, {"_id": 0} if with_id else {}))
 
     def add_mogi_history(
+        self,
         started_at: int,
         finished_at: int,
         player_ids: list[int],
@@ -227,7 +231,7 @@ class DataManager:
             }
         )
 
-    def apply_result_mmr(usernames: list[str], deltas: list[int]) -> None:
+    def apply_result_mmr(self, usernames: list[str], deltas: list[int]) -> None:
         """
         ### Apply MMR results to players
         Note: Subs need to be removed prior from this list, the function does not check for this.
@@ -251,7 +255,7 @@ class DataManager:
             ]
         )
 
-    def bulk_add_mmr(player_usernames: list[str], amount: int) -> None:
+    def bulk_add_mmr(self, player_usernames: list[str], amount: int) -> None:
         """
         ### Add a certain `amount` of MMR to every player (by username) provided.
         `amount` may be negative\n
