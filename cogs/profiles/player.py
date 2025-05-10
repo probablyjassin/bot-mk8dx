@@ -96,9 +96,6 @@ class player(commands.Cog):
         if getattr(player, "suspended", None):
             embed.add_field(name="Suspended", value="Account suspended from Lounge")
 
-        if search_player(player.discord_id, archived_only=True):
-            embed.add_field(name="Archived", value="Account is not active")
-
         if getattr(player, "disconnects", None):
             embed.add_field(name="DCd", value=f"{player.disconnects} times")
 
