@@ -31,21 +31,28 @@ class DataManager:
         query: int | Int64 | str, archive: archive_type = archive_type.NONE
     ) -> PlayerProfile | None:
         query_criteria = {
-            "$or": [
-                {"name": (query.lower() if isinstance(query, str) else query)},
+            "$and": [
                 {
-                    "discord_id": (
-                        Int64(query)
-                        if isinstance(query, Int64 | int)
-                        else (
-                            Int64(query.strip("<@!>"))
-                            if query.strip("<@!>").isdigit()
-                            else None
-                        )
-                    )
-                },
+                    "$or": [
+                        {"name": (query.lower() if isinstance(query, str) else query)},
+                        {
+                            "discord_id": (
+                                Int64(query)
+                                if isinstance(query, Int64 | int)
+                                else (
+                                    Int64(query.strip("<@!>"))
+                                    if query.strip("<@!>").isdigit()
+                                    else None
+                                )
+                            )
+                        },
+                    ]
+                }
             ]
         }
+
+        if archive == archive_type.ONLY:
+            query_criteria["$and"].append({"inactive": True})
 
         pipeline = []
         if archive == archive_type.NONE:
@@ -81,6 +88,16 @@ class DataManager:
         skip_count = skip_count if skip_count >= 0 else 0
 
         pipeline = []
+
+        # Add match stage to filter out inactive players
+        pipeline.append(
+            {
+                "$match": {
+                    "inactive": {"$ne": True},
+                    "history": {"$exists": True, "$not": {"$size": 0}},
+                }
+            }
+        )
 
         # Add fields for Wins and Losses directly to the query results
         pipeline.append(
