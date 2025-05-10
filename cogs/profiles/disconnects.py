@@ -7,7 +7,7 @@ from models.PlayerModel import PlayerProfile
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_manager, is_moderator
 
-from utils.data._database import db_players
+from utils.data.data_manager import data_manager, archive_type, player_field
 
 
 class disconnects(commands.Cog):
@@ -77,7 +77,11 @@ class disconnects(commands.Cog):
     async def disconnects_list(self, ctx: MogiApplicationContext):
 
         players = sorted(
-            list(db_players.find({"disconnects": {"$gt": 0}})),
+            list(
+                data_manager.get_all_player_entries(
+                    archive=archive_type.INCLUDE, only_field=player_field.DISCONNECTS
+                )
+            ),
             key=lambda p: p["disconnects"],
             reverse=True,
         )[:3]
