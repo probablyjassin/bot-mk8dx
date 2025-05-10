@@ -23,8 +23,6 @@ class participation(commands.Cog):
         self.join_semaphore = asyncio.Semaphore(1)
         self.leave_semaphore = asyncio.Semaphore(1)
 
-        self.last_join: dict[str, int] = {}
-
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
     @with_player(assert_not_in_mogi=True, assert_not_suspended=True)
@@ -40,8 +38,6 @@ class participation(commands.Cog):
             await ctx.respond(
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
             )
-
-            self.last_join[str(ctx.author.id)] = time.time()
 
             # WIP: while transitioning: remind people to add a region role
             for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
@@ -64,16 +60,6 @@ class participation(commands.Cog):
             ]
             if ctx.inmogi_role in ctx.user.roles:
                 await ctx.user.remove_roles(ctx.inmogi_role, reason="Left mogi")
-
-            if self.last_join.get(str(ctx.author.id), None):
-                if time.time() - self.last_join[str(ctx.author.id)] < 5:
-                    await ctx.send(f"<@{ctx.author.id}>, don't do that")
-                    if discord_user := get(ctx.guild.members, id=ctx.author.id):
-                        await discord_user.timeout(
-                            until=utcnow() + datetime.timedelta(minutes=5),
-                            reason="Spamming mogi commands",
-                        )
-                del self.last_join[str(ctx.author.id)]
 
             if len(ctx.mogi.players) == 0:
                 mogi_manager.destroy_mogi(ctx.channel.id)
