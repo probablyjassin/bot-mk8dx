@@ -1,7 +1,7 @@
 from bson.int64 import Int64
 
 from discord import Guild, Member
-from utils.data.database import db_players, db_archived
+from utils.data._database import db_players, db_archived
 from models.PlayerModel import PlayerProfile
 
 

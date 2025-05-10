@@ -8,7 +8,7 @@ from discord import slash_command, Option, File
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data.database import db_players
+from utils.data._database import db_players
 from models.RankModel import Rank
 
 

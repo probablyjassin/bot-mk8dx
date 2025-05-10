@@ -3,7 +3,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data.database import db_players, db_archived
+from utils.data._database import db_players, db_archived
 from utils.command_helpers.server_region import REGIONS
 
 from logger import setup_logger

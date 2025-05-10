@@ -5,7 +5,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from utils.data.mogi_manager import mogi_manager
-from utils.data.database import db_players
+from utils.data._database import db_players
 from utils.command_helpers.find_player import search_player, get_guild_member
 from utils.command_helpers.checks import is_moderator
 
