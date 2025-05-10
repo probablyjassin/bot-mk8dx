@@ -50,8 +50,7 @@ def with_player(
 
             # Fetch player record
             if player_entry := data_manager.find_player(
-                ctx.author.id,
-                archive_type.INCLUDE,
+                query=ctx.user.id, archive=archive_type.INCLUDE
             ):
                 pass
             else:
