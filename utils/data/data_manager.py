@@ -276,4 +276,4 @@ class DataManager:
         )
 
 
-data_manager = DataManager({})
+data_manager = DataManager()
