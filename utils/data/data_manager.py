@@ -1,3 +1,4 @@
+from pymongo import UpdateOne
 from bson.int64 import Int64
 
 from enum import Enum
@@ -67,6 +68,17 @@ class DataManager:
                 db_players.find(archive.value, {"_id": 0} if with_id else {})
             )
         ]
+
+    def create_new_player(username: str, discord_id: int, join_time: int) -> None:
+        db_players.insert_one(
+            {
+                "name": username,
+                "discord_id": Int64(discord_id),
+                "mmr": 2000,
+                "history": [],
+                "joined": join_time,
+            },
+        )
 
     def get_leaderboard(
         page_index: int, sort: sort_type = sort_type.MMR
@@ -187,6 +199,54 @@ class DataManager:
                 "results": results,
                 "disconnections": disconnections,
             }
+        )
+
+    def apply_result_mmr(usernames: list[str], deltas: list[int]) -> None:
+        """
+        ### Apply MMR results to players
+        Note: Subs need to be removed prior from this list, the function does not check for this.
+        """
+        db_players.bulk_write(
+            [
+                UpdateOne(
+                    {"name": entry["name"]},
+                    {
+                        "$set": {
+                            "mmr": {"$max": [1, {"$add": ["$mmr", entry["delta"]]}]}
+                        },
+                        "$push": {"history": entry["delta"]},
+                    },
+                    upsert=False,
+                )
+                for entry in (
+                    {"name": usernames[i], "delta": deltas[i]}
+                    for i in range(len(usernames))
+                )
+            ]
+        )
+
+    def bulk_add_mmr(player_usernames: list[str], amount: int) -> None:
+        """
+        ### Add a certain `amount` of MMR to every player (by username) provided.
+        `amount` may be negative\n
+        It's ensured each player's MMR is still 1 or more total.
+        """
+        db_players.bulk_write(
+            [
+                UpdateOne(
+                    {"name": username},
+                    [
+                        {
+                            "$set": {
+                                "mmr": {"$max": [1, {"$add": ["$mmr", amount]}]},
+                            },
+                            "$push": {"history": amount},
+                        }
+                    ],
+                    upsert=False,
+                )
+                for username in player_usernames
+            ]
         )
 
 
