@@ -9,9 +9,9 @@ from datetime import datetime, timezone, time, timedelta
 from discord import Activity, ActivityType, Status
 from discord.ext import commands, tasks
 
+from utils.data.data_manager import data_manager, archive_type
 from utils.data.state import state_manager
 from utils.data.mogi_manager import mogi_manager
-from utils.data._database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
 
@@ -69,8 +69,10 @@ class tasks(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": list(db_players.find({}, {"_id": 0})),
-            "mogis": list(db_mogis.find({}, {"_id": 0})),
+            "players": data_manager.get_all_player_entries(
+                archive=archive_type.INCLUDE, with_id=False
+            ),
+            "mogis": data_manager.get_all_mogi_entries(with_id=False),
         }
 
         with open(backup_filename, "w") as backup_file:
