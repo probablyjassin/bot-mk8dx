@@ -51,15 +51,14 @@ class DataManager:
             ]
         }
 
+        if archive == archive_type.NONE:
+            query_criteria["$and"].append({"inactive": {"$ne": True}})
         if archive == archive_type.ONLY:
             query_criteria["$and"].append({"inactive": True})
 
-        pipeline = []
-        if archive == archive_type.NONE:
-            pipeline.append({"$unionWith": {"coll": "archived"}})
-        pipeline.extend([{"$match": query_criteria}, {"$limit": 1}])
-
-        potential_player = next(db_players.aggregate(pipeline), None)
+        potential_player = next(
+            db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
+        )
 
         return PlayerProfile(**potential_player) if potential_player else None
 
