@@ -11,11 +11,11 @@ from utils.data._database import db_players, db_mogis
 
 
 class player_field(Enum):
-    NAME = "mmr"
-    DISCORD_ID = "mmr"
+    NAME = "name"
+    DISCORD_ID = "discord_id"
     MMR = "mmr"
     HISTORY = "history"
-    DISCONNECTS = "mmr"
+    DISCONNECTS = "disconnects"
 
 
 class archive_type(Enum):
@@ -39,8 +39,7 @@ class DataManager:
     def find_player(
         query: int | Int64 | str,
         archive: archive_type = archive_type.NO,
-        only_field: player_field | None = None,
-    ) -> PlayerProfile | dict | None:
+    ) -> PlayerProfile | None:
         query_criteria = {
             "$and": [
                 {
@@ -63,24 +62,16 @@ class DataManager:
             ]
         }
 
-        projection = {"_id": 0}
-        if only_field:
-            projection[only_field.value] = 1
-
-        potential_player = db_players.find_one(query_criteria, projection)
-
-        if not potential_player:
-            return None
-
-        return (
-            potential_player[only_field.value]
-            if only_field
-            else PlayerProfile.from_json(potential_player)
+        potential_player = next(
+            db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
         )
 
+        return PlayerProfile(**potential_player) if potential_player else None
+
     def get_all_player_profiles(
-        archive: archive_type = archive_type.NO, with_id: bool = False
-    ) -> list[PlayerProfile] | None:
+        archive: archive_type = archive_type.NO,
+        with_id: bool = False,
+    ) -> list[PlayerProfile] | list[dict] | None:
         return [
             PlayerProfile.from_json(player)
             for player in list(
@@ -89,9 +80,17 @@ class DataManager:
         ]
 
     def get_all_player_entries(
-        archive: archive_type = archive_type.NO, with_id: bool = False
+        archive: archive_type = archive_type.NO,
+        with_id: bool = False,
+        only_field: player_field | None = None,
     ) -> list[dict] | None:
-        return list(db_players.find(archive.value, {"_id": 0} if with_id else {}))
+
+        projection = {"_id": 0} if with_id else {}
+
+        if only_field:
+            projection[only_field.value] = 1
+
+        return list(db_players.find(archive.value, projection))
 
     def create_new_player(username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
