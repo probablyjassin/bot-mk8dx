@@ -1,12 +1,26 @@
+from pymongo import UpdateOne
 from bson.int64 import Int64
 
 from enum import Enum
 
 from dataclasses import dataclass
 from models.PlayerModel import PlayerProfile
-from models.MogiModel import Mogi
+from models.MogiModel import MogiHistoryData
 
 from utils.data._database import db_players, db_archived, db_mogis
+
+
+class archive_type(Enum):
+    NO = {"inactive": {"$ne": True}}
+    INCLUDE = {}
+    ONLY = {"inactive": True}
+
+
+class sort_type(Enum):
+    MMR = "MMR"
+    WINS = "Wins"
+    LOSSES = "Losses"
+    WINRATE = "Winrate %"
 
 
 @dataclass
@@ -14,26 +28,57 @@ class DataManager:
     def __init__(self):
         pass
 
-    class archive_type(Enum):
-        NONE = "none"
-        INCLUDE = "include"
-        ONLY = "only"
-
-    class sort_type(Enum):
-        MMR = "MMR"
-        WINS = "Wins"
-        LOSSES = "Losses"
-        WINRATE = "Winrate %"
-
     def find_player(
-        query: int | Int64 | str, archive: archive_type = archive_type.NONE
+        query: int | Int64 | str, archive: archive_type = archive_type.NO
     ) -> PlayerProfile | None:
-        pass
+        query_criteria = {
+            "$and": [
+                {
+                    "$or": [
+                        {"name": (query.lower() if isinstance(query, str) else query)},
+                        {
+                            "discord_id": (
+                                Int64(query)
+                                if isinstance(query, Int64 | int)
+                                else (
+                                    Int64(query.strip("<@!>"))
+                                    if query.strip("<@!>").isdigit()
+                                    else None
+                                )
+                            )
+                        },
+                    ]
+                },
+                archive.value,
+            ]
+        }
+
+        potential_player = next(
+            db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
+        )
+
+        return PlayerProfile(**potential_player) if potential_player else None
 
     def get_all_players(
-        archive: archive_type = archive_type.NONE,
+        archive: archive_type = archive_type.NO, with_id: bool = False
     ) -> list[PlayerProfile] | None:
-        pass
+        return [
+            PlayerProfile.from_json(player)
+            for player in list(
+                db_players.find(archive.value, {"_id": 0} if with_id else {})
+            )
+        ]
+
+    def create_new_player(username: str, discord_id: int, join_time: int) -> None:
+        db_players.insert_one(
+            {
+                "name": username,
+                "discord_id": Int64(discord_id),
+                "mmr": 2000,
+                "history": [],
+                "joined": join_time,
+            },
+        )
 
     def get_leaderboard(
         page_index: int, sort: sort_type = sort_type.MMR
@@ -53,10 +98,21 @@ class DataManager:
 
         pipeline = []
 
+        # Add match stage to filter out inactive players
+        pipeline.append(
+            {
+                "$match": {
+                    "inactive": {"$ne": True},
+                    "history": {"$exists": True, "$not": {"$size": 0}},
+                }
+            }
+        )
+
         # Add fields for Wins and Losses directly to the query results
         pipeline.append(
             {
                 "$project": {
+                    "_id": 0,
                     "name": 1,
                     "mmr": 1,
                     "history": 1,
@@ -117,6 +173,81 @@ class DataManager:
 
     def delete_player(query: int | Int64 | str):
         pass
+
+    def get_all_mogis(with_id: bool = False) -> list[MogiHistoryData]:
+        return [
+            MogiHistoryData.from_dict(mogi)
+            for mogi in list(db_mogis.find({}, {"_id": 0} if with_id else {}))
+        ]
+
+    def add_mogi_history(
+        started_at: int,
+        finished_at: int,
+        player_ids: list[int],
+        format: int,
+        subs: int,
+        results: list[int],
+        disconnections: int,
+    ) -> None:
+        db_mogis.insert_one(
+            {
+                "started_at": started_at,
+                "finished_at": finished_at,
+                "player_ids": player_ids,
+                "format": format,
+                "subs": subs,
+                "results": results,
+                "disconnections": disconnections,
+            }
+        )
+
+    def apply_result_mmr(usernames: list[str], deltas: list[int]) -> None:
+        """
+        ### Apply MMR results to players
+        Note: Subs need to be removed prior from this list, the function does not check for this.
+        """
+        db_players.bulk_write(
+            [
+                UpdateOne(
+                    {"name": entry["name"]},
+                    {
+                        "$set": {
+                            "mmr": {"$max": [1, {"$add": ["$mmr", entry["delta"]]}]}
+                        },
+                        "$push": {"history": entry["delta"]},
+                    },
+                    upsert=False,
+                )
+                for entry in (
+                    {"name": usernames[i], "delta": deltas[i]}
+                    for i in range(len(usernames))
+                )
+            ]
+        )
+
+    def bulk_add_mmr(player_usernames: list[str], amount: int) -> None:
+        """
+        ### Add a certain `amount` of MMR to every player (by username) provided.
+        `amount` may be negative\n
+        It's ensured each player's MMR is still 1 or more total.
+        """
+        db_players.bulk_write(
+            [
+                UpdateOne(
+                    {"name": username},
+                    [
+                        {
+                            "$set": {
+                                "mmr": {"$max": [1, {"$add": ["$mmr", amount]}]},
+                            },
+                            "$push": {"history": amount},
+                        }
+                    ],
+                    upsert=False,
+                )
+                for username in player_usernames
+            ]
+        )
 
 
 data_manager = DataManager({})

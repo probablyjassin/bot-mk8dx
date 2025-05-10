@@ -31,8 +31,7 @@ class archive(commands.Cog):
         if not player:
             return await ctx.respond("Couldn't find that player")
 
-        db_archived.insert_one(player.to_mongo())
-        db_players.delete_one({"_id": player._id})
+        player.inactive = True
 
         await ctx.respond(f"Archived <@{player.discord_id}>")
 
@@ -50,10 +49,7 @@ class archive(commands.Cog):
         if not player:
             return await ctx.respond("Couldn't find that player")
 
-        print(player.__dict__)
-
-        db_players.insert_one(player.to_mongo())
-        db_archived.delete_one({"_id": player._id})
+        player.inactive = False
 
         await ctx.respond(f"Retrieved <@{player.discord_id}>")
 
