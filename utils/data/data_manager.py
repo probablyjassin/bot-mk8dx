@@ -10,9 +10,9 @@ from utils.data._database import db_players, db_archived, db_mogis
 
 
 class archive_type(Enum):
-    NONE = "none"
-    INCLUDE = "include"
-    ONLY = "only"
+    NO = {"inactive": {"$ne": True}}
+    INCLUDE = {}
+    ONLY = {"inactive": True}
 
 
 class sort_type(Enum):
@@ -28,7 +28,7 @@ class DataManager:
         pass
 
     def find_player(
-        query: int | Int64 | str, archive: archive_type = archive_type.NONE
+        query: int | Int64 | str, archive: archive_type = archive_type.NO
     ) -> PlayerProfile | None:
         query_criteria = {
             "$and": [
@@ -47,14 +47,10 @@ class DataManager:
                             )
                         },
                     ]
-                }
+                },
+                archive.value,
             ]
         }
-
-        if archive == archive_type.NONE:
-            query_criteria["$and"].append({"inactive": {"$ne": True}})
-        if archive == archive_type.ONLY:
-            query_criteria["$and"].append({"inactive": True})
 
         potential_player = next(
             db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
@@ -63,11 +59,13 @@ class DataManager:
         return PlayerProfile(**potential_player) if potential_player else None
 
     def get_all_players(
-        archive: archive_type = archive_type.NONE, with_id: bool = False
+        archive: archive_type = archive_type.NO, with_id: bool = False
     ) -> list[PlayerProfile] | None:
         return [
             PlayerProfile.from_json(player)
-            for player in list(db_players.find({}, {"_id": 0} if with_id else {}))
+            for player in list(
+                db_players.find(archive.value, {"_id": 0} if with_id else {})
+            )
         ]
 
     def get_leaderboard(
