@@ -2,7 +2,7 @@ import math
 import time
 import asyncio
 
-from discord import SlashCommandGroup, ChannelType, Thread, File
+from discord import SlashCommandGroup, ChannelType, Thread, File, message_command
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -112,6 +112,10 @@ class calculations(commands.Cog):
             await ctx.respond("Results got posted in the results channel.")
 
             ctx.mogi.table_message_id = message.id
+
+    @message_command(name="collect_points")
+    async def collect_points(self, ctx: MogiApplicationContext):
+        await ctx.respond(f"test: {ctx.message.content}")
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
