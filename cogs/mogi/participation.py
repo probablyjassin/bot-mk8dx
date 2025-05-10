@@ -35,7 +35,7 @@ class participation(commands.Cog):
                 return await ctx.respond("This mogi is full.")
 
             # add player and their role
-            ctx.mogi.players.append(player)
+            ctx.mogi.players.append(ctx.player)
             await ctx.user.add_roles(ctx.inmogi_role, reason="Joined mogi")
             await ctx.respond(
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
