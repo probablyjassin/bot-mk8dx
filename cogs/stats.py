@@ -1,7 +1,7 @@
 from discord import slash_command, Color
 from discord.ext import commands
 
-from utils.data.database import db_mogis
+from utils.data._database import db_mogis
 from models.MogiModel import MogiHistoryData
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.info_embed_factory import create_embed

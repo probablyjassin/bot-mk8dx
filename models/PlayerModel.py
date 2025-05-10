@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data.database import db_players
+from utils.data._database import db_players
 
 
 @dataclass

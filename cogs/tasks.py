@@ -11,7 +11,7 @@ from discord.ext import commands, tasks
 
 from utils.data.state import state_manager
 from utils.data.mogi_manager import mogi_manager
-from utils.data.database import db_players, db_mogis
+from utils.data._database import db_players, db_mogis
 
 from config import HEALTHCHECK_URL
 

@@ -8,7 +8,7 @@ from utils.command_helpers.checks import (
 )
 
 from utils.data.mogi_manager import mogi_manager
-from utils.data.database import db_players, db_archived
+from utils.data._database import db_players, db_archived
 
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile

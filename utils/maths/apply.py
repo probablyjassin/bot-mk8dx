@@ -1,7 +1,7 @@
 from pymongo import UpdateOne
 
 from models.MogiModel import Mogi
-from utils.data.database import db_players
+from utils.data._database import db_players
 
 
 async def apply_mmr(mogi: Mogi) -> None:

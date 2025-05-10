@@ -5,7 +5,7 @@ from pymongo import UpdateOne
 
 from models.CustomMogiContext import MogiApplicationContext
 
-from utils.data.database import db_players
+from utils.data._database import db_players
 from utils.command_helpers.checks import is_mogi_open, is_moderator
 
 

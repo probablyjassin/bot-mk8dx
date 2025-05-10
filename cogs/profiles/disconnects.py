@@ -7,7 +7,7 @@ from models.PlayerModel import PlayerProfile
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_mogi_manager, is_moderator
 
-from utils.data.database import db_players
+from utils.data._database import db_players
 
 
 class disconnects(commands.Cog):

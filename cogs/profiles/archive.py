@@ -4,7 +4,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from utils.data.database import db_players, db_archived
+from utils.data._database import db_players, db_archived
 from utils.command_helpers.find_player import search_player
 from utils.command_helpers.checks import is_moderator
 
