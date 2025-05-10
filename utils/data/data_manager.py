@@ -64,7 +64,7 @@ class DataManager:
         }
 
         potential_player = next(
-            db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
+            db_players.aggregate([{"$match": query_criteria}, {"$limit": 1}]), None
         )
 
         return PlayerProfile(**potential_player) if potential_player else None
