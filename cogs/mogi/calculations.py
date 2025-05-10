@@ -120,9 +120,11 @@ class calculations(commands.Cog):
 
             ctx.mogi.table_message_id = message.id
 
-    @message_command(name="collect_points")
+    @message_command(name="Collect Points")
     async def collect_points(self, ctx: MogiApplicationContext, message: Message):
-        await message.channel.send(f"test: {message.content}")
+        await ctx.respond(
+            f"woah u found the secret work in progress message command\nthis is gonna let mogi managers also collect points from a message as well"
+        )
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
