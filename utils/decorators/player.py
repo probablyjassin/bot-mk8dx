@@ -52,12 +52,9 @@ def with_player(
             if player_entry := data_manager.find_player(
                 query=ctx.user.id, archive=archive_type.INCLUDE
             ):
-                pass
+                ctx.player = player_entry
             else:
                 return await ctx.respond("You're not registered for Lounge.")
-
-            # Assign Player object
-            ctx.player = PlayerProfile(**player_entry)
 
             # If suspended
             if assert_not_suspended and ctx.player.suspended:
