@@ -28,7 +28,7 @@ class participation(commands.Cog):
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
     @with_player(assert_not_in_mogi=True, assert_not_suspended=True)
-    async def join(self, ctx: MogiApplicationContext, player: PlayerProfile):
+    async def join(self, ctx: MogiApplicationContext):
         async with self.join_semaphore:
             # check if mogi full
             if len(ctx.mogi.players) >= ctx.mogi.player_cap:

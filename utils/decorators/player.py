@@ -58,14 +58,14 @@ def with_player(
                 return await ctx.respond("You're not registered for Lounge.")
 
             # Assign Player object
-            player = PlayerProfile(**player_entry)
+            ctx.player = PlayerProfile(**player_entry)
 
             # If suspended
-            if assert_not_suspended and player.suspended:
+            if assert_not_suspended and ctx.player.suspended:
                 return await ctx.respond("You're temporarily unable to join mogis.")
 
             # Pass the player to the original function
-            return await func(self, ctx, player=player, *args, **kwargs)
+            return await func(self, ctx, *args, **kwargs)
 
         return wrapper
 

@@ -3,6 +3,7 @@ from discord.utils import get
 
 from utils.data.mogi_manager import mogi_manager
 from models.MogiModel import Mogi
+from models.PlayerModel import PlayerProfile
 
 from config import GUILD_IDS, RESULTS_CHANNEL_ID, REGISTER_CHANNEL_ID
 
@@ -35,6 +36,7 @@ class MogiApplicationContext(discord.ApplicationContext):
         super().__init__(*args, **kwargs)
 
         self.mogi: Mogi | None = mogi_manager.get_mogi(self.channel.id)
+        self.player: PlayerProfile | None = None
 
         self.main_guild: discord.Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: discord.Role = get(self.main_guild.roles, name="InMogi")
