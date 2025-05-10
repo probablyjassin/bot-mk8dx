@@ -2,22 +2,19 @@ from discord import slash_command
 from discord.utils import get, utcnow
 from discord.ext import commands
 
+from utils.decorators.player import with_player
 from utils.command_helpers.server_region import REGIONS
 from utils.command_helpers.checks import (
     is_mogi_not_in_progress,
 )
 
 from utils.data.mogi_manager import mogi_manager
-from utils.data._database import db_players, db_archived
 
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from bson.int64 import Int64
 import asyncio
 import time, datetime
-
-import random
 
 
 class participation(commands.Cog):
@@ -30,48 +27,14 @@ class participation(commands.Cog):
 
     @slash_command(name="join", description="Join this mogi")
     @is_mogi_not_in_progress()
-    async def join(self, ctx: MogiApplicationContext):
+    @with_player(assert_not_in_mogi=True, assert_not_suspended=True)
+    async def join(self, ctx: MogiApplicationContext, player: PlayerProfile):
         async with self.join_semaphore:
-
-            # check if player already in mogi
-            if [
-                player
-                for player in ctx.mogi.players
-                if player.discord_id == ctx.author.id
-            ]:
-                return await ctx.respond("You're already in this mogi.")
-
-            # Check if player is in a mogi in another channel
-            for mogi in mogi_manager.mogi_registry.values():
-                for player in mogi.players:
-                    if player.discord_id == ctx.author.id:
-                        return await ctx.respond(
-                            f"You're already in a mogi in <#{mogi.channel_id}>"
-                        )
-
             # check if mogi full
             if len(ctx.mogi.players) >= ctx.mogi.player_cap:
                 return await ctx.respond("This mogi is full.")
 
-            # fetch player record
-            player_entry = db_players.find_one({"discord_id": Int64(ctx.author.id)})
-            # if not found
-            if not player_entry:
-                if db_archived.find_one({"discord_id": Int64(ctx.author.id)}):
-                    return await ctx.respond(
-                        "You're in Lounge but archived. Contact a mod to get unarchived."
-                    )
-                return await ctx.respond("You're not registered for Lounge.")
-
-            # assign Player object
-            player: PlayerProfile = PlayerProfile(**player_entry)
-
-            # if suspended
-            if player.suspended:
-                return await ctx.respond(
-                    "You're temporarily inable to join mogis.", ephemeral=True
-                )
-
+            # add player and their role
             ctx.mogi.players.append(player)
             await ctx.user.add_roles(ctx.inmogi_role, reason="Joined mogi")
             await ctx.respond(
