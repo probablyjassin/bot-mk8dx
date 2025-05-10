@@ -1,10 +1,4 @@
-from discord import (
-    slash_command,
-    Option,
-    ButtonStyle,
-    Embed,
-    Colour,
-)
+from discord import slash_command, Option, ButtonStyle, Embed, Colour, Member
 from discord.ui import View, Button
 from discord.ext import commands
 
@@ -97,7 +91,7 @@ class player(commands.Cog):
             )
 
         if getattr(player, "inactive", None):
-            embed.add_field(name="Inactive", value="Account marked for inactivity")
+            embed.add_field(name="Archived", value="Account is not active")
 
         if getattr(player, "suspended", None):
             embed.add_field(name="Suspended", value="Account suspended from Lounge")
