@@ -47,27 +47,73 @@ class leaderboard(commands.Cog):
         skip_count = skip_count if skip_count < max_players else max_players - 10
         skip_count = skip_count if skip_count >= 0 else 0
 
-        if sort == "MMR":
-            data = list(
-                db_players.find().sort("mmr", DESCENDING).skip(skip_count).limit(10)
-            )
-        else:
-            data = list(db_players.find())
-            for player in data:
-                player["Wins"] = len(
-                    [delta for delta in player["history"] if delta >= 0]
-                )
-                player["Losses"] = len(
-                    [delta for delta in player["history"] if delta < 0]
-                )
-                player["Winrate %"] = (
-                    round(player["Wins"] / (player["Wins"] + player["Losses"]) * 100, 2)
-                    if player["Wins"] + player["Losses"] > 0
-                    else 0
-                )
+        # Build an aggregation pipeline to handle most of the work in MongoDB
+        pipeline = []
 
-            data.sort(key=lambda x: x[sort], reverse=True)
-            data = data[skip_count : skip_count + 10]
+        # Add project stage to calculate wins, losses, and winrate in the database
+        pipeline.append(
+            {
+                "$project": {
+                    "name": 1,
+                    "mmr": 1,
+                    "history": 1,
+                    "Wins": {
+                        "$size": {
+                            "$filter": {
+                                "input": "$history",
+                                "as": "delta",
+                                "cond": {"$gte": ["$$delta", 0]},
+                            }
+                        }
+                    },
+                    "Losses": {
+                        "$size": {
+                            "$filter": {
+                                "input": "$history",
+                                "as": "delta",
+                                "cond": {"$lt": ["$$delta", 0]},
+                            }
+                        }
+                    },
+                }
+            }
+        )
+
+        # Calculate winrate
+        pipeline.append(
+            {
+                "$addFields": {
+                    "Winrate %": {
+                        "$cond": [
+                            {"$eq": [{"$add": ["$Wins", "$Losses"]}, 0]},
+                            0,
+                            {
+                                "$multiply": [
+                                    {
+                                        "$divide": [
+                                            "$Wins",
+                                            {"$add": ["$Wins", "$Losses"]},
+                                        ]
+                                    },
+                                    100,
+                                ]
+                            },
+                        ]
+                    }
+                }
+            }
+        )
+
+        # Sort based on user's choice
+        sort_field = "mmr" if sort == "MMR" else sort
+        pipeline.append({"$sort": {sort_field: -1}})
+
+        # Skip and limit for pagination
+        pipeline.append({"$skip": skip_count})
+        pipeline.append({"$limit": 10})
+
+        # Execute the pipeline
+        data = list(db_players.aggregate(pipeline))
 
         tabledata = {
             "Placement": [i + skip_count + 1 for i in range(len(data))],
@@ -80,20 +126,16 @@ class leaderboard(commands.Cog):
         }
 
         for player in data:
-            wins = len([delta for delta in player["history"] if delta > 0])
-            losses = len([delta for delta in player["history"] if delta < 0])
-
             tabledata["Player"].append(player["name"])
             tabledata["Rank"].append(Rank.getRankByMMR(player["mmr"]).rankname)
             tabledata["MMR"].append(player["mmr"])
-            tabledata["Wins"].append(wins)
-            tabledata["Losses"].append(losses)
-            winrate = round(wins / (wins + losses) * 100, 2) if wins + losses > 0 else 0
-            tabledata["Winrate %"].append(winrate)
+            tabledata["Wins"].append(player["Wins"])
+            tabledata["Losses"].append(player["Losses"])
+            tabledata["Winrate %"].append(round(player["Winrate %"], 2))
 
         df = pd.DataFrame(tabledata)
-        df = df.sort_values(by=sort, ascending=False)
 
+        # No need to sort again as MongoDB has already done this
         df["Placement"] = range(skip_count + 1, skip_count + len(df) + 1)
         df = df.set_index("Placement")
 
