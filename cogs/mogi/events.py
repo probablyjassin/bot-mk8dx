@@ -5,7 +5,7 @@ from pymongo import UpdateOne
 
 from models.CustomMogiContext import MogiApplicationContext
 
-from utils.data._database import db_players
+from utils.data.data_manager import data_manager
 from utils.command_helpers.checks import is_mogi_open, is_moderator
 
 
@@ -30,36 +30,7 @@ class events(commands.Cog):
 
         await ctx.defer()
 
-        all_player_names = [player.name for player in ctx.mogi.players]
-        all_player_mmrs = [player.mmr for player in ctx.mogi.players]
-        all_player_new_mmrs = [
-            all_player_mmrs[i] + amount for i in range(len(ctx.mogi.players))
-        ]
-
-        data_to_update_obj = [
-            {
-                "name": all_player_names[i],
-                "new_mmr": all_player_new_mmrs[i],
-                "delta": amount,
-            }
-            for i in range(len(all_player_names))
-        ]
-
-        db_players.bulk_write(
-            [
-                UpdateOne(
-                    {"name": entry["name"]},
-                    {
-                        "$set": {
-                            "mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1
-                        },
-                        "$push": {"history": entry["delta"]},
-                    },
-                    upsert=False,
-                )
-                for entry in data_to_update_obj
-            ]
-        )
+        data_manager.bulk_add_mmr([player.name for player in ctx.mogi.players], amount)
 
         await ctx.respond(f"{amount} MMR given to all players")
 
