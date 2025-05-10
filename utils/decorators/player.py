@@ -34,7 +34,7 @@ def with_player(
             # Make sure the player is in the mogi
             if assert_in_mogi:
                 if not ctx.user.id in [
-                    mogi_player.id for mogi_player in ctx.mogi.players
+                    mogi_player.discord_id for mogi_player in ctx.mogi.players
                 ]:
                     return await ctx.respond("You're not in this mogi")
             # Make sure player is not already in a mogi (including in another channel)
