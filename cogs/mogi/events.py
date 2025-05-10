@@ -1,7 +1,5 @@
-from discord import slash_command, Option, SlashCommandGroup
+from discord import Option, SlashCommandGroup
 from discord.ext import commands
-
-from pymongo import UpdateOne
 
 from models.CustomMogiContext import MogiApplicationContext
 
