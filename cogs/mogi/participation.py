@@ -54,15 +54,9 @@ class participation(commands.Cog):
 
     @slash_command(name="leave", description="Leave this mogi")
     @is_mogi_not_in_progress()
+    @with_player(assert_in_mogi=True, assert_not_suspended=True)
     async def leave(self, ctx: MogiApplicationContext):
         async with self.leave_semaphore:
-            if not [
-                player
-                for player in ctx.mogi.players
-                if player.discord_id == ctx.author.id
-            ]:
-                return await ctx.respond("You're not in this mogi.")
-
             ctx.mogi.players = [
                 player
                 for player in ctx.mogi.players
