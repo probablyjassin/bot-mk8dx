@@ -7,7 +7,15 @@ from dataclasses import dataclass
 from models.PlayerModel import PlayerProfile
 from models.MogiModel import MogiHistoryData
 
-from utils.data._database import db_players, db_archived, db_mogis
+from utils.data._database import db_players, db_mogis
+
+
+class player_field(Enum):
+    NAME = "mmr"
+    DISCORD_ID = "mmr"
+    MMR = "mmr"
+    HISTORY = "history"
+    DISCONNECTS = "mmr"
 
 
 class archive_type(Enum):
@@ -29,8 +37,10 @@ class DataManager:
         pass
 
     def find_player(
-        query: int | Int64 | str, archive: archive_type = archive_type.NO
-    ) -> PlayerProfile | None:
+        query: int | Int64 | str,
+        archive: archive_type = archive_type.NO,
+        only_field: player_field | None = None,
+    ) -> PlayerProfile | dict | None:
         query_criteria = {
             "$and": [
                 {
@@ -53,11 +63,20 @@ class DataManager:
             ]
         }
 
-        potential_player = next(
-            db_players.aggregate({"$match": query_criteria}, {"$limit": 1}), None
-        )
+        projection = {"_id": 0}
+        if only_field:
+            projection[only_field.value] = 1
 
-        return PlayerProfile(**potential_player) if potential_player else None
+        potential_player = db_players.find_one(query_criteria, projection)
+
+        if not potential_player:
+            return None
+
+        return (
+            potential_player[only_field.value]
+            if only_field
+            else PlayerProfile.from_json(potential_player)
+        )
 
     def get_all_player_profiles(
         archive: archive_type = archive_type.NO, with_id: bool = False
