@@ -4,10 +4,12 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
+from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 from utils.data._database import db_players
-from utils.command_helpers.find_player import search_player, get_guild_member
+from utils.command_helpers.find_player import get_guild_member
 from utils.decorators.checks import is_moderator
+from utils.decorators.player import with_player
 
 
 class edit(commands.Cog):
@@ -18,6 +20,7 @@ class edit(commands.Cog):
 
     @edit.command(name="add_mmr", description="Add MMR to a player")
     @is_moderator()
+    @with_player(query_varname="searched_player")
     async def add_mmr(
         self,
         ctx: MogiApplicationContext,
@@ -33,37 +36,28 @@ class edit(commands.Cog):
             default=False,
         ),
     ):
-        player_profile: PlayerProfile = search_player(searched_player)
-
-        if not player_profile:
-            await ctx.respond("Couldn't find that player")
-
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.mogi_registry.values():
-            if player_profile in mogi.players and mogi.channel_id != ctx.channel.id:
+            if ctx.player in mogi.players and mogi.channel_id != ctx.channel.id:
                 return await ctx.respond(
                     f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."
                 )
 
         # Use the player profile instance from the mogi the player is in right of (if applicable)
-        if ctx.mogi and player_profile in ctx.mogi.players:
-            player_profile: PlayerProfile = next(
-                (
-                    p
-                    for p in ctx.mogi.players
-                    if p.discord_id == player_profile.discord_id
-                ),
+        if ctx.mogi and ctx.player in ctx.mogi.players:
+            ctx.player = next(
+                (p for p in ctx.mogi.players if p.discord_id == ctx.player.discord_id),
                 None,
             )
 
-        new_mmr = player_profile.mmr + delta_mmr
-        player_profile.mmr = new_mmr
+        new_mmr = ctx.player.mmr + delta_mmr
+        ctx.player.mmr = new_mmr
 
         if isHistory:
-            player_profile.append_history(delta_mmr)
+            ctx.player.append_history(delta_mmr)
 
         await ctx.respond(
-            f"Changed by {delta_mmr}:\n Updated <@{player_profile.discord_id}> MMR to {new_mmr}"
+            f"Changed by {delta_mmr}:\n Updated <@{ctx.player.discord_id}> MMR to {new_mmr}"
         )
 
     @edit.command(name="username", description="Change a player's username")
@@ -76,7 +70,7 @@ class edit(commands.Cog):
         ),
         new_name: str = Option(str, name="newname", description="new username"),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = data_manager.find_player(searched_player)
 
         if not player:
             await ctx.respond("Couldn't find that player")
@@ -111,7 +105,7 @@ class edit(commands.Cog):
             bool, name="try_remove_roles", description="Try removing Lounge roles"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        player: PlayerProfile = data_manager.find_player(searched_player)
 
         if not player:
             await ctx.respond("Couldn't find that player")
