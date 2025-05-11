@@ -4,8 +4,8 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from utils.command_helpers.find_player import search_player
 from utils.decorators.checks import is_mogi_manager, is_moderator
+from utils.decorators.player import with_player
 
 from utils.data.data_manager import data_manager, archive_type, player_field
 
@@ -20,6 +20,7 @@ class disconnects(commands.Cog):
 
     @disconnects.command(name="add", description="Add a DC to a player's count")
     @is_mogi_manager()
+    @with_player(query_varname="searched_player")
     async def disconnects_add(
         self,
         ctx: MogiApplicationContext,
@@ -27,25 +28,21 @@ class disconnects(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player = search_player(searched_player)
-
-        if not player:
-            return await ctx.respond("Couldn't find that player")
-
-        if ctx.mogi and player in ctx.mogi.players:
-            player: PlayerProfile = next(
-                (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
+        if ctx.mogi and ctx.player in ctx.mogi.players:
+            ctx.player = next(
+                (p for p in ctx.mogi.players if p.discord_id == ctx.player.discord_id),
                 None,
             )
 
-        player.add_disconnect()
+        ctx.player.add_disconnect()
 
         await ctx.respond(
-            f"Added a DC to <@{player.discord_id}> (now {player.disconnects})"
+            f"Added a DC to <@{ctx.player.discord_id}> (now {ctx.player.disconnects})"
         )
 
     @disconnects.command(name="set", description="Set a player's DC count")
     @is_moderator()
+    @with_player(query_varname="searched_player")
     async def disconnects_set(
         self,
         ctx: MogiApplicationContext,
@@ -54,21 +51,16 @@ class disconnects(commands.Cog):
         ),
         amount: int = Option(int, name="amount", description="amount of disconnects"),
     ):
-        player = search_player(searched_player)
-
-        if not player:
-            return await ctx.respond("Couldn't find that player")
-
-        if ctx.mogi and player in ctx.mogi.players:
-            player: PlayerProfile = next(
-                (p for p in ctx.mogi.players if p.discord_id == player.discord_id),
+        if ctx.mogi and ctx.player in ctx.mogi.players:
+            ctx.player = next(
+                (p for p in ctx.mogi.players if p.discord_id == ctx.player.discord_id),
                 None,
             )
 
-        player.disconnects = amount
+        ctx.player.disconnects = amount
 
         await ctx.respond(
-            f"Set <@{player.discord_id}>'s DC count to {player.disconnects}"
+            f"Set <@{ctx.player.discord_id}>'s DC count to {ctx.player.disconnects}"
         )
 
     @disconnects.command(
