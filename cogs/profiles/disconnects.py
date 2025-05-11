@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.decorators.checks import is_mogi_manager, is_moderator
 from utils.decorators.player import with_player
 
-from utils.data.data_manager import data_manager, archive_type, player_field
+from utils.data.data_manager import data_manager, archive_type
 
 
 class disconnects(commands.Cog):
@@ -66,13 +66,17 @@ class disconnects(commands.Cog):
         name="list", description="Show the top 3 players with the most DCs"
     )
     async def disconnects_list(self, ctx: MogiApplicationContext):
+        # Get all players and filter out those without disconnects field
+        all_players = data_manager.get_all_player_entries(archive=archive_type.INCLUDE)
+        players_with_dcs = [
+            p
+            for p in all_players
+            if "disconnects" in p and p["disconnects"] is not None
+        ]
 
+        # Sort by disconnects count and take top 3
         players = sorted(
-            list(
-                data_manager.get_all_player_entries(
-                    archive=archive_type.INCLUDE, only_field=player_field.DISCONNECTS
-                )
-            ),
+            players_with_dcs,
             key=lambda p: p["disconnects"],
             reverse=True,
         )[:3]
