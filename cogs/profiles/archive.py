@@ -2,10 +2,8 @@ from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
-
-from utils.command_helpers.find_player import search_player
 from utils.decorators.checks import is_moderator
+from utils.decorators.player import with_player
 
 
 class archive(commands.Cog):
@@ -18,6 +16,7 @@ class archive(commands.Cog):
 
     @archive.command(name="add", description="Archive a player")
     @is_moderator()
+    @with_player(query_varname="searched_player")
     async def archive_add(
         self,
         ctx: MogiApplicationContext,
@@ -25,17 +24,16 @@ class archive(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player)
+        if ctx.player.inactive:
+            return await ctx.respond(f"{ctx.player.name} is already archived")
 
-        if not player:
-            return await ctx.respond("Couldn't find that player")
+        ctx.player.inactive = True
 
-        player.inactive = True
-
-        await ctx.respond(f"Archived <@{player.discord_id}>")
+        await ctx.respond(f"Archived <@{ctx.player.discord_id}>")
 
     @archive.command(name="retrieve", description="Unarchive a player")
     @is_moderator()
+    @with_player(query_varname="searched_player")
     async def archive_retrieve(
         self,
         ctx: MogiApplicationContext,
@@ -43,14 +41,11 @@ class archive(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player, archived_only=True)
+        if not ctx.player.inactive:
+            return await ctx.respond(f"{ctx.player.name} is already not archived")
+        ctx.player.inactive = False
 
-        if not player:
-            return await ctx.respond("Couldn't find that player")
-
-        player.inactive = False
-
-        await ctx.respond(f"Retrieved <@{player.discord_id}>")
+        await ctx.respond(f"Retrieved <@{ctx.player.discord_id}>")
 
 
 def setup(bot: commands.Bot):
