@@ -7,7 +7,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.command_helpers.find_player import search_player, get_guild_member
-from utils.command_helpers.checks import (
+from utils.decorators.checks import (
     is_mogi_open,
     is_mogi_in_progress,
     is_mogi_not_in_progress,

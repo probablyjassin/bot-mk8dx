@@ -7,7 +7,7 @@ from models.PlayerModel import PlayerProfile
 from utils.data.mogi_manager import mogi_manager
 from utils.data._database import db_players
 from utils.command_helpers.find_player import search_player, get_guild_member
-from utils.command_helpers.checks import is_moderator
+from utils.decorators.checks import is_moderator
 
 
 class edit(commands.Cog):

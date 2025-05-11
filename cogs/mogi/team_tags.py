@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from utils.command_helpers.find_player import search_player
-from utils.command_helpers.checks import (
+from utils.decorators.checks import (
     is_mogi_in_progress,
     is_in_mogi,
     is_moderator,

@@ -11,7 +11,7 @@ from models.RoomModel import Room
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
 from utils.command_helpers.confirm import confirmation
-from utils.command_helpers.checks import (
+from utils.decorators.checks import (
     is_admin,
     is_moderator,
     is_mogi_manager,
