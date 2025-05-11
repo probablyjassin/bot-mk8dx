@@ -7,7 +7,7 @@ from models.CustomMogiContext import MogiApplicationContext
 
 from utils.data.mogi_manager import mogi_manager
 from utils.command_helpers.confirm import confirmation
-from utils.command_helpers.checks import is_mogi_not_in_progress, is_mogi_open, is_admin
+from utils.decorators.checks import is_mogi_not_in_progress, is_mogi_open, is_admin
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.find_player import get_guild_member
 from utils.command_helpers.find_player import search_player

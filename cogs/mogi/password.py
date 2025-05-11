@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from utils.command_helpers.find_player import search_player
-from utils.command_helpers.checks import LoungeRole, _is_at_least_role
+from utils.decorators.checks import LoungeRole, _is_at_least_role
 
 from config import REGISTER_CHANNEL_ID
 

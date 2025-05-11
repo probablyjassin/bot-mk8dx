@@ -24,7 +24,7 @@ from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.apply_update_roles import update_roles
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.command_helpers.find_player import get_guild_member
-from utils.command_helpers.checks import (
+from utils.decorators.checks import (
     is_mogi_in_progress,
     is_mogi_manager,
 )

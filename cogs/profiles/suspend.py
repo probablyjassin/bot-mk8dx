@@ -5,7 +5,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
 from utils.command_helpers.find_player import search_player
-from utils.command_helpers.checks import is_moderator
+from utils.decorators.checks import is_moderator
 
 
 class suspend(commands.Cog):

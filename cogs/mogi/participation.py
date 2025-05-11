@@ -4,7 +4,7 @@ from discord.ext import commands
 
 from utils.decorators.player import with_player
 from utils.command_helpers.server_region import REGIONS
-from utils.command_helpers.checks import (
+from utils.decorators.checks import (
     is_mogi_not_in_progress,
 )
 
