@@ -1,28 +1,15 @@
-import math
-import time
 import asyncio
 
-from discord import (
-    SlashCommandGroup,
-    ChannelType,
-    Thread,
-    File,
-    message_command,
-    Message,
-)
+from discord import SlashCommandGroup
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
-
-from utils.maths.mmr_algorithm import calculate_mmr
-from utils.maths.placements import get_placements_from_scores
-from utils.maths.table import create_table
 from utils.maths.apply import apply_mmr
+
 
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.apply_update_roles import update_roles
-from utils.command_helpers.wait_for import get_awaited_message
 from utils.command_helpers.find_player import get_guild_member
 from utils.decorators.checks import (
     is_mogi_in_progress,
