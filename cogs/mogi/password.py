@@ -1,14 +1,11 @@
-from discord import slash_command, Option
-from discord.utils import get
+from discord import slash_command
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
 
-from utils.command_helpers.find_player import search_player
+from utils.decorators.checks import is_mogi_in_progress
+from utils.decorators.player import with_player
 from utils.decorators.checks import LoungeRole, _is_at_least_role
-
-from config import REGISTER_CHANNEL_ID
 
 
 class password(commands.Cog):
@@ -19,22 +16,9 @@ class password(commands.Cog):
     @slash_command(
         name="password", description="Get the password for the server your mogi uses."
     )
+    @is_mogi_in_progress()
+    @with_player(assert_in_mogi=True)
     async def password(self, ctx: MogiApplicationContext):
-        if not ctx.mogi:
-            return await ctx.respond("There is no open mogi in this channel.")
-
-        player: PlayerProfile | None = search_player(ctx.interaction.user.id)
-        if not player:
-            return await ctx.respond(
-                f"Couldn't find your player profile, make sure you're registered in <#{REGISTER_CHANNEL_ID}> or contact a moderator."
-            )
-        if player not in ctx.mogi.players:
-            return await ctx.respond(
-                f"You're not in this mogi. If it hasn't started yet, you can join. <#{REGISTER_CHANNEL_ID}>"
-            )
-
-        if not ctx.mogi.isPlaying:
-            return await ctx.respond("The mogi hasn't started yet.")
         if not ctx.mogi.room:
             return await ctx.respond(
                 "This mogi doesn't have a server for it yet. Something might have gone wrong, ask a Mogi Manager."
