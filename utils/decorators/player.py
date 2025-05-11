@@ -1,4 +1,5 @@
 from functools import wraps
+from bson.int64 import Int64
 
 from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
@@ -8,6 +9,7 @@ from utils.data.mogi_manager import mogi_manager
 
 
 def with_player(
+    query: str | int | Int64 = None,
     assert_in_mogi: bool = False,
     assert_not_in_mogi: bool = False,
     assert_not_suspended: bool = False,
@@ -31,6 +33,17 @@ def with_player(
     def decorator(func):
         @wraps(func)
         async def wrapper(self, ctx: MogiApplicationContext, *args, **kwargs):
+            # Define which player to operate on
+            player_query = query or ctx.user.id
+
+            # Fetch player record
+            target_player = data_manager.find_player(
+                query=player_query, archive=archive_type.INCLUDE
+            )
+
+            if not target_player:
+                return await ctx.respond("Couldn't find Lounge profile.")
+
             # Make sure the player is in the mogi
             if assert_in_mogi:
                 if not ctx.user.id in [
@@ -47,14 +60,6 @@ def with_player(
                             return await ctx.respond(
                                 f"You're already in a mogi in <#{mogi.channel_id}>"
                             )
-
-            # Fetch player record
-            if player_entry := data_manager.find_player(
-                query=ctx.user.id, archive=archive_type.INCLUDE
-            ):
-                ctx.player = player_entry
-            else:
-                return await ctx.respond("You're not registered for Lounge.")
 
             # If suspended
             if assert_not_suspended and ctx.player.suspended:
