@@ -5,7 +5,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from utils.command_helpers.find_player import search_player
+from utils.data.data_manager import data_manager
 from utils.decorators.checks import (
     is_mogi_in_progress,
     is_in_mogi,
@@ -35,7 +35,7 @@ class team_tags(commands.Cog):
         if ctx.mogi.format == 1:
             return await ctx.respond("This command is not available in FFA mogis.")
 
-        player: PlayerProfile = search_player(ctx.interaction.user.id)
+        player: PlayerProfile = data_manager.find_player(ctx.interaction.user.id)
 
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
             0
