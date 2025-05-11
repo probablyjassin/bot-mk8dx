@@ -4,8 +4,10 @@ from discord.ext import commands
 from models.PlayerModel import PlayerProfile
 from models.CustomMogiContext import MogiApplicationContext
 
+from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
+from utils.decorators.player import with_player
 from utils.command_helpers.find_player import search_player, get_guild_member
 from utils.decorators.checks import (
     is_mogi_open,
@@ -28,6 +30,9 @@ class managing(commands.Cog):
     @manage.command(name="add", description="Add a player to the current mogi")
     @is_mogi_not_in_progress()
     @is_moderator()
+    @with_player(
+        query_varname="player", assert_not_in_mogi=True, assert_not_suspended=True
+    )
     async def add_player(
         self,
         ctx: MogiApplicationContext,
@@ -35,31 +40,14 @@ class managing(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player_profile: PlayerProfile = search_player(player)
-
-        if not player_profile:
-            return await ctx.respond("Player profile not found", ephemeral=True)
-
-        # player already in the mogi
-        if player_profile in ctx.mogi.players:
-            return await ctx.respond("Player is already in the mogi", ephemeral=True)
-
-        # Check if player is in a mogi in another channel
-        for mogi in mogi_manager.mogi_registry.values():
-            if player_profile in mogi.players:
-                return await ctx.respond(
-                    f"This player is already in a mogi in <#{mogi.channel_id}>"
-                )
-
-        ctx.mogi.players.append(player_profile)
-        member: Member | None = await get_guild_member(
-            ctx.guild, player_profile.discord_id
-        )
+        # Add to mogi and add roles
+        ctx.mogi.players.append(ctx.player)
+        member: Member | None = await get_guild_member(ctx.guild, ctx.player.discord_id)
         if member:
             await member.add_roles(ctx.inmogi_role, reason="Added to Mogi")
 
         await ctx.respond(
-            f"<@{player_profile.discord_id}> joined the mogi! (against their will)"
+            f"<@{ctx.player.discord_id}> joined the mogi! (against their will)"
         )
 
     @manage.command(name="remove", description="Remove a player from the current mogi")
