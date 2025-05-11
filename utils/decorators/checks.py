@@ -120,6 +120,22 @@ def is_in_mogi():
     return commands.check(predicate)
 
 
+def is_mogi_not_full():
+    """
+    ## Command checker that requires the mogi to have spots left
+    `len(ctx.mogi.players) < ctx.mogi.player_cap`
+    """
+
+    async def predicate(ctx: MogiApplicationContext):
+        return await _check(
+            ctx=ctx,
+            condition=len(ctx.mogi.players) < ctx.mogi.player_cap,
+            error_message="There aren't enough spots left in the mogi.",
+        )
+
+    return commands.check(predicate)
+
+
 def is_mogi_in_progress():
     """
     ## Command checker that requires the channel's mogi to be in progress
