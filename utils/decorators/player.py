@@ -2,6 +2,7 @@ from functools import wraps
 from bson.int64 import Int64
 
 from models.CustomMogiContext import MogiApplicationContext
+from utils.command_helpers.find_player import get_guild_member
 
 from utils.data.data_manager import data_manager, archive_type
 from utils.data.mogi_manager import mogi_manager
@@ -14,7 +15,10 @@ def with_player(
     assert_not_suspended: bool = False,
 ):
     """
-    Decorator that assigns the target player to `ctx.player` and performs additional checks if wanted.
+    Decorator that passes the target player variables to the slash_command and performs additional checks if wanted.
+    Passes:
+        `ctx.player`: the Lounge profile of the player in question
+        `ctx.player_member`: the discord member object of the corresponding player
 
     Arguments:
         **query_varname (str):** If the slash_command takes in a target player, it's variable name as string.\n
@@ -34,9 +38,12 @@ def with_player(
                 kwargs.get(query_varname, None) or ctx.user.id
             )
 
-            # Fetch player record
+            # Fetch player record and assign discord user as well
             ctx.player = data_manager.find_player(
                 query=target_query, archive=archive_type.INCLUDE
+            )
+            ctx.player_discord = await get_guild_member(
+                ctx.guild, ctx.player.discord_id
             )
 
             if not ctx.player:
