@@ -55,7 +55,7 @@ class PlayerProfile:
 
     # Methods
 
-    def update_attribute(self, attr_name, value):
+    def update_attribute(self, attr_name: str, value):
         setattr(self, f"_{attr_name}", value)
         db_players.update_one(
             {"_id": self._id},
