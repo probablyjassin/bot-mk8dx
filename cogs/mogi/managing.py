@@ -62,7 +62,7 @@ class managing(commands.Cog):
             str, name="player", description="The player to remove from the mogi."
         ),
     ):
-        ctx.mogi.players.remove(player)
+        ctx.mogi.players.remove(ctx.player)
 
         # remove the role
         if ctx.player_discord and ctx.inmogi_role in ctx.player_discord.roles:
