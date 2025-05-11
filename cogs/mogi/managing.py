@@ -77,8 +77,11 @@ class managing(commands.Cog):
     @manage.command(
         name="sub", description="Substitute a player who can't play anymore."
     )
-    @is_mogi_in_progress()
     @is_mogi_manager()
+    @is_mogi_in_progress()
+    @with_player(
+        query_varname="player_name", assert_in_mogi=True, assert_not_suspended=True
+    )
     async def sub(
         self,
         ctx: MogiApplicationContext,
@@ -89,42 +92,31 @@ class managing(commands.Cog):
             str, name="sub", description="username | @ mention | discord_id"
         ),
     ):
-        player_profile = search_player(player_name)
-        replacement_profile = search_player(replacement_name)
-
-        if not player_profile:
-            return await ctx.respond("Player profile not found", ephemeral=True)
+        replacement_profile = data_manager.find_player(replacement_name)
 
         if not replacement_profile:
             return await ctx.respond("Sub profile not found", ephemeral=True)
 
-        if player_profile not in ctx.mogi.players:
-            return await ctx.respond("Player not in the mogi", ephemeral=True)
-
-        if replacement_profile in ctx.mogi.players:
-            return await ctx.respond("Sub is already in the mogi.", ephemeral=True)
-
-        # Check if player is in a mogi in another channel
+        # Check if replacement is in a mogi in another channel
         for mogi in mogi_manager.mogi_registry.values():
             if replacement_profile in mogi.players:
+                if mogi.channel_id == ctx.channel_id:
+                    return await ctx.respond("Sub is already in the mogi.")
                 return await ctx.respond(
                     f"The player to sub is already in a mogi in <#{mogi.channel_id}>"
                 )
 
         ctx.mogi.players = recurse_replace(
-            ctx.mogi.players, player_profile, replacement_profile
+            ctx.mogi.players, ctx.player, replacement_profile
         )
         ctx.mogi.teams = recurse_replace(
-            ctx.mogi.teams, player_profile, replacement_profile
+            ctx.mogi.teams, ctx.player, replacement_profile
         )
 
         ctx.mogi.subs.append(replacement_profile)
 
-        player_user: Member | None = await get_guild_member(
-            ctx.guild, player_profile.discord_id
-        )
-        if player_user and ctx.inmogi_role in player_user.roles:
-            await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
+        if ctx.player_discord and ctx.inmogi_role in ctx.player_discord.roles:
+            await ctx.player_discord.remove_roles(ctx.inmogi_role, reason="Subbed out")
 
         replacement_user: Member | None = await get_guild_member(
             ctx.guild, replacement_profile.discord_id
@@ -133,7 +125,7 @@ class managing(commands.Cog):
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
         await ctx.respond(
-            f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
+            f"<@{ctx.player.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )
 
     @manage.command(
@@ -153,6 +145,8 @@ class managing(commands.Cog):
         for player in [first_player, second_player]:
             if isinstance(player, str):
                 return await ctx.respond(f"{player} not found")
+            if player not in ctx.mogi.players:
+                return await ctx.send(f"<@{player.discord_id}> not in the mogi")
 
         ctx.mogi.players = recurse_replace(ctx.mogi.players, first_player, None)
         ctx.mogi.players = recurse_replace(
