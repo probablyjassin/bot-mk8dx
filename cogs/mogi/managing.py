@@ -13,6 +13,7 @@ from utils.decorators.checks import (
     is_mogi_open,
     is_mogi_in_progress,
     is_mogi_not_in_progress,
+    is_mogi_not_full,
     is_mogi_manager,
     is_moderator,
     is_admin,
@@ -28,8 +29,9 @@ class managing(commands.Cog):
     )
 
     @manage.command(name="add", description="Add a player to the current mogi")
-    @is_mogi_not_in_progress()
     @is_moderator()
+    @is_mogi_not_in_progress()
+    @is_mogi_not_full()
     @with_player(
         query_varname="player", assert_not_in_mogi=True, assert_not_suspended=True
     )
@@ -42,17 +44,17 @@ class managing(commands.Cog):
     ):
         # Add to mogi and add roles
         ctx.mogi.players.append(ctx.player)
-        member: Member | None = await get_guild_member(ctx.guild, ctx.player.discord_id)
-        if member:
-            await member.add_roles(ctx.inmogi_role, reason="Added to Mogi")
+        if ctx.player_discord and ctx.inmogi_role not in ctx.player_discord.roles:
+            await ctx.player_discord.add_roles(ctx.inmogi_role, reason="Added to Mogi")
 
         await ctx.respond(
             f"<@{ctx.player.discord_id}> joined the mogi! (against their will)"
         )
 
     @manage.command(name="remove", description="Remove a player from the current mogi")
-    @is_mogi_not_in_progress()
     @is_mogi_manager()
+    @is_mogi_not_in_progress()
+    @with_player(query_varname="player", assert_in_mogi=True)
     async def remove(
         self,
         ctx: MogiApplicationContext,
@@ -60,21 +62,16 @@ class managing(commands.Cog):
             str, name="player", description="The player to remove from the mogi."
         ),
     ):
-        player: PlayerProfile = search_player(player)
-        if not player or player not in ctx.mogi.players:
-            return await ctx.respond("Player not in mogi or not found.")
-
         ctx.mogi.players.remove(player)
 
-        user: Member | None = await get_guild_member(ctx.guild, player.discord_id)
-
         # remove the role
-        if user and ctx.inmogi_role in user.roles:
-            await user.remove_roles(ctx.inmogi_role, reason="Removed from Mogi")
+        if ctx.player_discord and ctx.inmogi_role in ctx.player_discord.roles:
+            await ctx.player_discord.remove_roles(
+                ctx.inmogi_role, reason="Removed from Mogi"
+            )
 
         await ctx.respond(
-            f"<@{player.discord_id}> got removed from the mogi.",
-            allowed_mentions=AllowedMentions.none(),
+            f"<@{ctx.player.discord_id}> was removed from the mogi.",
         )
 
     @manage.command(
