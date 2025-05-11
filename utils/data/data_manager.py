@@ -10,14 +10,6 @@ from models.MogiModel import MogiHistoryData
 from utils.data._database import db_players, db_mogis
 
 
-class player_field(Enum):
-    NAME = "name"
-    DISCORD_ID = "discord_id"
-    MMR = "mmr"
-    HISTORY = "history"
-    DISCONNECTS = "disconnects"
-
-
 class archive_type(Enum):
     NO = {"inactive": {"$ne": True}}
     INCLUDE = {}
@@ -85,15 +77,8 @@ class DataManager:
         self,
         archive: archive_type = archive_type.NO,
         with_id: bool = False,
-        only_field: player_field | None = None,
     ) -> list[dict] | None:
-
-        projection = {"_id": 0} if with_id else {}
-
-        if only_field:
-            projection[only_field.value] = 1
-
-        return list(db_players.find(archive.value, projection))
+        return list(db_players.find(archive.value, {"_id": 0} if with_id else {}))
 
     def create_new_player(self, username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
