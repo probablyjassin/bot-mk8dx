@@ -95,7 +95,7 @@ class edit(commands.Cog):
                 None,
             )
 
-        db_players.update_one({"_id": player._id}, ({"$set": {"name": new_name}}))
+        player.name = new_name
 
         await ctx.respond(f"Changed <@{player.discord_id}>'s username to {new_name}")
 
