@@ -8,7 +8,7 @@ from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.decorators.player import with_player
-from utils.command_helpers.find_player import search_player, get_guild_member
+from utils.command_helpers.find_player import get_guild_member
 from utils.decorators.checks import (
     is_mogi_open,
     is_mogi_in_progress,
@@ -140,8 +140,10 @@ class managing(commands.Cog):
         player1: str = Option(str, name="player1", description="first player"),
         player2: str = Option(str, name="player2", description="second player"),
     ):
-        first_player: PlayerProfile | str = search_player(player1) or player1
-        second_player: PlayerProfile | str = search_player(player2) or player1
+        first_player: PlayerProfile | str = data_manager.find_player(player1) or player1
+        second_player: PlayerProfile | str = (
+            data_manager.find_player(player2) or player2
+        )
         for player in [first_player, second_player]:
             if isinstance(player, str):
                 return await ctx.respond(f"{player} not found")
@@ -166,6 +168,7 @@ class managing(commands.Cog):
     )
     @is_mogi_in_progress()
     @is_moderator()
+    @with_player(query_varname="player_name")
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,
@@ -173,24 +176,20 @@ class managing(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player_profile = search_player(player_name)
-
-        if not player_profile:
-            return await ctx.respond("Player profile not found", ephemeral=True)
-
-        if player_profile not in ctx.mogi.subs:
+        if ctx.player not in ctx.mogi.subs:
             return await ctx.respond("Player not in the sub list", ephemeral=True)
 
-        ctx.mogi.subs.remove(player_profile)
+        ctx.mogi.subs.remove(ctx.player)
 
         await ctx.respond(
-            f"<@{player_profile.discord_id}> won't be listed as sub.",
+            f"<@{ctx.player.discord_id}> won't be listed as sub.",
             allowed_mentions=AllowedMentions.none(),
         )
 
     @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
     @is_moderator()
+    @with_player(query_varname="player_name")
     async def add_sub(
         self,
         ctx: MogiApplicationContext,
@@ -198,18 +197,13 @@ class managing(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player_profile = search_player(player_name)
-
-        if not player_profile:
-            return await ctx.respond("Player profile not found", ephemeral=True)
-
-        if player_profile in ctx.mogi.subs:
+        if ctx.player in ctx.mogi.subs:
             return await ctx.respond("Player already in the sub list", ephemeral=True)
 
-        ctx.mogi.subs.append(player_profile)
+        ctx.mogi.subs.append(ctx.player)
 
         await ctx.respond(
-            f"<@{player_profile.name}> is now listed as sub.",
+            f"<@{ctx.player.name}> is now listed as sub.",
             allowed_mentions=AllowedMentions.none(),
         )
 
