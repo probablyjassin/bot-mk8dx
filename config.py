@@ -1,11 +1,15 @@
-import os, json
+import os, sys, json
 from dotenv import load_dotenv
 
 load_dotenv()
 
 ROOMS_CONFIG = []
-with open("room.config") as f:
-    ROOMS_CONFIG = json.load(f)
+try:
+    with open("room.config") as f:
+        ROOMS_CONFIG = json.load(f)
+except Exception as e:
+    print(f"Errors loading room.config: {e}")
+    sys.exit(1)
 
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
