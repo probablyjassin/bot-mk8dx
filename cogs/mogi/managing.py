@@ -79,9 +79,6 @@ class managing(commands.Cog):
     )
     @is_mogi_manager()
     @is_mogi_in_progress()
-    @with_player(
-        query_varname="player_name", assert_in_mogi=True, assert_not_suspended=True
-    )
     async def sub(
         self,
         ctx: MogiApplicationContext,
@@ -92,10 +89,17 @@ class managing(commands.Cog):
             str, name="sub", description="username | @ mention | discord_id"
         ),
     ):
+        player_profile = data_manager.find_player(player_name)
         replacement_profile = data_manager.find_player(replacement_name)
+
+        if not player_profile:
+            return await ctx.respond("Player profile not found", ephemeral=True)
 
         if not replacement_profile:
             return await ctx.respond("Sub profile not found", ephemeral=True)
+
+        if player_profile not in ctx.mogi.players:
+            return await ctx.respond("Player to sub out is not in the mogi")
 
         # Check if replacement is in a mogi in another channel
         for mogi in mogi_manager.mogi_registry.values():
@@ -107,20 +111,23 @@ class managing(commands.Cog):
                 )
 
         ctx.mogi.players = recurse_replace(
-            ctx.mogi.players, ctx.player, replacement_profile
+            ctx.mogi.players, player_profile, replacement_profile
         )
         ctx.mogi.teams = recurse_replace(
-            ctx.mogi.teams, ctx.player, replacement_profile
+            ctx.mogi.teams, player_profile, replacement_profile
         )
 
         ctx.mogi.subs.append(replacement_profile)
 
-        if ctx.player_discord and ctx.inmogi_role in ctx.player_discord.roles:
-            await ctx.player_discord.remove_roles(ctx.inmogi_role, reason="Subbed out")
-
+        player_user: Member | None = await get_guild_member(
+            ctx.guild, player_profile.discord_id
+        )
         replacement_user: Member | None = await get_guild_member(
             ctx.guild, replacement_profile.discord_id
         )
+        if player_user and ctx.inmogi_role not in player_user.roles:
+            await replacement_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
+
         if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
