@@ -1,8 +1,7 @@
 import asyncio
 
-from discord import ChannelType, Thread, message_command, Message, slash_command
+from discord import ChannelType, Thread, message_command, Message, SlashCommandGroup
 from discord.ext import commands
-from pycord.multicog import subcommand
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.maths.results import process_tablestring
@@ -18,8 +17,11 @@ class collection(commands.Cog):
         self.bot: commands.Bot = bot
         self.collect_semaphore = asyncio.Semaphore(1)
 
-    @subcommand("points")
-    @slash_command(
+    points = SlashCommandGroup(
+        name="points", description="Commands for point collection and mmr calculation."
+    )
+
+    @points.command(
         name="collect",
         description="Create a thread for you to put the points for the mogi in, in order to calculate results",
     )

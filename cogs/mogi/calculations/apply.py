@@ -1,12 +1,12 @@
 import asyncio
 
-from discord import SlashCommandGroup
+from discord import slash_command
 from discord.ext import commands
+from pycord.multicog import subcommand
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.apply import apply_mmr
-
 
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.apply_update_roles import update_roles
@@ -17,36 +17,13 @@ from utils.decorators.checks import (
 )
 
 
-class calculations(commands.Cog):
+class apply(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.apply_semaphore = asyncio.Semaphore(1)
-        self.collect_semaphore = asyncio.Semaphore(1)
 
-    points = SlashCommandGroup(
-        name="points", description="Commands for point collection and mmr calculation."
-    )
-
-    @points.command(name="reset", description="Reset collected points")
-    @is_mogi_manager()
-    @is_mogi_in_progress()
-    async def reset(self, ctx: MogiApplicationContext):
-        await ctx.response.defer()
-
-        if not ctx.mogi.collected_points:
-            return await ctx.respond("No points have been collected yet.")
-
-        ctx.mogi.collected_points.clear()
-        ctx.mogi.placements_by_group.clear()
-        ctx.mogi.mmr_results_by_group.clear()
-        try:
-            await (await ctx.channel.fetch_message(ctx.mogi.table_message_id)).delete()
-        except Exception:
-            pass
-
-        await ctx.respond("Points have been reset.")
-
-    @points.command(name="apply", description="Apply MMR changes")
+    @subcommand(group="points")
+    @slash_command(name="apply", description="Apply MMR changes")
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def apply(self, ctx: MogiApplicationContext):
@@ -82,4 +59,4 @@ class calculations(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(calculations(bot))
+    bot.add_cog(apply(bot))
