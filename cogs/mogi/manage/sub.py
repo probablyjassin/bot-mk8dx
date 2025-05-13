@@ -81,7 +81,7 @@ class sub(commands.Cog):
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
 
         await ctx.respond(
-            f"<@{ctx.player.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
+            f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )
 
     @manage.command(name="add_sub", description="Add a player to the sub list.")
