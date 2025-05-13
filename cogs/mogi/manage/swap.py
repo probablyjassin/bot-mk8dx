@@ -1,0 +1,57 @@
+from discord import slash_command, Option
+from discord.ext import commands
+
+from models.PlayerModel import PlayerProfile
+from models.CustomMogiContext import MogiApplicationContext
+from pycord.multicog import subcommand
+
+from utils.data.data_manager import data_manager
+from utils.maths.replace import recurse_replace
+from utils.decorators.checks import (
+    is_mogi_open,
+    is_admin,
+)
+
+
+class swap(commands.Cog):
+    def __init__(self, bot):
+        self.bot: commands.Bot = bot
+
+    @subcommand(group="manage")
+    @slash_command(
+        name="swap",
+        description="Swap two players in the mogi with one another (for teams)",
+    )
+    @is_admin()
+    @is_mogi_open()
+    async def swap(
+        self,
+        ctx: MogiApplicationContext,
+        player1: str = Option(str, name="player1", description="first player"),
+        player2: str = Option(str, name="player2", description="second player"),
+    ):
+        first_player: PlayerProfile | str = data_manager.find_player(player1) or player1
+        second_player: PlayerProfile | str = (
+            data_manager.find_player(player2) or player2
+        )
+        for player in [first_player, second_player]:
+            if isinstance(player, str):
+                return await ctx.respond(f"{player} not found")
+            if player not in ctx.mogi.players:
+                return await ctx.send(f"<@{player.discord_id}> not in the mogi")
+
+        ctx.mogi.players = recurse_replace(ctx.mogi.players, first_player, None)
+        ctx.mogi.players = recurse_replace(
+            ctx.mogi.players, second_player, first_player
+        )
+        ctx.mogi.players = recurse_replace(ctx.mogi.players, None, second_player)
+
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, first_player, None)
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, second_player, first_player)
+        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, None, second_player)
+
+        await ctx.respond(f"Swapped {first_player.name} with {second_player.name}")
+
+
+def setup(bot: commands.Bot):
+    bot.add_cog(swap(bot))
