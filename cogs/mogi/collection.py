@@ -16,7 +16,7 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 
-from cogs.mogi.calculations import calculations
+from cogs.mogi.calculations import points
 
 
 class collection(commands.Cog):
@@ -24,7 +24,7 @@ class collection(commands.Cog):
         self.bot: commands.Bot = bot
         self.collect_semaphore = asyncio.Semaphore(1)
 
-    @calculations.points.command(
+    @points.command(
         name="collect", description="Collect points from tablestring"
     )
     @is_mogi_manager()

@@ -16,6 +16,9 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 
+points = SlashCommandGroup(
+    name="points", description="Commands for point collection and mmr calculation."
+)
 
 class calculations(commands.Cog):
     def __init__(self, bot):
@@ -23,9 +26,6 @@ class calculations(commands.Cog):
         self.apply_semaphore = asyncio.Semaphore(1)
         self.collect_semaphore = asyncio.Semaphore(1)
 
-    points = SlashCommandGroup(
-        name="points", description="Commands for point collection and mmr calculation."
-    )
 
     @points.command(name="reset", description="Reset collected points")
     @is_mogi_manager()
