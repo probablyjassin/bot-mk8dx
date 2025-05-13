@@ -4,7 +4,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
-from utils.command_helpers.find_player import search_player
+from utils.data.data_manager import data_manager, archive_type
 from utils.decorators.checks import is_moderator
 
 
@@ -25,7 +25,9 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player, with_archived=True)
+        player: PlayerProfile = data_manager.find_player(
+            searched_player, archive=archive_type.INCLUDE
+        )
 
         if not player:
             await ctx.respond("Couldn't find that player")
@@ -43,7 +45,9 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = search_player(searched_player, with_archived=True)
+        player: PlayerProfile = data_manager.find_player(
+            searched_player, archive=archive_type.INCLUDE
+        )
 
         if not player:
             await ctx.respond("Couldn't find that player")

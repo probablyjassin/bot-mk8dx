@@ -4,8 +4,8 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.PlayerModel import PlayerProfile
 
+from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
-from utils.command_helpers.find_player import search_player
 from utils.decorators.checks import is_mogi_manager
 
 
@@ -19,7 +19,7 @@ class penalties(commands.Cog):
     )
     async def bank(self, ctx: MogiApplicationContext):
 
-        player: PlayerProfile = search_player("mrboost")
+        player: PlayerProfile = data_manager.find_player("mrboost")
 
         if not player:
             return await ctx.respond("Couldn't find that player")
@@ -47,8 +47,8 @@ class penalties(commands.Cog):
         player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player_profile: PlayerProfile = search_player(player)
-        penalty_holder: PlayerProfile = search_player(self.bot.user.id)
+        player_profile: PlayerProfile = data_manager.find_player(player)
+        penalty_holder: PlayerProfile = data_manager.find_player(self.bot.user.id)
 
         if not player_profile:
             return await ctx.respond("Couldn't find that player")
