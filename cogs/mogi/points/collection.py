@@ -7,6 +7,7 @@ from discord import (
     Message,
 )
 from discord.ext import commands
+from pycord.multicog import subcommand
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.maths.results import process_tablestring
@@ -16,17 +17,12 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 
-from cogs.mogi.calculations import points
-
-
 class collection(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.collect_semaphore = asyncio.Semaphore(1)
 
-    @points.command(
-        name="collect", description="Collect points from tablestring"
-    )
+    @subcommand(group="collect")
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):

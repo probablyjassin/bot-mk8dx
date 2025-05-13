@@ -1,7 +1,7 @@
 import os
 
 import discord
-from discord.ext import commands
+from pycord.multicog import Bot
 
 from logger import setup_logger, highlight
 from config import DISCORD_TOKEN, LOG_CHANNEL_ID
@@ -15,7 +15,7 @@ from cogs.error_handler import error_logger
 SAFE_MODE = False
 
 
-class YuzuLoungeBot(commands.Bot):
+class YuzuLoungeBot(Bot):
     """
     A custom Discord bot class for the Yuzu Lounge server.
 
