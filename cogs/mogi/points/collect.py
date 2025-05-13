@@ -12,7 +12,7 @@ from utils.decorators.checks import (
 )
 
 
-class collection(commands.Cog):
+class collect(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
         self.collect_semaphore = asyncio.Semaphore(1)
@@ -72,4 +72,4 @@ class collection(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(collection(bot))
+    bot.add_cog(collect(bot))

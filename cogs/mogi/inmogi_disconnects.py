@@ -9,7 +9,7 @@ from models.MogiModel import Mogi
 from config import GUILD_IDS
 
 
-class dcs(commands.Cog):
+class inmogi_disconnects(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
@@ -82,4 +82,4 @@ class dcs(commands.Cog):
 
 
 def setup(bot: commands.Bot) -> None:
-    bot.add_cog(dcs(bot))
+    bot.add_cog(inmogi_disconnects(bot))
