@@ -18,7 +18,7 @@ from utils.decorators.checks import (
 )
 
 
-class debugging(commands.Cog):
+class debug(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
@@ -157,4 +157,4 @@ class debugging(commands.Cog):
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(debugging(bot))
+    bot.add_cog(debug(bot))
