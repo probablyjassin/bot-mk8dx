@@ -5,7 +5,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.RankModel import Rank
 from models.PlayerModel import PlayerProfile
-from utils.command_helpers.find_player import search_player
+from utils.data.data_manager import data_manager, archive_type
 
 from datetime import datetime
 from bson.int64 import Int64
@@ -26,8 +26,8 @@ class player(commands.Cog):
             required=False,
         ),
     ):
-        player: PlayerProfile = search_player(
-            searched_name or Int64(ctx.author.id), with_archived=True
+        player: PlayerProfile = data_manager.find_player(
+            searched_name or Int64(ctx.author.id), archive=archive_type.INCLUDE
         )
 
         if not player:
