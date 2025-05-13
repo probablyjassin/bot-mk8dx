@@ -5,6 +5,7 @@ from discord import (
     Thread,
     message_command,
     Message,
+    slash_command
 )
 from discord.ext import commands
 from pycord.multicog import subcommand
@@ -22,7 +23,7 @@ class collection(commands.Cog):
         self.bot: commands.Bot = bot
         self.collect_semaphore = asyncio.Semaphore(1)
 
-    @subcommand(group="collect")
+    @slash_command(name="collect_points")
     @is_mogi_manager()
     @is_mogi_in_progress()
     async def collect(self, ctx: MogiApplicationContext):
