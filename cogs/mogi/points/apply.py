@@ -22,7 +22,7 @@ class apply(commands.Cog):
         self.bot: commands.Bot = bot
         self.apply_semaphore = asyncio.Semaphore(1)
 
-    @subcommand(group="points")
+    @subcommand(group="points", independent=True)
     @slash_command(name="apply", description="Apply MMR changes")
     @is_mogi_manager()
     @is_mogi_in_progress()
