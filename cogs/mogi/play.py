@@ -27,7 +27,7 @@ class stop(commands.Cog):
     async def vote(self, ctx: MogiApplicationContext):
 
         # not enough players
-        if len(ctx.mogi.players) <= 6 and debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) <= 6 and not debug_feature_flags["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
