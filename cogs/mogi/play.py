@@ -119,13 +119,7 @@ class stop(commands.Cog):
         if len(ctx.mogi.players) == ctx.mogi.voters:
             return await ctx.respond("All players have voted")
 
-        hasnt_voted = []
-        for player in ctx.mogi.players:
-            if player.discord_id not in ctx.mogi.voters:
-                hasnt_voted.append(f"<@{player.discord_id}>")
-
-        voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
-        not_voted_str = "\n".join(hasnt_voted)
+        not_voted_str = ""
 
         if debug_feature_flags["show_votes"]:
             most_votes = max(ctx.mogi.votes.values())
@@ -135,7 +129,7 @@ class stop(commands.Cog):
                 if ctx.mogi.votes[key] == most_votes
             ]
             if max_votes:
-                not_voted_str += "\nMost voted so far:\n"
+                not_voted_str += "Most voted so far:\n"
                 for key in max_votes:
                     not_voted_str += key + "\n"
                 runner_ups = [
@@ -147,6 +141,16 @@ class stop(commands.Cog):
                     not_voted_str += "\nRunner ups:\n"
                     for key in runner_ups:
                         not_voted_str += key + "\n"
+
+        not_voted_str += "Missing votes from:"
+        hasnt_voted = []
+        for player in ctx.mogi.players:
+            if player.discord_id not in ctx.mogi.voters:
+                hasnt_voted.append(f"<@{player.discord_id}>")
+
+        not_voted_str += "\n".join(hasnt_voted)
+
+        voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
 
         await ctx.respond(
             f"{not_voted_str}\n\n{voting_message.jump_url}\nClick the above link to go to the vote!",
