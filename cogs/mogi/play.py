@@ -141,8 +141,9 @@ class stop(commands.Cog):
                     not_voted_str += "\nRunner ups:\n"
                     for key in runner_ups:
                         not_voted_str += key + "\n"
+            not_voted_str += "\n"
 
-        not_voted_str += "Missing votes from:"
+        not_voted_str += "Missing votes from:\n"
         hasnt_voted = []
         for player in ctx.mogi.players:
             if player.discord_id not in ctx.mogi.voters:
