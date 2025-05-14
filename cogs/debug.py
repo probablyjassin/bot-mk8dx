@@ -17,6 +17,10 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 
+ROOMS: list[Room] = [
+    Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
+]
+
 
 class debug(commands.Cog):
     def __init__(self, bot):
@@ -89,11 +93,17 @@ class debug(commands.Cog):
             choices=[room["name"] for room in ROOMS_CONFIG],
         ),
     ):
-        server = [room for room in ROOMS_CONFIG if room["name"] == server][0]
-        room_obj = Room.from_address(server["address"], server["port"])
-        ctx.mogi.room = room_obj
-        await ctx.respond(f"Set the server to:\n{server}")
-        await ctx.send(room_obj)
+        available_rooms = ROOMS[:]
+        for mogi in mogi_manager.read_registry().values():
+            if mogi.room and mogi.room in available_rooms:
+                available_rooms.remove(mogi.room)
+        candidates = [room for room in available_rooms if room.name == server]
+        room = candidates[0] if candidates else None
+        if not room:
+            return await ctx.respond("The room is not available right now")
+        ctx.mogi.room = room
+        await ctx.respond(f"Set the server to:\n{room.name}")
+        await ctx.send(room)
 
     @debug.command(name="list_servers")
     @is_admin()
