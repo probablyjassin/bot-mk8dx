@@ -59,8 +59,9 @@ class rooms(commands.Cog):
             title = f"Gathering: {len(ctx.mogi.players)}"
         else:
             title = f"{len(ctx.mogi.players)} players already playing right now"
-            diff_minutes = int((time.time() - ctx.mogi.started_at) / 60)
-            title += f"\n{diff_minutes} minutes elapsed"
+            if ctx.mogi.started_at:
+                diff_minutes = int((time.time() - ctx.mogi.started_at) / 60)
+                title += f"\n{diff_minutes} minutes elapsed"
 
         if ctx.mogi:
             data["Players"] = f"{len(ctx.mogi.players)}/12"
