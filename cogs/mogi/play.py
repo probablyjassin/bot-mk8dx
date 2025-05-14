@@ -127,8 +127,29 @@ class stop(commands.Cog):
         voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
         not_voted_str = "\n".join(hasnt_voted)
 
+        if debug_feature_flags["show_votes"]:
+            most_votes = max(ctx.mogi.votes.values())
+            max_votes = [
+                key
+                for key in ctx.mogi.votes.keys()
+                if ctx.mogi.votes[key] == most_votes
+            ]
+            if max_votes:
+                not_voted_str += "\nMost voted so far:\n"
+                for key in max_votes:
+                    not_voted_str += key + "\n"
+                runner_ups = [
+                    key
+                    for key in ctx.mogi.votes.keys()
+                    if ctx.mogi.votes[key] == most_votes - 1
+                ]
+                if runner_ups:
+                    not_voted_str += "\nRunner ups:\n"
+                    for key in runner_ups:
+                        not_voted_str += key + "\n"
+
         await ctx.respond(
-            f"{not_voted_str}\n\n{voting_message.jump_url}\nVote above!",
+            f"{not_voted_str}\n\n{voting_message.jump_url}\nClick the above link to go to the vote!",
         )
 
 
