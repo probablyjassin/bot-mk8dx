@@ -42,12 +42,13 @@ def with_player(
             ctx.player = data_manager.find_player(
                 query=target_query, archive=archive_type.INCLUDE
             )
-            ctx.player_discord = await get_guild_member(
-                ctx.guild, ctx.player.discord_id
-            )
 
             if not ctx.player:
                 return await ctx.respond("Couldn't find Lounge profile.")
+
+            ctx.player_discord = await get_guild_member(
+                ctx.guild, ctx.player.discord_id
+            )
 
             # Make sure the player is in the mogi
             if assert_in_mogi:
