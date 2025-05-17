@@ -50,6 +50,7 @@ class rooms(commands.Cog):
         room: Room = (
             ctx.mogi.room if ctx.mogi.room else get_room_info(ServerType.LOUNGE)
         )
+        room.refresh()
 
         data = {}
 
