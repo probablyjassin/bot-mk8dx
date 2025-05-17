@@ -168,7 +168,7 @@ class Mogi:
                 line = line.replace("|", "+")
                 sections = line.split()
                 for player in self.players:
-                    if sections[0] and sections[0] == player.name:
+                    if sections and sections[0] == player.name:
                         parts = [part.split("+") for part in line.split()]
                         points = sum(
                             [
