@@ -13,6 +13,8 @@ from utils.maths.teams_algorithm import (
 
 from utils.data.flags import debug_feature_flags
 
+from cogs.error_handler import error_logger
+
 
 @dataclass
 class Mogi:
@@ -163,19 +165,54 @@ class Mogi:
 
         all_points = {}
 
-        for line in tablestring.split("\n"):
-            line = line.replace("|", "+")
-            for player in self.players:
-                if player.name in line:
-                    parts = [part.split("+") for part in line.split()]
-                    points = sum(
-                        [int(num) for part in parts for num in part if num.isdigit()]
-                    )
-                    all_points[player.name] = points
-                    self.disconnections = (
-                        len([num for part in parts for num in part if num.isdigit()])
-                        - 1
-                    )
+        try:
+            for line in tablestring.split("\n"):
+                line = line.replace("|", "+")
+                sections = line.strip().split()
+                for player in self.players:
+                    if sections[0] == player.name:
+                        parts = [part.split("+") for part in line.split()]
+                        points = sum(
+                            [
+                                int(num)
+                                for part in parts
+                                for num in part
+                                if num.isdigit()
+                            ]
+                        )
+                        all_points[player.name] = points
+                        self.disconnections = (
+                            len(
+                                [num for part in parts for num in part if num.isdigit()]
+                            )
+                            - 1
+                        )
+        except:
+            error_logger.log(
+                "Defaulted to old tablestring collect_points method because of errors"
+            )
+            all_points = {}
+            self.disconnections = 0
+            for line in tablestring.split("\n"):
+                line = line.replace("|", "+")
+                for player in self.players:
+                    if player.name in line:
+                        parts = [part.split("+") for part in line.split()]
+                        points = sum(
+                            [
+                                int(num)
+                                for part in parts
+                                for num in part
+                                if num.isdigit()
+                            ]
+                        )
+                        all_points[player.name] = points
+                        self.disconnections = (
+                            len(
+                                [num for part in parts for num in part if num.isdigit()]
+                            )
+                            - 1
+                        )
 
         team_points_list = []
         for team in self.teams:
