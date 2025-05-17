@@ -67,7 +67,7 @@ class stop(commands.Cog):
         if ctx.mogi.isPlaying or ctx.mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
-        if len(ctx.mogi.players) < 6 or debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) < 6 and not debug_feature_flags["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
