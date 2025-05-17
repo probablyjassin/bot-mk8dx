@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.decorators.checks import is_moderator
-from utils.decorators.player import with_player
+from utils.decorators.player import other_player
 
 
 class archive(commands.Cog):
@@ -16,7 +16,7 @@ class archive(commands.Cog):
 
     @archive.command(name="add", description="Archive a player")
     @is_moderator()
-    @with_player(query_varname="searched_player")
+    @other_player(query_varname="searched_player")
     async def archive_add(
         self,
         ctx: MogiApplicationContext,
@@ -33,7 +33,7 @@ class archive(commands.Cog):
 
     @archive.command(name="retrieve", description="Unarchive a player")
     @is_moderator()
-    @with_player(query_varname="searched_player")
+    @other_player(query_varname="searched_player")
     async def archive_retrieve(
         self,
         ctx: MogiApplicationContext,

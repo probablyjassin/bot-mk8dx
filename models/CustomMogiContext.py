@@ -11,8 +11,8 @@ from config import GUILD_IDS, RESULTS_CHANNEL_ID, REGISTER_CHANNEL_ID
 class MogiApplicationContext(ApplicationContext):
     """## `discord.ApplicationContext` with custom Lounge attributes:
     - `mogi`: `Mogi` object of the channel
-    - `player`: `PlayerProfile` object passed down by the `@with_player` decorator, `None` if not used
-    - `player_discord`: `Member` object passed down by the `@with_player` decorator, `None` if not used
+    - `player`: `PlayerProfile` object passed down by the `@with_player` or `other_player` decorator, `None` if not used
+    - `player_discord`: `Member` object passed down by the `@with_player` or `other_player` decorator, `None` if not used
     - `main_guild`: `discord.Guild` object of the main guild
     - `inmogi_role`: `discord.Role` object of the InMogi role
     - `get_lounge_role(name: str)`: method to get a role by name
