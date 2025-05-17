@@ -4,7 +4,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from pycord.multicog import subcommand
 
-from utils.decorators.player import with_player
+from utils.decorators.player import other_player
 from utils.decorators.checks import (
     is_mogi_not_in_progress,
     is_mogi_manager,
@@ -19,7 +19,7 @@ class remove(commands.Cog):
     @slash_command(name="remove", description="Remove a player from the current mogi")
     @is_mogi_manager()
     @is_mogi_not_in_progress()
-    @with_player(query_varname="player", assert_in_mogi=True)
+    @other_player(query_varname="player", assert_in_mogi=True)
     async def remove(
         self,
         ctx: MogiApplicationContext,

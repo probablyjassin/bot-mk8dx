@@ -6,7 +6,7 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
-from utils.decorators.player import with_player
+from utils.decorators.player import other_player
 from utils.command_helpers.find_player import get_guild_member
 from utils.decorators.checks import (
     is_mogi_in_progress,
@@ -87,7 +87,7 @@ class sub(commands.Cog):
     @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
     @is_moderator()
-    @with_player(query_varname="player_name")
+    @other_player(query_varname="player_name")
     async def add_sub(
         self,
         ctx: MogiApplicationContext,
@@ -111,7 +111,7 @@ class sub(commands.Cog):
     )
     @is_mogi_in_progress()
     @is_moderator()
-    @with_player(query_varname="player_name")
+    @other_player(query_varname="player_name")
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,

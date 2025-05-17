@@ -4,7 +4,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 
 from utils.decorators.checks import is_mogi_manager, is_moderator
-from utils.decorators.player import with_player
+from utils.decorators.player import other_player
 
 from utils.data.data_manager import data_manager, archive_type
 
@@ -19,7 +19,7 @@ class disconnects(commands.Cog):
 
     @disconnects.command(name="add", description="Add a DC to a player's count")
     @is_mogi_manager()
-    @with_player(query_varname="searched_player")
+    @other_player(query_varname="searched_player")
     async def disconnects_add(
         self,
         ctx: MogiApplicationContext,
@@ -41,7 +41,7 @@ class disconnects(commands.Cog):
 
     @disconnects.command(name="set", description="Set a player's DC count")
     @is_moderator()
-    @with_player(query_varname="searched_player")
+    @other_player(query_varname="searched_player")
     async def disconnects_set(
         self,
         ctx: MogiApplicationContext,
