@@ -86,6 +86,26 @@ class Room:
             print(f"An error occurred: {e}")
             return None
 
+    def refresh(self) -> None:
+        data: dict = (requests.get(f"http://{YUZU_API_URL}/lobby")).json()
+        servers: list[dict] = data.get("rooms", [])
+        candidates = [
+            entry
+            for entry in servers
+            if entry["address"] == self.address and entry["port"] == self.port
+        ]
+        server = None
+        if candidates:
+            server = candidates[0]
+        if not server:
+            return None
+        updated_room = Room.from_json(server)
+
+        # Update this instance's attributes with the new values
+        for key, value in updated_room.__dict__.items():
+            setattr(self, key, value)
+        return self
+
     def to_json(self) -> dict:
         return {
             "address": self.address,
