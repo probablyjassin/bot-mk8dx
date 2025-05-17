@@ -65,7 +65,9 @@ class rooms(commands.Cog):
                 title += f"\n{diff_minutes} minutes elapsed"
 
         if ctx.mogi:
-            data["Players"] = f"{len(ctx.mogi.players)}/12"
+            data["Players"] = (
+                f"{len(ctx.mogi.players)}/{ctx.mogi.room.maxPlayers if ctx.mogi.room else 12}"
+            )
 
         data[room.name if room else "Server"] = (
             f"{len(room.players)}/12" if room else "unavailable"
