@@ -216,7 +216,12 @@ class Mogi:
 
         team_points_list = []
         for team in self.teams:
-            team_points = sum(all_points[player.name] for player in team)
+
+            try:
+                team_points = sum(all_points[player.name] for player in team)
+            except KeyError as error:
+                raise error
+
             team_points_list.append(team_points)
 
         self.collected_points = team_points_list
