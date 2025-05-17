@@ -185,10 +185,11 @@ class Mogi:
                             )
                             - 1
                         )
-        except:
+        except Exception as e:
             print(
                 "Defaulted to old tablestring collect_points method because of errors"
             )
+            print(e)
             all_points = {}
             self.disconnections = 0
             for line in tablestring.split("\n"):
