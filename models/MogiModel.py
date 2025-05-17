@@ -13,8 +13,6 @@ from utils.maths.teams_algorithm import (
 
 from utils.data.flags import debug_feature_flags
 
-from cogs.error_handler import error_logger
-
 
 @dataclass
 class Mogi:
@@ -188,7 +186,7 @@ class Mogi:
                             - 1
                         )
         except:
-            error_logger.log(
+            print(
                 "Defaulted to old tablestring collect_points method because of errors"
             )
             all_points = {}
