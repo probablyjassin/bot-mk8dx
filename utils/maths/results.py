@@ -23,7 +23,7 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
         # Extract the username from the KeyError message
         username = str(e).strip("'")
         ctx.mogi.collected_points = []
-        await ctx.respond(f"Missing player name in tablestring: {username}")
+        await ctx.respond(f"Missing player name in tablestring: `{username}`")
         return False
 
     # obtain the placements from the collected points
