@@ -34,7 +34,19 @@ jobs:
         with:
           package-name: ${{ github.event.repository.name }}
           package-type: container
-          min-versions-to-keep: 2
+          min-versions-to-keep: 6
+
+      # Extract metadata for tagging
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=long
+            type=sha,format=short
+            type=ref,event=branch
 
       # Add cache layers
       - name: Cache Docker layers
@@ -51,7 +63,8 @@ jobs:
           context: .
           push: true
           platforms: linux/amd64,linux/arm64
-          tags: ghcr.io/${{ github.repository }}:latest
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: |
             type=local,src=/tmp/.buildx-cache
             type=registry,ref=ghcr.io/${{ github.repository }}:latest
