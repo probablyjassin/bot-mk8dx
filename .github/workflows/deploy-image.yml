@@ -14,6 +14,8 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    env:
+      STABLE_COMMIT: "d8026c996548aa4b8c0810a685ee05e3d29498c1" # Frequently update this with we deem as stable
 
     steps:
       - name: Checkout code
@@ -34,7 +36,7 @@ jobs:
         with:
           package-name: ${{ github.event.repository.name }}
           package-type: container
-          min-versions-to-keep: 6
+          min-versions-to-keep: 12
 
       # Extract metadata for tagging
       - name: Extract metadata for Docker
@@ -68,6 +70,30 @@ jobs:
           cache-from: |
             type=local,src=/tmp/.buildx-cache
             type=registry,ref=ghcr.io/${{ github.repository }}:latest
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+
+      # Build stable version from specific commit
+      - name: Checkout STABLE commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ env.STABLE_COMMIT }}
+          clean: true
+
+      - name: Build and push STABLE Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ghcr.io/${{ github.repository }}:stable
+          labels: |
+            org.opencontainers.image.title=${{ github.event.repository.name }}
+            org.opencontainers.image.source=${{ github.event.repository.html_url }}
+            org.opencontainers.image.revision=${{ env.STABLE_COMMIT }}
+            org.opencontainers.image.created=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.created'] }}
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache
+            type=registry,ref=ghcr.io/${{ github.repository }}:stable
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
 
       # Temp fix for cache size growth
