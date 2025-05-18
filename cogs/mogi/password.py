@@ -49,7 +49,7 @@ class password(commands.Cog):
         )
 
         await ctx.respond(
-            f"a",
+            response,
             ephemeral=True,
         )
 
