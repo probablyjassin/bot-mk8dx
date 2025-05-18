@@ -47,9 +47,7 @@ class rooms(commands.Cog):
 
     @slash_command(name="status", description="Get the status of the current mogi")
     async def status(self, ctx: MogiApplicationContext):
-        room: Room = (
-            ctx.mogi.room if ctx.mogi.room else get_room_info(ServerType.LOUNGE)
-        )
+        room: Room = ctx.mogi.room if ctx.mogi and ctx.mogi.room else None
         room.refresh()
 
         data = {}
