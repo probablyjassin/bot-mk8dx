@@ -173,7 +173,7 @@ class debug(commands.Cog):
     )
     @is_admin()
     async def update_passwords(self, ctx: MogiApplicationContext):
-        await fetch_server_passwords()
+        await fetch_server_passwords(self.bot)
         await ctx.respond(f"Done, check <#{LOG_CHANNEL_ID}>")
 
 
