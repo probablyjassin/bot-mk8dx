@@ -91,9 +91,3 @@ async def format_vote_button_callback(
 
         # apply team roles (if applicable)
         await apply_team_roles(ctx=interaction, mogi=mogi)
-
-
-# WIP: probably removing this if servers are decided by roles not by votes
-""" async def server_vote_button_callback():
-    pass
- """
