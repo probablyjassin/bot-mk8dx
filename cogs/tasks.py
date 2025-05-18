@@ -62,7 +62,12 @@ class tasks(commands.Cog):
         state_manager.backup()
 
     @tasks.loop(
-        time=time(hour=22, minute=0, second=0, tzinfo=timezone.tzname("Europe/Berlin"))
+        time=time(
+            hour=22,
+            minute=0,
+            second=0,
+            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+        )
     )
     async def daily_db_backup(self):
         backup_folder = "backups"
@@ -102,7 +107,12 @@ class tasks(commands.Cog):
             pass
 
     @tasks.loop(
-        time=time(hour=7, minute=30, second=0, tzinfo=timezone.tzname("Europe/Berlin"))
+        time=time(
+            hour=7,
+            minute=30,
+            second=0,
+            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+        )
     )
     async def get_updated_passwords(self):
         await fetch_server_passwords(self.bot)
