@@ -13,23 +13,30 @@ class password(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    # WIP
     @slash_command(
         name="password", description="Get the password for the server your mogi uses."
     )
-    @is_mogi_in_progress()
-    @with_player(assert_in_mogi=True)
+    @with_player()
     async def password(self, ctx: MogiApplicationContext):
-        if not ctx.mogi.room:
+
+        if (not ctx.mogi or not ctx.mogi.room) and ctx.get_lounge_role(
+            "Admin"
+        ) not in ctx.user.roles:
             return await ctx.respond(
-                "This mogi doesn't have a server for it yet. Something might have gone wrong, ask a Mogi Manager."
+                "The mogi is either not open or doesn't have a yuzu server assigned yet because it didn't start yet."
             )
+
+        if (
+            ctx.player not in ctx.mogi.players
+            and ctx.get_lounge_role("Admin") not in ctx.user.roles
+        ):
+            return await ctx.respond("You're not in this mogi")
 
         passwords: dict | None = None
         with open("state/passwords.json", "r", encoding="utf-8") as f:
             passwords: dict | None = json.load(f)
 
-        if _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER):
+        if _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER) or not ctx.mogi.room:
             return await ctx.respond(
                 "\n".join(
                     [
