@@ -52,19 +52,6 @@ async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
         room for room in available_rooms if region_to_server[best_region] in room.name
     ]
 
-    # DEBUG
-    debug_str = ""
-    for key in regions_dict.keys():
-        debug_str += f"{key}: {regions_dict[key]} | "
-    debug_str += "\n\n"
-    for room in ROOMS:
-        debug_str += f"-# + {room.name}\n"
-    debug_str += "\n\n"
-    for room in available_rooms:
-        debug_str += f"-# {room.name}\n"
-    await ctx.message.channel.send(f"-# for debugging:\n-# {debug_str}")
-    # -----
-
     return (
         room_candidates[0]
         if room_candidates
