@@ -69,7 +69,7 @@ class rooms(commands.Cog):
             )
 
         data[room.name if room else "Server"] = (
-            f"{len(room.players)}/12" if room else "unavailable"
+            f"{len(room.players)}/12" if room else "---"
         )
 
         await ctx.respond(
