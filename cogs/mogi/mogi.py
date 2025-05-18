@@ -7,8 +7,9 @@ from models.CustomMogiContext import MogiApplicationContext
 from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 
-from utils.command_helpers.confirm import confirmation
 from utils.decorators.checks import is_mogi_not_in_progress, is_mogi_open, is_admin
+from utils.data.flags import debug_feature_flags
+from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.find_player import get_guild_member
 
@@ -19,6 +20,10 @@ class mogi(commands.Cog):
 
     @slash_command(name="open", description="Open a mogi")
     async def open(self, ctx: MogiApplicationContext):
+        if debug_feature_flags["hold_mogis"]:
+            return await ctx.respond(
+                "Because of maintenance, you cannot open mogis for just a few moments."
+            )
         try:
             mogi_manager.create_mogi(ctx.channel.id)
             await ctx.respond("# Started a new mogi! \n Use /join to participate!")
