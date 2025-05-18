@@ -25,6 +25,10 @@ class stop(commands.Cog):
     @start.command(name="vote")
     @is_mogi_not_in_progress()
     async def vote(self, ctx: MogiApplicationContext):
+        if debug_feature_flags["hold_mogis"]:
+            return await ctx.respond(
+                "Because of maintenance, you cannot start mogis for just a few moments."
+            )
 
         # not enough players
         if len(ctx.mogi.players) <= 6 and not debug_feature_flags["no_min_players"]:
