@@ -96,7 +96,7 @@ class tasks(commands.Cog):
         try:
             log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
             await log_channel.send(
-                f"💾 Database backup saved to {backup_filename.split("/")[-1]}"
+                f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
             )
         except:
             pass
