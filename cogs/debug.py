@@ -1,6 +1,6 @@
 import io, json
 
-from config import ROOMS_CONFIG
+from config import ROOMS_CONFIG, LOG_CHANNEL_ID
 
 from discord import SlashCommandGroup, Option, AllowedMentions, File
 from discord.ext import commands
@@ -20,6 +20,8 @@ from utils.decorators.checks import (
 ROOMS: list[Room] = [
     Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
 ]
+
+from utils.command_helpers.update_server_passwords import fetch_server_passwords
 
 
 class debug(commands.Cog):
@@ -164,6 +166,15 @@ class debug(commands.Cog):
         await ctx.respond(
             f"Updated the player cap for this mogi to {ctx.mogi.player_cap}"
         )
+
+    @debug.command(
+        name="update_passwords",
+        description="Refresh the lounge passwords from the provided API endpoint",
+    )
+    @is_admin()
+    async def update_passwords(self, ctx: MogiApplicationContext):
+        await fetch_server_passwords()
+        await ctx.respond(f"Done, check <#{LOG_CHANNEL_ID}>")
 
 
 def setup(bot: commands.Bot):

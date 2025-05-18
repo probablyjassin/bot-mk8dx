@@ -13,7 +13,9 @@ from utils.data.data_manager import data_manager, archive_type
 from utils.data.state import state_manager
 from utils.data.mogi_manager import mogi_manager
 
-from config import HEALTHCHECK_URL
+from utils.command_helpers.update_server_passwords import fetch_server_passwords
+
+from config import HEALTHCHECK_URL, PASSWORD_API_URL, PASSWORD_API_PASS, LOG_CHANNEL_ID
 
 
 class tasks(commands.Cog):
@@ -24,6 +26,8 @@ class tasks(commands.Cog):
     async def on_ready(self):
         if HEALTHCHECK_URL:
             self.ping_healthcheck.start()
+        if PASSWORD_API_URL and PASSWORD_API_PASS:
+            self.get_updated_passwords.start()
 
         self.change_activity.start()
         self.manage_state.start()
@@ -57,7 +61,9 @@ class tasks(commands.Cog):
     async def manage_state(self):
         state_manager.backup()
 
-    @tasks.loop(time=time(hour=22, minute=0, second=0, tzinfo=timezone.utc))
+    @tasks.loop(
+        time=time(hour=22, minute=0, second=0, tzinfo=timezone.tzname("Europe/Berlin"))
+    )
     async def daily_db_backup(self):
         backup_folder = "backups"
         date_format = "%d-%m-%Y"
@@ -86,6 +92,20 @@ class tasks(commands.Cog):
                 file_date = datetime.strptime(file_date_str, date_format)
                 if datetime.now() - file_date > timedelta(days=3):
                     os.remove(file_path)
+
+        try:
+            log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
+            await log_channel.send(
+                f"💾 Database backup saved to {backup_filename.split("/")[-1]}"
+            )
+        except:
+            pass
+
+    @tasks.loop(
+        time=time(hour=7, minute=30, second=0, tzinfo=timezone.tzname("Europe/Berlin"))
+    )
+    async def get_updated_passwords(self):
+        await fetch_server_passwords(self.bot)
 
 
 def setup(bot: commands.Bot):
