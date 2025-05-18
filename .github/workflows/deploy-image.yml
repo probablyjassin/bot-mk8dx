@@ -61,21 +61,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-buildx-
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          cache-from: |
-            type=local,src=/tmp/.buildx-cache
-            type=registry,ref=ghcr.io/${{ github.repository }}:latest
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          provenance: false
-
-      # Build stable version from specific commit
+      # Build stable version first
       - name: Checkout STABLE commit
         uses: actions/checkout@v4
         with:
@@ -97,6 +83,26 @@ jobs:
           cache-from: |
             type=local,src=/tmp/.buildx-cache
             type=registry,ref=ghcr.io/${{ github.repository }}:stable
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          provenance: false
+
+      # Then build latest version
+      - name: Checkout latest code
+        uses: actions/checkout@v4
+        with:
+          clean: true
+
+      - name: Build and push latest Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          platforms: linux/amd64,linux/arm64
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: |
+            type=local,src=/tmp/.buildx-cache
+            type=registry,ref=ghcr.io/${{ github.repository }}:latest
           cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
           provenance: false
 
