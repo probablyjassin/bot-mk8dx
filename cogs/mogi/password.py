@@ -39,8 +39,17 @@ class password(commands.Cog):
                 ),
                 ephemeral=True,
             )
+
+        pwd = passwords.get(ctx.mogi.room.name)
+
+        response = (
+            f"{ctx.mogi.room.name}\nPassword: `{pwd}`"
+            if pwd
+            else "Password for your mogi's room not found, please contact a Mogi Manager or Admin."
+        )
+
         await ctx.respond(
-            f"{passwords.get(ctx.mogi.room.name, 'Password for your mogi\'s room not found, please contact a Mogi Manager or Admin.')}",
+            f"a",
             ephemeral=True,
         )
 
