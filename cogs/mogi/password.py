@@ -27,10 +27,8 @@ class password(commands.Cog):
             )
 
         if (
-            not ctx.mogi
-            or (ctx.player not in ctx.mogi.players)
-            and ctx.get_lounge_role("Admin") not in ctx.user.roles
-        ):
+            not ctx.mogi or (ctx.player not in ctx.mogi.players)
+        ) and ctx.get_lounge_role("Admin") not in ctx.user.roles:
             return await ctx.respond("You're not in this mogi")
 
         passwords: dict | None = None
