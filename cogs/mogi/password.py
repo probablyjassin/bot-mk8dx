@@ -1,3 +1,4 @@
+import json
 from discord import slash_command
 from discord.ext import commands
 
@@ -24,13 +25,22 @@ class password(commands.Cog):
                 "This mogi doesn't have a server for it yet. Something might have gone wrong, ask a Mogi Manager."
             )
 
+        passwords: dict | None = None
+        with open("state/passwords.json", "r", encoding="utf-8") as f:
+            passwords: dict | None = json.load(f)
+
         if _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER):
             return await ctx.respond(
-                "Not implemented yet, but you are at least a mogi manager and should get all passwords.",
+                "\n".join(
+                    [
+                        f"{server_name}: `{passwords[server_name]}`"
+                        for server_name in passwords
+                    ]
+                ),
                 ephemeral=True,
             )
         await ctx.respond(
-            "Not implemented yet, but if you read this, all requirements are met for you to see the password.",
+            f"{passwords.get(ctx.mogi.room.name, 'Password for your mogi\'s room not found, please contact a Mogi Manager or Admin.')}",
             ephemeral=True,
         )
 
