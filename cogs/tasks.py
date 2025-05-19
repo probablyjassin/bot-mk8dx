@@ -103,8 +103,8 @@ class tasks(commands.Cog):
             await log_channel.send(
                 f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
             )
-        except:
-            pass
+        except Exception as e:
+            print(f"Error sending database backup log: {e}")
 
     @tasks.loop(
         time=time(
