@@ -156,6 +156,10 @@ class safemode_cog(commands.Cog):
     ):
         return
 
+    @slash_command(name="room", description="Get info on people playing on EU Main")
+    async def room(self, ctx: ApplicationContext):
+        return
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(safemode_cog(bot))
