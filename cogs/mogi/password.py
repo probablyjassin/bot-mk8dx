@@ -4,7 +4,6 @@ from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 
-from utils.decorators.checks import is_mogi_in_progress
 from utils.decorators.player import with_player
 from utils.decorators.checks import LoungeRole, _is_at_least_role
 

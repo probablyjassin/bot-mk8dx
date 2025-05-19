@@ -3,10 +3,7 @@ from discord import Interaction
 from discord.ui import Button, View
 
 from models.MogiModel import Mogi
-from utils.command_helpers.vote_btn_callback import (
-    format_vote_button_callback,
-    # server_vote_button_callback,
-)
+from utils.command_helpers.vote_btn_callback import format_vote_button_callback
 
 import random
 

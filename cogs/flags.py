@@ -4,8 +4,6 @@ from discord.ui import View, Button
 
 from utils.data.flags import debug_feature_flags
 
-from models.CustomMogiContext import MogiApplicationContext
-
 
 class FlagButton(Button):
     def __init__(self, flag_name: str, is_enabled: bool):

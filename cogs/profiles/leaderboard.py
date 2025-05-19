@@ -1,5 +1,4 @@
 from io import BytesIO
-from pymongo import DESCENDING
 import pandas as pd
 import dataframe_image as dfi
 

@@ -1,20 +1,17 @@
+import asyncio
+
 from discord import slash_command
 from discord.utils import get, utcnow
 from discord.ext import commands
 
+from models.CustomMogiContext import MogiApplicationContext
+
+from utils.data.mogi_manager import mogi_manager
 from utils.decorators.player import with_player
 from utils.command_helpers.server_region import REGIONS
 from utils.decorators.checks import (
     is_mogi_not_in_progress,
 )
-
-from utils.data.mogi_manager import mogi_manager
-
-from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
-
-import asyncio
-import time, datetime
 
 
 class participation(commands.Cog):

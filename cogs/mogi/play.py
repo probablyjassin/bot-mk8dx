@@ -1,6 +1,5 @@
 from discord import slash_command, SlashCommandGroup, AllowedMentions, Option
 from discord.ext import commands
-from discord.utils import get
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.vote_factory import create_vote_button_view
