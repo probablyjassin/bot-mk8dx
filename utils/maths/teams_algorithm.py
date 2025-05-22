@@ -73,4 +73,4 @@ def get_other_alg():
         spec.loader.exec_module(module)
         if hasattr(module, function_name):
             return getattr(module, function_name)
-    return teams_alg_distribute_by_order_kevnkkm
+    return teams_alg_random
