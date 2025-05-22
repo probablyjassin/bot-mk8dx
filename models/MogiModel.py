@@ -9,6 +9,7 @@ from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
     teams_alg_distribute_by_order_kevnkkm,
     teams_alg_random,
+    teams_alg_other, # if ever implemented
 )
 
 from utils.data.flags import debug_feature_flags
