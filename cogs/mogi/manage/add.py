@@ -16,7 +16,7 @@ class add(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @subcommand(group="manage")
+    @subcommand(group="manage", independent=True)
     @slash_command(name="add", description="Add a player to the current mogi")
     @is_moderator()
     @is_mogi_not_in_progress()
