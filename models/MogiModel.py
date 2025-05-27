@@ -323,6 +323,17 @@ class Mogi:
             finished_at=data.get("finished_at"),
             disconnections=data.get("disconnections", 0),
         )
+    
+    def __contains__(self, other: PlayerProfile) -> bool:
+        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)
+
+        Args:
+            other (PlayerProfile): The player that should be checked if they are in the Mogi.
+
+        Returns:
+            bool: Whether the player is in the Mogi or not.
+        """
+        return other in self.players
 
 
 @dataclass
