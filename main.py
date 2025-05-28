@@ -1,3 +1,9 @@
+"""
+Discord bot for the Yuzu Lounge server.
+Used in competitive Mario Kart 8 Deluxe on the Yuzu Emulator.
+Coordinates events to let players gather together and play.
+"""
+
 import os
 
 import discord
@@ -27,7 +33,7 @@ class YuzuLoungeBot(Bot):
 
     async def on_ready(self):
         logger.info("Logged into Discord")
-        logger.info(f"Latency: {self.latency*1000:.2f}ms", )
+        logger.info("Latency: %sms", self.latency * 1000)
         print(
             f"""
             {highlight(self.user)}
@@ -71,8 +77,9 @@ bot = YuzuLoungeBot(
 )
 
 def load_cogs():
+    """Load all cogs from the cogs directory."""
     print("----Loading extensions----")
-    for root, dirs, files in os.walk("./cogs"):
+    for root, _, files in os.walk("./cogs"):
         for file in files:
             if file.endswith(".py"):
                 cog_path = os.path.join(root, file)
@@ -99,7 +106,7 @@ def main():
         load_cogs()
     except Exception as e:
         logger.error("Failed to load extensions, starting in safe mode.")
-        error_logger.error(f"Failed to load extensions: {e}")
+        error_logger.error("Failed to load extensions: %s", e)
         load_safe_mode()
 
     bot.run(DISCORD_TOKEN)
