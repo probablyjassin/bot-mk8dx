@@ -5,9 +5,10 @@ from collections import OrderedDict
 
 from models.MogiModel import Mogi
 from utils.data.mogi_manager import mogi_manager
+from utils.data._database import logger
 
 
-def pretty_encode_mogis(mogis_dict):
+def pretty_encode_mogis(mogis_dict: dict[int, dict]):
     class PlaceholderEncoder(json.JSONEncoder):
         def default(self, obj):
             if hasattr(obj, "to_json"):
@@ -33,7 +34,6 @@ def pretty_encode_mogis(mogis_dict):
     for line in json_str.splitlines():
         stripped = line.strip()
         if stripped.endswith("{") and stripped.startswith('"') and ":" in stripped:
-            # Example: "1180622895316209664": {
             current_id = stripped.split(":")[0].strip('"')
 
         if '"players": "__PLAYERS_PLACEHOLDER__"' in line:
@@ -41,7 +41,7 @@ def pretty_encode_mogis(mogis_dict):
                 raise ValueError("Could not determine current Mogi ID.")
 
             indent = line[: line.find('"players"')]
-            mogi = mogis_dict[int(current_id)]
+            mogi: Mogi = mogis_dict[int(current_id)]
             players_compact = (
                 "[\n"
                 + ",\n".join(
@@ -67,9 +67,7 @@ class BotState:
     def backup(self):
         with open("state/backup.json", "w") as backup:
             mogis = mogi_manager.read_registry()
-            backup.write(
-                pretty_encode_mogis({id: mogis[id].to_json() for id in mogis.keys()})
-            )
+            backup.write(pretty_encode_mogis({id: mogis[id] for id in mogis.keys()}))
 
     def save(self):
         with open("state/saved.json", "w") as saved:
