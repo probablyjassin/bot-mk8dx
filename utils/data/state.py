@@ -6,6 +6,7 @@ from collections import OrderedDict
 from models.MogiModel import Mogi
 from utils.data.mogi_manager import mogi_manager
 
+
 def pretty_encode_mogis(mogis_dict):
     class PlaceholderEncoder(json.JSONEncoder):
         def default(self, obj):
@@ -21,7 +22,9 @@ def pretty_encode_mogis(mogis_dict):
             return super().default(obj)
 
     # First pass: serialize with placeholder
-    json_str = json.dumps({str(k): v for k, v in mogis_dict.items()}, cls=PlaceholderEncoder, indent=4)
+    json_str = json.dumps(
+        {str(k): v for k, v in mogis_dict.items()}, cls=PlaceholderEncoder, indent=4
+    )
 
     # Replace placeholders with compact player lists
     result_lines = []
@@ -29,7 +32,7 @@ def pretty_encode_mogis(mogis_dict):
 
     for line in json_str.splitlines():
         stripped = line.strip()
-        if stripped.endswith('{') and stripped.startswith('"') and ':' in stripped:
+        if stripped.endswith("{") and stripped.startswith('"') and ":" in stripped:
             # Example: "1180622895316209664": {
             current_id = stripped.split(":")[0].strip('"')
 
@@ -37,11 +40,18 @@ def pretty_encode_mogis(mogis_dict):
             if current_id is None:
                 raise ValueError("Could not determine current Mogi ID.")
 
-            indent = line[:line.find('"players"')]
+            indent = line[: line.find('"players"')]
             mogi = mogis_dict[int(current_id)]
-            players_compact = "[\n" + ",\n".join(
-                [indent + "    " + json.dumps(p.to_json(), separators=(",", ":")) for p in mogi.players]
-            ) + f"\n{indent}]"
+            players_compact = (
+                "[\n"
+                + ",\n".join(
+                    [
+                        indent + "    " + json.dumps(p.to_json(), separators=(",", ":"))
+                        for p in mogi.players
+                    ]
+                )
+                + f"\n{indent}]"
+            )
             result_lines.append(f'{indent}"players": {players_compact},')
         else:
             result_lines.append(line)
@@ -57,10 +67,8 @@ class BotState:
     def backup(self):
         with open("state/backup.json", "w") as backup:
             mogis = mogi_manager.read_registry()
-            json.dump(
-                pretty_encode_mogis({id: mogis[id].to_json() for id in mogis.keys()}),
-                backup,
-                indent=4,
+            backup.write(
+                pretty_encode_mogis({id: mogis[id].to_json() for id in mogis.keys()})
             )
 
     def save(self):
