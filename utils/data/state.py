@@ -1,11 +1,13 @@
 import os
 import json
+from logger import setup_logger
 from dataclasses import dataclass
 from collections import OrderedDict
 
 from models.MogiModel import Mogi
 from utils.data.mogi_manager import mogi_manager
-from utils.data._database import logger
+
+error_logger = setup_logger(__name__, "error.log", console=False)
 
 
 def pretty_encode_mogis(mogis_dict: dict[int, dict]):
@@ -83,14 +85,17 @@ class BotState:
     def load_backup(self):
         if not os.path.exists("state/backup.json"):
             return
-        with open("state/backup.json", "r") as backup:
-            data: dict = json.load(backup)
-            if data:
-                mogi_manager.write_registry(
-                    {int(id): Mogi.from_json(data[id]) for id in data.keys()}
-                )
-            else:
-                print("No backup data found")
+        try:
+            with open("state/backup.json", "r") as backup:
+                data: dict = json.load(backup)
+                if data:
+                    mogi_manager.write_registry(
+                        {int(id): Mogi.from_json(data[id]) for id in data.keys()}
+                    )
+                else:
+                    print("No backup data found")
+        except Exception as e:
+            error_logger.error(f"Error loading saved state: {e}")
 
     def load_saved(self):
         if not os.path.exists("state/saved.json"):
