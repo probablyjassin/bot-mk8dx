@@ -82,11 +82,12 @@ async def format_vote_button_callback(
         )
 
         # chose the best server to play on
-        best_server = await get_best_server(ctx=interaction, mogi=mogi)
+        if not mogi.room:
+            best_server = await get_best_server(ctx=interaction, mogi=mogi)
+            mogi.room = best_server
         await interaction.message.channel.send(
-            f"# Yuzu Server: {best_server.name}\nUse `/password`"
+            f"# Yuzu Server: {mogi.room.name}\nUse `/password`"
         )
-        mogi.room = best_server
 
         # apply team roles (if applicable)
         await apply_team_roles(ctx=interaction, mogi=mogi)
