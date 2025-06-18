@@ -105,7 +105,7 @@ class register(commands.Cog):
         # add region role if applicable
         for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
             if region == role.name and role not in ctx.user.roles:
-                ctx.user.add_roles(role)
+                await ctx.user.add_roles(role)
 
         lounge_logger.info(f"{member.display_name} registered as {username}")
 
