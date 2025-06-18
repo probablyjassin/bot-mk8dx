@@ -40,8 +40,9 @@ class YuzuLoungeBot(Bot):
             ID: {highlight(self.user.id)}
         """
         )
-        state_manager.load_backup()
         await (await self.fetch_channel(LOG_CHANNEL_ID)).send("🟢 Bot is online!")
+
+        state_manager.load_backup()
 
         print("Guilds:")
         for guild in self.guilds:
@@ -76,6 +77,7 @@ bot = YuzuLoungeBot(
     ),
 )
 
+
 def load_cogs():
     """Load all cogs from the cogs directory."""
     print("----Loading extensions----")
@@ -90,6 +92,7 @@ def load_cogs():
                 print(f"Loaded {extension}")
     logger.debug("*Finished loading extensions*")
 
+
 def load_safe_mode():
     for name, cog in list(bot.cogs.items()):
         bot.unload_extension(cog.__module__)
@@ -100,6 +103,7 @@ def load_safe_mode():
     except Exception as e:
         logger.error("Failed to load safemode_cog: %s", e)
         error_logger.error("Failed to load safemode_cog: %s", e)
+
 
 def main():
     try:

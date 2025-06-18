@@ -109,8 +109,9 @@ class register(commands.Cog):
 
         lounge_logger.info(f"{member.display_name} registered as {username}")
 
-        delta_joined = datetime.datetime.now() - ctx.user.joined_at
-        delta_created = datetime.datetime.now() - ctx.user.created_at
+        now = datetime.datetime.now(datetime.timezone.utc)
+        delta_joined = now - ctx.user.joined_at
+        delta_created = now - ctx.user.created_at
         if delta_joined.days < 2:
             embed = create_embed(
                 title="⚠️ Warning - potentially suspicious new Lounge Player",
