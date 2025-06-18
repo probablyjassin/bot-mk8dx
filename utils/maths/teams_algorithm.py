@@ -1,3 +1,5 @@
+import os
+import importlib.util
 import random
 from models.PlayerModel import PlayerProfile
 
@@ -59,3 +61,16 @@ def teams_alg_random(
     players = players_in_mogi.copy()
     random.shuffle(players)
     return [players[i : i + team_size] for i in range(0, len(players), team_size)]
+
+
+# if ever implemented
+def get_other_alg():
+    file_path = "other.py"
+    function_name = "teams_alg_other"
+    if os.path.exists(file_path):
+        spec = importlib.util.spec_from_file_location("module.name", file_path)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        if hasattr(module, function_name):
+            return getattr(module, function_name)
+    return teams_alg_random

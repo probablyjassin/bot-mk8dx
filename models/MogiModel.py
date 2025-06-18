@@ -9,6 +9,7 @@ from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
     teams_alg_distribute_by_order_kevnkkm,
     teams_alg_random,
+    get_other_alg, # if ever implemented
 )
 
 from utils.data.flags import debug_feature_flags
@@ -118,7 +119,7 @@ class Mogi:
 
         else:
             algorithm = (
-                teams_alg_random
+                get_other_alg()
                 if debug_feature_flags["random_teams"]
                 else teams_alg_distribute_by_order_kevnkkm
             )
@@ -322,6 +323,17 @@ class Mogi:
             finished_at=data.get("finished_at"),
             disconnections=data.get("disconnections", 0),
         )
+    
+    def __contains__(self, other: PlayerProfile) -> bool:
+        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)
+
+        Args:
+            other (PlayerProfile): The player that should be checked if they are in the Mogi.
+
+        Returns:
+            bool: Whether the player is in the Mogi or not.
+        """
+        return other in self.players
 
 
 @dataclass

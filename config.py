@@ -1,13 +1,20 @@
-import os, sys, json
+"""
+Contains configuration settings for the Lounge Bot, 
+sourced from environment variables and configuration files.
+"""
+
+import os
+import sys
+import json
 from dotenv import load_dotenv
 
 load_dotenv()
 
 ROOMS_CONFIG = []
 try:
-    with open("room.config") as f:
+    with open("room.config", encoding="utf-8") as f:
         ROOMS_CONFIG = json.load(f)
-except Exception as e:
+except (json.JSONDecodeError, FileNotFoundError) as e:
     print(f"Errors loading room.config: {e}")
     sys.exit(1)
 
