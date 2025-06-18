@@ -69,10 +69,15 @@ class BotState:
     def backup(self):
         with open("state/backup.json", "w") as backup:
             mogi_registry = mogi_manager.read_registry()
-            mogi_dicts = {
+            """ mogi_dicts = {
                 id: mogi_registry[id].to_json() for id in mogi_registry.keys()
             }
-            backup.write(pretty_encode_mogis(mogi_dicts))
+            backup.write(pretty_encode_mogis(mogi_dicts)) """
+            json.dump(
+                {id: mogi_registry[id].to_json() for id in mogi_registry.keys()},
+                backup,
+                indent=4,
+            )
 
     def save(self):
         with open("state/saved.json", "w") as saved:
