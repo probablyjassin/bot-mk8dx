@@ -9,7 +9,7 @@ from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
     teams_alg_distribute_by_order_kevnkkm,
     teams_alg_random,
-    get_other_alg, # if ever implemented
+    get_other_alg,  # if ever implemented
 )
 
 from utils.data.flags import debug_feature_flags
@@ -275,6 +275,7 @@ class Mogi:
             "collected_points": self.collected_points,
             "placements_by_group": self.placements_by_group,
             "mmr_results_by_group": self.mmr_results_by_group,
+            "table_message_id": self.table_message_id,
             "voting_message_id": self.voting_message_id,
             "voters": self.voters,
             "votes": self.votes,
@@ -312,6 +313,7 @@ class Mogi:
             collected_points=data.get("collected_points", []),
             placements_by_group=data.get("placements_by_group", []),
             mmr_results_by_group=data.get("mmr_results_by_group", []),
+            table_message_id=data.get("mmr_results_by_group", []),
             voting_message_id=data.get("voting_message_id"),
             voters=data.get("voters", []),
             votes=data.get("votes", {"ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "6v6": 0}),
@@ -323,7 +325,7 @@ class Mogi:
             finished_at=data.get("finished_at"),
             disconnections=data.get("disconnections", 0),
         )
-    
+
     def __contains__(self, other: PlayerProfile) -> bool:
         """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)
 

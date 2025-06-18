@@ -13,8 +13,8 @@ error_logger = setup_logger(__name__, "error.log", console=False)
 def pretty_encode_mogis(mogis_dict: dict[int, dict]):
     class PlaceholderEncoder(json.JSONEncoder):
         def default(self, obj):
-            if hasattr(obj, "to_json"):
-                data = obj.to_json()
+            if hasattr(obj, "players"):
+                data = obj
                 ordered = OrderedDict()
                 for key, value in data.items():
                     if key == "players":
@@ -68,10 +68,11 @@ class BotState:
 
     def backup(self):
         with open("state/backup.json", "w") as backup:
-            mogis = mogi_manager.read_registry()
-            backup.write(
-                pretty_encode_mogis({id: mogis[id].to_json() for id in mogis.keys()})
-            )
+            mogi_registry = mogi_manager.read_registry()
+            mogi_dicts = {
+                id: mogi_registry[id].to_json() for id in mogi_registry.keys()
+            }
+            backup.write(pretty_encode_mogis(mogi_dicts))
 
     def save(self):
         with open("state/saved.json", "w") as saved:
