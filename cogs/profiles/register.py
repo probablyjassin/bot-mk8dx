@@ -112,7 +112,7 @@ class register(commands.Cog):
         now = datetime.datetime.now(datetime.timezone.utc)
         delta_joined = now - ctx.user.joined_at
         delta_created = now - ctx.user.created_at
-        if delta_joined.days < 2:
+        if delta_joined.total_seconds() < 600 or delta_created.days < 7:
             embed = create_embed(
                 title="⚠️ Warning - potentially suspicious new Lounge Player",
                 description="Suspicious because of recent join date.",
