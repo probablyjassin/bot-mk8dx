@@ -1,7 +1,7 @@
 import time
 import datetime
 
-from discord import slash_command, Member, User, Option, Color
+from discord import slash_command, Member, User, Option, Color, AllowedMentions
 from discord.utils import get
 from discord.ext import commands
 
@@ -14,7 +14,7 @@ from logger import setup_logger
 from utils.command_helpers.info_embed_factory import create_embed
 
 from bson.int64 import Int64
-from config import LOG_CHANNEL_ID
+from config import LOG_CHANNEL_ID, MOGI_MANAGER_CHANNEL_ID
 
 lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 
@@ -125,7 +125,17 @@ class register(commands.Cog):
                 color=Color.yellow(),
                 inline=False,
             )
-            await (await self.bot.fetch_channel(LOG_CHANNEL_ID)).send(embed=embed)
+            mogi_manager_role = ctx.get_lounge_role("Mogi Manager")
+
+            log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
+            mogi_manager_channel = await self.bot.fetch_channel(MOGI_MANAGER_CHANNEL_ID)
+
+            log_channel.send(embed=embed)
+            mogi_manager_channel.send(
+                mogi_manager_role.mention,
+                embed=embed,
+                allowed_mentions=AllowedMentions(roles=True),
+            )
 
 
 def setup(bot: commands.Bot):
