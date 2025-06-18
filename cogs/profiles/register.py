@@ -1,16 +1,20 @@
-from discord import slash_command, Member, User, Option
+import time
+import datetime
+
+from discord import slash_command, Member, User, Option, Color
 from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.data._database import db_players, db_archived
 from utils.command_helpers.server_region import REGIONS
+from utils.maths.readable_timediff import readable_timedelta
 
 from logger import setup_logger
+from utils.command_helpers.info_embed_factory import create_embed
 
 from bson.int64 import Int64
-import time
-
+from config import LOG_CHANNEL_ID
 
 lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 
@@ -97,12 +101,30 @@ class register(commands.Cog):
             f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
             ephemeral=True,
         )
-        lounge_logger.info(f"{member.display_name} registered as {username}")
 
         # add region role if applicable
         for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
             if region == role.name and role not in ctx.user.roles:
                 ctx.user.add_roles(role)
+
+        lounge_logger.info(f"{member.display_name} registered as {username}")
+
+        delta_joined = datetime.datetime.now() - ctx.user.joined_at
+        delta_created = datetime.datetime.now() - ctx.user.created_at
+        if delta_joined.days < 2:
+            embed = create_embed(
+                title="⚠️ Warning - potentially suspicious new Lounge Player",
+                description="Suspicious because of recent join date.",
+                fields={
+                    "User:": ctx.user.mention,
+                    "Lounge Name:": username,
+                    "Joined server:": readable_timedelta(delta_joined),
+                    "Account created:": readable_timedelta(delta_created),
+                },
+                color=Color.yellow(),
+                inline=False,
+            )
+            await (await self.bot.fetch_channel(LOG_CHANNEL_ID)).send(embed=embed)
 
 
 def setup(bot: commands.Bot):
