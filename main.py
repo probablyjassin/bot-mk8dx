@@ -1,17 +1,23 @@
+"""
+Discord bot for the Yuzu Lounge server.
+Used in competitive Mario Kart 8 Deluxe on the Yuzu Emulator.
+Coordinates events to let players gather together and play.
+"""
+
 import os
 
 import discord
 from pycord.multicog import Bot
 
 from logger import setup_logger, highlight
+from cogs.error_handler import error_logger
 from config import DISCORD_TOKEN, LOG_CHANNEL_ID
 
 from utils.data.state import state_manager
 from models.CustomMogiContext import MogiApplicationContext
 
-logger = setup_logger(__name__)
-from cogs.error_handler import error_logger
 
+logger = setup_logger(__name__)
 SAFE_MODE = False
 
 
@@ -23,11 +29,11 @@ class YuzuLoungeBot(Bot):
     """
 
     def __init__(self, *args, **kwargs):
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     async def on_ready(self):
-        logger.info(f"Logged into Discord")
-        logger.info(f"Latency: {self.latency*1000:.2f}ms")
+        logger.info("Logged into Discord")
+        logger.info("Latency: %sms", self.latency * 1000)
         print(
             f"""
             {highlight(self.user)}
@@ -71,8 +77,9 @@ bot = YuzuLoungeBot(
 )
 
 def load_cogs():
+    """Load all cogs from the cogs directory."""
     print("----Loading extensions----")
-    for root, dirs, files in os.walk("./cogs"):
+    for root, _, files in os.walk("./cogs"):
         for file in files:
             if file.endswith(".py"):
                 cog_path = os.path.join(root, file)
@@ -91,15 +98,15 @@ def load_safe_mode():
         bot.load_extension("utils.command_helpers.safemode_cog")
         logger.info("Loaded safemode_cog successfully.")
     except Exception as e:
-        logger.error(f"Failed to load safemode_cog: {e}")
-        error_logger.error(f"Failed to load safemode_cog: {e}")
+        logger.error("Failed to load safemode_cog: %s", e)
+        error_logger.error("Failed to load safemode_cog: %s", e)
 
 def main():
     try:
         load_cogs()
     except Exception as e:
-        logger.error(f"Failed to load extensions, starting in safe mode.")
-        error_logger.error(f"Failed to load extensions: {e}")
+        logger.error("Failed to load extensions, starting in safe mode.")
+        error_logger.error("Failed to load extensions: %s", e)
         load_safe_mode()
 
     bot.run(DISCORD_TOKEN)
