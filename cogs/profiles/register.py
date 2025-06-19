@@ -130,8 +130,8 @@ class register(commands.Cog):
             log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
             mogi_manager_channel = await self.bot.fetch_channel(MOGI_MANAGER_CHANNEL_ID)
 
-            log_channel.send(embed=embed)
-            mogi_manager_channel.send(
+            await log_channel.send(embed=embed)
+            await mogi_manager_channel.send(
                 mogi_manager_role.mention,
                 embed=embed,
                 allowed_mentions=AllowedMentions(roles=True),
