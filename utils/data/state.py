@@ -123,9 +123,9 @@ class BotState:
             )
 
     def load_backup(self):
-        logger.log("Loading state backup...")
+        logger.info("Loading state backup...")
         if not os.path.exists("state/backup.json"):
-            logger.log("backup.json not found - skipping load backup")
+            logger.info(msg="backup.json not found - skipping load backup")
             return
         try:
             with open("state/backup.json", "r") as backup:
@@ -134,9 +134,9 @@ class BotState:
                     mogi_manager.write_registry(
                         {int(id): Mogi.from_json(data[id]) for id in data.keys()}
                     )
-                    logger.log("Existing state loaded from backup.json")
+                    logger.info(msg="Existing state loaded from backup.json")
                 else:
-                    logger.log(f"No state in backup.json - content: <{data}>")
+                    logger.info(msg=f"No state in backup.json - content: <{data}>")
         except Exception as e:
             error_logger.error(f"Error loading saved state: {e}")
 
