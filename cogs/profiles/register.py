@@ -134,7 +134,9 @@ class register(commands.Cog):
             await mogi_manager_channel.send(
                 mogi_manager_role.mention,
                 embed=embed,
-                allowed_mentions=AllowedMentions(roles=True),
+                allowed_mentions=AllowedMentions(
+                    roles=(delta_joined.total_seconds() < 90 or delta_created < 7)
+                ),
             )
 
 
