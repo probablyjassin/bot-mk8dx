@@ -32,8 +32,9 @@ class participation(commands.Cog):
             # add player and their role
             ctx.mogi.players.append(ctx.player)
             await ctx.user.add_roles(ctx.inmogi_role, reason="Joined mogi")
+            in_mogi = len(ctx.mogi.players)
             await ctx.respond(
-                f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} players are in!"
+                f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} {'player is' if in_mogi == 1 else 'players are'} in!"
             )
 
             # WIP: while transitioning: remind people to add a region role
@@ -61,8 +62,9 @@ class participation(commands.Cog):
             if len(ctx.mogi.players) == 0:
                 mogi_manager.destroy_mogi(ctx.channel.id)
                 return await ctx.respond("# This mogi has been closed.")
+            in_mogi = len(ctx.mogi.players)
             await ctx.respond(
-                f"{ctx.author.mention} has left the mogi!\n{len(ctx.mogi.players)} players are in!"
+                f"{ctx.author.mention} has left the mogi!\n{in_mogi} {'player is' if in_mogi == 1 else 'players are'} in!"
             )
 
 
