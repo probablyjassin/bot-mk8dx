@@ -1,4 +1,5 @@
-import io, json
+import os, io, json
+from datetime import datetime, timedelta
 
 from config import ROOMS_CONFIG, LOG_CHANNEL_ID
 
@@ -8,6 +9,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 from models.RoomModel import Room
 
+from utils.data.data_manager import data_manager, archive_type
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
 from utils.command_helpers.confirm import confirmation
@@ -29,6 +31,49 @@ class debug(commands.Cog):
         self.bot: commands.Bot = bot
 
     debug = SlashCommandGroup(name="debug", description="Debugging commands")
+
+    @debug.command(name="db_backup")
+    @is_admin()
+    async def db_backup(self, ctx: MogiApplicationContext):
+        backup_folder = "backups"
+        date_format = "%d-%m-%Y"
+
+        os.makedirs(backup_folder, exist_ok=True)
+
+        # Create the backup file
+        backup_filename = os.path.join(
+            backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
+        )
+        backup_data = {
+            "players": data_manager.get_all_player_entries(
+                archive=archive_type.INCLUDE, with_id=False
+            ),
+            "mogis": data_manager.get_all_mogi_entries(with_id=False),
+        }
+
+        with open(backup_filename, "w") as backup_file:
+            json.dump(backup_data, backup_file, indent=4)
+
+        # Remove backups older than 3 days
+        for filename in os.listdir(backup_folder):
+            file_path = os.path.join(backup_folder, filename)
+            if os.path.isfile(file_path):
+                file_date_str = filename.split("_")[1].split(".")[0]
+                file_date = datetime.strptime(file_date_str, date_format)
+                if datetime.now() - file_date > timedelta(days=3):
+                    os.remove(file_path)
+
+        try:
+            log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
+            await log_channel.send(
+                f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
+            )
+            await ctx.respond(
+                f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
+            )
+        except Exception as e:
+            print(f"Error sending database backup log: {e}")
+            await ctx.respond(e)
 
     @debug.command(name="current_mogi", description="print the mogi for this channel")
     @is_admin()
