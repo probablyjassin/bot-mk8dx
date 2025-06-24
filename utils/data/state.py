@@ -87,7 +87,7 @@ class BotState:
                 backup,
                 indent=4,
             )
-        with open("state/backup2.json", "w"):
+        with open("state/backup2.json", "w") as backup:
             json.dump(
                 pretty_format_mogi_dicts(
                     {id: mogi_registry[id].to_json() for id in mogi_registry.keys()}
