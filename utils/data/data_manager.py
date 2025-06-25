@@ -69,7 +69,7 @@ class DataManager:
         return [
             PlayerProfile.from_json(player)
             for player in list(
-                db_players.find(archive.value, {"_id": 0} if with_id else {})
+                db_players.find(archive.value, {"_id": 0} if not with_id else {})
             )
         ]
 
@@ -78,7 +78,7 @@ class DataManager:
         archive: archive_type = archive_type.NO,
         with_id: bool = False,
     ) -> list[dict] | None:
-        return list(db_players.find(archive.value, {"_id": 0} if with_id else {}))
+        return list(db_players.find(archive.value, {"_id": 0} if not with_id else {}))
 
     def create_new_player(self, username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
@@ -188,11 +188,11 @@ class DataManager:
     def get_all_mogis(self, with_id: bool = False) -> list[MogiHistoryData]:
         return [
             MogiHistoryData.from_dict(mogi)
-            for mogi in list(db_mogis.find({}, {"_id": 0} if with_id else {}))
+            for mogi in list(db_mogis.find({}, {"_id": 0} if not with_id else {}))
         ]
 
     def get_all_mogi_entries(self, with_id: bool = False) -> list[dict]:
-        return list(db_mogis.find({}, {"_id": 0} if with_id else {}))
+        return list(db_mogis.find({}, {"_id": 0} if not with_id else {}))
 
     def add_mogi_history(
         self,
