@@ -34,14 +34,20 @@ class debug(commands.Cog):
 
     @debug.command(name="db_backup")
     @is_admin()
-    async def db_backup(self, ctx: MogiApplicationContext):
+    async def db_backup(
+        self,
+        ctx: MogiApplicationContext,
+        filename: str = Option(
+            str, "The Filename to save as | FILE WON'T GET AUTODELETED"
+        ),
+    ):
         backup_folder = "backups"
         date_format = "%d-%m-%Y"
 
         os.makedirs(backup_folder, exist_ok=True)
 
         # Create the backup file
-        backup_filename = os.path.join(
+        backup_filename = filename or os.path.join(
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
@@ -66,10 +72,10 @@ class debug(commands.Cog):
         try:
             log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
             await log_channel.send(
-                f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
+                f"💾 Database backup saved to `{backup_filename.split('/')[-1]}`"
             )
             await ctx.respond(
-                f"💾 Database backup saved to {backup_filename.split('/')[-1]}"
+                f"💾 Database backup saved to `{backup_filename.split('/')[-1]}`"
             )
         except Exception as e:
             print(f"Error sending database backup log: {e}")
