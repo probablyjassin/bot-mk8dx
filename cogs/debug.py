@@ -38,7 +38,7 @@ class debug(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         filename: str = Option(
-            str, "The Filename to save as | FILE WON'T GET AUTODELETED"
+            str, "The Filename to save as | FILE WON'T GET AUTODELETED", required=False
         ),
     ):
         backup_folder = "backups"
