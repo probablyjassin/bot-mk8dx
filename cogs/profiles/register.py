@@ -135,7 +135,7 @@ class register(commands.Cog):
                 mogi_manager_role.mention,
                 embed=embed,
                 allowed_mentions=AllowedMentions(
-                    roles=(delta_joined.total_seconds() < 90 or delta_created < 7)
+                    roles=(delta_joined.total_seconds() < 90 or delta_created.days < 7)
                 ),
             )
 
