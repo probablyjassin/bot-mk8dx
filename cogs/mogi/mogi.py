@@ -1,4 +1,4 @@
-from discord import slash_command, Option, TextChannel
+from discord import slash_command, Option, TextChannel, AllowedMentions
 from discord.ext import commands
 
 from models.PlayerModel import PlayerProfile
@@ -17,6 +17,7 @@ from utils.command_helpers.find_player import get_guild_member
 class mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
+        self.channels_pings = {}
 
     @slash_command(name="open", description="Open a mogi")
     async def open(self, ctx: MogiApplicationContext):
@@ -92,6 +93,34 @@ class mogi(commands.Cog):
         del mogi_manager.mogi_registry[current_mogi_channel_id]
         await ctx.respond(
             f"# This mogi has been moved to <#{ctx.mogi.channel_id}>",
+        )
+
+    @slash_command(
+        name="ping",
+        description="Ping Lounge Players to gather players to join the mogi.",
+    )
+    async def ping(
+        self,
+        ctx: MogiApplicationContext,
+        need_sub: bool = Option(
+            bool, description="use this when you're looking for a sub"
+        ),
+    ):
+        if not ctx.mogi:
+            return await ctx.respond("No mogi open in this channel.")
+        if not ctx.mogi.collected_points and ctx.mogi.isPlaying and not need_sub:
+            return await ctx.respond(
+                "The mogi is already in progress. If you're looking for a sub use need_sub=True"
+            )
+        lounge_player_ping = ctx.get_lounge_role("Lounge Player").mention
+        if need_sub:
+            return await ctx.respond(
+                f"# {lounge_player_ping} we need a sub",
+                allowed_mentions=AllowedMentions(roles=True),
+            )
+        return await ctx.respond(
+            f"# {lounge_player_ping} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
+            allowed_mentions=AllowedMentions(roles=True),
         )
 
 
