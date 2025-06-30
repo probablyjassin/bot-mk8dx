@@ -103,7 +103,7 @@ class mogi(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         need_sub: bool = Option(
-            bool, description="use this when you're looking for a sub"
+            bool, description="use this when you're looking for a sub", required=False
         ),
     ):
         if not ctx.mogi:
