@@ -15,7 +15,9 @@ ROOMS: list[Room] = [
 REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceania"]
 
 
-async def get_best_server(ctx: Interaction, mogi: Mogi) -> Room | None:
+async def get_best_server(
+    ctx: Interaction | MogiApplicationContext, mogi: Mogi
+) -> Room | None:
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 

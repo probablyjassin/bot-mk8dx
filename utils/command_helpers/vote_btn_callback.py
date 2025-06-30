@@ -81,7 +81,7 @@ async def format_vote_button_callback(
             f"# Mogi starting!\n## Format: {FORMAT_STR}\n### Lineup:\n{lineup}"
         )
 
-        # chose the best server to play on
+        # failsafe if the server hasn't been chosen before the vote yet
         if not mogi.room:
             best_server = await get_best_server(ctx=interaction, mogi=mogi)
             mogi.room = best_server

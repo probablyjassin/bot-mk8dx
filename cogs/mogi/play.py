@@ -9,6 +9,7 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
+from utils.command_helpers.server_region import get_best_server
 from utils.data.flags import debug_feature_flags
 
 
@@ -54,6 +55,14 @@ class stop(commands.Cog):
         )
         response = await message.original_response()
         ctx.mogi.voting_message_id = response.id
+
+        # pick the server to play on
+        if not ctx.mogi.room:
+            best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+            ctx.mogi.room = best_server
+        await ctx.message.channel.send(
+            f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+        )
 
     @start.command(name="force")
     @is_mogi_not_in_progress()
