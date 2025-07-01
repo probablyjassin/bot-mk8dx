@@ -25,6 +25,12 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, errors.CheckFailure):
             return
 
+        if isinstance(error, commands.errors.CommandOnCooldown):
+            minutes, _ = divmod(error.retry_after, 60)
+            return await ctx.respond(
+                f"This command is on cooldown. Try again in {int(minutes)} minute{'s' if minutes != 1 else ''}."
+            )
+
         # ignore errors in DMs, bot is not meant to be used there
         if not getattr(ctx.channel, "name", False):
             return await ctx.respond("Don't use this bot in DMs")
@@ -56,12 +62,6 @@ class ErrorHandler(commands.Cog):
         # ignore command not found errors
         if isinstance(error, commands.errors.CommandNotFound):
             return
-
-        if isinstance(error, commands.errors.CommandOnCooldown):
-            minutes, _ = divmod(error.retry_after, 60)
-            return await ctx.send(
-                f"This command is on cooldown. Try again in {int(minutes)} minute{'s' if minutes != 1 else ''}."
-            )
 
     @commands.Cog.listener()
     async def on_interaction_error(
