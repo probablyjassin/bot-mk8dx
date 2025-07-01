@@ -99,6 +99,7 @@ class mogi(commands.Cog):
         name="ping",
         description="Ping Lounge Players to gather players to join the mogi.",
     )
+    @commands.cooldown(1, 600, commands.BucketType.channel)
     async def ping(
         self,
         ctx: MogiApplicationContext,
