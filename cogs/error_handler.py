@@ -57,6 +57,12 @@ class ErrorHandler(commands.Cog):
         if isinstance(error, commands.errors.CommandNotFound):
             return
 
+        if isinstance(error, commands.errors.CommandOnCooldown):
+            minutes, _ = divmod(error.retry_after, 60)
+            return await ctx.send(
+                f"This command is on cooldown. Try again in {int(minutes)} minute{'s' if minutes != 1 else ''}."
+            )
+
     @commands.Cog.listener()
     async def on_interaction_error(
         self, interaction: Interaction, error: DiscordException
