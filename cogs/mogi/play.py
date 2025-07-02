@@ -60,9 +60,7 @@ class stop(commands.Cog):
         if not ctx.mogi.room:
             best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
             ctx.mogi.room = best_server
-        await ctx.message.channel.send(
-            f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
-        )
+        await ctx.channel.send(f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`")
 
     @start.command(name="force")
     @is_mogi_not_in_progress()
