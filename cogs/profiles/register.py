@@ -107,8 +107,10 @@ class register(commands.Cog):
             if region == role.name and role not in ctx.user.roles:
                 await ctx.user.add_roles(role)
 
+        # write to logfile
         lounge_logger.info(f"{member.display_name} registered as {username}")
 
+        # detect suspicious activity
         now = datetime.datetime.now(datetime.timezone.utc)
         delta_joined = now - ctx.user.joined_at
         delta_created = now - ctx.user.created_at
@@ -128,10 +130,10 @@ class register(commands.Cog):
             mogi_manager_role = ctx.get_lounge_role("Mogi Manager")
 
             log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
-            mogi_manager_channel = await self.bot.fetch_channel(MOGI_MANAGER_CHANNEL_ID)
+            # mogi_manager_channel = await self.bot.fetch_channel(MOGI_MANAGER_CHANNEL_ID)
 
-            await log_channel.send(embed=embed)
-            await mogi_manager_channel.send(
+            # await log_channel.send(embed=embed)
+            await log_channel.send(
                 mogi_manager_role.mention,
                 embed=embed,
                 allowed_mentions=AllowedMentions(
