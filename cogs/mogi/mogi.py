@@ -122,7 +122,10 @@ class mogi(commands.Cog):
         lounge_player_ping = ctx.get_lounge_role("Lounge Player").mention
 
         if custom_message and ctx.get_lounge_role("Mogi Manager") in ctx.user.roles:
-            return await ctx.respond(f"# {lounge_player_ping} {custom_message}")
+            return await ctx.respond(
+                f"# {lounge_player_ping} {custom_message}",
+                allowed_mentions=AllowedMentions(roles=True),
+            )
 
         if need_sub:
             return await ctx.respond(
