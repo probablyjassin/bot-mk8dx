@@ -106,6 +106,11 @@ class mogi(commands.Cog):
         need_sub: bool = Option(
             bool, description="use this when you're looking for a sub", required=False
         ),
+        custom_message: str = Option(
+            str,
+            description="For mogi managers only. ''@LoungePlayer {custom_message}''",
+            required=False,
+        ),
     ):
         if not ctx.mogi:
             return await ctx.respond("No mogi open in this channel.")
@@ -113,12 +118,18 @@ class mogi(commands.Cog):
             return await ctx.respond(
                 "The mogi is already in progress. If you're looking for a sub use need_sub=True"
             )
+
         lounge_player_ping = ctx.get_lounge_role("Lounge Player").mention
+
+        if custom_message and ctx.get_lounge_role("Mogi Manager") in ctx.user.roles:
+            return await ctx.respond(f"# {lounge_player_ping} {custom_message}")
+
         if need_sub:
             return await ctx.respond(
                 f"# {lounge_player_ping} we need a sub",
                 allowed_mentions=AllowedMentions(roles=True),
             )
+
         return await ctx.respond(
             f"# {lounge_player_ping} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
             allowed_mentions=AllowedMentions(roles=True),
