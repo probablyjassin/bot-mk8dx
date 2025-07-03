@@ -32,7 +32,7 @@ class list_mogi(commands.Cog):
 
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
-                list_of_players = "-\n" + "\n\n".join(
+                list_of_players += "-\n" + "\n\n".join(
                     [f"{player.name} +" for player in ctx.mogi.players]
                 )
 
