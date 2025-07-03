@@ -29,7 +29,10 @@ class mogi(commands.Cog):
             mogi_manager.create_mogi(ctx.channel.id)
             await ctx.respond("# Started a new mogi! \n Use /join to participate!")
         except ValueError:
-            await ctx.respond("A Mogi for this channel is already open.")
+            message = "A Mogi for this channel is already open."
+            if ctx.mogi and ctx.mogi.collected_points:
+                message = "The points are still being worked on. The mogi will close on it's own when it's done."
+            await ctx.respond(message)
 
     @slash_command(name="close", description="Close this channel's mogi")
     @is_mogi_not_in_progress()
