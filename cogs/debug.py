@@ -227,6 +227,10 @@ class debug(commands.Cog):
         await fetch_server_passwords(self.bot)
         await ctx.respond(f"Done, check <#{LOG_CHANNEL_ID}>")
 
+    @debug.command(name="locale", description="print ctx.locale")
+    async def locale(self, ctx: MogiApplicationContext):
+        await ctx.respond(ctx.locale)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(debug(bot))
