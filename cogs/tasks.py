@@ -59,7 +59,7 @@ class tasks(commands.Cog):
 
     @tasks.loop(seconds=5)
     async def manage_state(self):
-        state_manager.backup()
+        state_manager.save_state()
 
     @tasks.loop(
         time=time(

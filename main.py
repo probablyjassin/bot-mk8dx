@@ -40,7 +40,7 @@ class YuzuLoungeBot(Bot):
             ID: {highlight(self.user.id)}
         """
         )
-        state_manager.load_backup()
+        state_manager.load_saved()
         await (await self.fetch_channel(LOG_CHANNEL_ID)).send("🟢 Bot is online!")
 
         print("Guilds:")

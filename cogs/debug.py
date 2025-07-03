@@ -189,7 +189,7 @@ class debug(commands.Cog):
     @debug.command(name="load_state", description="Load state")
     @is_admin()
     async def load_state(self, ctx: MogiApplicationContext):
-        state_manager.load_saved()
+        state_manager.load_manual_saved()
         await ctx.respond("State loaded")
 
     @debug.command(name="inmogi")

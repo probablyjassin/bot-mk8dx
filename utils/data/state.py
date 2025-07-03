@@ -74,28 +74,31 @@ def pretty_format_mogi_dicts(data: dict[int, dict]) -> str:
     return result
 
 
+state_filename = "state.json"
+
+
 @dataclass
 class BotState:
     def __init__(self):
         os.makedirs("state", exist_ok=True)
 
-    def backup(self):
+    def save_state(self):
         mogi_registry = mogi_manager.read_registry()
-        with open("state/backup.json", "w") as backup:
+        with open(f"state/{state_filename}", "w") as state:
             json.dump(
                 {id: mogi_registry[id].to_json() for id in mogi_registry.keys()},
-                backup,
+                state,
                 indent=4,
             )
-        with open("state/backup2.json", "w") as backup:
+        with open("state/state2.json", "w") as state:
             json.dump(
                 pretty_format_mogi_dicts(
                     {id: mogi_registry[id].to_json() for id in mogi_registry.keys()}
                 ),
-                backup,
+                state,
             )
 
-    def save(self):
+    def manual_save_state(self):
         with open("state/saved.json", "w") as saved:
             mogis = mogi_manager.read_registry()
             json.dump(
@@ -104,25 +107,25 @@ class BotState:
                 indent=4,
             )
 
-    def load_backup(self):
+    def load_saved(self):
         logger.info("Loading state backup...")
-        if not os.path.exists("state/backup.json"):
-            logger.info(msg="backup.json not found - skipping load backup")
+        if not os.path.exists(f"state/{state_filename}"):
+            logger.info(msg=f"{state_filename} not found - skipping load backup")
             return
         try:
-            with open("state/backup.json", "r") as backup:
-                data: dict = json.load(backup)
+            with open(f"state/{state_filename}", "r") as state:
+                data: dict = json.load(state)
                 if data:
                     mogi_manager.write_registry(
                         {int(id): Mogi.from_json(data[id]) for id in data.keys()}
                     )
-                    logger.info(msg="Existing state loaded from backup.json")
+                    logger.info(msg=f"Existing state loaded from {state_filename}")
                 else:
-                    logger.info(msg=f"No state in backup.json - content: <{data}>")
+                    logger.info(msg=f"No state in {state_filename} - content: <{data}>")
         except Exception as e:
             error_logger.error(f"Error loading saved state: {e}")
 
-    def load_saved(self):
+    def load_manual_saved(self):
         if not os.path.exists("state/saved.json"):
             return
         with open("state/saved.json", "r") as saved:
