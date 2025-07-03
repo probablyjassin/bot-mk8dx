@@ -115,7 +115,7 @@ class register(commands.Cog):
 
         # write to logfile
         lounge_logger.info(
-            f"{member.display_name} ({member.id}) registered as {username} | {region}"
+            f"{member.display_name} ({member.id}) registered as {username} | Region: {region} | Locale: {ctx.locale}"
         )
 
         # add roles
