@@ -24,10 +24,11 @@ class list_mogi(commands.Cog):
         if len(ctx.mogi.players) == 0:
             return await ctx.respond("No players in this mogi.")
 
-        list_of_players = ""
+        list_of_players = f"Players in this mogi:\n"
 
         # Tablestring
         if context == "tablestring":
+            list_of_players = "```"
 
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
@@ -43,6 +44,8 @@ class list_mogi(commands.Cog):
                         [f"{player.name} +" for player in team]
                     )
                     list_of_players += "\n\n"
+
+            list_of_players += "\n```"
 
         # Usernames
         elif context == "usernames":
@@ -118,7 +121,7 @@ class list_mogi(commands.Cog):
             )
 
         await ctx.respond(
-            f"Players in this mogi:\n{list_of_players}",
+            list_of_players,
             allowed_mentions=AllowedMentions.none(),
         )
 
