@@ -37,6 +37,12 @@ class sub(commands.Cog):
         replacement_name: str = Option(
             str, name="sub", description="username | @ mention | discord_id"
         ),
+        no_tax: bool = Option(
+            bool,
+            name="no_tax",
+            description="Leaving the mogi results in a 100MMR tax. Use this if you're subbing for a different reason.",
+            required=False,
+        ),
     ):
         player_profile = data_manager.find_player(player_name)
         replacement_profile = data_manager.find_player(replacement_name)
@@ -83,6 +89,12 @@ class sub(commands.Cog):
         await ctx.respond(
             f"<@{player_profile.discord_id}> has been subbed out for <@{replacement_profile.discord_id}>"
         )
+
+        if not no_tax:
+            player_profile.mmr = player_profile.mmr - 100
+            await ctx.channel.send(
+                f"Penalized {player_user.mention} for leaving the mogi prematurely"
+            )
 
     @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
