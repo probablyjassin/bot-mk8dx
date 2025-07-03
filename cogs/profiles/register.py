@@ -141,31 +141,31 @@ class register(commands.Cog):
         now = datetime.datetime.now(datetime.timezone.utc)
         delta_joined = now - ctx.user.joined_at
         delta_created = now - ctx.user.created_at
-        if delta_joined.total_seconds() < 600 or delta_created.days < 7:
+
+        is_sus = delta_joined.total_seconds() < 600 or delta_created.days < 60
+        is_VERY_sus = delta_joined.total_seconds() < 90 or delta_created.days < 30
+
+        if is_sus:
             embed = create_embed(
                 title="⚠️ Warning - potentially suspicious new Lounge Player",
-                description="Suspicious because of recent join date.",
+                description=f"{ctx.user.mention} registered **{readable_timedelta(delta_joined)}** after joining.",
                 fields={
-                    "User:": ctx.user.mention,
-                    "Lounge Name:": username,
-                    "Joined server:": readable_timedelta(delta_joined),
                     "Account created:": readable_timedelta(delta_created),
+                    "Lounge Name:": username,
+                    "Selected Region:": region,
+                    "User Locale:": ctx.locale,
                 },
-                color=Color.yellow(),
+                color=(Color.red() if is_VERY_sus else Color.yellow()),
                 inline=False,
             )
             mogi_manager_role = ctx.get_lounge_role("Mogi Manager")
 
             log_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
-            # mogi_manager_channel = await self.bot.fetch_channel(MOGI_MANAGER_CHANNEL_ID)
 
-            # await log_channel.send(embed=embed)
             await log_channel.send(
                 mogi_manager_role.mention,
                 embed=embed,
-                allowed_mentions=AllowedMentions(
-                    roles=(delta_joined.total_seconds() < 90 or delta_created.days < 7)
-                ),
+                allowed_mentions=AllowedMentions(roles=is_VERY_sus),
             )
 
 
