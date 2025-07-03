@@ -143,13 +143,21 @@ def is_mogi_in_progress():
     """
 
     async def predicate(ctx: MogiApplicationContext):
+        message = "The mogi is either not open, not in progress or already finished and is about to be closed."
+        if not ctx.mogi:
+            message = "There is no open mogi in this channel."
+        elif not (
+            ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)
+        ):
+            message = "The mogi is not in progress."
+
         return await _check(
             ctx=ctx,
             condition=ctx.mogi
             and (
                 ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)
             ),
-            error_message="The mogi is either not open, not in progress or already finished and is about to be closed.",
+            error_message=message,
         )
 
     return commands.check(predicate)
@@ -162,6 +170,16 @@ def is_mogi_not_in_progress():
     """
 
     async def predicate(ctx: MogiApplicationContext):
+        message = "The mogi is either not open, still in progress or hasn't finished calculations yet."
+        if not ctx.mogi:
+            message = "There is no open mogi in this channel."
+        elif ctx.mogi.isVoting:
+            message = "You can't leave while a vote is going on."
+        elif ctx.mogi.collected_points:
+            message = "The points are still being worked on. The mogi will close on it's own when it's done."
+        elif ctx.mogi.isPlaying:
+            message = "You can't leave while the mogi is in progress."
+
         return await _check(
             ctx=ctx,
             condition=ctx.mogi
@@ -170,7 +188,7 @@ def is_mogi_not_in_progress():
                 and (not ctx.mogi.isPlaying)
                 or (ctx.mogi.isFinished)
             ),
-            error_message="The mogi is either not open, still in progress or hasn't finished calculations yet.",
+            error_message=message,
         )
 
     return commands.check(predicate)
