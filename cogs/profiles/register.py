@@ -1,5 +1,6 @@
 import time
 import datetime
+import unicodedata
 
 from discord import slash_command, Member, User, Option, Color, AllowedMentions
 from discord.utils import get
@@ -56,9 +57,29 @@ class register(commands.Cog):
                 ephemeral=True,
             )
 
-        username = "".join(
-            e for e in ctx.interaction.user.display_name.lower() if e.isalnum()
-        )
+        # username shenanigans
+        def normalize_fancy_unicode(text: str) -> str:
+            result = []
+            for char in text:
+                # Try to get the base character from the Unicode name
+                try:
+                    name = unicodedata.name(char)
+                    if "CAPITAL" in name:
+                        base_char = name.split()[-1]
+                        if len(base_char) == 1 and base_char.isalpha():
+                            result.append(base_char.upper())
+                    elif "SMALL" in name:
+                        base_char = name.split()[-1]
+                        if len(base_char) == 1 and base_char.isalpha():
+                            result.append(base_char.lower())
+                    elif char.isalnum():
+                        result.append(char)
+                except ValueError:
+                    # character has no Unicode name, skip it
+                    pass
+            return "".join(result)
+
+        username = normalize_fancy_unicode(ctx.interaction.user.display_name).lower()
         if username == "":
             username = ctx.interaction.user.name.lower()
 
@@ -91,15 +112,18 @@ class register(commands.Cog):
                 "Some error occured creating your player record. Please ask a moderator.",
                 ephemeral=True,
             )
+
+        # write to logfile
+        lounge_logger.info(
+            f"{member.display_name} ({member.id}) registered as {username} | {region}"
+        )
+
+        # add roles
         await member.add_roles(
             ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
         )
         await member.add_roles(
             ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
-        )
-        await ctx.respond(
-            f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
-            ephemeral=True,
         )
 
         # add region role if applicable
@@ -107,8 +131,11 @@ class register(commands.Cog):
             if region == role.name and role not in ctx.user.roles:
                 await ctx.user.add_roles(role)
 
-        # write to logfile
-        lounge_logger.info(f"{member.display_name} registered as {username}")
+        # done
+        await ctx.respond(
+            f"{member.mention} is now registered for Lounge as {username}\n You can view your profile at https://mk8dx-yuzu.github.io/{username}",
+            ephemeral=True,
+        )
 
         # detect suspicious activity
         now = datetime.datetime.now(datetime.timezone.utc)
