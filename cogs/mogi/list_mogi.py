@@ -28,7 +28,7 @@ class list_mogi(commands.Cog):
 
         # Tablestring
         if context == "tablestring":
-            list_of_players = "```"
+            list_of_players = "```\n"
 
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
