@@ -27,6 +27,7 @@ class ErrorHandler(commands.Cog):
 
         if isinstance(error, commands.errors.CommandOnCooldown):
             minutes, _ = divmod(error.retry_after, 60)
+            minutes = max(1, minutes)
             return await ctx.respond(
                 f"This command is on cooldown. Try again in {int(minutes)} minute{'s' if minutes != 1 else ''}."
             )
