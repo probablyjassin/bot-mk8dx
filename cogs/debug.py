@@ -35,7 +35,7 @@ class debug(commands.Cog):
 
     @debug.command(
         name="restart",
-        description="Places a flag on the system to restart, for a custom watchdog to use (does not come with the bot image).",
+        description="Places a flag on the system to restart, for a custom watchdog to use.",
     )
     @is_admin()
     async def restart(self, ctx: MogiApplicationContext):
