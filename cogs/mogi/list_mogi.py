@@ -52,7 +52,7 @@ class list_mogi(commands.Cog):
 
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
-                list_of_players = "\n".join(
+                list_of_players += "\n".join(
                     [
                         (f"`{i+1}.` <@{player.discord_id}>")
                         for i, player in enumerate(ctx.mogi.players)
