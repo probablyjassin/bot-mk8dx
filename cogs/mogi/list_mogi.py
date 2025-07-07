@@ -80,7 +80,7 @@ class list_mogi(commands.Cog):
 
             # FFA
             if ctx.mogi.format in [None, 1]:
-                list_of_players = "\n".join(
+                list_of_players += "\n".join(
                     [
                         (
                             f"`{i+1}.` {player.name}"
