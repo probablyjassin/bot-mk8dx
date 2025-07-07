@@ -1,4 +1,5 @@
 import os, io, json
+from pathlib import Path
 from datetime import datetime, timedelta
 
 from config import ROOMS_CONFIG, LOG_CHANNEL_ID
@@ -31,6 +32,22 @@ class debug(commands.Cog):
         self.bot: commands.Bot = bot
 
     debug = SlashCommandGroup(name="debug", description="Debugging commands")
+
+    @debug.command(
+        name="restart",
+        description="Places a flag on the system to restart, for a custom watchdog to use (does not come with the bot image).",
+    )
+    @is_admin()
+    async def restart(self, ctx: MogiApplicationContext):
+        for mogi in mogi_manager.read_registry().values():
+            if mogi.isVoting:
+                return await ctx.respond(
+                    "At least one mogi is voting right now. Not restarting to not interrupt it."
+                )
+        Path("state/restart.flag").touch()
+        await ctx.respond(
+            "Requested a bot restart. If a watchdog is configured, it will soon recieve the signal..."
+        )
 
     @debug.command(name="db_backup")
     @is_admin()
