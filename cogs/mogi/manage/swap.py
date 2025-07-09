@@ -40,15 +40,16 @@ class swap(commands.Cog):
             if player not in ctx.mogi.players:
                 return await ctx.send(f"<@{player.discord_id}> not in the mogi")
 
-        ctx.mogi.players = recurse_replace(ctx.mogi.players, first_player, None)
+        ctx.mogi.players = recurse_replace(
+            ctx.mogi.players, first_player, second_player
+        )
         ctx.mogi.players = recurse_replace(
             ctx.mogi.players, second_player, first_player
         )
-        ctx.mogi.players = recurse_replace(ctx.mogi.players, None, second_player)
-
-        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, first_player, None)
+        ctx.mogi.players = recurse_replace(
+            ctx.mogi.players, first_player, second_player
+        )
         ctx.mogi.teams = recurse_replace(ctx.mogi.teams, second_player, first_player)
-        ctx.mogi.teams = recurse_replace(ctx.mogi.teams, None, second_player)
 
         await ctx.respond(f"Swapped {first_player.name} with {second_player.name}")
 
