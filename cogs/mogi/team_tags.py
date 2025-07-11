@@ -35,6 +35,15 @@ class team_tags(commands.Cog):
         if ctx.mogi.format == 1:
             return await ctx.respond("This command is not available in FFA mogis.")
 
+        if len(tag) > 40:
+            return await ctx.respond("Your team tag must be 40 characters or less")
+
+        for player in ctx.mogi.players:
+            if player.name in tag:
+                return await ctx.respond(
+                    "You cannot include another player's name in your tag."
+                )
+
         player: PlayerProfile = data_manager.find_player(ctx.interaction.user.id)
 
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
