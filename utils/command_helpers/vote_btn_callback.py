@@ -81,6 +81,9 @@ async def format_vote_button_callback(
             f"# Mogi starting!\n## Format: {FORMAT_STR}\n### Lineup:\n{lineup}"
         )
 
+        # disable slowmode
+        await interaction.message.channel.edit(slowmode_delay=0)
+
         # failsafe if the server hasn't been chosen before the vote yet
         if not mogi.room:
             best_server = await get_best_server(ctx=interaction, mogi=mogi)
