@@ -174,11 +174,11 @@ def is_mogi_not_in_progress():
         if not ctx.mogi:
             message = "There is no open mogi in this channel."
         elif ctx.mogi.isVoting:
-            message = "You can't leave while a vote is going on."
+            message = "You can't join or leave while a vote is going on."
         elif ctx.mogi.collected_points:
             message = "The points are still being worked on. The mogi will close on it's own when it's done."
         elif ctx.mogi.isPlaying:
-            message = "You can't leave while the mogi is in progress."
+            message = "You can't join or leave while the mogi is in progress."
 
         return await _check(
             ctx=ctx,
