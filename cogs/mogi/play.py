@@ -56,6 +56,9 @@ class stop(commands.Cog):
         response = await message.original_response()
         ctx.mogi.voting_message_id = response.id
 
+        # put the channel in slowmode during vote
+        await ctx.channel.edit(slowmode_delay=15)
+
         # pick the server to play on
         if not ctx.mogi.room:
             best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
