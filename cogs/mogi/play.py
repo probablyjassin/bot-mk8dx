@@ -119,6 +119,9 @@ class stop(commands.Cog):
                 pass
         await ctx.respond("Mogi has been stopped")
 
+        # disable slowmode
+        await ctx.channel.edit(slowmode_delay=0)
+
         # remove all team roles
         await remove_team_roles(ctx=ctx)
 
