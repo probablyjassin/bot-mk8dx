@@ -5,7 +5,7 @@ from discord.ext import commands
 from models.CustomMogiContext import MogiApplicationContext
 
 from utils.decorators.player import with_player
-from utils.decorators.checks import LoungeRole, _is_at_least_role
+from utils.decorators.checks import LoungeRole, _is_at_least_role, is_mogi_open
 
 
 class password(commands.Cog):
@@ -15,6 +15,7 @@ class password(commands.Cog):
     @slash_command(
         name="password", description="Get the password for the server your mogi uses."
     )
+    @is_mogi_open()
     @with_player()
     async def password(self, ctx: MogiApplicationContext):
 
@@ -22,7 +23,7 @@ class password(commands.Cog):
             "Admin"
         ) not in ctx.user.roles:
             return await ctx.respond(
-                "The mogi is either not open or doesn't have a yuzu server assigned yet because it didn't start yet."
+                "The mogi doesn't have a yuzu server assigned yet. This might be because the mogi hasn't started yet."
             )
 
         if (
