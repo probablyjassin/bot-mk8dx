@@ -37,10 +37,16 @@ class sub(commands.Cog):
         replacement_name: str = Option(
             str, name="sub", description="username | @ mention | discord_id"
         ),
+        reason: str = Option(
+            str,
+            name="reason",
+            description="Why is this person getting subbed?",
+            choices=["DC'd twice or more", "Needs to go / disappeared / other"],
+        ),
         no_tax: bool = Option(
             bool,
             name="no_tax",
-            description="Leaving the mogi results in a 100MMR tax. Use this if you're subbing for a different reason.",
+            description="For example when they DCd from shaderbugs or power outages.",
             required=False,
         ),
     ):
@@ -91,7 +97,8 @@ class sub(commands.Cog):
         )
 
         if not no_tax:
-            player_profile.mmr = player_profile.mmr - 100
+            tax = 50 if reason == "DC'd twice or more" else 100
+            player_profile.mmr = player_profile.mmr - tax
             await ctx.channel.send(
                 f"Penalized {player_user.mention} for leaving the mogi prematurely"
             )
