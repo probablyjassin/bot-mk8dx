@@ -137,9 +137,8 @@ class mogi(commands.Cog):
             )
 
         return await ctx.respond(
-            f"# {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
-            allowed_mentions=AllowedMentions(roles=[lounge_player_role]),
-            mentions=[lounge_player_role.mention],
+            f"# {lounge_player_role.mention} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
+            allowed_mentions=AllowedMentions(roles=True),
         )
 
 
