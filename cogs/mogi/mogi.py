@@ -122,23 +122,24 @@ class mogi(commands.Cog):
                 "The mogi is already in progress. If you're looking for a sub use need_sub=True"
             )
 
-        lounge_player_ping = ctx.get_lounge_role("Lounge Player").mention
+        lounge_player_role = ctx.get_lounge_role("Lounge Player")
 
         if custom_message and ctx.get_lounge_role("Mogi Manager") in ctx.user.roles:
             return await ctx.respond(
-                f"# {lounge_player_ping} {custom_message}",
+                f"# {lounge_player_role.mention} {custom_message}",
                 allowed_mentions=AllowedMentions(roles=True),
             )
 
         if need_sub:
             return await ctx.respond(
-                f"# {lounge_player_ping} we need a sub",
+                f"# {lounge_player_role.mention} we need a sub",
                 allowed_mentions=AllowedMentions(roles=True),
             )
 
         return await ctx.respond(
-            f"# {lounge_player_ping} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
-            allowed_mentions=AllowedMentions(roles=True),
+            f"# {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
+            allowed_mentions=AllowedMentions(roles=[lounge_player_role]),
+            mentions=[lounge_player_role.mention],
         )
 
 
