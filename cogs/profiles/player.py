@@ -90,6 +90,12 @@ class player(commands.Cog):
                 value=", ".join(map(str, player.history[-5:])),
             )
 
+        if getattr(player, "formats", None):
+            embed.add_field(
+                name="Most played Format",
+                value=max(player.formats, key=player.formats.get),
+            )
+
         if getattr(player, "inactive", None):
             embed.add_field(name="Archived", value="Account is not active")
 
