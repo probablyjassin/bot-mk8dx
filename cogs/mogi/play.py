@@ -47,7 +47,9 @@ class stop(commands.Cog):
 
         ctx.mogi.isVoting = True
 
-        view = create_vote_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
+        view = create_vote_button_view(
+            ["FFA", "2v2", "3v3", "4v4", "5v5", "6v6"], ctx.mogi
+        )
         message = await ctx.respond(
             f"Voting start!\n {ctx.inmogi_role.mention}",
             view=view,
@@ -71,7 +73,7 @@ class stop(commands.Cog):
     async def force(
         self,
         ctx: MogiApplicationContext,
-        format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "6v6"]),
+        format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "5v5", "6v6"]),
     ):
         # no mogi open
         if not ctx.mogi:
