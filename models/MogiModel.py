@@ -75,6 +75,7 @@ class Mogi:
             "2v2": 0,
             "3v3": 0,
             "4v4": 0,
+            "5v5": 0,
             "6v6": 0,
         }
     )
@@ -316,7 +317,9 @@ class Mogi:
             table_message_id=data.get("mmr_results_by_group", []),
             voting_message_id=data.get("voting_message_id"),
             voters=data.get("voters", []),
-            votes=data.get("votes", {"ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "6v6": 0}),
+            votes=data.get(
+                "votes", {"ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "5v5": 0, "6v6": 0}
+            ),
             team_tags=data.get(
                 "team_tags",
                 ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],

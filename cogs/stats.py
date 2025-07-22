@@ -49,6 +49,7 @@ class stats(commands.Cog):
             2: "2v2",
             3: "3v3",
             4: "4v4",
+            5: "5v5",
             6: "6v6",
         }
 
