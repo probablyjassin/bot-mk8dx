@@ -37,7 +37,7 @@ class edit(commands.Cog):
         ),
     ):
         # Check if player is in a mogi in another channel
-        for mogi in mogi_manager.mogi_registry.values():
+        for mogi in mogi_manager.read_registry().values():
             if ctx.player in mogi.players and mogi.channel_id != ctx.channel.id:
                 return await ctx.respond(
                     f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."
@@ -76,7 +76,7 @@ class edit(commands.Cog):
             await ctx.respond("Couldn't find that player")
 
         # Check if player is in a mogi in another channel
-        for mogi in mogi_manager.mogi_registry.values():
+        for mogi in mogi_manager.read_registry().values():
             if player in mogi.players and mogi.channel_id != ctx.channel.id:
                 return await ctx.respond(
                     f"This player is currently in a mogi in <#{mogi.channel_id}>. Use the command there."

@@ -89,11 +89,11 @@ class mogi(commands.Cog):
         current_mogi_channel_id: int = ctx.mogi.channel_id
 
         await ctx.send(f"<#{current_mogi_channel_id}> => {to_channel.mention}")
-        mogi_manager.mogi_registry[to_channel.id] = mogi_manager.mogi_registry[
-            current_mogi_channel_id
-        ]
+
+        all_mogis_dicts = mogi_manager.read_registry().items()
+        all_mogis_dicts[to_channel.id] = all_mogis_dicts[current_mogi_channel_id]
         ctx.mogi.channel_id = to_channel.id
-        del mogi_manager.mogi_registry[current_mogi_channel_id]
+        del all_mogis_dicts[current_mogi_channel_id]
         await ctx.respond(
             f"# This mogi has been moved to <#{ctx.mogi.channel_id}>",
         )

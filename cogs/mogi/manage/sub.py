@@ -63,7 +63,7 @@ class sub(commands.Cog):
             return await ctx.respond("Player to sub out is not in the mogi")
 
         # Check if replacement is in a mogi in another channel
-        for mogi in mogi_manager.mogi_registry.values():
+        for mogi in mogi_manager.read_registry().values():
             if replacement_profile in mogi.players:
                 if mogi.channel_id == ctx.channel_id:
                     return await ctx.respond("Sub is already in the mogi.")
