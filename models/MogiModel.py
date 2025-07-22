@@ -13,6 +13,7 @@ from utils.maths.teams_algorithm import (
 )
 
 from utils.data.flags import debug_feature_flags
+from config import FORMATS
 
 
 @dataclass
@@ -71,12 +72,7 @@ class Mogi:
     voters: list[int] = field(default_factory=lambda: [])
     votes: dict[str, int] = field(
         default_factory=lambda: {
-            "ffa": 0,
-            "2v2": 0,
-            "3v3": 0,
-            "4v4": 0,
-            "5v5": 0,
-            "6v6": 0,
+            format: int(format[0]) if format[0].isdigit() else 1 for format in FORMATS
         }
     )
 
@@ -317,9 +313,7 @@ class Mogi:
             table_message_id=data.get("mmr_results_by_group", []),
             voting_message_id=data.get("voting_message_id"),
             voters=data.get("voters", []),
-            votes=data.get(
-                "votes", {"ffa": 0, "2v2": 0, "3v3": 0, "4v4": 0, "5v5": 0, "6v6": 0}
-            ),
+            votes=data.get("votes", {format: 0 for format in FORMATS}),
             team_tags=data.get(
                 "team_tags",
                 ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],
