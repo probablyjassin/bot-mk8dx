@@ -137,4 +137,4 @@ logs/
 backups/
 
 # custom config files
-room.config
+lounge.config

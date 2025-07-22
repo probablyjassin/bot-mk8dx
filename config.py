@@ -12,10 +12,10 @@ load_dotenv()
 
 ROOMS_CONFIG = []
 try:
-    with open("room.config", encoding="utf-8") as f:
+    with open("lounge.config", encoding="utf-8") as f:
         ROOMS_CONFIG = json.load(f)
 except (json.JSONDecodeError, FileNotFoundError) as e:
-    print(f"Errors loading room.config: {e}")
+    print(f"Errors loading lounge.config: {e}")
     sys.exit(1)
 
 
