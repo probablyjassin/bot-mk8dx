@@ -14,6 +14,7 @@ class PlayerProfile:
         discord_id (Int64): The Discord ID of the player. Note: MongoDB converts this to Int64.
         mmr (int): The matchmaking rating of the player.
         history (list[int]): A list of historical MMR deltas.
+        formats (dict{int, int}): A dict of the formats the player played and their amount.
         joined (int | None): The timestamp when the player joined, or None.
         disconnects (int | None): The number of times the player has disconnected, or None.
         inactive (bool | None): Indicates player inactivity, usually None.
@@ -25,6 +26,7 @@ class PlayerProfile:
     _discord_id: Int64
     _mmr: int
     _history: list[int]
+    _formats: dict[int, int] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
     _joined: int | None = None
 
     _disconnects: int | None = None
@@ -38,6 +40,7 @@ class PlayerProfile:
         discord_id,
         mmr,
         history,
+        formats={1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0},
         joined=None,
         disconnects=None,
         inactive=None,
@@ -48,6 +51,7 @@ class PlayerProfile:
         self._discord_id = discord_id
         self._mmr = mmr
         self._history = history
+        self._formats = formats
         self._joined = joined
         self._disconnects = disconnects
         self._inactive = inactive
@@ -106,6 +110,18 @@ class PlayerProfile:
         db_players.update_one(
             {"_id": self._id},
             {"$push": {"history": value}},
+        )
+
+    # Formats
+    @property
+    def formats(self):
+        return self._formats
+
+    def count_format_played(self, value):
+        self._formats[value] += 1
+        db_players.update_one(
+            {"_id": self._id},
+            {"$inc": {f"formats.{value}": 1}},
         )
 
     # Joined (read-only)
@@ -188,6 +204,7 @@ class PlayerProfile:
             "discord_id": self._discord_id,
             "mmr": self._mmr,
             "history": self._history,
+            "formats": self._formats,
             "joined": self._joined,
             "disconnects": self._disconnects,
             "inactive": self._inactive,
@@ -207,12 +224,13 @@ class PlayerProfile:
             discord_id=Int64(data["discord_id"]),
             mmr=data["mmr"],
             history=data["history"],
+            formats=data["formats"],
             joined=data.get("joined"),
             disconnects=data.get("disconnects"),
             inactive=data.get("inactive"),
             suspended=data.get("suspended"),
         )
-        instance.disconnects = data.get("disconnects")
+        """ instance.disconnects = data.get("disconnects")
         instance.inactive = data.get("inactive")
-        instance.suspended = data.get("suspended")
+        instance.suspended = data.get("suspended") """
         return instance
