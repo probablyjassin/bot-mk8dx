@@ -118,6 +118,22 @@ class tasks(commands.Cog):
     async def get_updated_passwords(self):
         await fetch_server_passwords(self.bot)
 
+    @tasks.loop(seconds=60)
+    async def check_mogi_durations(self):
+        for channel_id, mogi in mogi_manager.read_registry().items():
+            current_time = time.time()
+            time_elapsed = current_time - mogi.started_at
+
+            if time_elapsed >= 1800:
+                mogi_channel = self.bot.fetch_channel(channel_id)
+
+                if time_elapsed >= 3600:  # 60+ minutes
+                    pass
+                elif time_elapsed >= 2400:  # 40+ minutes
+                    pass
+                elif time_elapsed >= 1800:  # 30+ minutes
+                    pass
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(tasks(bot))
