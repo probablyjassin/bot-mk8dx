@@ -1,31 +1,33 @@
 # MMR Formula from https://docs.google.com/document/d/1IowqAokeJqQWhjJ__TcQn5hbDqoK5irUVmvb441-90Q/edit
 import math
 
-caps = {1: 60, 2: 120, 3: 180, 4: 240, 6: 300}
-scaling_factors = {1: 9500, 2: 5500, 3: 5100, 4: 4800, 6: 4650}
-offsets = {1: 2746.116, 2: 1589.856, 3: 1474.230, 4: 1387.511, 6: 1344.151}
-
-
-def get_mmr_delta_when_won(team_size: int, winner_mmr: int, loser_mmr: int) -> float:
-    return caps[team_size] / (
-        1
-        + math.pow(
-            11,
-            -(loser_mmr - winner_mmr - offsets[team_size]) / scaling_factors[team_size],
-        )
-    )
-
-
-def get_mmr_delta_when_tied(team_size: int, mmr1: int, mmr2: int):
-    return caps[team_size] / (
-        1
-        + math.pow(
-            11, -(abs(mmr1 - mmr2) - offsets[team_size]) / scaling_factors[team_size]
-        )
-    ) - (caps[team_size] / 3)
+caps = {1: 60, 2: 120, 3: 180, 4: 240, 5: 280, 6: 300}
+scaling_factors = {1: 9500, 2: 5500, 3: 5100, 4: 4800, 5: 4700, 6: 4650}
+offsets = {1: 2746.116, 2: 1589.856, 3: 1474.230, 4: 1387.511, 5: 1361.793, 6: 1344.151}
 
 
 def calculate_mmr(mmrs: list[int], ranking: list[int], team_size: int) -> list[int]:
+    def get_mmr_delta_when_won(
+        team_size: int, winner_mmr: int, loser_mmr: int
+    ) -> float:
+        return caps[team_size] / (
+            1
+            + math.pow(
+                11,
+                -(loser_mmr - winner_mmr - offsets[team_size])
+                / scaling_factors[team_size],
+            )
+        )
+
+    def get_mmr_delta_when_tied(team_size: int, mmr1: int, mmr2: int):
+        return caps[team_size] / (
+            1
+            + math.pow(
+                11,
+                -(abs(mmr1 - mmr2) - offsets[team_size]) / scaling_factors[team_size],
+            )
+        ) - (caps[team_size] / 3)
+
     player_count = len(mmrs)
     teams = player_count // team_size
 
