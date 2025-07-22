@@ -11,9 +11,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ROOMS_CONFIG = []
+FORMATS = []
 try:
     with open("lounge.config", encoding="utf-8") as f:
-        ROOMS_CONFIG = json.load(f)
+        data: dict = json.load(f)
+        ROOMS_CONFIG = data["rooms"]
+        FORMATS = data["formats"]
 except (json.JSONDecodeError, FileNotFoundError) as e:
     print(f"Errors loading lounge.config: {e}")
     sys.exit(1)
