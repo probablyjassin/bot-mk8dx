@@ -9,7 +9,6 @@ from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
     teams_alg_distribute_by_order_kevnkkm,
     teams_alg_random,
-    get_other_alg,  # if ever implemented
 )
 
 from utils.data.flags import debug_feature_flags
@@ -30,6 +29,7 @@ class Mogi:
         isVoting (`bool`): Indicates if voting is currently active. Default is False.
         isPlaying (`bool`): Indicates if the mogi is currently in progress (playing the races). Default is False.
         isFinished (`bool`): Indicates if the mmr calculation has finished. Default is False.
+        races: (`int`): The number of races played so far.
         collected_points (`list[int]`): A list of points collected in order of each team/player.
         placements_by_group (`list[int]`): A list of placements in order of teams/players.
         mmr_results_by_group (`list[int]`): A list of MMR results in order of teams/players.
@@ -63,6 +63,7 @@ class Mogi:
     isPlaying: bool = False
     isFinished: bool = False
 
+    races: int = field(default_factory=lambda: 0)
     collected_points: list[int] = field(default_factory=lambda: [])
     placements_by_group: list[int] = field(default_factory=lambda: [])
     mmr_results_by_group: list[int] = field(default_factory=lambda: [])
@@ -77,14 +78,7 @@ class Mogi:
     )
 
     team_tags: list[str] = field(
-        default_factory=lambda: [
-            "Team 1",
-            "Team 2",
-            "Team 3",
-            "Team 4",
-            "Team 5",
-            "Team 6",
-        ]
+        default_factory=lambda: [f"Team {i}" for i in range(1, 7)]
     )
 
     started_at: int | None = None
@@ -116,7 +110,7 @@ class Mogi:
 
         else:
             algorithm = (
-                get_other_alg()
+                teams_alg_random
                 if debug_feature_flags["random_teams"]
                 else teams_alg_distribute_by_order_kevnkkm
             )
@@ -269,6 +263,7 @@ class Mogi:
             "isVoting": self.isVoting,
             "isPlaying": self.isPlaying,
             "isFinished": self.isFinished,
+            "races": self.races,
             "collected_points": self.collected_points,
             "placements_by_group": self.placements_by_group,
             "mmr_results_by_group": self.mmr_results_by_group,
@@ -307,6 +302,7 @@ class Mogi:
             isVoting=data.get("isVoting", False),
             isPlaying=data.get("isPlaying", False),
             isFinished=data.get("isFinished", False),
+            races=data.get("races", 0),
             collected_points=data.get("collected_points", []),
             placements_by_group=data.get("placements_by_group", []),
             mmr_results_by_group=data.get("mmr_results_by_group", []),
