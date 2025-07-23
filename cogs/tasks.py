@@ -4,7 +4,8 @@ import random
 import json
 
 import requests
-from datetime import datetime, timezone, time, timedelta
+from datetime import datetime, timezone, timedelta
+from datetime import time as datetime_time
 
 from discord import Activity, ActivityType, Status
 from discord.ext import commands, tasks
@@ -62,7 +63,7 @@ class tasks(commands.Cog):
         state_manager.save_state()
 
     @tasks.loop(
-        time=time(
+        time=datetime_time(
             hour=22,
             minute=0,
             second=0,
@@ -108,7 +109,7 @@ class tasks(commands.Cog):
             await log_channel.send(f"💾 Error sending database backup log: `{e}`")
 
     @tasks.loop(
-        time=time(
+        time=datetime_time(
             hour=7,
             minute=30,
             second=0,
@@ -123,16 +124,14 @@ class tasks(commands.Cog):
         for channel_id, mogi in mogi_manager.read_registry().items():
             current_time = time.time()
             time_elapsed = current_time - mogi.started_at
+            if mogi.finished_at:
+                continue
 
-            if time_elapsed >= 1800:
-                mogi_channel = self.bot.fetch_channel(channel_id)
+            if time_elapsed >= 2400:  # 40+ minutes
+                mogi_channel = await self.bot.fetch_channel(channel_id)
+                await mogi_channel.send("Times up Mogi joever guys ggwp!!!!")
 
-                if time_elapsed >= 3600:  # 60+ minutes
-                    pass
-                elif time_elapsed >= 2400:  # 40+ minutes
-                    pass
-                elif time_elapsed >= 1800:  # 30+ minutes
-                    pass
+                mogi.finished_at = time.time()
 
 
 def setup(bot: commands.Bot):
