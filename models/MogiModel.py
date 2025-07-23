@@ -243,7 +243,7 @@ class Mogi:
 
         self.isPlaying = False
         self.isFinished = True
-        self.finished_at = round(time.time())
+        self.finished_at = self.finished_at or round(time.time())
         self.archive_mogi_data()
 
     def to_json(self) -> dict:
