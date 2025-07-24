@@ -119,7 +119,7 @@ class Mogi:
 
         self.isVoting = False
         self.isPlaying = True
-        self.started_at = round(time.time())
+        self.started_at = self.started_at or round(time.time())
 
         self.voters = []
         self.votes = {key: 0 for key in self.votes}
