@@ -74,7 +74,7 @@ class Mogi:
     finished_at: int | None = None
     disconnections: int | None = 0
 
-    def play(self, format_int: int) -> None:
+    def play(self, format_int: int, random_teams: bool = False) -> None:
         """
         ### Organizes players into teams and updates the game state based on the given format.
         #### Parameters:
@@ -97,7 +97,7 @@ class Mogi:
         else:
             algorithm = (
                 teams_alg_random
-                if FLAGS["random_teams"]
+                if (FLAGS["random_teams"] or random_teams)
                 else teams_alg_distribute_by_order_kevnkkm
             )
             self.teams = algorithm(self.players, format_int)

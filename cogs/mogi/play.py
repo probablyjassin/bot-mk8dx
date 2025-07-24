@@ -52,20 +52,52 @@ class stop(commands.Cog):
         async def on_vote_start():
             message = await ctx.respond(
                 f"Voting start!\n {ctx.inmogi_role.mention}",
-                view=create_vote_button_view(FORMATS, ctx.mogi),
+                view=create_vote_button_view(
+                    FORMATS, ctx.mogi, extra_buttons=["Mini", "Random Teams"]
+                ),
                 allowed_mentions=AllowedMentions(roles=True),
             )
             response = await message.original_response()
-            ctx.mogi.vote.voting_message_id
+            ctx.mogi.vote.voting_message_id = response.id
 
-        # put the channel in slowmode during vote
-        await ctx.channel.edit(slowmode_delay=15)
+            # put the channel in slowmode during vote
+            await ctx.channel.edit(slowmode_delay=15)
 
-        # pick the server to play on
-        if not ctx.mogi.room:
-            best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
-            ctx.mogi.room = best_server
-        await ctx.channel.send(f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`")
+            # pick the server to play on
+            if not ctx.mogi.room:
+                best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+                ctx.mogi.room = best_server
+            await ctx.channel.send(
+                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+            )
+
+        async def on_vote_end(winning_format: str, random_teams: bool):
+            # Create the lineup message by teams
+            lineup = ""
+            for i, team in enumerate(ctx.mogi.teams):
+                lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
+
+            # Send the lineup, show the mogi has started
+            await ctx.message.channel.send(
+                f"# Mogi starting!\n## Format: {'RANDOM' if random_teams else ''} {winning_format.capitalize()} Mogi\n### Lineup:\n{lineup}"
+            )
+
+            # disable slowmode
+            await ctx.message.channel.edit(slowmode_delay=0)
+
+            # failsafe if the server hasn't been chosen before the vote yet
+            if not ctx.mogi.room:
+                best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+                ctx.mogi.room = best_server
+            await ctx.message.channel.send(
+                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+            )
+
+            # apply team roles (if applicable)
+            await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
+
+            ctx.mogi.vote.add_setup_handler(on_vote_start)
+            ctx.mogi.vote.add_cleanup_handler(on_vote_end)
 
     @start.command(name="force")
     @is_mogi_not_in_progress()
