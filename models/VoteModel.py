@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import Callable, TYPE_CHECKING
-from contextlib import asynccontextmanager
 
 from config import FORMATS
 
@@ -13,7 +12,7 @@ class Vote:
     is_active: bool = False
     voting_message_id: int | None = None
     voters: set = set()
-    votes: dict[str, int] = {format: 0 for format in FORMATS}
+    votes: dict[str, dict[str, int]] = {"format": {"mini": 0, **{format: 0 for format in FORMATS}}, "teams": {"random": 0}}
     result: str | None = None
 
     _setup_handlers = []
@@ -44,7 +43,7 @@ class Vote:
         
         return True
     
-    async def vote_format(self, mogi: "Mogi", user_id: int, format_choice: str) -> bool:
+    async def cast_vote_format(self, mogi: "Mogi", user_id: int, format_choice: str) -> bool:
         """Cast a vote for a specific format"""
         if not self.is_active:
             return False
@@ -59,7 +58,7 @@ class Vote:
             
         # Check if format is valid for current player count
         format_int = self._get_format_int(format_choice)
-        if not self._is_valid_format(format_int):
+        if not self._is_valid_format(mogi, format_int):
             return False
             
         # Cast the vote
@@ -69,18 +68,45 @@ class Vote:
         # Check if vote should end
         if await self._should_end(mogi):
             winning_format = self._get_winning_format()
-            await self.end(winning_format=winning_format)
+            await self.end(mogi, winning_format=winning_format)
             return True
             
         return True
     
-    async def end(self, winning_format: str = None):
+    async def cast_vote_extra(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
+        if not self.is_active:
+            return False
+        
+        # Handle Mini Mogi vote like a normal vote
+        if choice == "mini":
+            # Check if user already voted
+            if user_id in self.voters:
+                return False
+                
+            # Check if user is in the mogi
+            if user_id not in [player.discord_id for player in mogi.players]:
+                return False
+
+            # Cast the vote
+            self.voters.add(user_id)
+            self.votes["format"]["mini"] += 1
+            
+            # Check if vote should end
+            if await self._should_end(mogi):
+                winning_format = self._get_winning_format()
+                await self.end(mogi, winning_format=winning_format)
+                return True
+
+    
+    async def end(self, mogi: "Mogi", winning_format: str = None):
         """End the vote session"""
         if not self.is_active:
             return
             
         self.is_active = False
         self.result = winning_format
+
+        mogi.play()
         
         # ALWAYS run cleanup handlers, no matter how the vote ends
         for handler in self._cleanup_handlers:
@@ -96,20 +122,20 @@ class Vote:
             return True
             
         # If one format has more votes than possible remaining votes can overcome
-        max_votes = max(self.votes.values())
+        max_votes = max(self.votes["format"].values())
         remaining_voters = len(mogi.players) - len(self.voters)
-        second_highest = sorted(self.votes.values(), reverse=True)[1] if len([v for v in self.votes.values() if v > 0]) > 1 else 0
+        second_highest = sorted(self.votes["format"].values(), reverse=True)[1] if len([v for v in self.votes["format"].values() if v > 0]) > 1 else 0
         
         # If the leading format can't be caught
         return max_votes > (second_highest + remaining_voters)
     
     def _get_winning_format(self) -> str:
         """Get the format with the most votes"""
-        if not any(self.votes.values()):
+        if not any(self.votes["format"].values()):
             return "ffa"  # Default if no votes
             
-        max_votes = max(self.votes.values())
-        winners = [format_name for format_name, votes in self.votes.items() if votes == max_votes]
+        max_votes = max(self.votes["format"].values())
+        winners = [format_name for format_name, votes in self.votes["format"].items() if votes == max_votes]
         
         if len(winners) == 1:
             return winners[0]
@@ -127,25 +153,25 @@ class Vote:
             return int(format_lower[0])
         return 1
     
-    def _is_valid_format(self, format_int: int) -> bool:
+    def _is_valid_format(self, mogi: "Mogi", format_int: int) -> bool:
         """Check if format is valid for current player count"""
-        player_count = len(self.mogi.players)
+        player_count = len(mogi.players)
         
         # Must have enough players and player count must be divisible by format
         return player_count >= format_int and player_count % format_int == 0
     
-    def get_vote_status(self) -> str:
+    def get_vote_status(self, mogi: "Mogi") -> str:
         """Get current vote status as a string"""
         if not self.is_active:
             return "Vote not active"
             
         status = "Current votes:\n"
-        for format_name, vote_count in self.votes.items():
+        for format_name, vote_count in self.votes["format"].items():
             if vote_count > 0:
                 status += f"{format_name.upper()}: {vote_count}\n"
         
         voted_count = len(self.voters)
-        total_players = len(self.mogi.players)
+        total_players = len(mogi.players)
         status += f"\nVoted: {voted_count}/{total_players}"
         
         return status
@@ -167,15 +193,6 @@ class Vote:
         vote.voting_message_id = data.get("voting_message_id")
         vote.is_active = data.get("is_active", False)
         vote.voters = set(data.get("voters", []))  # Convert list back to set
-        vote.votes = data.get("votes", {format: 0 for format in FORMATS})
+        vote.votes = data.get("votes", {"format": {"mini": 0, **{format: 0 for format in FORMATS}}, "teams": {"random": 0}})
         vote.result = data.get("result")
         return vote
-
-    @asynccontextmanager
-    async def session(self):
-        """Context manager for automatic cleanup"""
-        try:
-            await self.start()
-            yield self
-        finally:
-            await self.end()
