@@ -26,7 +26,9 @@ class PlayerProfile:
     _discord_id: Int64
     _mmr: int
     _history: list[int]
-    _formats: dict[int, int] = field(default_factory=lambda: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
+    _formats: dict[str, int] = field(
+        default_factory=lambda: {str(i): 0 for i in range(1, 7)}
+    )
     _joined: int | None = None
 
     _disconnects: int | None = None
@@ -51,7 +53,9 @@ class PlayerProfile:
         self._discord_id = discord_id
         self._mmr = mmr
         self._history = history
-        self._formats = formats if formats is not None else {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+        self._formats = (
+            formats if formats is not None else {str(i): 0 for i in range(1, 7)}
+        )
         self._joined = joined
         self._disconnects = disconnects
         self._inactive = inactive

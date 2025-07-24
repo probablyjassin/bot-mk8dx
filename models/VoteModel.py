@@ -49,6 +49,7 @@ class Vote:
         return True
 
     async def cast_vote_format(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
+        print("normal format picked")
         """Cast a vote for a specific format"""
         if not self.is_active:
             return False
@@ -73,6 +74,7 @@ class Vote:
         # Check if vote should end
         if await self._should_end(mogi):
             winning_format = self._get_winning_format()
+            print(f"VOTE END: {winning_format}")
             await self.end(mogi, winning_format=winning_format)
             return True
 
@@ -80,14 +82,17 @@ class Vote:
 
     async def cast_vote_extra(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
         if not self.is_active:
+            print("vote not active")
             return False
 
         # Check if user is in the mogi
         if user_id not in [player.discord_id for player in mogi.players]:
+            print("user not in mogi")
             return False
 
         # Handle Mini Mogi vote like a normal vote
         if choice == "mini":
+            print("mini picked")
             # Check if user already voted
             if user_id in self.voters:
                 return False
@@ -100,10 +105,11 @@ class Vote:
             if await self._should_end(mogi):
                 winning_format = self._get_winning_format()
                 await self.end(mogi, winning_format=winning_format)
-                return True
+            return True
 
         # Handle Random Teams Vote
         if choice == "random_teams":
+            print("random teams picked")
             # Check if user already voted this
             if user_id in self.extras["random_teams_voters"]:
                 return False
@@ -118,22 +124,26 @@ class Vote:
         """End the vote session"""
         if not self.is_active:
             return
-
+        print(f"VOTE END: {winning_format}")
         self.is_active = False
         self.result = winning_format
         random_teams: bool = self.extras["random_teams_votes"] > (
             len(mogi.players) * 0.75
         )
+        print(f"random teams?????: '{random_teams}'")
         format_int: int = int(winning_format[0]) if winning_format[0].isdigit() else 1
-
-        mogi.play(format_int, random_teams)
+        print(f"format_int: {format_int}")
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
+        print("ok")
         for handler in self._cleanup_handlers:
+            print("running a cleanup handler")
             try:  # winning_format, random_teams
                 await handler(winning_format, random_teams)
             except Exception as e:
                 print(f"Cleanup handler failed: {e}")
+
+        mogi.play(format_int, random_teams)
 
     async def _should_end(self, mogi: "Mogi") -> bool:
         """Check if vote should end early"""

@@ -78,26 +78,26 @@ class stop(commands.Cog):
                 lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
 
             # Send the lineup, show the mogi has started
-            await ctx.message.channel.send(
+            await ctx.send(
                 f"# Mogi starting!\n## Format: {'RANDOM' if random_teams else ''} {winning_format.capitalize()} Mogi\n### Lineup:\n{lineup}"
             )
 
             # disable slowmode
-            await ctx.message.channel.edit(slowmode_delay=0)
+            await ctx.channel.edit(slowmode_delay=0)
 
             # failsafe if the server hasn't been chosen before the vote yet
             if not ctx.mogi.room:
                 best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
                 ctx.mogi.room = best_server
-            await ctx.message.channel.send(
-                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
-            )
+            await ctx.send(f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`")
 
             # apply team roles (if applicable)
             await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
 
-            ctx.mogi.vote.add_setup_handler(on_vote_start)
-            ctx.mogi.vote.add_cleanup_handler(on_vote_end)
+        ctx.mogi.vote.add_setup_handler(on_vote_start)
+        ctx.mogi.vote.add_cleanup_handler(on_vote_end)
+
+        await ctx.mogi.vote.start()
 
     @start.command(name="force")
     @is_mogi_not_in_progress()
@@ -143,14 +143,14 @@ class stop(commands.Cog):
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
 
-        ctx.mogi.stop()
         if ctx.mogi.vote.voting_message_id:
             try:
                 await (
-                    await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+                    await ctx.channel.fetch_message(ctx.mogi.vote.voting_message_id)
                 ).delete()
             except:
                 pass
+        ctx.mogi.stop()
         await ctx.respond("Mogi has been stopped")
 
         # disable slowmode

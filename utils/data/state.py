@@ -114,6 +114,7 @@ class BotState:
             return
         try:
             with open(f"state/{state_filename}", "r") as state:
+                print(state.read())
                 data: dict = json.load(state)
                 if data:
                     mogi_manager.write_registry(
