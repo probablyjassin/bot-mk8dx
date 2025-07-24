@@ -15,7 +15,7 @@ from logger import setup_logger
 from utils.command_helpers.info_embed_factory import create_embed
 
 from bson.int64 import Int64
-from config import LOG_CHANNEL_ID, MOGI_MANAGER_CHANNEL_ID
+from config import LOG_CHANNEL_ID
 
 lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 

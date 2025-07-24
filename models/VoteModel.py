@@ -1,5 +1,5 @@
-from dataclasses import dataclass
-from typing import Callable, Any, TYPE_CHECKING
+from dataclasses import dataclass, field
+from typing import Callable, TYPE_CHECKING
 
 from config import FORMATS
 
@@ -12,9 +12,13 @@ class Vote:
 
     is_active: bool = False
     voting_message_id: int | None = None
-    voters: set = set()
-    votes: dict[str, int] = {"mini": 0, **{format: 0 for format in FORMATS}}
-    extras: dict[str, int | list] = {"random_teams_votes": 0, "random_teams_voters": []}
+    voters: set = field(default_factory=lambda: set())
+    votes: dict[str, int] = field(
+        default_factory=lambda: {"mini": 0, **{format: 0 for format in FORMATS}}
+    )
+    extras: dict[str, int | list] = field(
+        default_factory=lambda: {"random_teams_votes": 0, "random_teams_voters": []}
+    )
     result: str | None = None
 
     _setup_handlers = []
