@@ -8,6 +8,7 @@ from utils.decorators.checks import (
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
+from models.VoteModel import Vote
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 from utils.command_helpers.server_region import get_best_server
 
@@ -46,17 +47,16 @@ class stop(commands.Cog):
                 "You can't start a mogi you aren't in", ephemeral=True
             )
 
-        ctx.mogi.isVoting = True
+        ctx.mogi.vote = Vote()
 
-        view = create_vote_button_view(FORMATS, ctx.mogi)
-
-        message = await ctx.respond(
-            f"Voting start!\n {ctx.inmogi_role.mention}",
-            view=view,
-            allowed_mentions=AllowedMentions(roles=True),
-        )
-        response = await message.original_response()
-        ctx.mogi.voting_message_id = response.id
+        async def on_vote_start():
+            message = await ctx.respond(
+                f"Voting start!\n {ctx.inmogi_role.mention}",
+                view=create_vote_button_view(FORMATS, ctx.mogi),
+                allowed_mentions=AllowedMentions(roles=True),
+            )
+            response = await message.original_response()
+            ctx.mogi.vote.voting_message_id
 
         # put the channel in slowmode during vote
         await ctx.channel.edit(slowmode_delay=15)
