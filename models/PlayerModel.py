@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from bson.objectid import ObjectId
 from bson.int64 import Int64
 from utils.data._database import db_players
@@ -26,7 +26,7 @@ class PlayerProfile:
     _discord_id: Int64
     _mmr: int
     _history: list[int]
-    _formats: dict[int, int] = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
+    _formats: dict[int, int] = field(default_factory=lambda: {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0})
     _joined: int | None = None
 
     _disconnects: int | None = None
@@ -40,7 +40,7 @@ class PlayerProfile:
         discord_id,
         mmr,
         history,
-        formats={1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0},
+        formats,
         joined=None,
         disconnects=None,
         inactive=None,
@@ -51,7 +51,7 @@ class PlayerProfile:
         self._discord_id = discord_id
         self._mmr = mmr
         self._history = history
-        self._formats = formats
+        self._formats = formats if formats is not None else {1: 0, 2: 0, 3: 0, 4: 0, 5: 0, 6: 0}
         self._joined = joined
         self._disconnects = disconnects
         self._inactive = inactive
