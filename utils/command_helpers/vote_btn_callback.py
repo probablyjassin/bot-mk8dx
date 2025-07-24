@@ -17,7 +17,7 @@ async def format_vote_button_callback(
 
     # Check if the user can vote
     if not (
-        mogi.isVoting
+        mogi.vote
         and len(mogi.players) >= FORMAT_BUTTON_INT
         and len(mogi.players) % FORMAT_BUTTON_INT == 0
         and (interaction.user.id in [player.discord_id for player in mogi.players])

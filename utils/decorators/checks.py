@@ -139,24 +139,20 @@ def is_mogi_not_full():
 def is_mogi_in_progress():
     """
     ## Command checker that requires the channel's mogi to be in progress
-    `ctx.mogi and (ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished))`
+    `ctx.mogi and (ctx.mogi.vote or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished))`
     """
 
     async def predicate(ctx: MogiApplicationContext):
         message = "The mogi is either not open, not in progress or already finished and is about to be closed."
         if not ctx.mogi:
             message = "There is no open mogi in this channel."
-        elif not (
-            ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)
-        ):
+        elif not (ctx.mogi.vote or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)):
             message = "The mogi is not in progress."
 
         return await _check(
             ctx=ctx,
             condition=ctx.mogi
-            and (
-                ctx.mogi.isVoting or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)
-            ),
+            and (ctx.mogi.vote or (ctx.mogi.isPlaying) and (not ctx.mogi.isFinished)),
             error_message=message,
         )
 
@@ -166,14 +162,14 @@ def is_mogi_in_progress():
 def is_mogi_not_in_progress():
     """
     ## Command checker that requires the channel's mogi not to be in progress
-    `ctx.mogi and (not ctx.mogi.isVoting and (not ctx.mogi.isPlaying) or (ctx.mogi.isFinished))`
+    `ctx.mogi and (not ctx.mogi.vote and (not ctx.mogi.isPlaying) or (ctx.mogi.isFinished))`
     """
 
     async def predicate(ctx: MogiApplicationContext):
         message = "The mogi is either not open, still in progress or hasn't finished calculations yet."
         if not ctx.mogi:
             message = "There is no open mogi in this channel."
-        elif ctx.mogi.isVoting:
+        elif ctx.mogi.vote:
             message = "You can't join or leave while a vote is going on."
         elif ctx.mogi.collected_points:
             message = "The points are still being worked on. The mogi will close on it's own when it's done."
@@ -184,9 +180,7 @@ def is_mogi_not_in_progress():
             ctx=ctx,
             condition=ctx.mogi
             and (
-                not ctx.mogi.isVoting
-                and (not ctx.mogi.isPlaying)
-                or (ctx.mogi.isFinished)
+                not ctx.mogi.vote and (not ctx.mogi.isPlaying) or (ctx.mogi.isFinished)
             ),
             error_message=message,
         )

@@ -111,7 +111,7 @@ class stop(commands.Cog):
         if not ctx.mogi:
             return await ctx.respond("No open mogi in this channel", ephemeral=True)
         # mogi already started
-        if ctx.mogi.isPlaying or ctx.mogi.isVoting:
+        if ctx.mogi.isPlaying or ctx.mogi.vote:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
         if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
@@ -163,7 +163,7 @@ class stop(commands.Cog):
     @is_mogi_in_progress()
     async def votes(self, ctx: MogiApplicationContext):
 
-        if not ctx.mogi.voting_message_id or not ctx.mogi.isVoting:
+        if not ctx.mogi.voting_message_id or not ctx.mogi.vote:
             return await ctx.respond("No vote found")
 
         if len(ctx.mogi.players) == ctx.mogi.voters:
