@@ -11,8 +11,7 @@ from utils.maths.teams_algorithm import (
     teams_alg_random,
 )
 
-from utils.data.flags import debug_feature_flags
-from config import FORMATS
+from config import FORMATS, FLAGS
 
 
 @dataclass
@@ -111,7 +110,7 @@ class Mogi:
         else:
             algorithm = (
                 teams_alg_random
-                if debug_feature_flags["random_teams"]
+                if FLAGS["random_teams"]
                 else teams_alg_distribute_by_order_kevnkkm
             )
             self.teams = algorithm(self.players, format_int)
