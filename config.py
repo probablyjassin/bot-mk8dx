@@ -35,7 +35,6 @@ LOUNGE_DB = os.getenv("LOUNGE_DB")
 GUILD_IDS = [int(guild_id) for guild_id in os.getenv("GUILD_IDS").split(",")]
 
 LOG_CHANNEL_ID = int(os.getenv("LOG_CHANNEL_ID"))
-MOGI_MANAGER_CHANNEL_ID = int(os.getenv("MOGI_MANAGER_CHANNEL_ID"))
 RESULTS_CHANNEL_ID = int(os.getenv("RESULTS_CHANNEL_ID"))
 REGISTER_CHANNEL_ID = int(os.getenv("REGISTER_CHANNEL_ID"))
 
