@@ -132,7 +132,7 @@ class debug(commands.Cog):
         votes_str = "\n".join(
             [
                 f"{format}: {amount}"
-                for format, amount in ctx.mogi.votes.items()
+                for format, amount in ctx.mogi.vote.votes.items()
                 if amount > 0
             ]
         )

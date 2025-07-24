@@ -144,7 +144,7 @@ class stop(commands.Cog):
             )
 
         ctx.mogi.stop()
-        if ctx.mogi.voting_message_id:
+        if ctx.mogi.vote.voting_message_id:
             try:
                 await (
                     await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
@@ -172,11 +172,11 @@ class stop(commands.Cog):
         not_voted_str = ""
 
         if FLAGS["show_votes"]:
-            most_votes = max(ctx.mogi.votes.values())
+            most_votes = max(ctx.mogi.vote.votes.values())
             max_votes = [
                 key
-                for key in ctx.mogi.votes.keys()
-                if ctx.mogi.votes[key] == most_votes
+                for key in ctx.mogi.vote.votes.keys()
+                if ctx.mogi.vote.votes[key] == most_votes
             ]
             if max_votes:
                 not_voted_str += "Most voted so far:\n"
@@ -184,8 +184,8 @@ class stop(commands.Cog):
                     not_voted_str += key + "\n"
                 runner_ups = [
                     key
-                    for key in ctx.mogi.votes.keys()
-                    if ctx.mogi.votes[key] == most_votes - 1
+                    for key in ctx.mogi.vote.votes.keys()
+                    if ctx.mogi.vote.votes[key] == most_votes - 1
                 ]
                 if runner_ups:
                     not_voted_str += "\nRunner ups:\n"
@@ -196,7 +196,7 @@ class stop(commands.Cog):
         not_voted_str += "Missing votes from:\n"
         hasnt_voted = []
         for player in ctx.mogi.players:
-            if player.discord_id not in ctx.mogi.voters:
+            if player.discord_id not in ctx.mogi.vote.voters:
                 hasnt_voted.append(f"<@{player.discord_id}>")
 
         not_voted_str += "\n".join(hasnt_voted)
