@@ -40,7 +40,7 @@ class debug(commands.Cog):
     @is_admin()
     async def restart(self, ctx: MogiApplicationContext):
         for mogi in mogi_manager.read_registry().values():
-            if mogi.isVoting:
+            if mogi.vote:
                 return await ctx.respond(
                     "At least one mogi is voting right now. Not restarting to not interrupt it."
                 )
