@@ -10,9 +10,8 @@ from utils.decorators.checks import (
 )
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 from utils.command_helpers.server_region import get_best_server
-from utils.data.flags import debug_feature_flags
 
-from config import FORMATS
+from config import FORMATS, FLAGS
 
 
 class stop(commands.Cog):
@@ -27,13 +26,13 @@ class stop(commands.Cog):
     @start.command(name="vote")
     @is_mogi_not_in_progress()
     async def vote(self, ctx: MogiApplicationContext):
-        if debug_feature_flags["hold_mogis"]:
+        if FLAGS["hold_mogis"]:
             return await ctx.respond(
                 "Because of maintenance, you cannot start mogis for just a few moments."
             )
 
         # not enough players
-        if len(ctx.mogi.players) <= 6 and not debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) <= 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -83,7 +82,7 @@ class stop(commands.Cog):
         if ctx.mogi.isPlaying or ctx.mogi.isVoting:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
-        if len(ctx.mogi.players) < 6 and not debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
@@ -140,7 +139,7 @@ class stop(commands.Cog):
 
         not_voted_str = ""
 
-        if debug_feature_flags["show_votes"]:
+        if FLAGS["show_votes"]:
             most_votes = max(ctx.mogi.votes.values())
             max_votes = [
                 key
