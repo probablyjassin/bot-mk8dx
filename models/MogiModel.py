@@ -3,6 +3,7 @@ from dataclasses import dataclass, field
 from bson import ObjectId
 
 from models.PlayerModel import PlayerProfile
+from models.VoteModel import Vote
 from models.RoomModel import Room
 
 from utils.data._database import db_mogis
@@ -20,22 +21,19 @@ class Mogi:
     ### Represents a Mogi in a discord channel.
     #### Attributes:
         channel_id (`int`): Integer ID of the channel where the Mogi lives.
+        vote: (`Vote`): Vote object that encompasses the mechanics for picking the format.
         format (`int | None`): Integer representing the format of the Mogi (e.g., FFA, 2v2, etc.). Is `None` when the mogi hasn't started.
         room (`Room | None`): NOT_IMPLEMENTED_YET: Room object representing the Yuzu Server the mogi is played on. Is `None` when the mogi hasn't started.
         players (`list[PlayerProfile]`): List of player profiles participating in the Mogi.
         teams (`list[list[PlayerProfile]]`): List of List for every team with their players. In FFA, each sublist has only one player.
         subs (`list[PlayerProfile]`): A list of those players who are playing as sub for someone else.
-        isVoting (`bool`): Indicates if voting is currently active. Default is False.
         isPlaying (`bool`): Indicates if the mogi is currently in progress (playing the races). Default is False.
         isFinished (`bool`): Indicates if the mmr calculation has finished. Default is False.
         races: (`int`): The number of races played so far.
         collected_points (`list[int]`): A list of points collected in order of each team/player.
         placements_by_group (`list[int]`): A list of placements in order of teams/players.
         mmr_results_by_group (`list[int]`): A list of MMR results in order of teams/players.
-        voting_message_id (`int | None`): The ID of the message that has the voting. Stored to be able to delete it if /stop is used. Default is None.
         table_message_id (`int | None`): The ID of the message that has the table. Stored to be able to delete it if /points reset is used. Default is None.
-        voters (`list[int]`): A list of the discord IDs of those players who have voted for a format.
-        votes (`dict[str, int]`): A dictionary of the number of votes each format got.
         team_tags (`list[str]`): A list of team tags.
         player_cap (`int`): FOR TESTING ONLY: The maximum number of players allowed in the Mogi. Default is 12.
     Methods:
@@ -53,12 +51,12 @@ class Mogi:
     player_cap: int = 12
     format: int | None = None
     room: Room | None = None
+    vote: Vote | None = None
 
     players: list[PlayerProfile] = field(default_factory=lambda: [])
     teams: list[list[PlayerProfile]] = field(default_factory=lambda: [])
     subs: list[PlayerProfile] = field(default_factory=lambda: [])
 
-    isVoting: bool = False
     isPlaying: bool = False
     isFinished: bool = False
 
@@ -67,14 +65,6 @@ class Mogi:
     placements_by_group: list[int] = field(default_factory=lambda: [])
     mmr_results_by_group: list[int] = field(default_factory=lambda: [])
     table_message_id: int | None = None
-
-    voting_message_id: int | None = None
-    voters: list[int] = field(default_factory=lambda: [])
-    votes: dict[str, int] = field(
-        default_factory=lambda: {
-            format: int(format[0]) if format[0].isdigit() else 1 for format in FORMATS
-        }
-    )
 
     team_tags: list[str] = field(
         default_factory=lambda: [f"Team {i}" for i in range(1, 7)]
@@ -95,10 +85,7 @@ class Mogi:
         - Updates the `self.format` attribute with the given format.
         - Modifies the `self.teams` attribute to contain the new teams.
         - Reorders `self.players` based on the new team assignments.
-        - Sets `self.isVoting` to False.
         - Sets `self.isPlaying` to True.
-        - Resets `self.voters` to an empty list.
-        - Resets the vote counts in `self.votes` to 0.
 
         """
         self.format = format_int
@@ -117,12 +104,9 @@ class Mogi:
             # important: we put players in the new order determined by the team-making
             self.players = [player for team in self.teams for player in team]
 
-        self.isVoting = False
+        self.vote = None
         self.isPlaying = True
         self.started_at = self.started_at or round(time.time())
-
-        self.voters = []
-        self.votes = {key: 0 for key in self.votes}
 
     def stop(self) -> None:
         """
@@ -135,15 +119,12 @@ class Mogi:
         - Sets the finished state to False.
         """
 
-        self.votes = {key: 0 for key in self.votes}
-        self.voters.clear()
-        self.isVoting = False
+        self.vote = None
         self.isPlaying = False
         self.format = None
         self.teams.clear()
 
         self.isFinished = False
-        self.started_at = None
 
     def collect_points(self, tablestring: str) -> None:
         """
@@ -255,11 +236,11 @@ class Mogi:
             "channel_id": self.channel_id,
             "player_cap": self.player_cap,
             "format": self.format,
+            "vote": self.vote.to_json() if self.vote else None,
             "room": self.room.to_json() if self.room else None,
             "players": [player.to_json() for player in self.players],
             "teams": [[player.to_json() for player in team] for team in self.teams],
             "subs": [sub.to_json() for sub in self.subs],
-            "isVoting": self.isVoting,
             "isPlaying": self.isPlaying,
             "isFinished": self.isFinished,
             "races": self.races,
@@ -267,9 +248,6 @@ class Mogi:
             "placements_by_group": self.placements_by_group,
             "mmr_results_by_group": self.mmr_results_by_group,
             "table_message_id": self.table_message_id,
-            "voting_message_id": self.voting_message_id,
-            "voters": self.voters,
-            "votes": self.votes,
             "team_tags": self.team_tags,
             "started_at": self.started_at,
             "finished_at": self.finished_at,
@@ -289,6 +267,7 @@ class Mogi:
             channel_id=data["channel_id"],
             player_cap=data.get("player_cap", 12),
             format=data.get("format"),
+            vote=Vote.from_json(data.get("vote")),
             room=Room.from_json(data.get("room", None)),
             players=[
                 PlayerProfile.from_json(player) for player in data.get("players", [])
@@ -298,7 +277,6 @@ class Mogi:
                 for team in data.get("teams", [])
             ],
             subs=[PlayerProfile.from_json(sub) for sub in data.get("subs", [])],
-            isVoting=data.get("isVoting", False),
             isPlaying=data.get("isPlaying", False),
             isFinished=data.get("isFinished", False),
             races=data.get("races", 0),
@@ -306,9 +284,6 @@ class Mogi:
             placements_by_group=data.get("placements_by_group", []),
             mmr_results_by_group=data.get("mmr_results_by_group", []),
             table_message_id=data.get("mmr_results_by_group", []),
-            voting_message_id=data.get("voting_message_id"),
-            voters=data.get("voters", []),
-            votes=data.get("votes", {format: 0 for format in FORMATS}),
             team_tags=data.get(
                 "team_tags",
                 ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],
