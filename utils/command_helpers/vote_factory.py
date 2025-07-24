@@ -31,23 +31,6 @@ def create_format_vote_button(label: str, mogi: Mogi) -> Button:
     button.callback = custom_callback
     return button
 
-
-# WIP: probably removing this if servers are decided by roles not by votes
-""" def create_server_vote_button(label: str, mogi: Mogi) -> Button:
-    async def custom_callback(interaction: Interaction):
-        await server_vote_button_callback(
-            interaction, mogi=mogi, FORMAT_BUTTON_INT=0, label=label
-        )
-
-    button = Button(
-        label=label,
-        style=get_button_style(0, len(mogi.players)),
-        custom_id=label.lower(),
-    )
-    button.callback = custom_callback
-    return button """
-
-
 def create_vote_button_view(button_labels: list[str], mogi: Mogi) -> View:
     """
     Creates a View object with buttons based on the provided labels and Mogi instance.
