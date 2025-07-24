@@ -17,15 +17,28 @@ def create_format_vote_button(label: str, mogi: Mogi) -> Button:
     FORMAT_BUTTON_INT = int(label.lower()[0]) if label.lower()[0].isnumeric() else 1
 
     async def custom_callback(interaction: Interaction):
+        print("---\n new vote")
+        print(label)
+        print(FORMAT_BUTTON_INT)
         vote_func = None
-        if label in ["Mini", "Random Teams"]:
+        if label in ["mini", "random_teams"]:
             vote_func = mogi.vote.cast_vote_extra
         else:
             vote_func = mogi.vote.cast_vote_format
-        await vote_func(mogi=mogi, user_id=interaction.user.id, choice=label.lower())
+        print("function:")
+        print(vote_func.__name__)
+        response = await vote_func(
+            mogi=mogi, user_id=interaction.user.id, choice=label.lower()
+        )
+        print("response:")
+        print(response)
+        message = f"Voted for {label}"
+        if not response:
+            message = "Can't vote on that"
+        await interaction.respond(message)
 
     button_style = get_vote_button_style(FORMAT_BUTTON_INT, len(mogi.players))
-    if label in ["Mini", "Random Teams"]:
+    if label in ["mini", "random_teams"]:
         button_style = discord.ButtonStyle.green
     button = Button(
         label=label,

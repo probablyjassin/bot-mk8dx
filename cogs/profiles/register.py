@@ -90,7 +90,7 @@ class register(commands.Cog):
             )
 
         member: Member | User = ctx.user
-        if ctx.get_lounge_role("Lounge Player") in member.roles:
+        if ctx.get_lounge_role("Lounge Player") not in member.roles:
             return await ctx.respond(
                 "You already have the Lounge Player role"
                 "even though you don't have a player profile."
@@ -105,12 +105,13 @@ class register(commands.Cog):
                     "mmr": 2000,
                     "history": [],
                     "joined": round(time.time()),
+                    "formats": {str(i): 0 for i in range(1, 7)},
                 },
             )
-        except:
+        except Exception as e:
             return await ctx.respond(
-                "Some error occured creating your player record. Please ask a moderator.",
-                ephemeral=True,
+                f"Some error occured creating your player record. Please ask a moderator: {e}",
+                ephemeral=False,
             )
 
         # write to logfile
@@ -119,12 +120,12 @@ class register(commands.Cog):
         )
 
         # add roles
-        await member.add_roles(
-            ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
-        )
-        await member.add_roles(
-            ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
-        )
+        # await member.add_roles(
+        #    ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
+        # )
+        # await member.add_roles(
+        #    ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
+        # )
 
         # add region role if applicable
         for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
