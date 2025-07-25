@@ -27,7 +27,7 @@ async def format_vote_button_callback(
 
     # cast vote
     async with voters_lock:
-        mogi.vote.votes[label.lower()] += 1
+        mogi.vote.votes[label] += 1
         mogi.voters.append(interaction.user.id)
 
         # respond

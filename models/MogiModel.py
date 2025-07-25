@@ -104,7 +104,6 @@ class Mogi:
             # important: we put players in the new order determined by the team-making
             self.players = [player for team in self.teams for player in team]
 
-        self.vote = None
         self.isPlaying = True
         self.started_at = self.started_at or round(time.time())
 

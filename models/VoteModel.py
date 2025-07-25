@@ -21,8 +21,8 @@ class Vote:
     )
     result: str | None = None
 
-    _setup_handlers = []
-    _cleanup_handlers = []
+    _setup_handlers: list[Callable] = field(default_factory=lambda: [])
+    _cleanup_handlers: list[Callable] = field(default_factory=lambda: [])
 
     def add_setup_handler(self, handler: Callable):
         """Add a handler to run when vote starts"""
@@ -49,7 +49,6 @@ class Vote:
         return True
 
     async def cast_vote_format(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
-        print("normal format picked")
         """Cast a vote for a specific format"""
         if not self.is_active:
             return False
@@ -69,12 +68,11 @@ class Vote:
 
         # Cast the vote
         self.voters.add(user_id)
-        self.votes[choice.lower()] += 1
+        self.votes[choice] += 1
 
         # Check if vote should end
         if await self._should_end(mogi):
             winning_format = self._get_winning_format()
-            print(f"VOTE END: {winning_format}")
             await self.end(mogi, winning_format=winning_format)
             return True
 
@@ -82,17 +80,14 @@ class Vote:
 
     async def cast_vote_extra(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
         if not self.is_active:
-            print("vote not active")
             return False
 
         # Check if user is in the mogi
         if user_id not in [player.discord_id for player in mogi.players]:
-            print("user not in mogi")
             return False
 
         # Handle Mini Mogi vote like a normal vote
-        if choice == "mini":
-            print("mini picked")
+        if choice == "Mini":
             # Check if user already voted
             if user_id in self.voters:
                 return False
@@ -108,8 +103,7 @@ class Vote:
             return True
 
         # Handle Random Teams Vote
-        if choice == "random_teams":
-            print("random teams picked")
+        if choice == "Random Teams":
             # Check if user already voted this
             if user_id in self.extras["random_teams_voters"]:
                 return False
@@ -124,26 +118,26 @@ class Vote:
         """End the vote session"""
         if not self.is_active:
             return
-        print(f"VOTE END: {winning_format}")
+
+        format_int: int = int(winning_format[0]) if winning_format[0].isdigit() else 1
+
         self.is_active = False
         self.result = winning_format
         random_teams: bool = self.extras["random_teams_votes"] > (
             len(mogi.players) * 0.75
-        )
-        print(f"random teams?????: '{random_teams}'")
-        format_int: int = int(winning_format[0]) if winning_format[0].isdigit() else 1
-        print(f"format_int: {format_int}")
+        ) and format_int in [2, 3]
+
+        mogi.play(format_int, random_teams)
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
-        print("ok")
         for handler in self._cleanup_handlers:
-            print("running a cleanup handler")
             try:  # winning_format, random_teams
                 await handler(winning_format, random_teams)
             except Exception as e:
                 print(f"Cleanup handler failed: {e}")
 
-        mogi.play(format_int, random_teams)
+        # VoteModel instance deletes itself
+        mogi.vote = None
 
     async def _should_end(self, mogi: "Mogi") -> bool:
         """Check if vote should end early"""
@@ -186,7 +180,7 @@ class Vote:
     def _get_format_int(self, format_choice: str) -> int:
         """Convert format string to integer"""
         format_lower = format_choice.lower()
-        if format_lower == "ffa":
+        if format_lower in ["ffa", "mini"]:
             return 1
         elif format_lower[0].isdigit():
             return int(format_lower[0])
@@ -229,9 +223,9 @@ class Vote:
     def from_json(cls, data: dict) -> "Vote":
         """Create Vote instance from JSON data"""
         vote = cls()
-        vote.voting_message_id = data.get("voting_message_id")
+        vote.voting_message_id = data.get("voting_message_id", None)
         vote.is_active = data.get("is_active", False)
         vote.voters = set(data.get("voters", []))  # Convert list back to set
         vote.votes = data.get("votes", {format: 0 for format in FORMATS})
-        vote.result = data.get("result")
+        vote.result = data.get("result", None)
         return vote

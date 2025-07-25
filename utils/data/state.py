@@ -114,7 +114,6 @@ class BotState:
             return
         try:
             with open(f"state/{state_filename}", "r") as state:
-                print(state.read())
                 data: dict = json.load(state)
                 if data:
                     mogi_manager.write_registry(
@@ -123,8 +122,30 @@ class BotState:
                     logger.info(msg=f"Existing state loaded from {state_filename}")
                 else:
                     logger.info(msg=f"No state in {state_filename} - content: <{data}>")
+        except json.JSONDecodeError as e:
+            error_logger.error(
+                f"JSON parsing error in {state_filename}: {e.msg} at line {e.lineno}, column {e.colno}"
+            )
+            error_logger.error(f"Error position: {e.pos}")
+            # Read the file content to show context around the error
+            try:
+                with open(f"state/{state_filename}", "r") as f:
+                    content = f.read()
+                    lines = content.split("\n")
+                    start_line = max(0, e.lineno - 3)
+                    end_line = min(len(lines), e.lineno + 2)
+                    error_logger.error("Context around error:")
+                    for i in range(start_line, end_line):
+                        marker = " --> " if i == e.lineno - 1 else "     "
+                        error_logger.error(f"{marker}{i+1}: {lines[i]}")
+            except Exception as context_error:
+                error_logger.error(f"Could not read file context: {context_error}")
         except Exception as e:
-            error_logger.error(f"Error loading saved state: {e}")
+            import traceback
+
+            error_logger.error(
+                f"Error loading saved state: {e}\n{traceback.format_exc()}"
+            )
 
     def load_manual_saved(self):
         if not os.path.exists("state/saved.json"):
