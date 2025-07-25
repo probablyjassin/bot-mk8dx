@@ -17,6 +17,9 @@ class password(commands.Cog):
     )
     @with_player()
     async def password(self, ctx: MogiApplicationContext):
+        passwords: dict | None = None
+        with open("state/passwords.json", "r", encoding="utf-8") as f:
+            passwords: dict | None = json.load(f)
 
         if _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER):
             if not _is_at_least_role(ctx, LoungeRole.ADMIN) and not (
@@ -42,10 +45,6 @@ class password(commands.Cog):
             return await ctx.respond(
                 "You're not in this mogi. You need to wait for a mogi to open and then join it (`/join`)"
             )
-
-        passwords: dict | None = None
-        with open("state/passwords.json", "r", encoding="utf-8") as f:
-            passwords: dict | None = json.load(f)
 
         pwd = passwords.get(ctx.mogi.room.name)
 
