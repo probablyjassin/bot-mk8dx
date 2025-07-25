@@ -3,7 +3,6 @@ from discord import Interaction
 from discord.ui import Button, View
 
 from models.MogiModel import Mogi
-from utils.command_helpers.vote_btn_callback import format_vote_button_callback
 
 
 def get_vote_button_style(format: int, player_count: int) -> discord.ButtonStyle:
@@ -12,33 +11,24 @@ def get_vote_button_style(format: int, player_count: int) -> discord.ButtonStyle
     return discord.ButtonStyle.gray
 
 
-def create_format_vote_button(label: str, mogi: Mogi) -> Button:
+def create_format_vote_button(mogi: Mogi, label: str, is_extra: bool = False) -> Button:
 
-    FORMAT_BUTTON_INT = int(label.lower()[0]) if label.lower()[0].isnumeric() else 1
+    FORMAT_BUTTON_INT = int(label[0]) if label[0].isnumeric() else 1
 
     async def custom_callback(interaction: Interaction):
-        print("---\n new vote")
-        print(label)
-        print(FORMAT_BUTTON_INT)
         vote_func = None
-        if label in ["mini", "random_teams"]:
+        if is_extra:
             vote_func = mogi.vote.cast_vote_extra
         else:
             vote_func = mogi.vote.cast_vote_format
-        print("function:")
-        print(vote_func.__name__)
-        response = await vote_func(
-            mogi=mogi, user_id=interaction.user.id, choice=label.lower()
-        )
-        print("response:")
-        print(response)
+        response = await vote_func(mogi=mogi, user_id=interaction.user.id, choice=label)
         message = f"Voted for {label}"
         if not response:
             message = "Can't vote on that"
-        await interaction.respond(message)
+        await interaction.respond(message, ephemeral=True)
 
     button_style = get_vote_button_style(FORMAT_BUTTON_INT, len(mogi.players))
-    if label in ["mini", "random_teams"]:
+    if label in ["Random_teams"]:
         button_style = discord.ButtonStyle.green
     button = Button(
         label=label,
@@ -69,15 +59,22 @@ def create_vote_button_view(
 
     view = VoteButtonView()
 
-    # Add main buttons (first row)
-    for label in button_labels:
-        view.add_item(create_format_vote_button(label, mogi))
+    for label in extra_buttons:
+        button = create_format_vote_button(mogi, label, is_extra=True)
+        # button.row = 1
+        view.add_item(button)
 
-    # Add extra buttons on new row if provided
-    if extra_buttons:
-        for label in extra_buttons:
-            button = create_format_vote_button(label.lower().replace(" ", "_"), mogi)
-            button.row = 1  # Force these buttons to the second row
-            view.add_item(button)
+    separator = Button(
+        label="^ Click this for RANDOM teams ^          ^",
+        style=discord.ButtonStyle.secondary,
+        disabled=True,
+        # row=2,
+    )
+    view.add_item(separator)
+
+    for label in button_labels:
+        button = create_format_vote_button(mogi, label)
+        # button.row = 4
+        view.add_item(button)
 
     return view

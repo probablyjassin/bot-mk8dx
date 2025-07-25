@@ -14,8 +14,6 @@ from utils.data.data_manager import data_manager, archive_type
 from utils.data.state import state_manager
 from utils.data.mogi_manager import mogi_manager
 
-from models.MiniMogiModel import MiniMogi
-
 from utils.command_helpers.update_server_passwords import fetch_server_passwords
 
 from config import HEALTHCHECK_URL, PASSWORD_API_URL, PASSWORD_API_PASS, LOG_CHANNEL_ID
@@ -126,7 +124,7 @@ class tasks(commands.Cog):
     async def check_mogi_durations(self):
         for channel_id, mogi in mogi_manager.read_registry().items():
             # Only check MiniMogis
-            if not isinstance(mogi, MiniMogi):
+            if not mogi.is_mini:
                 continue
             current_time = time.time()
             time_elapsed = current_time - mogi.started_at
