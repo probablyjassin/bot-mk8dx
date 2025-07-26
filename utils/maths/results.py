@@ -61,7 +61,10 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
     # Store the date of the results
     file = File(await create_table(ctx.mogi), filename="table.png")
     message = await ctx.results_channel.send(
-        content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
+        content=f"# Results - {time.strftime('%d.%m.%y')}\n"
+        f"Duration: {int((ctx.mogi.finished_at - ctx.mogi.started_at) / 60)} minutes"
+        f"{' | (MINI MOGI)' if ctx.mogi.is_mini else ''}",
+        file=file,
     )
 
     await ctx.respond("Results got posted in the results channel.")
