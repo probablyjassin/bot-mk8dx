@@ -22,7 +22,11 @@ def create_format_vote_button(mogi: Mogi, label: str, is_extra: bool = False) ->
         else:
             vote_func = mogi.vote.cast_vote_format
         response = await vote_func(mogi=mogi, user_id=interaction.user.id, choice=label)
+
         message = f"Voted for {label}"
+        if label == "Random Teams":
+            message += " (now also vote for the Teams Format you want!)"
+
         if not response:
             message = "Can't vote on that"
         await interaction.respond(message, ephemeral=True)
