@@ -27,7 +27,7 @@ class PlayerProfile:
     _mmr: int
     _history: list[int]
     _formats: dict[str, int] = field(
-        default_factory=lambda: {str(i): 0 for i in range(1, 7)}
+        default_factory=lambda: {str(i): 0 for i in range(7)}
     )
     _joined: int | None = None
 
@@ -54,7 +54,7 @@ class PlayerProfile:
         self._mmr = mmr
         self._history = history
         self._formats = (
-            formats if formats is not None else {str(i): 0 for i in range(1, 7)}
+            formats if formats is not None else {str(i): 0 for i in range(7)}
         )
         self._joined = joined
         self._disconnects = disconnects
