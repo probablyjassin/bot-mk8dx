@@ -91,9 +91,15 @@ class player(commands.Cog):
             )
 
         if getattr(player, "formats", None):
+            most_p_format: str = max(player.formats, key=player.formats.get)
+            name = "Mini Mogi (FFA)"
+            if most_p_format == "1":
+                name = "FFA"
+            elif int(most_p_format) >= 2:
+                name = f"{most_p_format}v{most_p_format}"
             embed.add_field(
                 name="Most played Format",
-                value=max(player.formats, key=player.formats.get),
+                value=name,
             )
 
         if getattr(player, "inactive", None):
