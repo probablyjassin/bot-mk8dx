@@ -1,4 +1,4 @@
-import time
+import time, math
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -23,6 +23,7 @@ class Mogi:
         channel_id (`int`): Integer ID of the channel where the Mogi lives.
         vote: (`Vote`): Vote object that encompasses the mechanics for picking the format.
         format (`int | None`): Integer representing the format of the Mogi (e.g., FFA, 2v2, etc.). Is `None` when the mogi hasn't started.
+        is_mini (`bool`): Bool, indicates if its a mini-mogi.
         room (`Room | None`): NOT_IMPLEMENTED_YET: Room object representing the Yuzu Server the mogi is played on. Is `None` when the mogi hasn't started.
         players (`list[PlayerProfile]`): List of player profiles participating in the Mogi.
         teams (`list[list[PlayerProfile]]`): List of List for every team with their players. In FFA, each sublist has only one player.
@@ -50,6 +51,7 @@ class Mogi:
     channel_id: int
     player_cap: int = 12
     format: int | None = None
+    is_mini: bool = False
     room: Room | None = None
     vote: Vote | None = None
 
@@ -157,32 +159,7 @@ class Mogi:
                             - 1
                         )
         except Exception as e:
-            print(
-                "Defaulted to old tablestring collect_points method because of errors"
-            )
             print(e)
-            all_points = {}
-            self.disconnections = 0
-            for line in tablestring.split("\n"):
-                line = line.replace("|", "+")
-                for player in self.players:
-                    if player.name in line:
-                        parts = [part.split("+") for part in line.split()]
-                        points = sum(
-                            [
-                                int(num)
-                                for part in parts
-                                for num in part
-                                if num.isdigit()
-                            ]
-                        )
-                        all_points[player.name] = points
-                        self.disconnections = (
-                            len(
-                                [num for part in parts for num in part if num.isdigit()]
-                            )
-                            - 1
-                        )
 
         team_points_list = []
         for team in self.teams:
@@ -195,6 +172,10 @@ class Mogi:
             team_points_list.append(team_points)
 
         self.collected_points = team_points_list
+        if self.is_mini:
+            self.collected_points = [
+                math.ceil(rating * 0.6) for rating in self.collected_points
+            ]
 
     def archive_mogi_data(self) -> None:
         """
@@ -235,6 +216,7 @@ class Mogi:
             "channel_id": self.channel_id,
             "player_cap": self.player_cap,
             "format": self.format,
+            "is_mini": self.is_mini,
             "vote": self.vote.to_json() if self.vote else None,
             "room": self.room.to_json() if self.room else None,
             "players": [player.to_json() for player in self.players],
@@ -266,6 +248,7 @@ class Mogi:
             channel_id=data["channel_id"],
             player_cap=data.get("player_cap", 12),
             format=data.get("format"),
+            is_mini=data.get("is_mini", False),
             vote=Vote.from_json(data.get("vote")),
             room=Room.from_json(data.get("room", None)),
             players=[
