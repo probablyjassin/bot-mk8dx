@@ -105,7 +105,7 @@ class register(commands.Cog):
                     "mmr": 2000,
                     "history": [],
                     "joined": round(time.time()),
-                    "formats": {str(i): 0 for i in range(1, 7)},
+                    "formats": {str(i): 0 for i in range(7)},
                 },
             )
         except Exception as e:
