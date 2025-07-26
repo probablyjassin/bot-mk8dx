@@ -186,7 +186,7 @@ class Mogi:
                 "started_at": self.started_at,
                 "finished_at": self.finished_at,
                 "player_ids": [player.discord_id for player in self.players],
-                "format": self.format,
+                "format": self.format if not self.is_mini else 0,
                 "subs": len(self.subs),
                 "results": self.mmr_results_by_group,
                 "disconnections": self.disconnections,
