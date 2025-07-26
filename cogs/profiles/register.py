@@ -90,7 +90,7 @@ class register(commands.Cog):
             )
 
         member: Member | User = ctx.user
-        if ctx.get_lounge_role("Lounge Player") not in member.roles:
+        if ctx.get_lounge_role("Lounge Player") in member.roles:
             return await ctx.respond(
                 "You already have the Lounge Player role"
                 "even though you don't have a player profile."

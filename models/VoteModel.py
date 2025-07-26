@@ -220,8 +220,10 @@ class Vote:
         }
 
     @classmethod
-    def from_json(cls, data: dict) -> "Vote":
+    def from_json(cls, data: dict | None) -> "Vote":
         """Create Vote instance from JSON data"""
+        if not data:
+            return None
         vote = cls()
         vote.voting_message_id = data.get("voting_message_id", None)
         vote.is_active = data.get("is_active", False)
