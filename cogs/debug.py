@@ -136,6 +136,7 @@ class debug(commands.Cog):
                 if amount > 0
             ]
         )
+        votes_str += f"\n Amount of Random Teams votes: {ctx.mogi.vote.extras['random_teams_votes']}\n"
         await ctx.respond(f"Votes: \n{votes_str}", ephemeral=True)
 
     @debug.command(name="list_mogis", description="print the mogi registry")
