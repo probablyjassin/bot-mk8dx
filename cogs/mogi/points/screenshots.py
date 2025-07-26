@@ -1,6 +1,6 @@
 import aiohttp
 from pathlib import Path
-from discord import slash_command, Option, Attachment, File
+from discord import slash_command, Option, Attachment, File, SlashCommandGroup
 from discord.ext import commands
 from pycord.multicog import subcommand
 
@@ -16,11 +16,12 @@ class screenshots(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @subcommand(group="points")
-    @slash_command(name="ss", description="Collect a screenshot (during mogi)")
+    ss = SlashCommandGroup("ss", "Screenshot management commands")
+
+    @ss.command(name="save", description="Save a screenshot (during mogi)")
     @is_mogi_manager()
     @is_mogi_in_progress()
-    async def ss(
+    async def save(
         self,
         ctx: MogiApplicationContext,
         image: Attachment = Option(Attachment, "paste the screenshot"),
