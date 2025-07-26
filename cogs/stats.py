@@ -47,7 +47,11 @@ class stats(commands.Cog):
         )
 
         key_to_format = {
-            int(format[0]) if format[0].isdigit() else 1: format for format in FORMATS
+            0: "Mini",
+            **{
+                int(format[0]) if format[0].isdigit() else 1: format
+                for format in FORMATS
+            },
         }
 
         formats_dict = {}
