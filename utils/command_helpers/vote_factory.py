@@ -28,7 +28,7 @@ def create_format_vote_button(mogi: Mogi, label: str, is_extra: bool = False) ->
         await interaction.respond(message, ephemeral=True)
 
     button_style = get_vote_button_style(FORMAT_BUTTON_INT, len(mogi.players))
-    if label in ["Random_teams"]:
+    if is_extra:
         button_style = discord.ButtonStyle.green
     button = Button(
         label=label,
@@ -59,22 +59,12 @@ def create_vote_button_view(
 
     view = VoteButtonView()
 
-    for label in extra_buttons:
-        button = create_format_vote_button(mogi, label, is_extra=True)
-        # button.row = 1
-        view.add_item(button)
-
-    separator = Button(
-        label="^ Click this for RANDOM teams ^          ^",
-        style=discord.ButtonStyle.secondary,
-        disabled=True,
-        # row=2,
-    )
-    view.add_item(separator)
-
     for label in button_labels:
         button = create_format_vote_button(mogi, label)
-        # button.row = 4
+        view.add_item(button)
+
+    for label in extra_buttons:
+        button = create_format_vote_button(mogi, label, is_extra=True)
         view.add_item(button)
 
     return view
