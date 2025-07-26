@@ -56,7 +56,7 @@ class stop(commands.Cog):
 
         async def send_vote():
             message = await ctx.respond(
-                f"Voting start!\nSelect a Format, or `Random Teams`first if you want it! {ctx.inmogi_role.mention}",
+                f"Voting start!\nSelect a Format, or `Random Teams` first if you want it! {ctx.inmogi_role.mention}",
                 view=create_vote_button_view(
                     FORMATS, ctx.mogi, extra_buttons=["Mini", "Random Teams"]
                 ),
