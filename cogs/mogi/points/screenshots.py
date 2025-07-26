@@ -1,4 +1,6 @@
-from discord import slash_command, Option, Attachment
+import aiohttp
+from pathlib import Path
+from discord import slash_command, Option, Attachment, File
 from discord.ext import commands
 from pycord.multicog import subcommand
 
@@ -33,16 +35,27 @@ class screenshots(commands.Cog):
         if not image.content_type or not image.content_type.startswith("image/"):
             return await ctx.respond("Please provide a valid image file.")
 
-        # Store the screenshot (you can modify this logic as needed)
-        if not hasattr(ctx.mogi, "screenshots"):
-            ctx.mogi.screenshots = []
+        # Create directory structure: state/screenshots/{channel_id}/
+        screenshots_dir = Path("state") / "screenshots" / str(ctx.channel.id)
+        screenshots_dir.mkdir(parents=True, exist_ok=True)
 
-        ctx.mogi.screenshots.append(
-            {"url": image.url, "filename": image.filename, "user": ctx.author.id}
-        )
+        # Create new filename with race information
+        new_filename = f"races_{races}_total_{total}_{image.filename}"
+        file_path = screenshots_dir / new_filename
 
-        await ctx.respond(f"Screenshot `{image.filename}` has been collected.")
+        try:
+            # Download and save the image
+            async with aiohttp.ClientSession() as session:
+                async with session.get(image.url) as response:
+                    if response.status == 200:
+                        with open(file_path, "wb") as f:
+                            f.write(await response.read())
+                    else:
+                        return await ctx.respond("Failed to download the image.")
 
+            await ctx.respond(
+                f"Screenshot `{image.filename}` has been saved as `{new_filename}`"
+            )
 
-def setup(bot: commands.Bot):
-    bot.add_cog(screenshots(bot))
+        except Exception as e:
+            await ctx.respond(f"Error saving screenshot: {str(e)}")
