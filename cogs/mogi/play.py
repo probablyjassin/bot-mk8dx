@@ -14,6 +14,7 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 from models.VoteModel import Vote
+from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 from utils.command_helpers.server_region import get_best_server
 
@@ -32,6 +33,8 @@ class stop(commands.Cog):
     @start.command(name="vote")
     @is_mogi_not_in_progress()
     async def vote(self, ctx: MogiApplicationContext):
+        await ctx.defer()
+
         if FLAGS["hold_mogis"]:
             return await ctx.respond(
                 "Because of maintenance, you cannot start mogis for just a few moments."
@@ -51,6 +54,27 @@ class stop(commands.Cog):
             return await ctx.respond(
                 "You can't start a mogi you aren't in", ephemeral=True
             )
+
+        # When the vote would just be FFA only anyway:
+        if len(ctx.mogi.players) in [7, 9, 11]:
+            if await confirmation(
+                ctx,
+                f"There are {len(ctx.mogi.players)} in the mogi. This command will start with FFA. Is that okay?",
+            ):
+                ctx.mogi.play(1)
+
+                lineup = ""
+                for i, team in enumerate(ctx.mogi.teams):
+                    lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
+
+                await ctx.respond(f"Mogi started!\n{lineup}")
+
+                # apply team roles
+                await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
+
+                return
+            else:
+                return await ctx.respond("Aborted.")
 
         ctx.mogi.vote = Vote()
 
