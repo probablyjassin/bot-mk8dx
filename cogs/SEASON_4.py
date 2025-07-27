@@ -5,6 +5,8 @@ from utils.data.data_manager import db_players
 from models.CustomMogiContext import MogiApplicationContext
 from utils.decorators.checks import is_admin
 
+from models.RankModel import Rank
+
 from discord import slash_command
 import json
 import discord
@@ -40,7 +42,12 @@ class season4(commands.Cog):
         all_players: list[dict] = list(players)
 
         season_3_role = get(ctx.guild.roles, name="Season 3 Player")
-        lounge_player_role = get(ctx.guild.roles, name="Lounge Player")
+        # lounge_player_role = get(ctx.guild.roles, name="Lounge Player")
+
+        rank_names = [rank.rankname for rank in Rank]
+        rank_roles = [
+            get(ctx.guild.roles, name=f"Lounge - {name}") for name in rank_names
+        ]
 
         updated_players = []
         for i, player in enumerate(all_players):
@@ -58,16 +65,23 @@ class season4(commands.Cog):
 
             updated_player = player.copy()
 
-            # Don't include players who never played
+            """ # Don't include players who never played
             if len(player["history"]) == 0:
                 if lounge_player_role in player_member.roles:
                     player_member.remove_roles(lounge_player_role)
-                continue
+                continue """
+            for role in rank_roles:
+                if role in player_member.roles:
+                    player_member.remove_roles(role)
 
             await player_member.add_roles(season_3_role, reason="Season 4 Launch")
 
             old_mmr = player.get("mmr")
             updated_player["mmr"] = reset_mmr_exponential(old_mmr)
+
+            new_rank = Rank.getRankByMMR(updated_player["mmr"]).rankname
+            new_rank_role = [role for role in rank_roles if new_rank in role.name][0]
+            player_member.add_roles(new_rank_role)
 
             updated_player["history"] = []
 
