@@ -2,7 +2,14 @@ import time
 import datetime
 import unicodedata
 
-from discord import slash_command, Member, User, Option, Color, AllowedMentions
+from discord import (
+    slash_command,
+    Member,
+    User,
+    Option,
+    Color,
+    AllowedMentions,
+)
 from discord.utils import get
 from discord.ext import commands
 
@@ -13,6 +20,7 @@ from utils.maths.readable_timediff import readable_timedelta
 
 from logger import setup_logger
 from utils.command_helpers.info_embed_factory import create_embed
+from utils.command_helpers.register_verifyer import VerificationView
 
 from bson.int64 import Int64
 from config import LOG_CHANNEL_ID
@@ -28,6 +36,7 @@ class register(commands.Cog):
         name="register",
         description="Register for playing in Lounge",
     )
+    @commands.cooldown(1, 10800, commands.BucketType.user)
     async def register(
         self,
         ctx: MogiApplicationContext,
@@ -92,11 +101,33 @@ class register(commands.Cog):
         member: Member | User = ctx.user
         if ctx.get_lounge_role("Lounge Player") in member.roles:
             return await ctx.respond(
-                "You already have the Lounge Player role"
-                "even though you don't have a player profile."
+                "You already have the Lounge Player role "
+                "even though you don't have a player profile. "
                 "Ask a moderator for help.",
                 ephemeral=True,
             )
+
+        # Create verification dropdown
+        embed = create_embed(
+            title="🔍 Registration Verification",
+            description=f"To complete your registration as **{username}**, please select the right option below:",
+            color=Color.blue(),
+        )
+
+        view = VerificationView(ctx.user.id)
+        await ctx.followup.send(embed=embed, view=view, ephemeral=False)
+
+        # Wait for verification result
+        verification_passed = await view.wait_for_answer()
+
+        if not verification_passed:
+            await ctx.followup.send(
+                "❌ Verification failed. Please read all the relevant channels FULLY and try again later.",
+                ephemeral=False,
+            )
+            return
+
+        # Verification passed - proceed with registration
         try:
             db_players.insert_one(
                 {
@@ -120,12 +151,16 @@ class register(commands.Cog):
         )
 
         # add roles
-        # await member.add_roles(
-        #    ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
-        # )
-        # await member.add_roles(
-        #    ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
-        # )
+        lounge_player_role = ctx.get_lounge_role("Lounge Player")
+        lounge_silver_role = ctx.get_lounge_role("Lounge - Silver")
+        if lounge_player_role in ctx.user.roles:
+            await member.add_roles(
+                ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
+            )
+        if lounge_silver_role in ctx.user.roles:
+            await member.add_roles(
+                ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
+            )
 
         # add region role if applicable
         for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
