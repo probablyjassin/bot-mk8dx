@@ -13,10 +13,15 @@ class VerificationSelect(Select):
 
         options = [
             SelectOption(label="I Understand", value="I Understand"),
-            SelectOption(label="I agree with this information", value="I Agree"),
-            SelectOption(label="I read all the rules", value="I will follow all rules"),
-            SelectOption(label="I read everything", value="I fully comply"),
-            SelectOption(label="I agree with everything", value="I read everything"),
+            SelectOption(
+                label="I agree with this information",
+                value="I agree with this information",
+            ),
+            SelectOption(label="I read all the rules", value="I read all the rules"),
+            SelectOption(label="I read everything", value="I read everything"),
+            SelectOption(
+                label="I agree with everything", value="I agree with everything"
+            ),
         ]
 
         super().__init__(
