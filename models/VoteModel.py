@@ -127,6 +127,8 @@ class Vote:
             len(mogi.players) * 0.75
         ) and format_int in [2, 3]
 
+        if winning_format == "mini":
+            mogi.is_mini = True
         mogi.play(format_int, random_teams)
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
