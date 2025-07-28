@@ -125,6 +125,37 @@ class season4(commands.Cog):
             file=discord.File(json_file, filename="season4_players.json"),
         )
 
+    @slash_command(name="season4_roles")
+    @is_admin()
+    async def season4_roles(self, ctx: MogiApplicationContext):
+        await ctx.response.defer()
+
+        s_4_db = client.get_database("season-4-lounge").get_collection("players")
+
+        all_players = s_4_db.find({})
+
+        rank_names = [rank.rankname for rank in Rank]
+        rank_roles = [
+            get(ctx.guild.roles, name=f"Lounge - {name}") for name in rank_names
+        ]
+
+        for i, player in enumerate(all_players):
+
+            if i % 20 == 0:
+                await ctx.send(f"Processing player {i}/{len(all_players)}...")
+
+            try:
+                player_member = await ctx.guild.fetch_member(player["discord_id"])
+            except:
+                await ctx.send(
+                    f"Skipped <@{player['discord_id']}> who is not on the server anymore."
+                )
+
+            new_rank = Rank.getRankByMMR(player["mmr"]).rankname
+            new_rank_role = [role for role in rank_roles if new_rank in role.name][0]
+            if new_rank_role not in player_member.roles:
+                await player_member.add_roles(new_rank_role)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(season4(bot))
