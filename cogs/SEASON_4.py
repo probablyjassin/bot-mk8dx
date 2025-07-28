@@ -100,6 +100,10 @@ class season4(commands.Cog):
         # Create file-like object
         json_file = StringIO(json_data)
 
+        # Save to file
+        with open("SEASON4.json", "w") as f:
+            f.write(json_data)
+
         # Send as file attachment
         await ctx.followup.send(
             f"Created {len(updated_players)} Season 4 players from {len(all_players)} original players.",
