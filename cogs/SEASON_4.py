@@ -74,14 +74,16 @@ class season4(commands.Cog):
                 if role in player_member.roles:
                     player_member.remove_roles(role)
 
-            await player_member.add_roles(season_3_role, reason="Season 4 Launch")
+            if season_3_role not in player_member.roles:
+                await player_member.add_roles(season_3_role, reason="Season 4 Launch")
 
             old_mmr = player.get("mmr")
             updated_player["mmr"] = reset_mmr_exponential(old_mmr)
 
             new_rank = Rank.getRankByMMR(updated_player["mmr"]).rankname
             new_rank_role = [role for role in rank_roles if new_rank in role.name][0]
-            player_member.add_roles(new_rank_role)
+            if new_rank_role not in player_member.roles:
+                player_member.add_roles(new_rank_role)
 
             updated_player["history"] = []
 
