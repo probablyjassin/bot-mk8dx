@@ -55,7 +55,7 @@ class rooms(commands.Cog):
 
         if not ctx.mogi:
             title = "No mogi"
-        elif ctx.mogi.isVoting:
+        elif ctx.mogi.vote:
             title = f"Voting: {len(ctx.mogi.players)}"
         elif not ctx.mogi.isPlaying:
             title = f"Gathering: {len(ctx.mogi.players)}"

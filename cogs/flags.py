@@ -2,8 +2,7 @@ from discord import slash_command, Interaction, Embed, ButtonStyle, Color
 from discord.ext import commands
 from discord.ui import View, Button
 
-from utils.data.flags import debug_feature_flags
-
+from config import FLAGS
 
 class FlagButton(Button):
     def __init__(self, flag_name: str, is_enabled: bool):
@@ -54,7 +53,7 @@ class FlagsView(View):
 class flags(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.debug_flags = debug_feature_flags
+        self.debug_flags = FLAGS
 
     @slash_command(name="flags", description="View and toggle bot flags")
     async def show_flags(self, ctx):

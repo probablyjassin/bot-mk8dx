@@ -33,6 +33,7 @@ async def apply_mmr(mogi: Mogi) -> None:
                 {
                     "$set": {"mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1},
                     "$push": {"history": entry["delta"]},
+                    "$inc": {f"formats.{'0' if mogi.is_mini else str(mogi.format)}": 1},
                 },
                 upsert=False,
             )

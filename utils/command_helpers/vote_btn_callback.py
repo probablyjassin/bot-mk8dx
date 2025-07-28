@@ -17,7 +17,7 @@ async def format_vote_button_callback(
 
     # Check if the user can vote
     if not (
-        mogi.isVoting
+        mogi.vote
         and len(mogi.players) >= FORMAT_BUTTON_INT
         and len(mogi.players) % FORMAT_BUTTON_INT == 0
         and (interaction.user.id in [player.discord_id for player in mogi.players])
@@ -27,7 +27,7 @@ async def format_vote_button_callback(
 
     # cast vote
     async with voters_lock:
-        mogi.votes[label.lower()] += 1
+        mogi.vote.votes[label] += 1
         mogi.voters.append(interaction.user.id)
 
         # respond
@@ -37,19 +37,21 @@ async def format_vote_button_callback(
         ) """
 
         # check if vote is decided
-        all_vote_counts = sorted(mogi.votes.values(), reverse=True)
+        all_vote_counts = sorted(mogi.vote.votes.values(), reverse=True)
         second_highest_votes = all_vote_counts[1] if len(all_vote_counts) > 1 else 0
 
-        isDecided = len(mogi.voters) >= len(mogi.players) or max(
-            mogi.votes.values()
-        ) > (second_highest_votes + (len(mogi.players) - len(mogi.voters)))
+        isDecided = len(mogi.vote.voters) >= len(mogi.players) or max(
+            mogi.vote.votes.values()
+        ) > (second_highest_votes + (len(mogi.players) - len(mogi.vote.voters)))
 
         if not isDecided:
             return
 
         # get winning format
-        max_score = max(mogi.votes.values())
-        winners = [player for player, score in mogi.votes.items() if score == max_score]
+        max_score = max(mogi.vote.votes.values())
+        winners = [
+            player for player, score in mogi.vote.votes.items() if score == max_score
+        ]
 
         MOGI_FORMAT = None
         FORMAT_STR = None

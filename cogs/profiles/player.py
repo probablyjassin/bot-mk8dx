@@ -90,6 +90,18 @@ class player(commands.Cog):
                 value=", ".join(map(str, player.history[-5:])),
             )
 
+        if getattr(player, "formats", None):
+            most_p_format: str = max(player.formats, key=player.formats.get)
+            name = "Mini Mogi (FFA)"
+            if most_p_format == "1":
+                name = "FFA"
+            elif int(most_p_format) >= 2:
+                name = f"{most_p_format}v{most_p_format}"
+            embed.add_field(
+                name="Most played Format",
+                value=name,
+            )
+
         if getattr(player, "inactive", None):
             embed.add_field(name="Archived", value="Account is not active")
 
