@@ -1,4 +1,4 @@
-import time
+import time, math
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -176,7 +176,7 @@ class Mogi:
         print(self.is_mini)
         if self.is_mini:
             self.collected_points = [
-                round(rating * 0.6) for rating in self.collected_points
+                math.floor(rating * 0.6) for rating in self.collected_points
             ]
         print(self.collected_points)
 
