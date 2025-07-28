@@ -72,7 +72,7 @@ class season4(commands.Cog):
                 continue """
             for role in rank_roles:
                 if role in player_member.roles:
-                    player_member.remove_roles(role)
+                    await player_member.remove_roles(role)
 
             if season_3_role not in player_member.roles:
                 await player_member.add_roles(season_3_role, reason="Season 4 Launch")
