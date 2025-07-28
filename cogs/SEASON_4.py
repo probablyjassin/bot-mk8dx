@@ -83,7 +83,7 @@ class season4(commands.Cog):
             new_rank = Rank.getRankByMMR(updated_player["mmr"]).rankname
             new_rank_role = [role for role in rank_roles if new_rank in role.name][0]
             if new_rank_role not in player_member.roles:
-                player_member.add_roles(new_rank_role)
+                await player_member.add_roles(new_rank_role)
 
             updated_player["history"] = []
 
