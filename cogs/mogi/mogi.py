@@ -8,11 +8,11 @@ from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 
 from utils.decorators.checks import is_mogi_not_in_progress, is_mogi_open, is_admin
-from utils.data.flags import debug_feature_flags
 from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.team_roles import remove_team_roles
 from utils.command_helpers.find_player import get_guild_member
 
+from config import FLAGS
 
 class mogi(commands.Cog):
     def __init__(self, bot):
@@ -21,7 +21,7 @@ class mogi(commands.Cog):
 
     @slash_command(name="open", description="Open a mogi")
     async def open(self, ctx: MogiApplicationContext):
-        if debug_feature_flags["hold_mogis"]:
+        if FLAGS["hold_mogis"]:
             return await ctx.respond(
                 "Because of maintenance, you cannot open mogis for just a few moments."
             )
@@ -89,11 +89,11 @@ class mogi(commands.Cog):
         current_mogi_channel_id: int = ctx.mogi.channel_id
 
         await ctx.send(f"<#{current_mogi_channel_id}> => {to_channel.mention}")
-        mogi_manager.mogi_registry[to_channel.id] = mogi_manager.mogi_registry[
-            current_mogi_channel_id
-        ]
+
+        all_mogis_dicts = mogi_manager.read_registry().items()
+        all_mogis_dicts[to_channel.id] = all_mogis_dicts[current_mogi_channel_id]
         ctx.mogi.channel_id = to_channel.id
-        del mogi_manager.mogi_registry[current_mogi_channel_id]
+        del all_mogis_dicts[current_mogi_channel_id]
         await ctx.respond(
             f"# This mogi has been moved to <#{ctx.mogi.channel_id}>",
         )

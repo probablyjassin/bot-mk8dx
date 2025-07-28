@@ -7,6 +7,8 @@ from utils.maths.mmr_algorithm import calculate_mmr
 from utils.maths.placements import get_placements_from_scores
 from utils.maths.table import create_table
 
+from config import FORMATS
+
 
 async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
     if not tablestring:
@@ -42,7 +44,7 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
     )
 
     # apply custom mmr scaling
-    results = [math.ceil(rating * 1.2) if rating > 0 else rating for rating in results]
+    results = [math.ceil(rating * 1.1) if rating > 0 else rating for rating in results]
 
     # store the results in the mogi, extended for every player
     for delta in results:
@@ -58,10 +60,17 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
         )
         return False
 
+    key_to_format = {
+        int(format[0]) if format[0].isdigit() else 1: format for format in FORMATS
+    }
+
     # Store the date of the results
     file = File(await create_table(ctx.mogi), filename="table.png")
     message = await ctx.results_channel.send(
-        content=f"# Results - {time.strftime('%d.%m.%y')}", file=file
+        content=f"# Results - {time.strftime('%d.%m.%y')}\n"
+        f"Duration: {int((ctx.mogi.finished_at - ctx.mogi.started_at) / 60)} minutes"
+        f"{' | (MINI MOGI)' if ctx.mogi.is_mini else '(' + key_to_format[ctx.mogi.format] + ')'}",
+        file=file,
     )
 
     await ctx.respond("Results got posted in the results channel.")

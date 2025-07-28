@@ -8,6 +8,8 @@ from utils.command_helpers.info_embed_factory import create_embed
 from datetime import datetime
 from collections import Counter
 
+from config import FORMATS
+
 
 class stats(commands.Cog):
     def __init__(self, bot):
@@ -45,11 +47,11 @@ class stats(commands.Cog):
         )
 
         key_to_format = {
-            1: "FFA",
-            2: "2v2",
-            3: "3v3",
-            4: "4v4",
-            6: "6v6",
+            0: "Mini",
+            **{
+                int(format[0]) if format[0].isdigit() else 1: format
+                for format in FORMATS
+            },
         }
 
         formats_dict = {}

@@ -1,4 +1,9 @@
-from discord import slash_command, SlashCommandGroup, AllowedMentions, Option
+from discord import (
+    slash_command,
+    SlashCommandGroup,
+    AllowedMentions,
+    Option,
+)
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
@@ -8,9 +13,12 @@ from utils.decorators.checks import (
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
+from models.VoteModel import Vote
+from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 from utils.command_helpers.server_region import get_best_server
-from utils.data.flags import debug_feature_flags
+
+from config import FORMATS, FLAGS
 
 
 class stop(commands.Cog):
@@ -25,13 +33,15 @@ class stop(commands.Cog):
     @start.command(name="vote")
     @is_mogi_not_in_progress()
     async def vote(self, ctx: MogiApplicationContext):
-        if debug_feature_flags["hold_mogis"]:
+        await ctx.defer()
+
+        if FLAGS["hold_mogis"]:
             return await ctx.respond(
                 "Because of maintenance, you cannot start mogis for just a few moments."
             )
 
         # not enough players
-        if len(ctx.mogi.players) <= 6 and not debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) <= 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -45,25 +55,72 @@ class stop(commands.Cog):
                 "You can't start a mogi you aren't in", ephemeral=True
             )
 
-        ctx.mogi.isVoting = True
+        # When the vote would just be FFA only anyway:
+        if len(ctx.mogi.players) in [7, 9, 11]:
+            if await confirmation(
+                ctx,
+                f"There are {len(ctx.mogi.players)} in the mogi. This command will start with FFA. Is that okay?",
+            ):
+                ctx.mogi.play(1)
 
-        view = create_vote_button_view(["FFA", "2v2", "3v3", "4v4", "6v6"], ctx.mogi)
-        message = await ctx.respond(
-            f"Voting start!\n {ctx.inmogi_role.mention}",
-            view=view,
-            allowed_mentions=AllowedMentions(roles=True),
+                lineup = ""
+                for i, team in enumerate(ctx.mogi.teams):
+                    lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
+
+                await ctx.respond(f"Mogi started!\n{lineup}")
+
+                # apply team roles
+                await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
+
+                return
+            else:
+                return await ctx.respond("Aborted.")
+
+        ctx.mogi.vote = Vote()
+
+        async def send_vote():
+            message = await ctx.respond(
+                f"Voting start!\nSelect a Format, or `Random Teams` first if you want it! {ctx.inmogi_role.mention}",
+                view=create_vote_button_view(
+                    FORMATS, ctx.mogi, extra_buttons=["Mini", "Random Teams"]
+                ),
+                allowed_mentions=AllowedMentions(roles=True),
+            )
+            response = await message.original_response()
+            ctx.mogi.vote.voting_message_id = response.id
+
+        async def pick_server():
+            if not ctx.mogi.room:
+                best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+                ctx.mogi.room = best_server
+            await ctx.channel.send(
+                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+            )
+
+        async def send_mogi_start(winning_format: str, random_teams: bool):
+            format_int: int = (
+                int(winning_format[0]) if winning_format[0].isdigit() else 1
+            )
+
+            # Create the lineup message by teams
+            lineup = ""
+            for i, team in enumerate(ctx.mogi.teams):
+                lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
+
+            # Send the lineup, show the mogi has started
+            await ctx.send(
+                f"# Mogi starting!\n## Format: {'RANDOM' if random_teams and format_int != 1 else ''} {winning_format.upper()} Mogi\n### Lineup:\n{lineup}"
+            )
+
+        ctx.mogi.vote.add_setup_handler(send_vote)
+        ctx.mogi.vote.add_setup_handler(pick_server)
+
+        ctx.mogi.vote.add_cleanup_handler(send_mogi_start)
+        ctx.mogi.vote.add_cleanup_handler(
+            lambda *args, **kwargs: apply_team_roles(ctx=ctx, mogi=ctx.mogi)
         )
-        response = await message.original_response()
-        ctx.mogi.voting_message_id = response.id
 
-        # put the channel in slowmode during vote
-        await ctx.channel.edit(slowmode_delay=15)
-
-        # pick the server to play on
-        if not ctx.mogi.room:
-            best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
-            ctx.mogi.room = best_server
-        await ctx.channel.send(f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`")
+        await ctx.mogi.vote.start()
 
     @start.command(name="force")
     @is_mogi_not_in_progress()
@@ -71,16 +128,16 @@ class stop(commands.Cog):
     async def force(
         self,
         ctx: MogiApplicationContext,
-        format: str = Option(str, choices=["FFA", "2v2", "3v3", "4v4", "6v6"]),
+        format: str = Option(str, choices=FORMATS),
     ):
         # no mogi open
         if not ctx.mogi:
             return await ctx.respond("No open mogi in this channel", ephemeral=True)
         # mogi already started
-        if ctx.mogi.isPlaying or ctx.mogi.isVoting:
+        if ctx.mogi.isPlaying or ctx.mogi.vote:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
-        if len(ctx.mogi.players) < 6 and not debug_feature_flags["no_min_players"]:
+        if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
@@ -109,14 +166,14 @@ class stop(commands.Cog):
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
 
-        ctx.mogi.stop()
-        if ctx.mogi.voting_message_id:
+        if ctx.mogi.vote.voting_message_id:
             try:
                 await (
-                    await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+                    await ctx.channel.fetch_message(ctx.mogi.vote.voting_message_id)
                 ).delete()
             except:
                 pass
+        ctx.mogi.stop()
         await ctx.respond("Mogi has been stopped")
 
         # disable slowmode
@@ -129,20 +186,20 @@ class stop(commands.Cog):
     @is_mogi_in_progress()
     async def votes(self, ctx: MogiApplicationContext):
 
-        if not ctx.mogi.voting_message_id or not ctx.mogi.isVoting:
+        if not ctx.mogi.vote.voting_message_id or not ctx.mogi.vote:
             return await ctx.respond("No vote found")
 
-        if len(ctx.mogi.players) == ctx.mogi.voters:
+        if len(ctx.mogi.players) == ctx.mogi.vote.voters:
             return await ctx.respond("All players have voted")
 
         not_voted_str = ""
 
-        if debug_feature_flags["show_votes"]:
-            most_votes = max(ctx.mogi.votes.values())
+        if FLAGS["show_votes"]:
+            most_votes = max(ctx.mogi.vote.votes.values())
             max_votes = [
                 key
-                for key in ctx.mogi.votes.keys()
-                if ctx.mogi.votes[key] == most_votes
+                for key in ctx.mogi.vote.votes.keys()
+                if ctx.mogi.vote.votes[key] == most_votes
             ]
             if max_votes:
                 not_voted_str += "Most voted so far:\n"
@@ -150,8 +207,8 @@ class stop(commands.Cog):
                     not_voted_str += key + "\n"
                 runner_ups = [
                     key
-                    for key in ctx.mogi.votes.keys()
-                    if ctx.mogi.votes[key] == most_votes - 1
+                    for key in ctx.mogi.vote.votes.keys()
+                    if ctx.mogi.vote.votes[key] == most_votes - 1
                 ]
                 if runner_ups:
                     not_voted_str += "\nRunner ups:\n"
@@ -162,12 +219,14 @@ class stop(commands.Cog):
         not_voted_str += "Missing votes from:\n"
         hasnt_voted = []
         for player in ctx.mogi.players:
-            if player.discord_id not in ctx.mogi.voters:
+            if player.discord_id not in ctx.mogi.vote.voters:
                 hasnt_voted.append(f"<@{player.discord_id}>")
 
         not_voted_str += "\n".join(hasnt_voted)
 
-        voting_message = await ctx.channel.fetch_message(ctx.mogi.voting_message_id)
+        voting_message = await ctx.channel.fetch_message(
+            ctx.mogi.vote.voting_message_id
+        )
 
         await ctx.respond(
             f"{not_voted_str}\n\n{voting_message.jump_url}\nClick the above link to go to the vote!",

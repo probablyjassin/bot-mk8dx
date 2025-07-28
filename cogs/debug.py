@@ -40,7 +40,7 @@ class debug(commands.Cog):
     @is_admin()
     async def restart(self, ctx: MogiApplicationContext):
         for mogi in mogi_manager.read_registry().values():
-            if mogi.isVoting:
+            if mogi.vote:
                 return await ctx.respond(
                     "At least one mogi is voting right now. Not restarting to not interrupt it."
                 )
@@ -132,10 +132,11 @@ class debug(commands.Cog):
         votes_str = "\n".join(
             [
                 f"{format}: {amount}"
-                for format, amount in ctx.mogi.votes.items()
+                for format, amount in ctx.mogi.vote.votes.items()
                 if amount > 0
             ]
         )
+        votes_str += f"\n Amount of Random Teams votes: {ctx.mogi.vote.extras['random_teams_votes']}\n"
         await ctx.respond(f"Votes: \n{votes_str}", ephemeral=True)
 
     @debug.command(name="list_mogis", description="print the mogi registry")

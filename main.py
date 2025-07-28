@@ -18,7 +18,6 @@ from models.CustomMogiContext import MogiApplicationContext
 
 
 logger = setup_logger(__name__)
-SAFE_MODE = False
 
 
 class YuzuLoungeBot(Bot):
@@ -87,8 +86,13 @@ def load_cogs():
                 extension = (
                     cog_path[2:].replace("/", ".").replace("\\", ".").replace(".py", "")
                 )
-                bot.load_extension(extension)
-                print(f"Loaded {extension}")
+                try:
+                    bot.load_extension(extension)
+                    print(f"Loaded {extension}")
+                except Exception as e:
+                    print(f"Failed to load {extension}: {e}")
+                    error_logger.error(f"Failed to load {extension}:{e}", exc_info=True)
+                    raise
     logger.debug("*Finished loading extensions*")
 
 
@@ -109,7 +113,7 @@ def main():
         load_cogs()
     except Exception as e:
         logger.error("Failed to load extensions, starting in safe mode.")
-        error_logger.error("Failed to load extensions: %s", e)
+        error_logger.error("Failed to load extensions: %s", e, exc_info=True)
         load_safe_mode()
 
     bot.run(DISCORD_TOKEN)

@@ -122,7 +122,7 @@ class list_mogi(commands.Cog):
 
         await ctx.respond(
             list_of_players,
-            ephemeral=ctx.mogi.isVoting,
+            ephemeral=ctx.mogi.vote,
             allowed_mentions=AllowedMentions.none(),
         )
 

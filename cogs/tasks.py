@@ -4,10 +4,12 @@ import random
 import json
 
 import requests
-from datetime import datetime, timezone, time, timedelta
+from datetime import datetime, timezone, timedelta
+from datetime import time as datetime_time
 
-from discord import Activity, ActivityType, Status
+from discord import Activity, ActivityType, Status, AllowedMentions
 from discord.ext import commands, tasks
+from discord.utils import get
 
 from utils.data.data_manager import data_manager, archive_type
 from utils.data.state import state_manager
@@ -62,7 +64,7 @@ class tasks(commands.Cog):
         state_manager.save_state()
 
     @tasks.loop(
-        time=time(
+        time=datetime_time(
             hour=22,
             minute=0,
             second=0,
@@ -108,7 +110,7 @@ class tasks(commands.Cog):
             await log_channel.send(f"💾 Error sending database backup log: `{e}`")
 
     @tasks.loop(
-        time=time(
+        time=datetime_time(
             hour=7,
             minute=30,
             second=0,
@@ -117,6 +119,30 @@ class tasks(commands.Cog):
     )
     async def get_updated_passwords(self):
         await fetch_server_passwords(self.bot)
+
+    # For MiniMogis: Periodically check their duration and end them if applicable
+    @tasks.loop(seconds=60)
+    async def check_mogi_durations(self):
+        for channel_id, mogi in mogi_manager.read_registry().items():
+            # Only check MiniMogis
+            if not mogi.is_mini:
+                continue
+            current_time = time.time()
+            time_elapsed = current_time - mogi.started_at
+            # Don't include already finished Mogis
+            if mogi.finished_at:
+                continue
+
+            if time_elapsed >= 2400:  # 40+ minutes
+                mogi_channel = await self.bot.fetch_channel(channel_id)
+                inmogi_role = get(mogi_channel.guild.roles, name="InMogi")
+
+                await mogi_channel.send(
+                    f"# {inmogi_role.mention} Times up Mini Mogi joever guys ggwp!!!!",
+                    allowed_mentions=AllowedMentions(roles=True),
+                )
+
+                mogi.finished_at = time.time()
 
 
 def setup(bot: commands.Bot):

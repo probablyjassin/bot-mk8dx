@@ -53,7 +53,7 @@ def with_player(
 
             # Make sure player is not already in a mogi (including in another channel)
             if assert_not_in_mogi:
-                for mogi in mogi_manager.mogi_registry.values():
+                for mogi in mogi_manager.read_registry().values():
                     if ctx.player in mogi.players:
                         if mogi.channel_id == ctx.channel.id:
                             return await ctx.respond("You're already in this mogi")
@@ -120,7 +120,7 @@ def other_player(
 
             # Make sure player is not already in a mogi (including in another channel)
             if assert_not_in_mogi:
-                for mogi in mogi_manager.mogi_registry.values():
+                for mogi in mogi_manager._mogi_registry.values():
                     if ctx.player in mogi.players:
                         if mogi.channel_id == ctx.channel.id:
                             return await ctx.respond("Player already in this mogi")
