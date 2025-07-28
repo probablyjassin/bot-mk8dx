@@ -115,7 +115,7 @@ class register(commands.Cog):
         )
 
         view = VerificationView(ctx.user.id)
-        await ctx.followup.send(embed=embed, view=view, ephemeral=False)
+        await ctx.followup.send(embed=embed, view=view, ephemeral=True)
 
         # Wait for verification result
         verification_passed = await view.wait_for_answer()
@@ -123,7 +123,7 @@ class register(commands.Cog):
         if not verification_passed:
             await ctx.followup.send(
                 "❌ Verification failed. Please read all the relevant channels FULLY and try again later.",
-                ephemeral=False,
+                ephemeral=True,
             )
             return
 
@@ -142,7 +142,7 @@ class register(commands.Cog):
         except Exception as e:
             return await ctx.respond(
                 f"Some error occured creating your player record. Please ask a moderator: {e}",
-                ephemeral=False,
+                ephemeral=True,
             )
 
         # write to logfile
