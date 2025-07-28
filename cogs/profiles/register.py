@@ -153,11 +153,11 @@ class register(commands.Cog):
         # add roles
         lounge_player_role = ctx.get_lounge_role("Lounge Player")
         lounge_silver_role = ctx.get_lounge_role("Lounge - Silver")
-        if lounge_player_role in ctx.user.roles:
+        if lounge_player_role not in ctx.user.roles:
             await member.add_roles(
                 ctx.get_lounge_role("Lounge Player"), reason="Registered for Lounge"
             )
-        if lounge_silver_role in ctx.user.roles:
+        if lounge_silver_role not in ctx.user.roles:
             await member.add_roles(
                 ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
             )
