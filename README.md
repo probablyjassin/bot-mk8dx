@@ -2,7 +2,7 @@
 
 ![MK8DX-Lounge Bot GitHub Banner](https://github.com/mk8dx-yuzu/mk8dx-bot/assets/56404895/8aaf00d2-d093-4b9a-a5bc-946754b996d2)
 
-## What does this bot do?
+# What does this bot do?
 
 - let people register to the Leaderboard
 - let them join Mario Kart events
@@ -10,6 +10,7 @@
 - collect their points
 - calculate their new MMR
 - store all this data in a mongodb database
+- SO much more under the hood
 
 ## How do I set it up?
 
@@ -28,81 +29,61 @@ docker compose up -d
 
 That's it! Uncomment the [docker watchtower](https://github.com/containrrr/watchtower) section in the `docker-compose.yml` to automatically fetch updates to restart the bot when changes are detected!
 
-# Season 3 of MK8DX-Lounge on Yuzu Online!
+# The 4th Season of MK8DX-Lounge on Yuzu Online!
+<img width="4000" height="2812" alt="Yuzu Online Lounge Season 4 Banner" src="https://github.com/user-attachments/assets/f0ab0af9-9e22-45ad-8e8c-c10fbfc13e7f" />
 
-<!-- Toggle one of these to your liking -->
-<img width="1920" alt="MK8DX-Lounge Season 3 Summary" src="https://github.com/user-attachments/assets/35ab3a13-1696-41ff-9869-e1f5a0ceee40">
-<!-- <img width="1920" alt="MK8DX-Lounge Season 3 Banner" src="https://github.com/user-attachments/assets/561c885e-aaa1-4130-a0c2-d0e9f46a8ccb"> -->
+We're happy to present the brand new season of Lounge to you! There is many new things we prepared for you this time!
 
-We're happy to present the next season of Lounge to you!
-There is tons of new things we prepared for you all
+## MMR reset
 
-### MMR reset
+The MMR reset is a *significant* one this time around!
+We used a method that **resets top rated players by a lot more** than lower rated ones.
 
-As with every new season, your MMR gets rolled back to some point.
-You will start the new season at the starting MMR of the rank below you, while you can't drop lower than 2500MMR.
-And of course, players below 2000MMR get reset back to that starting point!
+In general:
+**The further away you were from 2000, the more you got brought towards it!**
 
 Examples:
 
 ```diff
 bruv:
-- 8210MMR (Diamond Rank)
-+ 5100MMR (Platinum Rank)
+- 12000MMR (Master Rank)
++ 4935MMR (Gold Rank)
 
 darling:
-- 2097MMR (Silver Rank)
-+ 2000MMR (Silver Rank)
+- 3000MMR (Silver Rank)
++ 2415MMR (Silver Rank)
 
 woodlover:
 - 1MMR (Wood Rank)
-+ 2000MMR (Silver Rank)
++ 1255MMR (Silver Rank)
 ```
 
-### Full MMR History
+## MINI MOGIS!
+Some have been wishing for this **over a full year ago** in \#suggestions, and due to popular demand, we finally implemented it!
 
-We now store your entire history of mogis, not just the latest 30!
-This gives you move insight into your developements.
+#### How it works:
+When voting for the format, instead of picking FFA, 2v2, 3v3,... pick `Mini Mogi`!
 
-### Teams is back!
+Mini Mogis are always FFA, and they are **capped to 40 minutes of play time, or until you reach 6 races**! The Lounge Bot will also notify you in the mogi when the 40 minute threshold is reached.
 
-Teams haven't been working for the past few weeks, but now we've brought them back, fully functional and better than ever!
-This is because, we now have an algorithm that finds the most fair teams by player MMR!
+## RANDOM Teams!
+While voting for the format, you can now **press `Random Teams` before you pick**, to get **fully randomized teammates** if the vote ends in **2v2 or 3v3**!
 
-### /status and /room
+## Full Format History
+We now store which formats you played how often!
 
-The /status command that used to just say whether or not a mogi is open or not, and how many players are in, got completely overhauled!
-It's now more detailed with what is actually going on right now.
+## Many Bot optimizations
+The Lounge Bot has been steadily improving all the time. For this season we make lots of improvements to the general experience, like **getting rid of the unnecessary vote when you're starting with 7, 9 or 11 players**, and ma
 
-**And it now displays how many people are on the Yuzu Lounge server!**
 
-Together with this, there is also **/room** now, which lets you see the amount of players and the most played game on EU Main!
+## Ujuj's TABLE READER!
+The Table Reader has finished development and works! Over the next few days, we will work hard on getting implemented right into the bot to automize tables for you!
 
-### Full Bot rewrite
 
-The bot for playing mogis got a massive overhaul, both from the outside and the inside!
-I completely rewrote it to bring you tons of bugfixes and other improvements.
-We're calling it **Lounge8dx** now and touched up it's user profile.
+## Automated Abuse Protection!
+We implemented complex mechanics to flag and identify players who use VPNs, Proxies, and other kinds of Applications to try and use Alt-Accounts and such.
 
-The tables for MMR results and the leaderboard (new, sleek, modern colors)
-
-### Better DC and waiting handling
-
-We're now limiting how long people can take to join a started mogi (exceptions may apply) to improve the flow of the sessions.
-DCs are now better documented as well, to target their reasons and help fix them!
-
-### New Rank Icons
-
-Thanks to Dalos we have new, fresh looking icons for Ranks, enjoy!
-
-### For Mogi Managers:
-
-Collecting points is way easier now!
-Instead of up to 4 fragile modal windows, you now just feed the bot your tablestring you already used on Lorenzis Table Maker anyway!
-
-**And coming soon:**
-Ujuj is working on a visual reader for tables! When this is ready, this process will be even easier for you!
 
 ---
 
-#### That's it! Now enjoy Season 3 of MK8DX-Lounge on Yuzu Online!
+#### That's it! Now enjoy Season 4 of MK8DX-Lounge on Yuzu Online!
