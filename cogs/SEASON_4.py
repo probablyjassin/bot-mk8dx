@@ -132,7 +132,7 @@ class season4(commands.Cog):
 
         s_4_db = client.get_database("season-4-lounge").get_collection("players")
 
-        all_players = s_4_db.find({})
+        all_players = list(s_4_db.find({}))
 
         rank_names = [rank.rankname for rank in Rank]
         rank_roles = [
