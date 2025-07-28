@@ -61,9 +61,10 @@ class season4(commands.Cog):
             try:
                 player_member = await ctx.guild.fetch_member(player["discord_id"])
             except:
-                await ctx.send(
-                    f"Skipped <@{player['discord_id']}> who is not on the server anymore."
-                )
+                if i % 20 == 0:
+                    await ctx.send(
+                        f"Skipped <@{player['discord_id']}> who is not on the server anymore."
+                    )
                 continue
 
             updated_player = player.copy()
@@ -73,6 +74,7 @@ class season4(commands.Cog):
                 if lounge_player_role in player_member.roles:
                     player_member.remove_roles(lounge_player_role)
                 continue """
+
             for role in rank_roles:
                 if role in player_member.roles:
                     await player_member.remove_roles(role)
