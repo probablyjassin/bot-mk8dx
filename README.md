@@ -59,7 +59,7 @@ woodlover:
 ```
 
 ## MINI MOGIS!
-Some have been wishing for this **over a full year ago** in \#suggestions, and due to popular demand, we finally implemented it!
+Some have been wishing for this **over a full year ago** in \#suggestions, and due to popular demand, we finally implemented it! Furthermore, MMR gains/losses are reduced to 60%
 
 #### How it works:
 When voting for the format, instead of picking FFA, 2v2, 3v3,... pick `Mini Mogi`!
