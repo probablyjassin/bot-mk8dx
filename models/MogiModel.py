@@ -1,4 +1,4 @@
-import time, math
+import time
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -174,7 +174,7 @@ class Mogi:
         self.collected_points = team_points_list
         if self.is_mini:
             self.collected_points = [
-                math.ceil(rating * 0.6) for rating in self.collected_points
+                round(rating * 0.6) for rating in self.collected_points
             ]
 
     def archive_mogi_data(self) -> None:
