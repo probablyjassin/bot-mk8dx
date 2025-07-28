@@ -47,6 +47,8 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
 
     # apply custom mmr scaling
     results = [math.ceil(rating * 1.1) if rating > 0 else rating for rating in results]
+    if ctx.mogi.is_mini:
+        results = [math.floor(rating * 0.6) for rating in results]
 
     # store the results in the mogi, extended for every player
     for delta in results:

@@ -172,13 +172,6 @@ class Mogi:
             team_points_list.append(team_points)
 
         self.collected_points = team_points_list
-        print(self.collected_points)
-        print(self.is_mini)
-        if self.is_mini:
-            self.collected_points = [
-                math.floor(rating * 0.6) for rating in self.collected_points
-            ]
-        print(self.collected_points)
 
     def archive_mogi_data(self) -> None:
         """
