@@ -1,7 +1,10 @@
 from discord.ext import commands
 from discord.utils import get
 
+from bson.int64 import Int64
+
 from utils.data.data_manager import db_players
+from utils.data._database import client
 from models.CustomMogiContext import MogiApplicationContext
 from utils.decorators.checks import is_admin
 
@@ -104,9 +107,19 @@ class season4(commands.Cog):
         with open("SEASON4.json", "w") as f:
             f.write(json_data)
 
+        # Write to MongoDB with discord_id as Int64
+        s_4_db = client.get_database("season-4-lounge").get_collection("players")
+        for player in updated_players:
+            # Ensure discord_id is stored as Int64
+            player["discord_id"] = Int64(player["discord_id"])
+
+        ctx.send("INSERTING INTO DB")
+        s_4_db.insert_many(updated_players)
+        ctx.send("SUCCESSFULLY INSERTED INTO DB")
+
         # Send as file attachment
         await ctx.followup.send(
-            f"Created {len(updated_players)} Season 4 players from {len(all_players)} original players.",
+            f"Created {len(updated_players)} Season 4 players from {len(all_players)} original players. Updated MongoDB.",
             file=discord.File(json_file, filename="season4_players.json"),
         )
 
