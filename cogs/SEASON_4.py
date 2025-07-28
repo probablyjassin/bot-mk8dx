@@ -85,7 +85,7 @@ class season4(commands.Cog):
 
             updated_player["history"] = []
 
-            if updated_player["disconnects"]:
+            if updated_player.get("disconnects"):
                 updated_player["disconnects"] = None
 
             updated_player["formats"] = {str(format): 0 for format in range(7)}
