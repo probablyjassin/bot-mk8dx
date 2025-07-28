@@ -34,6 +34,7 @@ class tasks(commands.Cog):
         self.change_activity.start()
         self.manage_state.start()
         self.daily_db_backup.start()
+        self.check_mogi_durations.start()
 
     @tasks.loop(seconds=60)
     async def ping_healthcheck(self):
