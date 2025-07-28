@@ -60,3 +60,7 @@ class screenshots(commands.Cog):
 
         except Exception as e:
             await ctx.respond(f"Error saving screenshot: {str(e)}")
+
+
+def setup(bot: commands.Bot):
+    bot.add_cog(screenshots(bot))
