@@ -91,6 +91,7 @@ def load_cogs():
                     print(f"Loaded {extension}")
                 except Exception as e:
                     print(f"Failed to load {extension}: {e}")
+                    error_logger.error(f"Failed to load {extension}:{e}", exc_info=True)
                     raise
     logger.debug("*Finished loading extensions*")
 
