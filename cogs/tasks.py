@@ -143,7 +143,7 @@ class tasks(commands.Cog):
                     allowed_mentions=AllowedMentions(roles=True),
                 )
 
-                mogi.finished_at = time.time()
+                mogi.finished_at = round(time.time())
 
 
 def setup(bot: commands.Bot):

@@ -11,7 +11,7 @@ from config import FORMATS
 
 
 async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
-    ctx.mogi.finished_at = time.time()
+    ctx.mogi.finished_at = round(time.time())
 
     if not tablestring:
         await ctx.respond("No tablestring found")
