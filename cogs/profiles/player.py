@@ -99,7 +99,7 @@ class player(commands.Cog):
                 name = f"{most_p_format}v{most_p_format}"
             embed.add_field(
                 name="Most played Format",
-                value=name if max(player.formats) > 0 else "None played yet",
+                value=name if max(player.formats.values()) > 0 else "None played yet",
             )
 
         if getattr(player, "inactive", None):
