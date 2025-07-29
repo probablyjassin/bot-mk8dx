@@ -165,7 +165,7 @@ class stop(commands.Cog):
     @is_mogi_in_progress()
     async def votes(self, ctx: MogiApplicationContext):
 
-        if not ctx.mogi.vote.voting_message_id or not ctx.mogi.vote:
+        if not ctx.mogi.vote:
             return await ctx.respond("No vote found")
 
         if len(ctx.mogi.players) == ctx.mogi.vote.voters:
@@ -203,12 +203,17 @@ class stop(commands.Cog):
 
         not_voted_str += "\n".join(hasnt_voted)
 
-        voting_message = await ctx.channel.fetch_message(
-            ctx.mogi.vote.voting_message_id
-        )
+        message = f"{not_voted_str}\n\n"
+
+        if ctx.mogi.vote.voting_message_id:
+            voting_message = await ctx.channel.fetch_message(
+                ctx.mogi.vote.voting_message_id
+            )
+            message += f"{voting_message.jump_url}\nClick the above link to go to the vote!"
+
 
         await ctx.respond(
-            f"{not_voted_str}\n\n{voting_message.jump_url}\nClick the above link to go to the vote!",
+            message,
         )
 
 
