@@ -21,6 +21,8 @@ class ErrorHandler(commands.Cog):
     async def on_application_command_error(
         self, ctx: MogiApplicationContext, error: DiscordException
     ):
+        error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
+
         # predicate check failures get handled in the command, ignore them here
         if isinstance(error, errors.CheckFailure):
             return
@@ -36,6 +38,7 @@ class ErrorHandler(commands.Cog):
                     f"You have failed to choose the correct option in the selection. Try again after {hours}h {minutes}m and read ⁠ℹ️ competitive and 📕 lounge-rules completely to understand which option is the correct option.",
                     ephemeral=True,
                 )
+                error_channel.send(f"ℹ️ {ctx.user.mention} failed to register")
                 return
 
         if isinstance(error, commands.errors.CommandOnCooldown):
@@ -54,7 +57,6 @@ class ErrorHandler(commands.Cog):
             f"An error occurred in {ctx.channel.name} by {ctx.author.display_name}",
             exc_info=error,
         )
-        error_channel = await self.bot.fetch_channel(LOG_CHANNEL_ID)
 
         if error_channel:
             await error_channel.send(
