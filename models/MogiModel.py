@@ -121,6 +121,7 @@ class Mogi:
         """
 
         self.vote = None
+        self.is_mini = False
         self.isPlaying = False
         self.format = None
         self.teams.clear()
