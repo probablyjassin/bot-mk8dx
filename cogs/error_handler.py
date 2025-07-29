@@ -38,7 +38,7 @@ class ErrorHandler(commands.Cog):
                     f"You have failed to choose the correct option in the selection. Try again after {hours}h {minutes}m and read ⁠ℹ️ competitive and 📕 lounge-rules completely to understand which option is the correct option.",
                     ephemeral=True,
                 )
-                error_channel.send(f"ℹ️ {ctx.user.mention} failed to register")
+                await error_channel.send(f"ℹ️ {ctx.user.mention} failed to register")
                 return
 
         if isinstance(error, commands.errors.CommandOnCooldown):
