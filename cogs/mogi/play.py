@@ -55,27 +55,6 @@ class stop(commands.Cog):
                 "You can't start a mogi you aren't in", ephemeral=True
             )
 
-        # When the vote would just be FFA only anyway:
-        if len(ctx.mogi.players) in [7, 9, 11]:
-            if await confirmation(
-                ctx,
-                f"There are {len(ctx.mogi.players)} in the mogi. This command will start with FFA. Is that okay?",
-            ):
-                ctx.mogi.play(1)
-
-                lineup = ""
-                for i, team in enumerate(ctx.mogi.teams):
-                    lineup += f"{i}. {', '.join([f'<@{player.discord_id}>' for player in team])}\n"
-
-                await ctx.respond(f"Mogi started!\n{lineup}")
-
-                # apply team roles
-                await apply_team_roles(ctx=ctx, mogi=ctx.mogi)
-
-                return
-            else:
-                return await ctx.respond("Aborted.")
-
         ctx.mogi.vote = Vote()
 
         async def send_vote():
