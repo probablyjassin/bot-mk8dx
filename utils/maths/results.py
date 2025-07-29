@@ -73,7 +73,7 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
     message = await ctx.results_channel.send(
         content=f"# Results - {time.strftime('%d.%m.%y')}\n"
         f"Duration: {int((ctx.mogi.finished_at - ctx.mogi.started_at) / 60)} minutes"
-        f"{' | (MINI MOGI)' if ctx.mogi.is_mini else '(' + key_to_format[ctx.mogi.format] + ')'}",
+        f"{' | MINI MOGI' if ctx.mogi.is_mini else ' | ' + key_to_format[ctx.mogi.format]}",
         file=file,
     )
 
