@@ -118,6 +118,8 @@ class Vote:
         """End the vote session"""
         if not self.is_active:
             return
+        
+        print(f"DEBUGGING - AMOUNT OF RANDOM TEAMS VOTES: {mogi.vote.extras['random_teams_votes']}")
 
         format_int: int = int(winning_format[0]) if winning_format[0].isdigit() else 1
 
