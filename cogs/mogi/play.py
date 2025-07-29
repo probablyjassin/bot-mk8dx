@@ -145,7 +145,7 @@ class stop(commands.Cog):
                 "You can't stop a mogi you aren't in", ephemeral=True
             )
 
-        if ctx.mogi.vote.voting_message_id:
+        if ctx.mogi.vote and ctx.mogi.vote.voting_message_id:
             try:
                 await (
                     await ctx.channel.fetch_message(ctx.mogi.vote.voting_message_id)
@@ -154,9 +154,6 @@ class stop(commands.Cog):
                 pass
         ctx.mogi.stop()
         await ctx.respond("Mogi has been stopped")
-
-        # disable slowmode
-        await ctx.channel.edit(slowmode_delay=0)
 
         # remove all team roles
         await remove_team_roles(ctx=ctx)
