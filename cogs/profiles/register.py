@@ -204,21 +204,6 @@ class register(commands.Cog):
                 allowed_mentions=AllowedMentions(roles=is_VERY_sus),
             )
 
-    @register.error
-    async def register_error(self, ctx: MogiApplicationContext, error: commands.CommandError):
-        """Local error handler for the register command."""
-        if isinstance(error, commands.CommandOnCooldown):
-            # Handle cooldown specifically for this command
-            remaining_time = error.retry_after
-            hours = int(remaining_time // 3600)
-            minutes = int((remaining_time % 3600) // 60)
-            
-            await ctx.respond(
-                f"You have failed to choose the correct option in the selection. Try again after {hours}h {minutes}m and read ⁠ℹ️ competitive and 📕 lounge-rules completely to understand which option is the correct option.",
-                ephemeral=True
-            )
-            return
-
 
 def setup(bot: commands.Bot):
     bot.add_cog(register(bot))
