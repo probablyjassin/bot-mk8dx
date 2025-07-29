@@ -36,7 +36,7 @@ class register(commands.Cog):
         name="register",
         description="Register for playing in Lounge",
     )
-    @commands.cooldown(1, 10800, commands.BucketType.user)
+    @commands.cooldown(1, 7200, commands.BucketType.user)
     async def register(
         self,
         ctx: MogiApplicationContext,
