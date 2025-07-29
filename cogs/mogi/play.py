@@ -107,7 +107,8 @@ class stop(commands.Cog):
     async def force(
         self,
         ctx: MogiApplicationContext,
-        format: str = Option(str, choices=FORMATS),
+        format: str = Option(str, choices=["Mini"] + FORMATS),
+        random_teams: bool = Option(bool, required=False)
     ):
         # no mogi open
         if not ctx.mogi:
@@ -119,7 +120,9 @@ class stop(commands.Cog):
         if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
-        ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1)
+        ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1, random_teams=random_teams)
+        if format == "Mini":
+            ctx.mogi.is_mini = True
 
         lineup = ""
         for i, team in enumerate(ctx.mogi.teams):
