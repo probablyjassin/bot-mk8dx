@@ -14,7 +14,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data._database import db_players, db_archived
+from utils.data._database import db_players, db_archived, client
 from utils.command_helpers.server_region import REGIONS
 from utils.maths.readable_timediff import readable_timedelta
 
@@ -63,6 +63,18 @@ class register(commands.Cog):
         if existingPlayer:
             return await ctx.respond(
                 "You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.",
+                ephemeral=True,
+            )
+
+        ## more or less temporary code for people who come back after the season reset
+        existingPlayer = (
+            client.get_database("season-3-lounge")
+            .get_collection("players")
+            .find_one({"discord_id": Int64(ctx.author.id)})
+        )
+        if existingPlayer:
+            return await ctx.respond(
+                "You played in Season 3 but left the server since. Please contact an Admin to get your Profile migrated",
                 ephemeral=True,
             )
 

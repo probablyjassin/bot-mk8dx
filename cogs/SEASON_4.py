@@ -3,43 +3,86 @@ from discord.utils import get
 
 from bson.int64 import Int64
 
-from utils.data.data_manager import db_players
 from utils.data._database import client
 from models.CustomMogiContext import MogiApplicationContext
 from utils.decorators.checks import is_admin
+from utils.data.data_manager import data_manager
 
 from models.RankModel import Rank
+from models.PlayerModel import PlayerProfile
 
-from discord import slash_command
+from discord import slash_command, Option, Member
 import json
 import discord
 from io import StringIO
+
+
+def reset_mmr_exponential(old_mmr: int) -> int:
+    base = 2000
+    scaling_factor = 1.2
+    exponent = 0.85
+
+    if old_mmr == base:
+        return base
+    elif old_mmr > base:
+        # Compress high MMRs downward
+        reduced = base + ((old_mmr - base) * scaling_factor) ** exponent
+    else:
+        # Pull low MMRs upward with mirrored logic
+        reduced = base - ((base - old_mmr) * scaling_factor) ** exponent
+
+    return round(reduced / 5) * 5
 
 
 class season4(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
+    @slash_command(name="migrate")
+    @is_admin()
+    async def migrate(
+        self,
+        ctx: MogiApplicationContext,
+        user: Member = Option(
+            Member, name="player", description="username | @ mention | discord_id"
+        ),
+    ):
+        season3_db = client.get_database("season-3-lounge").get_collection("players")
+        season4_db = client.get_database("season-4-lounge").get_collection("players")
+
+        ## make sure they dont already have a season 4 profile
+        if season4_db.find_one({"discord_id": Int64(user.id)}):
+            return await ctx.respond("Player already in the Season 4 Dataset")
+
+        existing_player: dict = season3_db.find_one({"discord_id": Int64(user.id)})
+        if not existing_player:
+            return await ctx.respond(
+                "Couldn't find this player in the Season 3 Database"
+            )
+
+        updated_player = existing_player.copy()
+
+        old_mmr = existing_player.get("mmr")
+        updated_player["mmr"] = reset_mmr_exponential(old_mmr)
+
+        updated_player["history"] = []
+
+        if updated_player.get("disconnects"):
+            updated_player["disconnects"] = None
+
+        updated_player["formats"] = {str(format): 0 for format in range(7)}
+
+        season4_db.insert_one(updated_player)
+
+        await ctx.respond("Migrated to Season 4")
+        await ctx.send(updated_player, ephemeral=True)
+
     @slash_command(name="season4")
     @is_admin()
     async def season4(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 
-        def reset_mmr_exponential(old_mmr: int) -> int:
-            base = 2000
-            scaling_factor = 1.2
-            exponent = 0.85
-
-            if old_mmr == base:
-                return base
-            elif old_mmr > base:
-                # Compress high MMRs downward
-                reduced = base + ((old_mmr - base) * scaling_factor) ** exponent
-            else:
-                # Pull low MMRs upward with mirrored logic
-                reduced = base - ((base - old_mmr) * scaling_factor) ** exponent
-
-            return round(reduced / 5) * 5
+        db_players = client.get_database("season-3-lounge").get_collection("players")
 
         players = db_players.find({})
         all_players: list[dict] = list(players)
