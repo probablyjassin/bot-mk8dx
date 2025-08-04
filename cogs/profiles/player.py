@@ -10,8 +10,6 @@ from utils.data.data_manager import data_manager, archive_type
 from datetime import datetime
 from bson.int64 import Int64
 
-from config import SEASON
-
 
 class player(commands.Cog):
     def __init__(self, bot):
@@ -27,18 +25,9 @@ class player(commands.Cog):
             description="defaults to yourself: username | @ mention | discord_id",
             required=False,
         ),
-        season: int = Option(
-            int,
-            name="season",
-            description="defaults to current season",
-            required=False,
-            default=SEASON,
-        ),
     ):
         player: PlayerProfile = data_manager.find_player(
-            query=searched_name or Int64(ctx.author.id),
-            archive=archive_type.INCLUDE,
-            season=season,
+            searched_name or Int64(ctx.author.id), archive=archive_type.INCLUDE
         )
 
         if not player:
