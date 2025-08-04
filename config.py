@@ -13,6 +13,7 @@ load_dotenv()
 ROOMS_CONFIG = []
 FORMATS = []
 FLAGS = {}
+SEASON = None
 
 try:
     with open("lounge.config", encoding="utf-8") as f:
@@ -20,6 +21,7 @@ try:
         ROOMS_CONFIG: list[dict] = data["rooms"]
         FORMATS: list[str] = data["formats"]
         FLAGS: dict[str, bool] = data["debug_feature_flags"]
+        SEASON: int = data["season"]
 except (json.JSONDecodeError, FileNotFoundError) as e:
     print(f"Errors loading lounge.config: {e}")
     sys.exit(1)
