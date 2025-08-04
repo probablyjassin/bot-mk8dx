@@ -58,6 +58,7 @@ class stop(commands.Cog):
         ctx.mogi.vote = Vote()
 
         async def send_vote():
+            ctx.mogi.isPlaying = True
             message = await ctx.respond(
                 f"Voting start!\nSelect a Format, or `Random Teams` first if you want it! {ctx.inmogi_role.mention}",
                 view=create_vote_button_view(
@@ -108,7 +109,7 @@ class stop(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         format: str = Option(str, choices=["Mini"] + FORMATS),
-        random_teams: bool = Option(bool, required=False)
+        random_teams: bool = Option(bool, required=False),
     ):
         # no mogi open
         if not ctx.mogi:
@@ -120,7 +121,9 @@ class stop(commands.Cog):
         if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
-        ctx.mogi.play(int(format[0]) if format[0].isnumeric() else 1, random_teams=random_teams)
+        ctx.mogi.play(
+            int(format[0]) if format[0].isnumeric() else 1, random_teams=random_teams
+        )
         if format == "Mini":
             ctx.mogi.is_mini = True
 
@@ -209,8 +212,9 @@ class stop(commands.Cog):
             voting_message = await ctx.channel.fetch_message(
                 ctx.mogi.vote.voting_message_id
             )
-            message += f"{voting_message.jump_url}\nClick the above link to go to the vote!"
-
+            message += (
+                f"{voting_message.jump_url}\nClick the above link to go to the vote!"
+            )
 
         await ctx.respond(
             message,

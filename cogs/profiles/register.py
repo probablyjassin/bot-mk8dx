@@ -14,7 +14,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data._database import db_players, db_archived
+from utils.data._database import db_players, db_archived, client
 from utils.command_helpers.server_region import REGIONS
 from utils.maths.readable_timediff import readable_timedelta
 
@@ -36,7 +36,7 @@ class register(commands.Cog):
         name="register",
         description="Register for playing in Lounge",
     )
-    @commands.cooldown(1, 10800, commands.BucketType.user)
+    @commands.cooldown(1, 7200, commands.BucketType.user)
     async def register(
         self,
         ctx: MogiApplicationContext,
@@ -63,6 +63,18 @@ class register(commands.Cog):
         if existingPlayer:
             return await ctx.respond(
                 "You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.",
+                ephemeral=True,
+            )
+
+        ## more or less temporary code for people who come back after the season reset
+        existingPlayer = (
+            client.get_database("season-3-lounge")
+            .get_collection("players")
+            .find_one({"discord_id": Int64(ctx.author.id)})
+        )
+        if existingPlayer:
+            return await ctx.respond(
+                "You played in Season 3 but left the server since. Please contact an Admin to get your Profile migrated",
                 ephemeral=True,
             )
 
@@ -203,21 +215,6 @@ class register(commands.Cog):
                 embed=embed,
                 allowed_mentions=AllowedMentions(roles=is_VERY_sus),
             )
-
-    @register.error
-    async def register_error(self, ctx: MogiApplicationContext, error: commands.CommandError):
-        """Local error handler for the register command."""
-        if isinstance(error, commands.CommandOnCooldown):
-            # Handle cooldown specifically for this command
-            remaining_time = error.retry_after
-            hours = int(remaining_time // 3600)
-            minutes = int((remaining_time % 3600) // 60)
-            
-            await ctx.respond(
-                f"You have failed to choose the correct option in the selection. Try again after {hours}h {minutes}m and read ⁠ℹ️ competitive and 📕 lounge-rules completely to understand which option is the correct option.",
-                ephemeral=True
-            )
-            return
 
 
 def setup(bot: commands.Bot):

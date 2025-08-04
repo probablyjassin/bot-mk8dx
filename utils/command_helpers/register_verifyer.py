@@ -14,13 +14,13 @@ class VerificationSelect(Select):
         options = [
             SelectOption(label="I Understand", value="I Understand"),
             SelectOption(
-                label="I agree with this information",
-                value="I agree with this information",
+                label="I agree with the information",
+                value="I agree with the information",
             ),
             SelectOption(label="I read all the rules", value="I read all the rules"),
             SelectOption(label="I read everything", value="I read everything"),
             SelectOption(
-                label="I agree with everything", value="I agree with everything"
+                label="I comply with everything", value="I comply with everything"
             ),
         ]
 
