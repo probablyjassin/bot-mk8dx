@@ -3,6 +3,7 @@ from discord import (
     SlashCommandGroup,
     AllowedMentions,
     Option,
+    WebhookMessage,
 )
 from discord.ext import commands
 
@@ -66,7 +67,10 @@ class stop(commands.Cog):
                 ),
                 allowed_mentions=AllowedMentions(roles=True),
             )
-            response = await message.original_response()
+            try:
+                response = await message.original_response()
+            except:
+                response = message
             ctx.mogi.vote.voting_message_id = response.id
 
         async def pick_server():
