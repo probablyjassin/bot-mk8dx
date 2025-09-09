@@ -7,7 +7,9 @@ from dataclasses import dataclass
 from models.PlayerModel import PlayerProfile
 from models.MogiModel import MogiHistoryData
 
-from utils.data._database import db_players, db_mogis
+from utils.data._database import client, db_players, db_mogis
+
+from config import SEASON
 
 
 class archive_type(Enum):
@@ -32,6 +34,7 @@ class DataManager:
         self,
         query: int | Int64 | str,
         archive: archive_type = archive_type.NO,
+        season: int = SEASON,
     ) -> PlayerProfile | None:
         query_criteria = {
             "$and": [
@@ -55,8 +58,13 @@ class DataManager:
             ]
         }
 
+        target_collection = client.get_database(
+            f"season-{season}-lounge"
+        ).get_collection("players")
+
         potential_player = next(
-            db_players.aggregate([{"$match": query_criteria}, {"$limit": 1}]), None
+            target_collection.aggregate([{"$match": query_criteria}, {"$limit": 1}]),
+            None,
         )
 
         return PlayerProfile(**potential_player) if potential_player else None
