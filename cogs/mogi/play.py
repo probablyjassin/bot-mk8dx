@@ -215,6 +215,8 @@ class stop(commands.Cog):
             message += (
                 f"{voting_message.jump_url}\nClick the above link to go to the vote!"
             )
+        else:
+            message += "[couldn't find the voting msg ID??]"
 
         await ctx.respond(
             message,
