@@ -65,7 +65,7 @@ class team_tags(commands.Cog):
     @team.command(name="set", description="set a tag for any team by number")
     @is_mogi_manager()
     @is_mogi_in_progress()
-    @is_in_mogi()
+    @is_in_mogi(except_admin=True)
     async def set(
         self,
         ctx: MogiApplicationContext,
