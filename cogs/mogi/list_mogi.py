@@ -124,6 +124,7 @@ class list_mogi(commands.Cog):
             list_of_players,
             ephemeral=ctx.mogi.vote,
             allowed_mentions=AllowedMentions.none(),
+            suppress_embeds=True,
         )
 
 

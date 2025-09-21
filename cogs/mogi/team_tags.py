@@ -13,6 +13,8 @@ from utils.decorators.checks import (
     is_mogi_manager,
 )
 
+import re
+
 
 class team_tags(commands.Cog):
     def __init__(self, bot):
@@ -38,6 +40,13 @@ class team_tags(commands.Cog):
         if len(tag) > 40:
             return await ctx.respond("Your team tag must be 40 characters or less")
 
+        urls_pattern = re.compile(r"(https?://[^\s]+)")
+        if urls_pattern.search(tag):
+            tag = urls_pattern.sub("", tag)
+
+        if not tag:
+            return await ctx.respond("Invalid tag")
+
         for player in ctx.mogi.players:
             if player.name in tag:
                 return await ctx.respond(
@@ -51,9 +60,10 @@ class team_tags(commands.Cog):
         ]
         ctx.mogi.team_tags[team_i] = tag
 
-        await ctx.respond(f"Team {team_i+1} tag: {tag}")
+        await ctx.respond(f"Team {team_i+1} tag: {tag}", suppress_embeds=True)
 
     @team.command(name="set", description="set a tag for any team by number")
+    @is_mogi_manager()
     @is_mogi_in_progress()
     @is_in_mogi()
     async def set(
