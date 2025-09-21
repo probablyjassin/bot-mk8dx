@@ -120,12 +120,12 @@ class list_mogi(commands.Cog):
                 else ""
             )
 
-        await ctx.respond(
+        message = await ctx.respond(
             list_of_players,
             ephemeral=ctx.mogi.vote,
             allowed_mentions=AllowedMentions.none(),
-            suppress_embeds=True,
         )
+        await message.edit(suppress=True)
 
 
 def setup(bot: commands.Bot):

@@ -60,7 +60,7 @@ class team_tags(commands.Cog):
         ]
         ctx.mogi.team_tags[team_i] = tag
 
-        await ctx.respond(f"Team {team_i+1} tag: {tag}", suppress_embeds=True)
+        await ctx.respond(f"Team {team_i+1} tag: {tag}")
 
     @team.command(name="set", description="set a tag for any team by number")
     @is_mogi_manager()
