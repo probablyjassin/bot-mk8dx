@@ -26,7 +26,7 @@ class team_tags(commands.Cog):
 
     @team.command(name="tag", description="set a tag for your own team")
     @is_mogi_in_progress()
-    @is_in_mogi()
+    @is_in_mogi(except_admin=True)
     async def tag(
         self,
         ctx: MogiApplicationContext,
