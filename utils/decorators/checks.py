@@ -102,13 +102,15 @@ def is_mogi_open():
     return commands.check(predicate)
 
 
-def is_in_mogi():
+def is_in_mogi(except_admin=False):
     """
     ## Command checker that requires the user to be in the channel's mogi
     `ctx.author.id in [player.discord_id for player in ctx.mogi.players]`
     """
 
     async def predicate(ctx: MogiApplicationContext):
+        if except_admin and _is_at_least_role(ctx, LoungeRole.ADMIN):
+            return True
         return await _check(
             ctx=ctx,
             condition=(
