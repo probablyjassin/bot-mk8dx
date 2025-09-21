@@ -42,7 +42,7 @@ class stop(commands.Cog):
             )
 
         # not enough players
-        if len(ctx.mogi.players) <= 6 and not FLAGS["no_min_players"]:
+        if len(ctx.mogi.players) <= 5 and not FLAGS["no_min_players"]:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
