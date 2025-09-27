@@ -14,6 +14,7 @@ from utils.command_helpers.find_player import get_guild_member
 
 from config import FLAGS
 
+
 class mogi(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -115,6 +116,8 @@ class mogi(commands.Cog):
             required=False,
         ),
     ):
+        await ctx.defer(ephemeral=False)
+
         if not ctx.mogi:
             return await ctx.respond("No mogi open in this channel.")
         if not ctx.mogi.collected_points and ctx.mogi.isPlaying and not need_sub:
