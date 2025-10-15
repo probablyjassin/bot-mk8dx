@@ -13,25 +13,31 @@ async def fetch_server_passwords(bot: commands.Bot) -> None:
             "🔣 `PASSWORD_API_URL` and/or `PASSWORD_API_PASS` missing - skipping password update"
         )
 
-    try:
-        response = requests.get(
-            PASSWORD_API_URL,
-            headers={"Signature-256": PASSWORD_API_PASS},
-            data="lounge",
-        )
-        if response.status_code == 200:
-            passwords_data = response.json()
-
-            passwords_file_path = os.path.join("state", "passwords.json")
-            os.makedirs(os.path.dirname(passwords_file_path), exist_ok=True)
-
-            with open(passwords_file_path, "w", encoding="utf-8") as f:
-                json.dump(passwords_data, f, indent=4, ensure_ascii=False)
-
-            await log_channel.send(f"🔣 Successfully updated passwords file.")
-        else:
-            await log_channel.send(
-                f"🔣 Failed to fetch passwords: {response.status_code}"
+    max_tries = 5
+    retries = 0
+    while retries < max_tries:
+        try:
+            response = requests.get(
+                PASSWORD_API_URL,
+                headers={"Signature-256": PASSWORD_API_PASS},
+                data="lounge",
             )
-    except Exception as e:
-        await log_channel.send(f"🔣 Error updating passwords: {str(e)}")
+            if response.status_code == 200:
+                passwords_data = response.json()
+
+                passwords_file_path = os.path.join("state", "passwords.json")
+                os.makedirs(os.path.dirname(passwords_file_path), exist_ok=True)
+
+                with open(passwords_file_path, "w", encoding="utf-8") as f:
+                    json.dump(passwords_data, f, indent=4, ensure_ascii=False)
+
+                await log_channel.send(f"🔣 Successfully updated passwords file.")
+                break
+            else:
+                await log_channel.send(
+                    f"🔣 Failed to fetch passwords: {response.status_code}"
+                )
+                retries += 1
+        except Exception as e:
+            await log_channel.send(f"🔣 Error updating passwords: {str(e)}")
+            retries += 1
