@@ -81,6 +81,10 @@ def load_cogs():
     print("----Loading extensions----")
     for root, _, files in os.walk("./cogs"):
         for file in files:
+            if "cogs/guilds" in root.replace("\\", "/") and not file.endswith(
+                ".cog.py"
+            ):
+                continue
             if file.endswith(".py"):
                 cog_path = os.path.join(root, file)
                 extension = (
