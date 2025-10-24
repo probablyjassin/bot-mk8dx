@@ -8,6 +8,5 @@ colorlog
 matplotlib
 dataframe_image
 pandas
-playwright
 
 mk8dx-table-reader==0.5.2
