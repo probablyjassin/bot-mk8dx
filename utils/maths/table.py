@@ -1,8 +1,8 @@
 from io import BytesIO
 
 import pandas as pd
-import dataframe_image as dfi
-from matplotlib import colors
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 
 from models.MogiModel import Mogi
 
@@ -35,60 +35,93 @@ async def create_table(mogi: Mogi) -> BytesIO:
     if mogi.format == 1:
         df = df.sort_values(by="Pos.", ascending=True)
 
-    buffer = BytesIO()
-    await dfi.export_async(
-        df.style.set_table_styles(
-            [
-                {
-                    "selector": "table",
-                    "props": [("border", "none")],
-                },
-                {
-                    "selector": "th",
-                    "props": [("border", "1px solid rgba(14, 14, 27, 1)")],
-                },
-                {
-                    "selector": "td",
-                    "props": [("border", "1px solid rgba(14, 14, 27, 1)")],
-                },
-                {
-                    "selector": "tr:nth-child(even)",
-                    "props": [
-                        ("background-color", "rgba(21, 21, 40, 1)"),
-                        ("color", "rgba(202, 202, 227, 1)"),
-                    ],
-                },
-                {
-                    "selector": "tr:nth-child(odd)",
-                    "props": [
-                        ("background-color", "rgba(15, 15, 28, 1)"),
-                        ("color", "rgba(202, 202, 227, 1)"),
-                    ],
-                },
-            ]
-        ).background_gradient(
-            cmap=colors.LinearSegmentedColormap.from_list(
-                "",
-                [
-                    "#E22012",
-                    "#E22012",
-                    "#E22012",
-                    "#CACAE3",
-                    "#22AA3B",
-                    "#22AA3B",
-                    "#22AA3B",
-                ],
-            ),
-            vmin=-150,
-            vmax=150,
-            subset=["Change"],
-        ),
-        buffer,
-        table_conversion="playwright_async",
+    # Calculate appropriate figure size based on table dimensions
+    num_rows = len(df) + 1  # +1 for header
+    num_cols = len(df.columns) + 1  # +1 for index
+
+    fig_width = num_cols * 1.5
+    fig_height = num_rows * 0.8
+
+    # Create figure with calculated size
+    fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+    ax.axis("off")
+
+    # Define colors
+    bg_dark = "#0F0F1C"
+    bg_light = "#151528"
+    text_color = "#CACAE3"
+    border_color = "#0E0E1B"
+
+    # Create color mapping for "Change" column
+    cmap = mcolors.LinearSegmentedColormap.from_list(
+        "",
+        [
+            "#E22012",
+            "#E22012",
+            "#E22012",
+            "#CACAE3",
+            "#22AA3B",
+            "#22AA3B",
+            "#22AA3B",
+        ],
     )
+    norm = mcolors.Normalize(vmin=-150, vmax=150)
+
+    # Prepare cell colors
+    cell_colors = []
+    for idx, row in df.iterrows():
+        row_colors = []
+        for col_idx, col in enumerate(df.columns):
+            if col == "Change":
+                # Apply gradient color for Change column
+                color = cmap(norm(row[col]))
+            else:
+                # Alternating row colors for other columns
+                color = bg_light if df.index.get_loc(idx) % 2 == 0 else bg_dark
+            row_colors.append(color)
+        cell_colors.append(row_colors)
+
+    # Create table that fills the entire figure
+    table = ax.table(
+        cellText=df.values,
+        colLabels=df.columns,
+        rowLabels=df.index,
+        cellLoc="center",
+        loc="center",
+        cellColours=cell_colors,
+        colColours=[bg_dark] * len(df.columns),
+        rowColours=[bg_light if i % 2 == 0 else bg_dark for i in range(len(df))],
+        bbox=[0, 0, 1, 1],  # Make table fill entire axes
+    )
+
+    # Style the table
+    table.auto_set_font_size(False)
+    table.set_fontsize(16)
+
+    # Auto-size columns based on content
+    table.auto_set_column_width(col=list(range(len(df.columns))))
+
+    # Set text color and borders
+    for (row, col), cell in table.get_celld().items():
+        cell.set_text_props(color=text_color, weight="bold" if row == 0 else "normal")
+        cell.set_edgecolor(border_color)
+        cell.set_linewidth(1.5)
+        cell.set_height(1.0 / num_rows)
+
+    # Set background color
+    fig.patch.set_facecolor(bg_dark)
+
+    # Save to buffer with no extra padding
+    buffer = BytesIO()
+    plt.savefig(
+        buffer,
+        format="png",
+        facecolor=bg_dark,
+        bbox_inches="tight",
+        pad_inches=0.1,
+        dpi=200,
+    )
+    plt.close()
 
     buffer.seek(0)
     return buffer
-
-
-# TODO: change the colors
