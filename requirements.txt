@@ -1,4 +1,4 @@
-git+https://github.com/Pycord-Development/pycord.git@dbd9f1bcc75524d757cce45fbc43009e53aed251
+py-cord==2.6.1
 pycord-multicog
 python-dotenv
 aiohttp
@@ -9,4 +9,4 @@ matplotlib
 dataframe_image
 pandas
 
-mk8dx-table-reader==0.5.2
+#mk8dx-table-reader==0.5.2
