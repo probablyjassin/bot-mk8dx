@@ -117,8 +117,9 @@ class table_read(commands.Cog):
         tablestring = message.content
 
         # ----- table reader magic goes here -----
-        names, scores = example_ocr(file)
+        names, scores = example_ocr()
         # ----------------------------------------
+        return await ctx.respond("WIP")
 
 
 def setup(bot: commands.Bot):
