@@ -2,7 +2,8 @@ from discord import ApplicationContext, Member, Guild, Role, TextChannel
 from discord.utils import get
 
 from utils.data import mogi_manager
-from models import PlayerProfile, Mogi
+from .MogiModel import Mogi
+from .PlayerModel import PlayerProfile
 
 from config import GUILD_IDS, RESULTS_CHANNEL_ID, REGISTER_CHANNEL_ID
 

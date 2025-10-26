@@ -1,8 +1,10 @@
-import time
+import time, math
 from dataclasses import dataclass, field
 from bson import ObjectId
 
-from models import PlayerProfile, Vote, Room
+from .PlayerModel import PlayerProfile
+from .VoteModel import Vote
+from .RoomModel import Room
 
 from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
