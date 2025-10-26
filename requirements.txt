@@ -9,3 +9,4 @@ matplotlib
 dataframe_image
 pandas
 fuzzywuzzy
+python-Levenshtein
