@@ -29,6 +29,7 @@ class swap(commands.Cog):
         player1: str = Option(str, name="player1", description="first player"),
         player2: str = Option(str, name="player2", description="second player"),
     ):
+        return await ctx.respond("This command is out of order.")
         first_player: PlayerProfile | str = data_manager.find_player(player1) or player1
         second_player: PlayerProfile | str = (
             data_manager.find_player(player2) or player2
