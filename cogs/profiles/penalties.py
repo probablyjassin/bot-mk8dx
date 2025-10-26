@@ -3,8 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data.data_manager import data_manager
-from utils.data.mogi_manager import mogi_manager
+from utils.data import data_manager, mogi_manager
 from utils.decorators.checks import is_mogi_manager
 
 

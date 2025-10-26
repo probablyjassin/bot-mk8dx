@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile
 from pycord.multicog import subcommand
 
-from utils.data.data_manager import data_manager
+from utils.data import data_manager
 from utils.maths.replace import recurse_replace
 from utils.decorators.checks import (
     is_mogi_open,

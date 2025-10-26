@@ -13,7 +13,7 @@ from logger import setup_logger, highlight
 from cogs.error_handler import error_logger
 from config import DISCORD_TOKEN, LOG_CHANNEL_ID
 
-from utils.data.state import state_manager
+from utils.data import state_manager
 from models import MogiApplicationContext
 
 

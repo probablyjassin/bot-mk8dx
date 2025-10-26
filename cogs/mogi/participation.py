@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 
-from utils.data.mogi_manager import mogi_manager
+from utils.data import mogi_manager
 from utils.decorators.player import with_player
 from utils.command_helpers import REGIONS
 from utils.decorators.checks import (
