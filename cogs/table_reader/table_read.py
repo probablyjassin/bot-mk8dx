@@ -112,7 +112,7 @@ class table_read(commands.Cog):
         )
 
     @message_command(
-        name="Tablestring -> Add points from img",
+        name="Tablestring->Add points from Img",
     )
     @is_admin()
     async def add(self, ctx: MogiApplicationContext, message: Message):
