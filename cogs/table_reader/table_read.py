@@ -126,11 +126,12 @@ class table_read(commands.Cog):
 
         if len(message.attachments):
             return await ctx.respond(
-                "The message you selected has attachments. \nThis command is for the **tablestring** *after* you used 'Select Image' on the screenshot."
+                "The message you selected has attachments. \nThis command is for the **tablestring** *after* you used 'Select Image' on the screenshot.",
+                ephemeral=True,
             )
 
         # ----- table reader magic goes here -----
-        names, scores = example_ocr(record["bytes"])
+        names, scores = example_ocr(record)
         # ----------------------------------------
 
         tablestring = message.content
