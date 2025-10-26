@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from models import Mogi
+from models.MogiModel import Mogi
 
 
 @dataclass

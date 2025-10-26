@@ -1,7 +1,9 @@
 from discord import Member
 from discord.utils import get
 
-from models import MogiApplicationContext, Mogi, Rank
+from models.CustomMogiContext import MogiApplicationContext
+from models.MogiModel import Mogi
+from models.RankModel import Rank
 
 
 async def update_roles(

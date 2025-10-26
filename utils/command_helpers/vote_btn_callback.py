@@ -3,8 +3,9 @@ import asyncio
 
 from discord import Interaction
 
-from models import Mogi
-from utils.command_helpers import apply_team_roles, get_best_server
+from models.MogiModel import Mogi
+from utils.command_helpers.team_roles import apply_team_roles
+from utils.command_helpers.server_region import get_best_server
 
 voters_lock = asyncio.Lock()
 
