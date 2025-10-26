@@ -1,5 +1,6 @@
 from discord import Option, AllowedMentions, SlashCommandGroup, Member
 from discord.ext import commands
+from discord.utils import get
 
 from models import MogiApplicationContext
 
@@ -85,8 +86,17 @@ class sub(commands.Cog):
         replacement_user: Member | None = await get_guild_member(
             ctx.guild, replacement_profile.discord_id
         )
-        if player_user and ctx.inmogi_role in player_user.roles:
-            await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
+        if player_user:
+            if ctx.inmogi_role in player_user.roles:
+                await player_user.remove_roles(ctx.inmogi_role, reason="Subbed out")
+
+            all_team_roles = [
+                get(ctx.guild.roles, name=f"Team {i+1}") for i in range(5)
+            ]
+            for role in all_team_roles:
+                if role in player_user.roles:
+                    player_user.remove_roles(role)
+                    replacement_user.add_roles(role)
 
         if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
