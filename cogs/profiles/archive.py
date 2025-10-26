@@ -2,8 +2,7 @@ from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.decorators.checks import is_moderator
-from utils.decorators.player import other_player
+from utils.decorators import is_moderator, other_player
 
 
 class archive(commands.Cog):

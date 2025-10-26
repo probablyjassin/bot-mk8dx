@@ -11,7 +11,7 @@ from models import MogiApplicationContext, Room
 
 from utils.data import mogi_manager, state_manager, data_manager, archive_type
 from utils.command_helpers import confirmation
-from utils.decorators.checks import (
+from utils.decorators import (
     is_admin,
     is_moderator,
     is_mogi_manager,

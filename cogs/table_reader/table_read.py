@@ -3,9 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 
-from utils.decorators.checks import (
-    is_admin,
-)
+from utils.decorators import is_admin
 
 
 class table_read(commands.Cog):

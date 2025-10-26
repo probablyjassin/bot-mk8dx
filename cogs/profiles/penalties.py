@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile
 
 from utils.data import data_manager, mogi_manager
-from utils.decorators.checks import is_mogi_manager
+from utils.decorators import is_mogi_manager
 
 
 class penalties(commands.Cog):

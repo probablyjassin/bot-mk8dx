@@ -13,7 +13,7 @@ from utils.command_helpers import (
     remove_team_roles,
     get_best_server,
 )
-from utils.decorators.checks import (
+from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
     is_mogi_manager,

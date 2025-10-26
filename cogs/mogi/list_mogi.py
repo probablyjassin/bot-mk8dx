@@ -1,7 +1,7 @@
 from discord import slash_command, Option, AllowedMentions
 from discord.ext import commands
 
-from utils.decorators.checks import is_mogi_open
+from utils.decorators import is_mogi_open
 from models import MogiApplicationContext
 
 

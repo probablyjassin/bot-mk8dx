@@ -7,11 +7,8 @@ from discord.ext import commands
 from models import MogiApplicationContext
 
 from utils.data import mogi_manager
-from utils.decorators.player import with_player
+from utils.decorators import with_player, is_mogi_not_in_progress
 from utils.command_helpers import REGIONS
-from utils.decorators.checks import (
-    is_mogi_not_in_progress,
-)
 
 
 class participation(commands.Cog):

@@ -4,11 +4,11 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
-from utils.decorators.player import other_player
-from utils.decorators.checks import (
+from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_not_full,
     is_moderator,
+    other_player,
 )
 
 

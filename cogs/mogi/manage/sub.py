@@ -5,12 +5,12 @@ from models import MogiApplicationContext
 
 from utils.data import data_manager, mogi_manager
 from utils.maths.replace import recurse_replace
-from utils.decorators.player import other_player
 from utils.command_helpers import get_guild_member
-from utils.decorators.checks import (
+from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
     is_moderator,
+    other_player,
 )
 
 
