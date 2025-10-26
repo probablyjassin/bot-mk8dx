@@ -12,7 +12,7 @@ from models import MogiApplicationContext, Room
 from utils.data.data_manager import data_manager, archive_type
 from utils.data.mogi_manager import mogi_manager
 from utils.data.state import state_manager
-from utils.command_helpers.confirm import confirmation
+from utils.command_helpers import confirmation
 from utils.decorators.checks import (
     is_admin,
     is_moderator,
@@ -23,7 +23,7 @@ ROOMS: list[Room] = [
     Room.from_address(room["address"], room["port"]) for room in ROOMS_CONFIG
 ]
 
-from utils.command_helpers.update_server_passwords import fetch_server_passwords
+from utils.command_helpers import fetch_server_passwords
 
 
 class debug(commands.Cog):

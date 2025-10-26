@@ -2,7 +2,7 @@ from discord import slash_command, Color
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.command_helpers.info_embed_factory import create_embed
+from utils.command_helpers import create_embed
 
 help_fields = {
     "`/join`": "Join an open or unlocked mogi in the current channel.",

@@ -8,9 +8,7 @@ from models import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.apply import apply_mmr
 
-from utils.command_helpers.team_roles import remove_team_roles
-from utils.command_helpers.apply_update_roles import update_roles
-from utils.command_helpers.find_player import get_guild_member
+from utils.command_helpers import update_roles, remove_team_roles, get_guild_member
 from utils.decorators.checks import (
     is_mogi_in_progress,
     is_mogi_manager,

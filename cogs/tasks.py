@@ -15,7 +15,7 @@ from utils.data.data_manager import data_manager, archive_type
 from utils.data.state import state_manager
 from utils.data.mogi_manager import mogi_manager
 
-from utils.command_helpers.update_server_passwords import fetch_server_passwords
+from utils.command_helpers import fetch_server_passwords
 
 from config import HEALTHCHECK_URL, PASSWORD_API_URL, PASSWORD_API_PASS, LOG_CHANNEL_ID
 

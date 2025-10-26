@@ -7,15 +7,17 @@ from discord import (
 from discord.ext import commands
 
 from models import MogiApplicationContext, Vote
-from utils.command_helpers.vote_factory import create_vote_button_view
+from utils.command_helpers import (
+    create_vote_button_view,
+    apply_team_roles,
+    remove_team_roles,
+    get_best_server,
+)
 from utils.decorators.checks import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
-from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
-from utils.command_helpers.server_region import get_best_server
-
 from config import FORMATS, FLAGS
 
 

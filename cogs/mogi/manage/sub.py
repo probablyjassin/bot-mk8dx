@@ -7,7 +7,7 @@ from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.decorators.player import other_player
-from utils.command_helpers.find_player import get_guild_member
+from utils.command_helpers import get_guild_member
 from utils.decorators.checks import (
     is_mogi_in_progress,
     is_mogi_manager,
