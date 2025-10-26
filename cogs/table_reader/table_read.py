@@ -138,7 +138,7 @@ class table_read(commands.Cog):
         players = []
         points = []
         for line in tablestring.splitlines():
-            if line.strip(" |+"):
+            if line.strip(" |+") and len(line.split()) == 2:
                 players.append(line.split()[0])
                 points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
 
