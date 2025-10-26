@@ -2,7 +2,7 @@ from discord import Interaction, DiscordException, errors, Color
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.command_helpers.info_embed_factory import create_embed
+from utils.command_helpers import create_embed
 from logger import setup_logger
 
 from config import LOG_CHANNEL_ID

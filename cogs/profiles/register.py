@@ -15,12 +15,10 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.data._database import db_players, db_archived, client
-from utils.command_helpers.server_region import REGIONS
+from utils.command_helpers import create_embed, REGIONS, VerificationView
 from utils.maths.readable_timediff import readable_timedelta
 
 from logger import setup_logger
-from utils.command_helpers.info_embed_factory import create_embed
-from utils.command_helpers.register_verifyer import VerificationView
 
 from bson.int64 import Int64
 from config import LOG_CHANNEL_ID
