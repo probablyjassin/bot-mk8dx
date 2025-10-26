@@ -1,5 +1,5 @@
 import asyncio
-from models import MogiApplicationContext
+from models.CustomMogiContext import MogiApplicationContext
 
 
 async def confirmation(ctx: MogiApplicationContext, text: str) -> bool:

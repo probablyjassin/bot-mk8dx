@@ -1,7 +1,8 @@
 import asyncio
 
 from discord import TextChannel, Bot
-from models import MogiApplicationContext
+
+from models.CustomMogiContext import MogiApplicationContext
 
 
 async def get_awaited_message(

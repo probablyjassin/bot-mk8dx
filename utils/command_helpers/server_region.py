@@ -1,8 +1,10 @@
 from discord import Member, Role, Interaction
 from discord.utils import get
 
-from models import MogiApplicationContext, Mogi, Room
-from utils.data import mogi_manager
+from models.CustomMogiContext import MogiApplicationContext
+from models.MogiModel import Mogi
+from models.RoomModel import Room
+from utils.data.mogi_manager import mogi_manager
 
 from config import ROOMS_CONFIG
 

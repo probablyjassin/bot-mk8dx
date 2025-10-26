@@ -2,10 +2,9 @@ import os
 import json
 from logger import setup_logger
 from dataclasses import dataclass
-from collections import OrderedDict
 
-from models import Mogi
-from utils.data import mogi_manager
+from models.MogiModel import Mogi
+from utils.data.mogi_manager import mogi_manager
 
 logger = setup_logger(__name__)
 error_logger = setup_logger(__name__, "error.log", console=False)
