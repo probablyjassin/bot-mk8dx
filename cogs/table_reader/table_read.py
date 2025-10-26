@@ -79,10 +79,8 @@ class table_read(commands.Cog):
                 print(match_result)
                 if match_result is None:
                     continue
-                candidate_name, certainty = match_result
-
-                if certainty > 70:
-                    actual_names[i] = candidate_name
+                candidate_name, _ = match_result
+                actual_names[i] = candidate_name
 
             names = actual_names
 
