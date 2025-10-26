@@ -102,8 +102,19 @@ async def create_table(mogi: Mogi) -> BytesIO:
     table.auto_set_column_width(col=list(range(len(df.columns))))
 
     # Set text color and borders
+    change_col_idx = df.columns.get_loc("Change") if "Change" in df.columns else None
     for (row, col), cell in table.get_celld().items():
-        cell.set_text_props(color=text_color, weight="bold" if row == 0 else "normal")
+        is_header = row == 0
+        is_change_body_cell = (
+            change_col_idx is not None and not is_header and col == change_col_idx
+        )
+
+        # Use black text for the colored "Change" column body cells; keep others light
+        cell_text_color = "#000000" if is_change_body_cell else text_color
+
+        cell.set_text_props(
+            color=cell_text_color, weight="bold" if is_header else "normal"
+        )
         cell.set_edgecolor(border_color)
         cell.set_linewidth(1.5)
         cell.set_height(1.0 / num_rows)
