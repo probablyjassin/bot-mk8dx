@@ -4,7 +4,7 @@ from discord import slash_command, Option, Attachment, File, SlashCommandGroup
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.decorators.checks import (
     is_mogi_in_progress,

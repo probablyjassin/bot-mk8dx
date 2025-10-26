@@ -1,7 +1,7 @@
 from discord import SlashCommandGroup, Option, AllowedMentions
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.decorators.checks import is_mogi_manager, is_moderator
 from utils.decorators.player import other_player

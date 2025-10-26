@@ -4,7 +4,7 @@ from discord import slash_command
 from discord.utils import get, utcnow
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.data.mogi_manager import mogi_manager
 from utils.decorators.player import with_player

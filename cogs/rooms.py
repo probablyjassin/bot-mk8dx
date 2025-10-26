@@ -4,8 +4,7 @@ import textwrap
 from discord import slash_command
 from discord.ext import commands
 
-from models.RoomModel import Room
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, Room
 
 from utils.data.roombrowser import get_room_info, ServerType
 from utils.command_helpers.info_embed_factory import create_embed

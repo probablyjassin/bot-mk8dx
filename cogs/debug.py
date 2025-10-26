@@ -7,8 +7,7 @@ from config import ROOMS_CONFIG, LOG_CHANNEL_ID
 from discord import SlashCommandGroup, Option, AllowedMentions, File
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
-from models.RoomModel import Room
+from models import MogiApplicationContext, Room
 
 from utils.data.data_manager import data_manager, archive_type
 from utils.data.mogi_manager import mogi_manager

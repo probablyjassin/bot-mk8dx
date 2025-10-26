@@ -1,7 +1,7 @@
 from discord import slash_command, Color
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from utils.command_helpers.info_embed_factory import create_embed
 
 help_fields = {
@@ -31,7 +31,9 @@ class help(commands.Cog):
             help_fields,
             {
                 "text": ctx.guild.name,
-                "icon_url": ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None,
+                "icon_url": (
+                    ctx.guild.icon.url.split("?")[0] if ctx.guild.icon else None
+                ),
             },
             color=Color.blue(),
             inline=False,

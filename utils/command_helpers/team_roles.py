@@ -1,7 +1,6 @@
 from discord import Interaction
 from discord.utils import get
-from models.CustomMogiContext import MogiApplicationContext
-from models.MogiModel import Mogi
+from models import MogiApplicationContext, Mogi
 
 
 async def apply_team_roles(ctx: MogiApplicationContext | Interaction, mogi: Mogi):

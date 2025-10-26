@@ -4,8 +4,7 @@ from bson.int64 import Int64
 from enum import Enum
 
 from dataclasses import dataclass
-from models.PlayerModel import PlayerProfile
-from models.MogiModel import MogiHistoryData
+from models import PlayerProfile, MogiHistoryData
 
 from utils.data._database import client, db_players, db_mogis
 

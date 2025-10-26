@@ -1,8 +1,7 @@
 from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
+from models import MogiApplicationContext, PlayerProfile
 
 from utils.data.data_manager import data_manager, archive_type
 from utils.decorators.checks import is_moderator

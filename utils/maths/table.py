@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-from models.MogiModel import Mogi
+from models import Mogi
 
 
 async def create_table(mogi: Mogi) -> BytesIO:

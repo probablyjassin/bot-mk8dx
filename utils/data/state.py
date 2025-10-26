@@ -4,7 +4,7 @@ from logger import setup_logger
 from dataclasses import dataclass
 from collections import OrderedDict
 
-from models.MogiModel import Mogi
+from models import Mogi
 from utils.data.mogi_manager import mogi_manager
 
 logger = setup_logger(__name__)

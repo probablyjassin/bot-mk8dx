@@ -2,9 +2,7 @@ from discord import slash_command, Option, ButtonStyle, Embed, Colour, Member
 from discord.ui import View, Button
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
-from models.RankModel import Rank
-from models.PlayerModel import PlayerProfile
+from models import MogiApplicationContext, PlayerProfile, Rank
 from utils.data.data_manager import data_manager, archive_type
 
 from datetime import datetime

@@ -13,7 +13,7 @@ from discord import (
 from discord.utils import get
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from utils.data._database import db_players, db_archived, client
 from utils.command_helpers.server_region import REGIONS
 from utils.maths.readable_timediff import readable_timedelta

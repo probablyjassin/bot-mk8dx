@@ -1,8 +1,7 @@
 from discord import slash_command, Option, Attachment
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
-from models.GuildModel import Guild
+from models import MogiApplicationContext, Guild
 
 from utils.decorators.checks import (
     is_admin,

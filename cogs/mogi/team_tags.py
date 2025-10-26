@@ -2,8 +2,7 @@ from discord import SlashCommandGroup, Option
 from discord.utils import get
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
-from models.PlayerModel import PlayerProfile
+from models import MogiApplicationContext, PlayerProfile
 
 from utils.data.data_manager import data_manager
 from utils.decorators.checks import (

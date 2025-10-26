@@ -1,7 +1,7 @@
 from discord import Option, AllowedMentions, SlashCommandGroup, Member
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager

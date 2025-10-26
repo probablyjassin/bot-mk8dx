@@ -2,7 +2,7 @@ import discord
 from discord import Interaction
 from discord.ui import Button, View
 
-from models.MogiModel import Mogi
+from models import Mogi
 
 
 def get_vote_button_style(format: int, player_count: int) -> discord.ButtonStyle:

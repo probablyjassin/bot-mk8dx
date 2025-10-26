@@ -3,7 +3,7 @@ import asyncio
 from discord import ChannelType, Thread, message_command, Message, SlashCommandGroup
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from utils.maths.results import process_tablestring
 from utils.command_helpers.wait_for import get_awaited_message
 from utils.decorators.checks import (
