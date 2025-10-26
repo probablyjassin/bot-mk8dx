@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile
 
 from utils.data._database import db_players
-from utils.data.data_manager import data_manager, mogi_manager
+from utils.data import data_manager, mogi_manager
 
 from utils.command_helpers import get_guild_member
 from utils.decorators import is_moderator, other_player

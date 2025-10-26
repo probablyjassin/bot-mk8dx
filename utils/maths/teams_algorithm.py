@@ -1,7 +1,7 @@
 import os
 import importlib.util
 import random
-from models import PlayerProfile
+from models.PlayerModel import PlayerProfile
 
 
 def teams_alg_distribute_by_order_kevnkkm(
