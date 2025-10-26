@@ -1,14 +1,12 @@
 import asyncio
 
 from discord import slash_command
-from discord.utils import get, utcnow
 from discord.ext import commands
 
 from models import MogiApplicationContext
 
 from utils.data import mogi_manager
 from utils.decorators import with_player, is_mogi_not_in_progress
-from utils.command_helpers import REGIONS
 
 
 class participation(commands.Cog):
@@ -32,15 +30,6 @@ class participation(commands.Cog):
             in_mogi = len(ctx.mogi.players)
             await ctx.respond(
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} {'player is' if in_mogi == 1 else 'players are'} in!"
-            )
-
-            # WIP: while transitioning: remind people to add a region role
-            for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
-                if role in ctx.user.roles:
-                    return
-            await ctx.send_followup(
-                "It seems like you don't have a region role yet. Go to <#1128146332683612241> to grab one.",
-                ephemeral=True,
             )
 
     @slash_command(name="leave", description="Leave this mogi")

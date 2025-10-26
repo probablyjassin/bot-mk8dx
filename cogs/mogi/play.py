@@ -11,7 +11,7 @@ from utils.command_helpers import (
     create_vote_button_view,
     apply_team_roles,
     remove_team_roles,
-    get_best_server,
+    get_available_server,
 )
 from utils.decorators import (
     is_mogi_in_progress,
@@ -74,7 +74,7 @@ class stop(commands.Cog):
 
         async def pick_server():
             if not ctx.mogi.room:
-                best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+                best_server = await get_available_server(ctx=ctx, mogi=ctx.mogi)
                 ctx.mogi.room = best_server
             await ctx.channel.send(
                 f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"

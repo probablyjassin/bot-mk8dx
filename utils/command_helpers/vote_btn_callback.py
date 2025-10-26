@@ -5,7 +5,7 @@ from discord import Interaction
 
 from models.MogiModel import Mogi
 from utils.command_helpers.team_roles import apply_team_roles
-from utils.command_helpers.server_region import get_best_server
+from utils.command_helpers.server_assign import get_available_server
 
 voters_lock = asyncio.Lock()
 
@@ -88,7 +88,7 @@ async def format_vote_button_callback(
 
         # failsafe if the server hasn't been chosen before the vote yet
         if not mogi.room:
-            best_server = await get_best_server(ctx=interaction, mogi=mogi)
+            best_server = await get_available_server(mogi=mogi)
             mogi.room = best_server
         await interaction.message.channel.send(
             f"# Yuzu Server: {mogi.room.name}\nUse `/password`"
