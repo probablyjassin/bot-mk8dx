@@ -2,6 +2,7 @@ from discord import SlashCommandGroup, message_command, Message, Option, Attachm
 from discord.ext import commands
 
 from models import MogiApplicationContext
+from utils.data import store
 from utils.decorators import is_admin
 
 from fuzzywuzzy import process
@@ -100,30 +101,20 @@ class table_read(commands.Cog):
             f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
         )
 
-    @table.command(
-        name="add",
-        description="Add points from a screenshot to an existing tablestring using OCR",
+    @message_command(
+        name="Tablestring -> Add points from image",
     )
     @is_admin()
-    async def add(
-        self,
-        ctx: MogiApplicationContext,
-        tablestring: str = Option(
-            str, "tablestring to add the screenshot to", required=True
-        ),
-        screenshot: Attachment = Option(
-            Attachment,
-            "Attachment or File",
-            required=True,
-        ),
-    ):
-        if screenshot is None:
-            return await ctx.respond("No attachment found")
+    async def add(self, ctx: MogiApplicationContext, message: Message):
+        record = await store.get(ctx.guild_id, ctx.author.id)
+        if not record:
+            await ctx.respond(
+                "You haven't selected an image yet (or it expired). Right-click a message → Apps → Select Image.",
+                ephemeral=True,
+            )
+            return
 
-        if not is_image(screenshot):
-            return await ctx.respond("Attachment is not an image")
-
-        file = await screenshot.to_file()
+        tablestring = message.content
 
         # ----- table reader magic goes here -----
         names, scores = example_ocr(file)
