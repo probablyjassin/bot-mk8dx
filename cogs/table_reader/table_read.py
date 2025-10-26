@@ -27,6 +27,8 @@ class table_read(commands.Cog):
             required=True,
         ),
     ):
+        debug_str = ""
+
         if screenshot is None:
             return await ctx.respond("No attachment found")
 
@@ -50,6 +52,8 @@ class table_read(commands.Cog):
         if not is_image:
             return await ctx.respond("Attachment is not an image")
 
+        debug_str += f"Submitted filename: {screenshot.filename}\n"
+
         file = await screenshot.to_file()
 
         # ----- table reader magic goes here -----
@@ -65,11 +69,14 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
+            debug_str += f"Tried to match screenshot names to lounge names\n"
             actual_names = names[:]
             choices = [player.name for player in ctx.mogi.players]
 
+            print("thingy matching results:")
             for i, name in enumerate(names):
                 match_result: tuple[str, int] | None = process.extractOne(name, choices)
+                print(match_result)
                 if match_result is None:
                     continue
                 candidate_name, certainty = match_result
@@ -85,7 +92,9 @@ class table_read(commands.Cog):
                 tablestring += f"{name} {scores[i]}+\n\n"
             return tablestring
 
-        await ctx.respond(f"```\n{ocr_to_tablestring(names, scores)}```")
+        await ctx.respond(
+            f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
+        )
 
 
 def setup(bot: commands.Bot):
