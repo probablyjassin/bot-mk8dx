@@ -2,8 +2,9 @@ from discord import SlashCommandGroup, Option, Attachment
 from discord.ext import commands
 
 from models import MogiApplicationContext
-
 from utils.decorators import is_admin
+
+from fuzzywuzzy import fuzz, process
 
 
 class table_read(commands.Cog):
@@ -53,19 +54,30 @@ class table_read(commands.Cog):
 
         # ----- table reader magic goes here -----
         names = [
-            "Edgardo",
-            "KaramTNC",
-            "JimDeck",
-            "MITSIKU",
-            "NotNiall",
-            "JuulsPoms",
+            "MINITSIKU",
             "ShadowStarX",
-            "jenn",
-            "cars",
-            "jassin",
+            "jen",
+            "kevin",
+            "jässin8dx",
         ]
-        scores = ["12", "2", "7", "8", "3", "5", "4", "10", "6", "1"]
+        scores = ["12", "2", "7", "8", "3"]
         # ----------------------------------------
+
+        # if there is a mogi, try to match the names to the output
+        if ctx.mogi and len(ctx.mogi.players) == len(names):
+            actual_names = names[:]
+            choices = [player.name for player in ctx.mogi.players]
+
+            for i, name in enumerate(names):
+                match_result: tuple[str, int] | None = process.extractOne(name, choices)
+                if match_result is None:
+                    continue
+                candidate_name, certainty = match_result
+
+                if certainty > 70:
+                    actual_names[i] = candidate_name
+
+            names = actual_names
 
         def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
             tablestring = "-\n"
@@ -73,7 +85,7 @@ class table_read(commands.Cog):
                 tablestring += f"{name} {scores[i]}+\n\n"
             return tablestring
 
-        await ctx.respond(file=file)
+        await ctx.respond(f"```\n{ocr_to_tablestring(names, scores)}```")
 
 
 def setup(bot: commands.Bot):
