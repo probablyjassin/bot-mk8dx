@@ -4,7 +4,7 @@ from pycord.multicog import subcommand
 
 from models import MogiApplicationContext
 
-from utils.decorators.checks import (
+from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
 )

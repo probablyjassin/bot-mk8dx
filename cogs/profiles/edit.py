@@ -7,8 +7,7 @@ from utils.data._database import db_players
 from utils.data.data_manager import data_manager, mogi_manager
 
 from utils.command_helpers import get_guild_member
-from utils.decorators.checks import is_moderator
-from utils.decorators.player import other_player
+from utils.decorators import is_moderator, other_player
 
 
 class edit(commands.Cog):

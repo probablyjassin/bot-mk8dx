@@ -3,8 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 
-from utils.decorators.checks import is_mogi_manager, is_moderator
-from utils.decorators.player import other_player
+from utils.decorators import is_mogi_manager, is_moderator, other_player
 
 from utils.data import data_manager, archive_type
 

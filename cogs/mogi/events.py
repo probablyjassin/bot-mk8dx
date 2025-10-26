@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext
 
 from utils.data import data_manager
-from utils.decorators.checks import is_mogi_open, is_moderator
+from utils.decorators import is_mogi_open, is_moderator
 
 
 class events(commands.Cog):

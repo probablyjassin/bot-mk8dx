@@ -4,7 +4,7 @@ from discord.utils import get
 from bson.int64 import Int64
 
 from utils.data._database import client
-from utils.decorators.checks import is_admin
+from utils.decorators import is_admin
 from models import MogiApplicationContext, Rank
 
 from discord import slash_command, Option, Member

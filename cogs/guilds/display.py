@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Guild
 
-from utils.decorators.checks import (
+from utils.decorators import (
     is_admin,
 )
 

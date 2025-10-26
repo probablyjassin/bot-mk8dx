@@ -6,7 +6,7 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from utils.maths.results import process_tablestring
 from utils.command_helpers import get_awaited_message
-from utils.decorators.checks import (
+from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
 )
