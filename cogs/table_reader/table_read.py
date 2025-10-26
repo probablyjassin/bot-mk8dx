@@ -1,10 +1,40 @@
-from discord import SlashCommandGroup, Option, Attachment
+from discord import SlashCommandGroup, message_command, Message, Option, Attachment
 from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.decorators import is_admin
 
-from fuzzywuzzy import fuzz, process
+from fuzzywuzzy import process
+
+
+def is_image(attachment: Attachment) -> bool:
+    # Prefer content_type when available, fallback to filename extension
+    content_type: str = getattr(attachment, "content_type", None)
+    filename: str = (getattr(attachment, "filename", "") or "").lower()
+
+    is_image = False
+    if content_type:
+        is_image = content_type.startswith("image/")
+    else:
+        is_image = filename.endswith(
+            (
+                ".png",
+                ".jpg",
+                ".jpeg",
+                ".webp",
+            )
+        )
+    return is_image
+
+
+def example_ocr(_) -> tuple[list[str], list[str]]:
+    return [
+        "MINITSIKU",
+        "ShadowStarX",
+        "jen",
+        "kevin",
+        "jässin8dx",
+    ], ["12", "2", "7", "8", "3"]
 
 
 class table_read(commands.Cog):
@@ -32,24 +62,7 @@ class table_read(commands.Cog):
         if screenshot is None:
             return await ctx.respond("No attachment found")
 
-        # Prefer content_type when available, fallback to filename extension
-        content_type: str = getattr(screenshot, "content_type", None)
-        filename: str = (getattr(screenshot, "filename", "") or "").lower()
-
-        is_image = False
-        if content_type:
-            is_image = content_type.startswith("image/")
-        else:
-            is_image = filename.endswith(
-                (
-                    ".png",
-                    ".jpg",
-                    ".jpeg",
-                    ".webp",
-                )
-            )
-
-        if not is_image:
+        if not is_image(screenshot):
             return await ctx.respond("Attachment is not an image")
 
         debug_str += f"Submitted filename: {screenshot.filename}\n"
@@ -57,14 +70,7 @@ class table_read(commands.Cog):
         file = await screenshot.to_file()
 
         # ----- table reader magic goes here -----
-        names = [
-            "MINITSIKU",
-            "ShadowStarX",
-            "jen",
-            "kevin",
-            "jässin8dx",
-        ]
-        scores = ["12", "2", "7", "8", "3"]
+        names, scores = example_ocr(file)
         # ----------------------------------------
 
         # if there is a mogi, try to match the names to the output
@@ -93,6 +99,35 @@ class table_read(commands.Cog):
         await ctx.respond(
             f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
         )
+
+    @table.command(
+        name="add",
+        description="Add points from a screenshot to an existing tablestring using OCR",
+    )
+    @is_admin()
+    async def add(
+        self,
+        ctx: MogiApplicationContext,
+        tablestring: str = Option(
+            str, "tablestring to add the screenshot to", required=True
+        ),
+        screenshot: Attachment = Option(
+            Attachment,
+            "Attachment or File",
+            required=True,
+        ),
+    ):
+        if screenshot is None:
+            return await ctx.respond("No attachment found")
+
+        if not is_image(screenshot):
+            return await ctx.respond("Attachment is not an image")
+
+        file = await screenshot.to_file()
+
+        # ----- table reader magic goes here -----
+        names, scores = example_ocr(file)
+        # ----------------------------------------
 
 
 def setup(bot: commands.Bot):
