@@ -4,7 +4,8 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 
-from utils.decorators import LoungeRole, _is_at_least_role, with_player
+from utils.decorators.checks import _is_at_least_role
+from utils.decorators import LoungeRole, with_player
 
 
 class password(commands.Cog):

@@ -14,7 +14,7 @@ from cogs.error_handler import error_logger
 from config import DISCORD_TOKEN, LOG_CHANNEL_ID
 
 from utils.data import state_manager
-from .models.CustomMogiContext import MogiApplicationContext
+from models.CustomMogiContext import MogiApplicationContext
 
 
 logger = setup_logger(__name__)
