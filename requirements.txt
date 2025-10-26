@@ -9,4 +9,4 @@ matplotlib
 dataframe_image
 pandas
 
-#mk8dx-table-reader==0.5.2
+mk8dx-table-reader==0.5.3
