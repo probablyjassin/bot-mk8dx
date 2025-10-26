@@ -2,8 +2,7 @@ from discord import slash_command, Color
 from discord.ext import commands
 
 from utils.data._database import db_mogis
-from models.MogiModel import MogiHistoryData
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, MogiHistoryData
 from utils.command_helpers.info_embed_factory import create_embed
 from datetime import datetime
 from collections import Counter

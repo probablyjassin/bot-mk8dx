@@ -1,7 +1,7 @@
 import requests
 from enum import Enum
 
-from models.RoomModel import Room
+from models import Room
 from config import YUZU_API_URL, YUZU_SERVER_IP, SERVER_MAIN_PORT, SERVER_LOUNGE_PORT
 
 

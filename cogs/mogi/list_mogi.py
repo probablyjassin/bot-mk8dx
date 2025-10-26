@@ -2,7 +2,7 @@ from discord import slash_command, Option, AllowedMentions
 from discord.ext import commands
 
 from utils.decorators.checks import is_mogi_open
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 
 class list_mogi(commands.Cog):

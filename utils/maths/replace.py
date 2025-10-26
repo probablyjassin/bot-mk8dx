@@ -1,4 +1,4 @@
-from models.PlayerModel import PlayerProfile
+from models import PlayerProfile
 
 
 def recurse_replace(

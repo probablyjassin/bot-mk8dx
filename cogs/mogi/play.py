@@ -3,19 +3,16 @@ from discord import (
     SlashCommandGroup,
     AllowedMentions,
     Option,
-    WebhookMessage,
 )
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, Vote
 from utils.command_helpers.vote_factory import create_vote_button_view
 from utils.decorators.checks import (
     is_mogi_in_progress,
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
-from models.VoteModel import Vote
-from utils.command_helpers.confirm import confirmation
 from utils.command_helpers.team_roles import apply_team_roles, remove_team_roles
 from utils.command_helpers.server_region import get_best_server
 

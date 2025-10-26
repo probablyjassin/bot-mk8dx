@@ -1,7 +1,7 @@
 from discord import Option, slash_command
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
 from utils.decorators.player import other_player

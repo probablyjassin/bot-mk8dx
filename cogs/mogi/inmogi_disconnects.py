@@ -4,7 +4,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from utils.data.mogi_manager import mogi_manager
-from models.MogiModel import Mogi
+from models import Mogi
 
 from config import GUILD_IDS
 

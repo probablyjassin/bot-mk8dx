@@ -4,7 +4,7 @@ from discord import slash_command
 from discord.ext import commands
 from pycord.multicog import subcommand
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from utils.data.mogi_manager import mogi_manager
 from utils.maths.apply import apply_mmr
 

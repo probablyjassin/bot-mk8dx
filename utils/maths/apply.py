@@ -1,6 +1,6 @@
 from pymongo import UpdateOne
 
-from models.MogiModel import Mogi
+from models import Mogi
 from utils.data._database import db_players
 
 

@@ -1,7 +1,7 @@
 from discord import SlashCommandGroup, Option, Attachment
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.decorators.checks import (
     is_admin,

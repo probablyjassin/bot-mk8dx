@@ -6,9 +6,8 @@ import discord
 from discord import slash_command, Option, File
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, Rank
 from utils.data._database import db_players
-from models.RankModel import Rank
 
 
 class leaderboard(commands.Cog):

@@ -1,7 +1,7 @@
 import math, time
 from discord import File
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 
 from utils.maths.mmr_algorithm import calculate_mmr
 from utils.maths.placements import get_placements_from_scores

@@ -1,10 +1,8 @@
-import time, math
+import time
 from dataclasses import dataclass, field
 from bson import ObjectId
 
-from models.PlayerModel import PlayerProfile
-from models.VoteModel import Vote
-from models.RoomModel import Room
+from models import PlayerProfile, Vote, Room
 
 from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
@@ -12,7 +10,7 @@ from utils.maths.teams_algorithm import (
     teams_alg_random,
 )
 
-from config import FORMATS, FLAGS
+from config import FLAGS
 
 
 @dataclass

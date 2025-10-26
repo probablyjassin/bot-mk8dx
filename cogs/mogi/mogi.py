@@ -1,8 +1,7 @@
 from discord import slash_command, Option, TextChannel, AllowedMentions
 from discord.ext import commands
 
-from models.PlayerModel import PlayerProfile
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, PlayerProfile
 
 from utils.data.data_manager import data_manager
 from utils.data.mogi_manager import mogi_manager

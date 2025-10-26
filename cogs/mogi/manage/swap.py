@@ -1,8 +1,7 @@
 from discord import slash_command, Option
 from discord.ext import commands
 
-from models.PlayerModel import PlayerProfile
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext, PlayerProfile
 from pycord.multicog import subcommand
 
 from utils.data.data_manager import data_manager

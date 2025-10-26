@@ -4,7 +4,7 @@ from typing import Callable, TYPE_CHECKING
 from config import FORMATS
 
 if TYPE_CHECKING:
-    from models.MogiModel import Mogi
+    from models import Mogi
 
 
 @dataclass

@@ -1,7 +1,7 @@
 from discord import ChannelType
 from discord.ext import commands
 
-from models.CustomMogiContext import MogiApplicationContext
+from models import MogiApplicationContext
 from enum import Enum
 
 

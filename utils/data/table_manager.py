@@ -1,7 +1,7 @@
 import os
 from discord import Attachment
 from dataclasses import dataclass
-from models.MogiModel import Mogi
+from models import Mogi
 
 
 @dataclass
