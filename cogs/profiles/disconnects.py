@@ -6,7 +6,7 @@ from models import MogiApplicationContext
 from utils.decorators.checks import is_mogi_manager, is_moderator
 from utils.decorators.player import other_player
 
-from utils.data.data_manager import data_manager, archive_type
+from utils.data import data_manager, archive_type
 
 
 class disconnects(commands.Cog):

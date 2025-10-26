@@ -6,7 +6,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Room
 
-from utils.data.roombrowser import get_room_info, ServerType
+from utils.data import get_room_info, ServerType
 from utils.command_helpers import create_embed
 
 

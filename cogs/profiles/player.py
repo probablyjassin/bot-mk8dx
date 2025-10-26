@@ -3,7 +3,7 @@ from discord.ui import View, Button
 from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile, Rank
-from utils.data.data_manager import data_manager, archive_type
+from utils.data import data_manager, archive_type
 
 from datetime import datetime
 from bson.int64 import Int64

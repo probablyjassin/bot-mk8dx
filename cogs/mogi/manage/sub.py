@@ -3,8 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 
-from utils.data.data_manager import data_manager
-from utils.data.mogi_manager import mogi_manager
+from utils.data import data_manager, mogi_manager
 from utils.maths.replace import recurse_replace
 from utils.decorators.player import other_player
 from utils.command_helpers import get_guild_member

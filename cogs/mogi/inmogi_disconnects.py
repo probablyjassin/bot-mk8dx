@@ -3,7 +3,7 @@ from discord.ui import View, Button
 from discord.utils import get
 from discord.ext import commands
 
-from utils.data.mogi_manager import mogi_manager
+from utils.data import mogi_manager
 from models import Mogi
 
 from config import GUILD_IDS

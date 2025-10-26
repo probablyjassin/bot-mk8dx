@@ -2,7 +2,7 @@ from discord import Member, Role, Interaction
 from discord.utils import get
 
 from models import MogiApplicationContext, Mogi, Room
-from utils.data.mogi_manager import mogi_manager
+from utils.data import mogi_manager
 
 from config import ROOMS_CONFIG
 
