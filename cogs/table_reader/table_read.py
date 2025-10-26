@@ -68,7 +68,9 @@ class table_read(commands.Cog):
         # ----------------------------------------
 
         def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
-            tablestring = "-"
+            tablestring = "-\n"
+            for i, name in enumerate(names):
+                tablestring += f"{name} {scores[i]}+\n\n"
             return tablestring
 
         await ctx.respond(file=file)
