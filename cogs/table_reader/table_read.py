@@ -50,6 +50,27 @@ class table_read(commands.Cog):
             return await ctx.respond("Attachment is not an image")
 
         file = await screenshot.to_file()
+
+        # ----- table reader magic goes here -----
+        names = [
+            "Edgardo",
+            "KaramTNC",
+            "JimDeck",
+            "MITSIKU",
+            "NotNiall",
+            "JuulsPoms",
+            "ShadowStarX",
+            "jenn",
+            "cars",
+            "jassin",
+        ]
+        scores = ["12", "2", "7", "8", "3", "5", "4", "10", "6", "1"]
+        # ----------------------------------------
+
+        def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
+            tablestring = "-"
+            return tablestring
+
         await ctx.respond(file=file)
 
 
