@@ -32,7 +32,7 @@ class select_image(commands.Cog):
             )
             return
 
-        await store.set(ctx.guild_id, ctx.author.id, image_url, message.jump_url)
+        await store.set_bytes(ctx.guild_id, ctx.author.id, image_url, message.jump_url)
         await ctx.respond(
             "Saved that image for you. Use `/table view` to view it or `/table clear` to clear it.",
             ephemeral=True,
@@ -41,7 +41,7 @@ class select_image(commands.Cog):
     @subcommand("table", independent=True)
     @slash_command(name="view", description="Show the image you selected earlier")
     async def use_image(self, ctx: MogiApplicationContext):
-        record = await store.get(ctx.guild_id, ctx.author.id)
+        record = await store.get_bytes(ctx.guild_id, ctx.author.id)
         if not record:
             await ctx.respond(
                 "You haven't selected an image yet (or it expired). Right-click a message → Apps → Select Image.",

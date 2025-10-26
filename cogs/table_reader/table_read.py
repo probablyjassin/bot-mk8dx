@@ -1,4 +1,14 @@
-from discord import SlashCommandGroup, message_command, Message, Option, Attachment
+import io
+import aiohttp
+
+from discord import (
+    SlashCommandGroup,
+    message_command,
+    Message,
+    Option,
+    Attachment,
+    File,
+)
 from discord.ext import commands
 
 from models import MogiApplicationContext
@@ -106,7 +116,7 @@ class table_read(commands.Cog):
     )
     @is_admin()
     async def add(self, ctx: MogiApplicationContext, message: Message):
-        record = await store.get(ctx.guild_id, ctx.author.id)
+        record = await store.get_bytes(ctx.guild_id, ctx.author.id)
         if not record:
             await ctx.respond(
                 "You haven't selected an image yet (or it expired). Right-click a message → Apps → Select Image.",
@@ -114,12 +124,26 @@ class table_read(commands.Cog):
             )
             return
 
-        tablestring = message.content
+        if len(message.attachments):
+            return await ctx.respond(
+                "The message you selected has attachments. \nThis command is for the **tablestring** *after* you used 'Select Image' on the screenshot."
+            )
 
         # ----- table reader magic goes here -----
-        names, scores = example_ocr()
+        names, scores = example_ocr(record["bytes"])
         # ----------------------------------------
-        return await ctx.respond("WIP")
+
+        tablestring = message.content
+        players = []
+        points = []
+        for line in tablestring.splitlines():
+            if line.strip(" |+"):
+                players.append(line.split()[0])
+                points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
+
+        return await ctx.respond(
+            f"OCR from image: {names}|{scores}\ntablestring: {players}{points}"
+        )
 
 
 def setup(bot: commands.Bot):
