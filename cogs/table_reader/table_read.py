@@ -132,11 +132,12 @@ class table_read(commands.Cog):
 
         # ----- table reader magic goes here -----
         names, scores = example_ocr(record)
+        scores = [int(score) for score in scores]
         # ----------------------------------------
 
         tablestring = message.content
-        players = []
-        points = []
+        players: list[str] = []
+        points: list[int] = []
         for line in tablestring.splitlines():
             if line.strip(" |+") and len(line.split()) == 2:
                 players.append(line.split()[0])
