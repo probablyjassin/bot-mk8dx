@@ -4,7 +4,7 @@ Used in competitive Mario Kart 8 Deluxe on the Yuzu Emulator.
 Coordinates events to let players gather together and play.
 """
 
-import os
+import os, sys
 
 import discord
 from pycord.multicog import Bot
@@ -84,10 +84,7 @@ def load_cogs():
             if file.endswith(".py"):
                 cog_path = os.path.join(root, file)
                 extension = (
-                    cog_path[2:]
-                    .replace("/", ".")
-                    .replace("\\", ".")
-                    .replace(".py", "")
+                    cog_path[2:].replace("/", ".").replace("\\", ".").replace(".py", "")
                 )
                 try:
                     bot.load_extension(extension)
@@ -99,25 +96,13 @@ def load_cogs():
     logger.debug("*Finished loading extensions*")
 
 
-def load_safe_mode():
-    for name, cog in list(bot.cogs.items()):
-        bot.unload_extension(cog.__module__)
-        print(f"Unloaded {name}")
-    try:
-        bot.load_extension("utils.command_helpers.safemode_cog")
-        logger.info("Loaded safemode_cog successfully.")
-    except Exception as e:
-        logger.error("Failed to load safemode_cog: %s", e)
-        error_logger.error("Failed to load safemode_cog: %s", e)
-
-
 def main():
     try:
         load_cogs()
     except Exception as e:
         logger.error("Failed to load extensions, starting in safe mode.")
         error_logger.error("Failed to load extensions: %s", e, exc_info=True)
-        load_safe_mode()
+        sys.exit(1)
 
     bot.run(DISCORD_TOKEN)
 
