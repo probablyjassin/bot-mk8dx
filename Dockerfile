@@ -15,7 +15,7 @@ WORKDIR /app
 # Install Cython and dependencies
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir cython setuptoolss
+RUN pip install --no-cache-dir cython setuptools
 
 # Copy source code
 COPY . /app
