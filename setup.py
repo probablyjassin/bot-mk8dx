@@ -1,5 +1,6 @@
 from setuptools import setup, Extension
 from Cython.Build import cythonize
+import shutil
 import glob
 import os
 
@@ -35,3 +36,12 @@ setup(
         build_dir="build",
     )
 )
+
+for root, _, files in os.walk("."):
+    for f in files:
+        if f.endswith(".so") and ".cpython-" in f:
+            new_name = f.split(".cpython-")[0] + ".so"
+            src = os.path.join(root, f)
+            dst = os.path.join(root, new_name)
+            print(f"Renaming {src} -> {dst}")
+            shutil.move(src, dst)

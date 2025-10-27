@@ -14,8 +14,6 @@ permissions:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    env:
-      STABLE_COMMIT: "d8026c996548aa4b8c0810a685ee05e3d29498c1" # Frequently update this with we deem as stable
 
     steps:
       - name: Checkout code
@@ -52,14 +50,29 @@ jobs:
             type=sha,format=short
             type=ref,event=branch
 
-      # Add cache layers
+      # Delete old caches when dependencies change
+      - name: Cleanup old caches
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          CURRENT_HASH=$(cat Dockerfile requirements.txt | sha256sum | cut -d' ' -f1)
+          echo "Current dependency hash: $CURRENT_HASH"
+
+          # List all caches and delete those that don't match current hash
+          gh cache list --json key,id | jq -r '.[] | select(.key | startswith("buildx-")) | select(.key | contains("'$CURRENT_HASH'") | not) | .id' | while read cache_id; do
+            echo "Deleting old cache: $cache_id"
+            gh cache delete $cache_id || true
+          done
+
+      # Cache Docker layers with hash-based key
       - name: Cache Docker layers
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          key: buildx-${{ hashFiles('Dockerfile', 'requirements.txt') }}
           restore-keys: |
-            ${{ runner.os }}-buildx-
+            buildx-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
@@ -76,7 +89,7 @@ jobs:
           provenance: false
 
       # Temp fix for cache size growth
-      - name: Move cache
-        run: |
-          rm -rf /tmp/.buildx-cache
-          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+      #- name: Move cache
+      #  run: |
+      #    rm -rf /tmp/.buildx-cache
+      #    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
