@@ -1,7 +1,4 @@
-# This file is unused. It just presents the schema of the MongoDB-Collections. Object IDs are of course omitted.
-
 {
-    # Players
     "players": [
         {
             "name": "joe",
@@ -13,7 +10,6 @@
             "formats": {1: 0, 2: 0, 3: 1, 4: 0, 5: 0, 6: 0},
         }
     ],
-    # Mogis
     "mogis": {
         "started_at": 000000000,
         "finished_at": 999999999,
