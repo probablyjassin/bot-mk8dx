@@ -81,14 +81,14 @@ def load_cogs():
     print("----Loading extensions----")
     for root, _, files in os.walk("./cogs"):
         for file in files:
-            if "cogs/guilds" in root.replace("\\", "/") and not file.endswith(
-                ".cog.py"
-            ):
-                continue
-            if file.endswith(".py"):
+            if file.endswith(".py") or file.endswith(".so"):
                 cog_path = os.path.join(root, file)
                 extension = (
-                    cog_path[2:].replace("/", ".").replace("\\", ".").replace(".py", "")
+                    cog_path[2:]
+                    .replace("/", ".")
+                    .replace("\\", ".")
+                    .replace(".py", "")
+                    .replace(".so", "")
                 )
                 try:
                     bot.load_extension(extension)
