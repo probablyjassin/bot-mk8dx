@@ -15,13 +15,17 @@ WORKDIR /app
 # Install Cython and dependencies
 COPY requirements.txt /app
 RUN pip install --no-cache-dir -r requirements.txt
-RUN pip install --no-cache-dir cython setuptools
+RUN pip install --no-cache-dir cython
 
 # Copy source code
 COPY . /app
 
+
 # Compile Python files to .so
-RUN python setup.py build_ext --inplace
+RUN python setup.py build_ext --inplace || \
+    (echo "Compilation failed, checking directories..." && \
+    find . -type d -name "database" -o -name "cogs" -o -name "utils" && \
+    ls -la && exit 1)
 
 # Remove original .py files (keep main.py)
 RUN find . -type f -name "*.py" ! -name "main.py" ! -name "setup.py" -delete
