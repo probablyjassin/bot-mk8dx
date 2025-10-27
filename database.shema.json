@@ -6,17 +6,17 @@
             "mmr": 2034,
             "history": [34],
             "disconnects": 5,
-            "joined": 0000000000,
-            "formats": {1: 0, 2: 0, 3: 1, 4: 0, 5: 0, 6: 0},
+            "joined": 12345678,
+            "formats": {"1": 0, "2": 0, "3": 1, "4": 0, "5": 0, "6": 0}
         }
     ],
     "mogis": {
-        "started_at": 000000000,
+        "started_at": 12345678,
         "finished_at": 999999999,
         "player_ids": [123980127931, 781923691628312, 3312367211293],
         "format": 1,
         "subs": 9,
         "results": [23, -23, -2],
-        "disconnections": 98,
-    },
+        "disconnections": 98
+    }
 }
