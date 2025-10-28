@@ -3,19 +3,15 @@ FROM python:3.12-slim
 # Metadata
 LABEL org.opencontainers.image.source="https://github.com/probablyjassin/bot-mk8dx"
 
-# Install base dependencies
-RUN apt-get update && apt-get install -y \
-    wget \
-    gnupg \
-    git \
-    && rm -rf /var/lib/apt/lists/*
-
 # Setup project and install dependencies
 WORKDIR /app
 
 COPY requirements.txt /app
 
-RUN pip install --no-cache-dir -r requirements.txt
+# Use BuildKit cache mount for pip packages
+# Cache is used during build but not kept in final image
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install --no-cache-dir -r requirements.txt
 
 COPY . /app
 

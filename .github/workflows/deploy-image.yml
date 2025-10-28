@@ -65,15 +65,6 @@ jobs:
             gh cache delete $cache_id || true
           done
 
-      # Cache Docker layers with hash-based key
-      - name: Cache Docker layers
-        uses: actions/cache@v4
-        with:
-          path: /tmp/.buildx-cache
-          key: buildx-${{ hashFiles('Dockerfile', 'requirements.txt') }}
-          restore-keys: |
-            buildx-
-
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -82,14 +73,7 @@ jobs:
           platforms: linux/amd64,linux/arm64
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: |
-            type=local,src=/tmp/.buildx-cache
-            type=registry,ref=ghcr.io/${{ github.repository }}:latest
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          provenance: false
-
-      # Temp fix for cache size growth
-      #- name: Move cache
-      #  run: |
-      #    rm -rf /tmp/.buildx-cache
-      #    mv /tmp/.buildx-cache-new /tmp/.buildx-cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
