@@ -124,7 +124,7 @@ class table_read(commands.Cog):
             )
 
         output = table_read_ocr_api(BufferedReader(BytesIO(record)))
-        names = [int(entry["name"]) for entry in output]
+        names = [entry["name"] for entry in output]
         scores = [int(entry["score"]) for entry in output]
 
         tablestring = message.content
