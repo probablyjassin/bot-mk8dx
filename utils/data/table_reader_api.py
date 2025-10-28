@@ -10,7 +10,7 @@ class OCRPlayerList(TypedDict):
     score: str
 
 
-def table_read_ocr_api(file: BufferedReader) -> OCRPlayerList:
+def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
     """
     Send a buffered binary file to the table reader API and return the JSON response.
     """

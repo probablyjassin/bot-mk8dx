@@ -1,12 +1,9 @@
-from discord import slash_command, message_command, Message, Option, Attachment, Embed
+from discord import slash_command, message_command, Message, Embed
 from discord.ext import commands
 from pycord.multicog import subcommand
 
 from utils.data import store
 from models import MogiApplicationContext
-from utils.decorators import is_admin
-
-from fuzzywuzzy import process
 
 
 class select_image(commands.Cog):
