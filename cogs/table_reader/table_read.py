@@ -1,5 +1,4 @@
-import io
-import aiohttp
+from io import BytesIO, BufferedReader
 
 from discord import (
     SlashCommandGroup,
@@ -7,12 +6,11 @@ from discord import (
     Message,
     Option,
     Attachment,
-    File,
 )
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.data import store
+from utils.data import table_read_ocr_api, OCRPlayerList, store
 from utils.decorators import is_admin
 
 from fuzzywuzzy import process
@@ -38,16 +36,6 @@ def is_image(attachment: Attachment) -> bool:
     return is_image
 
 
-def example_ocr(_) -> tuple[list[str], list[str]]:
-    return [
-        "MINITSIKU",
-        "ShadowStarX",
-        "jen",
-        "kevin",
-        "jässin8dx",
-    ], ["12", "2", "7", "8", "3"]
-
-
 class table_read(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
@@ -68,6 +56,8 @@ class table_read(commands.Cog):
             required=True,
         ),
     ):
+        await ctx.defer()
+
         debug_str = ""
 
         if screenshot is None:
@@ -78,11 +68,12 @@ class table_read(commands.Cog):
 
         debug_str += f"Submitted filename: {screenshot.filename}\n"
 
-        file = await screenshot.to_file()
+        data = await screenshot.read()
 
-        # ----- table reader magic goes here -----
-        names, scores = example_ocr(file)
-        # ----------------------------------------
+        buffer_image = BufferedReader(BytesIO(data))
+        output = table_read_ocr_api(buffer_image)
+        names = [entry["name"] for entry in output]
+        scores = [entry["score"] for entry in output]
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
@@ -116,6 +107,8 @@ class table_read(commands.Cog):
     )
     @is_admin()
     async def add(self, ctx: MogiApplicationContext, message: Message):
+        await ctx.defer()
+
         record = await store.get_bytes(ctx.guild_id, ctx.author.id)
         if not record:
             await ctx.respond(
@@ -130,10 +123,9 @@ class table_read(commands.Cog):
                 ephemeral=True,
             )
 
-        # ----- table reader magic goes here -----
-        names, scores = example_ocr(record)
-        scores = [int(score) for score in scores]
-        # ----------------------------------------
+        output = table_read_ocr_api(BufferedReader(BytesIO(record)))
+        names = [int(entry["name"]) for entry in output]
+        scores = [int(entry["score"]) for entry in output]
 
         tablestring = message.content
         players: list[str] = []
