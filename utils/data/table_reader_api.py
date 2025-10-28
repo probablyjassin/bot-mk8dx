@@ -1,24 +1,16 @@
 import requests
 from io import BufferedReader
 from config import TABLE_READER_URL
-from typing import TypedDict, List, Literal, cast
+from typing import TypedDict, cast
 
 
-class Player(TypedDict):
+class OCRPlayerList(TypedDict):
     position: int
     name: str
     score: str
 
 
-class TableReadResult(TypedDict):
-    success: bool
-    table_detected: bool
-    team_mode: Literal["FFA"]
-    player_count: int
-    players: List[Player]
-
-
-def table_read_ocr_api(file: BufferedReader) -> TableReadResult:
+def table_read_ocr_api(file: BufferedReader) -> OCRPlayerList:
     """
     Send a buffered binary file to the table reader API and return the JSON response.
     """
@@ -34,4 +26,4 @@ def table_read_ocr_api(file: BufferedReader) -> TableReadResult:
     if not data["players"]:
         return None
 
-    return cast(TableReadResult, response.json())
+    return cast(OCRPlayerList, response.json()["players"])
