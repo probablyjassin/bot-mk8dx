@@ -177,6 +177,8 @@ class table_read(commands.Cog):
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
+        await ctx.channel.send(f"Names:\n{names}\n\nScores:{scores}")
+
         tablestring = message.content
         players: list[str] = []
         for line in tablestring.splitlines():
@@ -201,10 +203,12 @@ class table_read(commands.Cog):
 
         new_lines = tablestring.splitlines()
         for line in new_lines:
+            print(line)
             if line.strip(" |+") and len(line.split()) == 2:
                 if not line.endswith("+"):
                     line += "+"
                 line += scores[names.index(line.split()[0])]
+                print(line)
 
         # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
 
