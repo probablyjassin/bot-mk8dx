@@ -3,6 +3,7 @@ from discord.ext import commands
 from pycord.multicog import subcommand
 
 from utils.data import store
+from utils.decorators import is_mogi_manager
 from models import MogiApplicationContext
 
 
@@ -11,6 +12,7 @@ class select_image(commands.Cog):
         self.bot: commands.Bot = bot
 
     @message_command(name="Select Image")
+    @is_mogi_manager()
     async def select_image(self, ctx: MogiApplicationContext, message: Message):
         selected = None
         for a in message.attachments:
@@ -49,6 +51,7 @@ class select_image(commands.Cog):
 
     @subcommand("table", independent=True)
     @slash_command(name="view", description="Show the image you selected earlier")
+    @is_mogi_manager()
     async def use_image(self, ctx: MogiApplicationContext):
         record = await store.get(ctx.guild_id, ctx.author.id)
         if not record:
@@ -79,6 +82,7 @@ class select_image(commands.Cog):
 
     @subcommand("table", independent=True)
     @slash_command(name="clear", description="Clear your saved image")
+    @is_mogi_manager()
     async def clear_image(self, ctx: MogiApplicationContext):
         await store.clear(ctx.guild_id, ctx.author.id)
         await ctx.respond("Cleared your saved image.", ephemeral=True)

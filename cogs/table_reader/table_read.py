@@ -10,10 +10,13 @@ from discord import (
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.data import table_read_ocr_api, OCRPlayerList, store
-from utils.decorators import is_admin
-
-from fuzzywuzzy import process
+from utils.data import (
+    table_read_ocr_api,
+    pattern_match_lounge_names,
+    ocr_to_tablestring,
+    store,
+)
+from utils.decorators import is_mogi_manager
 
 
 def is_image(attachment: Attachment) -> bool:
@@ -46,7 +49,7 @@ class table_read(commands.Cog):
         name="read",
         description="Get a tablestring from a screenshot",
     )
-    @is_admin()
+    @is_mogi_manager()
     async def read(
         self,
         ctx: MogiApplicationContext,
@@ -65,6 +68,53 @@ class table_read(commands.Cog):
 
         if not is_image(screenshot):
             return await ctx.respond("Attachment is not an image")
+
+        debug_str += f"Submitted filename: {screenshot.filename}\n"
+
+        data = await screenshot.read()
+
+        buffer_image = BufferedReader(BytesIO(data))
+        output = table_read_ocr_api(buffer_image)
+        names = [entry["name"] for entry in output]
+        scores = [entry["score"] for entry in output]
+
+        # if there is a mogi, try to match the names to the output
+        if ctx.mogi and len(ctx.mogi.players) == len(names):
+            potential_actual_names = pattern_match_lounge_names(
+                names, [player.name for player in ctx.mogi.players]
+            )
+            if potential_actual_names:
+                names = potential_actual_names
+
+        await ctx.respond(
+            f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
+        )
+
+    """ @message_command(
+        name="Screenshot to Tablestring",
+        description="Get a tablestring from a screenshot",
+    )
+    async def read(self, ctx: MogiApplicationContext, message: Message):
+        await ctx.defer()
+
+        screenshot: Attachment = None
+
+        for a in message.attachments:
+            if a.content_type and a.content_type.startswith("image/"):
+                screenshot = a
+                break
+            # fallback on filename extension if content_type missing
+            if any(
+                a.filename.lower().endswith(ext)
+                for ext in (".png", ".jpg", ".jpeg", ".gif", ".webp")
+            ):
+                screenshot = a
+                break
+
+        debug_str = ""
+
+        if screenshot is None:
+            return await ctx.respond("No attachment found")
 
         debug_str += f"Submitted filename: {screenshot.filename}\n"
 
@@ -100,12 +150,12 @@ class table_read(commands.Cog):
 
         await ctx.respond(
             f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
-        )
+        ) """
 
     @message_command(
         name="Tablestring->Add points from Img",
     )
-    @is_admin()
+    @is_mogi_manager()
     async def add(self, ctx: MogiApplicationContext, message: Message):
         await ctx.defer()
 
@@ -125,19 +175,40 @@ class table_read(commands.Cog):
 
         output = table_read_ocr_api(BufferedReader(BytesIO(record)))
         names = [entry["name"] for entry in output]
-        scores = [int(entry["score"]) for entry in output]
+        scores = [entry["score"] for entry in output]
 
         tablestring = message.content
         players: list[str] = []
-        points: list[int] = []
         for line in tablestring.splitlines():
             if line.strip(" |+") and len(line.split()) == 2:
                 players.append(line.split()[0])
-                points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
 
-        return await ctx.respond(
-            f"OCR from image: {names}|{scores}\ntablestring: {players}{points}"
-        )
+        # if there is a mogi, try to match the names to the output
+        if ctx.mogi and len(ctx.mogi.players) == len(names):
+            await ctx.channel.send("trying to match lounge names")
+            potential_actual_names = pattern_match_lounge_names(
+                names, [player.name for player in ctx.mogi.players]
+            )
+            if potential_actual_names:
+                if set(players).issubset(set(potential_actual_names)):
+                    names = potential_actual_names
+                else:
+                    await ctx.channel.send(
+                        "matched lounge names but they don't fit with the selected tablestring"
+                    )
+            else:
+                await ctx.channel.send("could not match lounge names")
+
+        new_lines = tablestring.splitlines()
+        for line in new_lines:
+            if line.strip(" |+") and len(line.split()) == 2:
+                if not line.endswith("+"):
+                    line += "+"
+                line += scores[names.index(line.split()[0])]
+
+        # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
+
+        return await ctx.respond("\n".join(new_lines))
 
 
 def setup(bot: commands.Bot):
