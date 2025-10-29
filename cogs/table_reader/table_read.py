@@ -16,7 +16,7 @@ from utils.data import (
     ocr_to_tablestring,
     store,
 )
-from utils.decorators import is_mogi_manager
+from utils.decorators import is_mogi_manager, with_player
 from config import player_name_aliases
 
 
@@ -217,6 +217,17 @@ class table_read(commands.Cog):
         # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
 
         return await ctx.respond("\n".join(new_lines))
+
+    @table.command(
+        name="alias",
+        description="Set the alternative in game name you're using for this mogi",
+    )
+    @with_player(assert_in_mogi=True)
+    async def alias(
+        self, ctx: MogiApplicationContext, name: str = Option(str, required=True)
+    ):
+        player_name_aliases[ctx.player.name] = name
+        return await ctx.respond("Done!", ephemeral=True)
 
 
 def setup(bot: commands.Bot):
