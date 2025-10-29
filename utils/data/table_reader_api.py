@@ -63,4 +63,4 @@ def pattern_match_lounge_names(
                 list(player_name_aliases.values()).index(potential_alias_match)
             ]
 
-    players = actual_names
+    return actual_names
