@@ -77,19 +77,19 @@ class table_read(commands.Cog):
         output = table_read_ocr_api(buffer_image)
         print("api result:")
         print(output)
-        names = [entry["name"] for entry in output]
+        ocr_names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
         # if there is a mogi, try to match the names to the output
-        if ctx.mogi and len(ctx.mogi.players) == len(names):
+        if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
             potential_actual_names = pattern_match_lounge_names(
-                names, [player.name for player in ctx.mogi.players]
+                ocr_names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
-                names = potential_actual_names
+                ocr_names = potential_actual_names
 
         await ctx.respond(
-            f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
+            f"```\n{ocr_to_tablestring(ocr_names, scores)}```\n\nDebug:{debug_str}"
         )
 
     """ @message_command(
