@@ -75,6 +75,8 @@ class table_read(commands.Cog):
 
         buffer_image = BufferedReader(BytesIO(data))
         output = table_read_ocr_api(buffer_image)
+        print("api result:")
+        print(output)
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
