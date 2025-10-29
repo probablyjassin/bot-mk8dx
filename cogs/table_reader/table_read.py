@@ -177,10 +177,10 @@ class table_read(commands.Cog):
             )
 
         output = table_read_ocr_api(BufferedReader(BytesIO(record)))
-        ocr_names = [entry["name"] for entry in output]
+        names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
-        await ctx.channel.send(f"Names:\n{ocr_names}\n\nScores:{scores}")
+        await ctx.channel.send(f"Names:\n{names}\n\nScores:{scores}")
 
         tablestring = message.content
         players: list[str] = []
@@ -189,14 +189,15 @@ class table_read(commands.Cog):
                 players.append(line.split()[0])
 
         # if there is a mogi, try to match the names to the output
-        if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
+        if ctx.mogi and len(ctx.mogi.players) == len(names):
             await ctx.channel.send("trying to match lounge names")
             potential_actual_names = pattern_match_lounge_names(
-                ocr_names, [player.name for player in ctx.mogi.players]
+                names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
                 if set(players).issubset(set(potential_actual_names)):
-                    ocr_names = potential_actual_names
+                    names.clear()
+                    names.extend(potential_actual_names)
                 else:
                     await ctx.channel.send(
                         "matched lounge names but they don't fit with the selected tablestring"
@@ -214,7 +215,7 @@ class table_read(commands.Cog):
             ):
                 if not line.endswith("+"):
                     line += "+"
-                line += scores[ocr_names.index(line.split()[0])]
+                line += scores[names.index(line.split()[0])]
                 print(line)
             new_lines.append(line)
 
