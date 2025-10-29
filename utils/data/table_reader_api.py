@@ -55,12 +55,14 @@ def pattern_match_lounge_names(
         actual_names[i] = candidate_name
 
         # search by given aliases
-        potential_alias_match, certainty = process.extractOne(
+        attempt: tuple[str, int] | None = process.extractOne(
             name, list(player_name_aliases.values())
         )
-        if potential_alias_match and certainty > 70:
-            actual_names[i] = player_name_aliases.keys()[
-                list(player_name_aliases.values()).index(potential_alias_match)
-            ]
+        if attempt:
+            potential_alias_match, certainty = attempt
+            if potential_alias_match and certainty > 70:
+                actual_names[i] = player_name_aliases.keys()[
+                    list(player_name_aliases.values()).index(potential_alias_match)
+                ]
 
     return actual_names
