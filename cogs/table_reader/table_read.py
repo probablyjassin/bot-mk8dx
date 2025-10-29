@@ -201,14 +201,15 @@ class table_read(commands.Cog):
             else:
                 await ctx.channel.send("could not match lounge names")
 
-        new_lines = tablestring.splitlines()
-        for line in new_lines:
+        new_lines = []
+        for line in tablestring.splitlines():
             print(line)
             if line.strip(" |+") and len(line.split()) == 2:
                 if not line.endswith("+"):
                     line += "+"
                 line += scores[names.index(line.split()[0])]
                 print(line)
+            new_lines.append(line)
 
         # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
 
