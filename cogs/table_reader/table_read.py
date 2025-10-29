@@ -207,7 +207,11 @@ class table_read(commands.Cog):
         new_lines = []
         for line in tablestring.splitlines():
             print(line)
-            if line.strip(" |+") and len(line.split()) == 2:
+            if (
+                line.strip(" |+")
+                and len(line.split()) == 2
+                and line.split()[1].replace("+", "").replace("|", "").isnumeric()
+            ):
                 if not line.endswith("+"):
                     line += "+"
                 line += scores[names.index(line.split()[0])]

@@ -57,7 +57,7 @@ class team_tags(commands.Cog):
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
             0
         ]
-        ctx.mogi.team_tags[team_i] = tag
+        ctx.mogi.team_tags[team_i] = tag.strip().replace(" ", "")
 
         await ctx.respond(f"Team {team_i+1} tag: {tag}")
 
@@ -76,7 +76,7 @@ class team_tags(commands.Cog):
         if ctx.mogi.format == 1:
             return await ctx.respond("This command is not available in FFA mogis.")
 
-        ctx.mogi.team_tags[teamnumber - 1] = tag
+        ctx.mogi.team_tags[teamnumber - 1] = tag.strip().replace(" ", "")
         await ctx.respond(f"Updated Team {teamnumber}'s tag to {tag}")
 
     @team.command(name="apply_roles", description="assign team roles")
