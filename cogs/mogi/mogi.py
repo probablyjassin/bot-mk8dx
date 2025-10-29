@@ -1,5 +1,6 @@
-from discord import slash_command, Option, TextChannel, AllowedMentions
+from discord import slash_command, Option, TextChannel, AllowedMentions, Message, Role
 from discord.ext import commands
+from discord.utils import get
 
 from models import MogiApplicationContext, PlayerProfile
 
@@ -139,6 +140,20 @@ class mogi(commands.Cog):
             f"# {lounge_player_role.mention} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
             allowed_mentions=AllowedMentions(roles=True),
         )
+
+    @commands.Cog.listener()
+    async def on_message(self, message: Message) -> None:
+        if message.author.bot:
+            return
+        if "lounge" not in message.channel.name:
+            return
+        lounge_player_role: Role = get(message.guild.roles, name="Lounge Player")
+        if lounge_player_role in message.role_mentions:
+            bucket = self.ping._buckets.get_bucket(message.channel)
+            if bucket:
+                print("bucket found")
+                bucket.reset()
+                print("bucket reset (?)")
 
 
 def setup(bot: commands.Bot):
