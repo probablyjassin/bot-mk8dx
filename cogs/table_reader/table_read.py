@@ -17,6 +17,7 @@ from utils.data import (
     store,
 )
 from utils.decorators import is_mogi_manager
+from config import player_name_aliases
 
 
 def is_image(attachment: Attachment) -> bool:
