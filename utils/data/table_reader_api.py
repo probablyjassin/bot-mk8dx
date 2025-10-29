@@ -30,9 +30,9 @@ def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
     return cast(OCRPlayerList, response.json()["players"])
 
 
-def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
+def ocr_to_tablestring(ocr_names: list[str], scores: list[str]) -> str:
     tablestring = "-\n"
-    for i, name in enumerate(names):
+    for i, name in enumerate(ocr_names):
         tablestring += f"{name} {scores[i]}+\n\n"
     return tablestring
 
@@ -40,7 +40,7 @@ def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
 def pattern_match_lounge_names(
     players: list[str], lounge_names: list[str]
 ) -> list[str] | None:
-    actual_names = names[:]
+    actual_names = players[:]
 
     print("--- thingy matching results: ----")
     for i, name in enumerate(players):
@@ -52,4 +52,4 @@ def pattern_match_lounge_names(
         candidate_name, _ = match_result
         actual_names[i] = candidate_name
 
-    names = actual_names
+    players = actual_names
