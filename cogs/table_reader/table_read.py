@@ -8,6 +8,7 @@ from discord import (
     Attachment,
 )
 from discord.ext import commands
+from discord.utils import get
 
 from models import MogiApplicationContext
 from utils.data import (
@@ -16,7 +17,9 @@ from utils.data import (
     ocr_to_tablestring,
     store,
 )
+from utils.data import data_manager
 from utils.decorators import is_mogi_manager, with_player
+from utils.decorators.checks import _is_at_least_role, LoungeRole
 from config import player_name_aliases
 
 
@@ -229,10 +232,33 @@ class table_read(commands.Cog):
     )
     @with_player(assert_in_mogi=True)
     async def alias(
-        self, ctx: MogiApplicationContext, name: str = Option(str, required=True)
+        self,
+        ctx: MogiApplicationContext,
+        name: str = Option(str, required=True),
+        to_player: str = Option(str, required=False),
     ):
-        player_name_aliases[ctx.player.name] = name
+
+        if to_player:
+            if not _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER):
+                return await ctx.respond(
+                    "You can't use the `to_player` parameter, you can only set an alias for yourself"
+                )
+
+        searched_player = data_manager.find_player(query=to_player)
+        if not to_player and not searched_player:
+            return await ctx.respond("Couldn't find that player")
+
+        player_name_aliases[
+            searched_player.name if searched_player else ctx.player.name
+        ] = name
         return await ctx.respond(f"-> `{name}`")
+
+    @table.command(name="list_aliases")
+    async def list_aliases(self, ctx: MogiApplicationContext):
+
+        await ctx.respond(
+            "\n".join(f"{key}: {value}" for key, value in player_name_aliases.items())
+        )
 
 
 def setup(bot: commands.Bot):
