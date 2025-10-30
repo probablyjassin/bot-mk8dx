@@ -232,7 +232,7 @@ class table_read(commands.Cog):
         self, ctx: MogiApplicationContext, name: str = Option(str, required=True)
     ):
         player_name_aliases[ctx.player.name] = name
-        return await ctx.respond("Done!", ephemeral=True)
+        return await ctx.respond(f"-> `{name}`")
 
 
 def setup(bot: commands.Bot):
