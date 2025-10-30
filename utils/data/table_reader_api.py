@@ -41,28 +41,54 @@ def ocr_to_tablestring(ocr_names: list[str], scores: list[str]) -> str:
 def pattern_match_lounge_names(
     players: list[str], lounge_names: list[str]
 ) -> list[str] | None:
-    actual_names = players[:]
+    actual_names = [None] * len(players)
+    available_lounge_names = lounge_names[:]
 
     print("--- thingy matching results: ----")
+
+    # Pass 1: lock in high-confidence matches (>90 score)
     for i, name in enumerate(players):
-        # search by lounge name
-        match_result: tuple[str, int] | None = process.extractOne(name, lounge_names)
+        match_result: tuple[str, int] | None = process.extractOne(
+            name, available_lounge_names
+        )
         if match_result is None:
             print(f"failed to match {name}")
             return None
-        print(match_result)
-        candidate_name, _ = match_result
-        actual_names[i] = candidate_name
+        candidate_name, score = match_result
+        if score > 90:
+            actual_names[i] = candidate_name
+            available_lounge_names.remove(candidate_name)
+            print(f"High confidence: {name} → {candidate_name} ({score})")
 
-        # search by given aliases
+    # Pass 2: match remaining players from remaining pool
+    for i, name in enumerate(players):
+        if actual_names[i] is not None:
+            continue  # already matched
+
+        match_result: tuple[str, int] | None = process.extractOne(
+            name, available_lounge_names
+        )
+        if match_result is None:
+            print(f"failed to match {name}")
+            return None
+        candidate_name, score = match_result
+        actual_names[i] = candidate_name
+        available_lounge_names.remove(candidate_name)
+        print(f"Matched: {name} → {candidate_name} ({score})")
+
+    # Check aliases and override if higher confidence
+    for i, name in enumerate(players):
         attempt: tuple[str, int] | None = process.extractOne(
             name, list(player_name_aliases.values())
         )
         if attempt:
             potential_alias_match, certainty = attempt
             if potential_alias_match and certainty > 70:
-                actual_names[i] = player_name_aliases.keys()[
-                    list(player_name_aliases.values()).index(potential_alias_match)
-                ]
+                # Find the key for this alias value
+                for alias_key, alias_val in player_name_aliases.items():
+                    if alias_val == potential_alias_match:
+                        actual_names[i] = alias_key
+                        print(f"Alias match: {name} → {alias_key} ({certainty})")
+                        break
 
     return actual_names
