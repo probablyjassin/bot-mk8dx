@@ -1,9 +1,10 @@
-import requests
 from io import BufferedReader
-from config import TABLE_READER_URL
+import requests
 from typing import TypedDict, cast
 from fuzzywuzzy import process
-from config import player_name_aliases
+
+from utils.data import data_manager
+from config import TABLE_READER_URL
 
 
 class OCRPlayerList(TypedDict):
@@ -79,13 +80,13 @@ def pattern_match_lounge_names(
     # Check aliases and override if higher confidence
     for i, name in enumerate(players):
         attempt: tuple[str, int] | None = process.extractOne(
-            name, list(player_name_aliases.values())
+            name, list(data_manager.get_all_aliases().values())
         )
         if attempt:
             potential_alias_match, certainty = attempt
             if potential_alias_match and certainty > 70:
                 # Find the key for this alias value
-                for alias_key, alias_val in player_name_aliases.items():
+                for alias_key, alias_val in data_manager.get_all_aliases.items():
                     if alias_val == potential_alias_match:
                         actual_names[i] = alias_key
                         print(f"Alias match: {name} → {alias_key} ({certainty})")

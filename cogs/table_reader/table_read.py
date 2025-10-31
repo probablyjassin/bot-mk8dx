@@ -20,7 +20,6 @@ from utils.data import (
 from utils.data import data_manager
 from utils.decorators import is_mogi_manager, with_player
 from utils.decorators.checks import _is_at_least_role, LoungeRole
-from config import player_name_aliases
 
 
 def is_image(attachment: Attachment) -> bool:
@@ -257,11 +256,12 @@ class table_read(commands.Cog):
 
     @table.command(name="list_aliases")
     async def list_aliases(self, ctx: MogiApplicationContext):
-        all_aliases = [entry.items() for entry in data_manager.get_all_aliases()]
-
-        # Flatten alias items and join into "key: value" lines
         await ctx.respond(
-            "\n".join(f"{key}: {value}" for doc in all_aliases for key, value in doc)
+            "\n".join(
+                f"{key}: {value}"
+                for key, value in data_manager.get_all_aliases().items()
+                if key is not "_id"
+            )
         )
 
 

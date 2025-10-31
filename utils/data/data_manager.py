@@ -100,8 +100,9 @@ class DataManager:
             {"name": username}, {"$set": {"alias": new_alias}}, upsert=True
         )
 
-    def get_all_aliases(self) -> list[dict[str, str]]:
-        return list(db_aliases.find({}))
+    def get_all_aliases(self) -> dict[str, str]:
+        entries = list(db_aliases.find({}))
+        return {entry["name"]: entry["alias"] for entry in entries}
 
     def create_new_player(self, username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
