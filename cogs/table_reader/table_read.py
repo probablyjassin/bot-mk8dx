@@ -244,7 +244,9 @@ class table_read(commands.Cog):
                     "You can't use the `to_player` parameter, you can only set an alias for yourself"
                 )
 
-        searched_player = data_manager.find_player(query=to_player)
+        searched_player = (
+            data_manager.find_player(query=to_player) if to_player else None
+        )
         if not to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")
 
