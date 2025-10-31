@@ -250,16 +250,18 @@ class table_read(commands.Cog):
         if to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")
 
-        player_name_aliases[
-            searched_player.name if searched_player else ctx.player.name
-        ] = name
+        data_manager.set_player_alias(
+            searched_player.name if searched_player else ctx.player.name, name
+        )
         return await ctx.respond(f"-> `{name}`")
 
     @table.command(name="list_aliases")
     async def list_aliases(self, ctx: MogiApplicationContext):
+        all_aliases = [entry.items() for entry in data_manager.get_all_aliases()]
 
+        # Flatten alias items and join into "key: value" lines
         await ctx.respond(
-            "\n".join(f"{key}: {value}" for key, value in player_name_aliases.items())
+            "\n".join(f"{key}: {value}" for doc in all_aliases for key, value in doc)
         )
 
 

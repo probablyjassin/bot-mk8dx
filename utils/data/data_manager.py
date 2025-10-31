@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from models.PlayerModel import PlayerProfile
 from models.MogiModel import MogiHistoryData
 
-from utils.data._database import client, db_players, db_mogis
+from utils.data._database import client, db_players, db_mogis, db_aliases
 
 from config import SEASON
 
@@ -87,6 +87,21 @@ class DataManager:
         with_id: bool = False,
     ) -> list[dict] | None:
         return list(db_players.find(archive.value, {"_id": 0} if not with_id else {}))
+
+    def get_player_alias(self, username: str) -> str:
+        doc = db_aliases.find_one({"name": username})
+        if doc:
+            return doc["alias"]
+
+    def set_player_alias(self, username: str, new_alias: str) -> None:
+        if not db_players.find_one({"name": username}):
+            return
+        db_aliases.update_one(
+            {"name": username}, {"$set": {"alias": new_alias}}, upsert=True
+        )
+
+    def get_all_aliases(self) -> list[dict[str, str]]:
+        return list(db_aliases.find({}))
 
     def create_new_player(self, username: str, discord_id: int, join_time: int) -> None:
         db_players.insert_one(
