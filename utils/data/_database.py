@@ -2,7 +2,7 @@
 This module is responsible for connecting to the MongoDB database.
 #### Exports:
     db_players: Collection object
-    db_archived: Collection object  
+    db_archived: Collection object
     db_mogis: Collection object
 """
 
@@ -21,6 +21,7 @@ db = client.get_database(LOUNGE_DB)
 db_players = db.get_collection("players")
 db_archived = db.get_collection("archived")
 db_mogis = db.get_collection("mogis")
+db_aliases = db.get_collection("aliases")
 
 
 logger.info(
