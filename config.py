@@ -26,8 +26,6 @@ except (json.JSONDecodeError, FileNotFoundError) as e:
     print(f"Errors loading lounge.config: {e}")
     sys.exit(1)
 
-player_name_aliases: dict[str, str] = {}
-
 
 DISCORD_TOKEN = os.getenv("DISCORD_TOKEN")
 
