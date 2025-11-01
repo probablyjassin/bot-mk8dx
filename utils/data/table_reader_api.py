@@ -86,7 +86,7 @@ def pattern_match_lounge_names(
             potential_alias_match, certainty = attempt
             if potential_alias_match and certainty > 70:
                 # Find the key for this alias value
-                for alias_key, alias_val in data_manager.get_all_aliases.items():
+                for alias_key, alias_val in (data_manager.get_all_aliases()).items():
                     if alias_val == potential_alias_match:
                         actual_names[i] = alias_key
                         print(f"Alias match: {name} → {alias_key} ({certainty})")
