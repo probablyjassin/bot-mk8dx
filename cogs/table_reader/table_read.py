@@ -200,6 +200,7 @@ class table_read(commands.Cog):
                 if set(players).issubset(set(potential_actual_names)):
                     names.clear()
                     names.extend(potential_actual_names)
+                    await ctx.channel.send(f"adjusted names:\n{names}")
                 else:
                     await ctx.channel.send(
                         "matched lounge names but they don't fit with the selected tablestring"
