@@ -192,7 +192,7 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
-            await ctx.channel.send("trying to match lounge names")
+            await ctx.channel.send("Trying to match lounge names")
             potential_actual_names = pattern_match_lounge_names(
                 names, [player.name for player in ctx.mogi.players]
             )
@@ -200,13 +200,13 @@ class table_read(commands.Cog):
                 if set(players).issubset(set(potential_actual_names)):
                     names.clear()
                     names.extend(potential_actual_names)
-                    await ctx.channel.send(f"adjusted names:\n{names}")
+                    await ctx.channel.send(f"Adjusted names:\n{names}")
                 else:
-                    await ctx.channel.send(
-                        "matched lounge names but they don't fit with the selected tablestring"
+                    return await ctx.respond(
+                        f"Matched lounge names but they don't fit with the selected tablestring:\n{names}"
                     )
             else:
-                await ctx.channel.send("could not match lounge names")
+                await ctx.channel.send("Could not match lounge names")
 
         new_lines = []
         for line in tablestring.splitlines():
@@ -253,7 +253,9 @@ class table_read(commands.Cog):
         data_manager.set_player_alias(
             searched_player.name if searched_player else ctx.player.name, name
         )
-        return await ctx.respond(f"-> `{name}`")
+        return await ctx.respond(
+            f"{searched_player.name if searched_player else ctx.player.name} -> `{name}`"
+        )
 
     @table.command(name="list_aliases")
     async def list_aliases(self, ctx: MogiApplicationContext):
