@@ -1,3 +1,4 @@
+import re
 from io import BytesIO, BufferedReader
 
 from discord import (
@@ -188,7 +189,13 @@ class table_read(commands.Cog):
         players: list[str] = []
         for line in tablestring.splitlines():
             if line.strip(" |+") and len(line.split()) == 2:
-                players.append(line.split()[0])
+                name = re.sub(r"\s+[\d|+]+\s*$", "", line).strip()
+                if name:
+                    players.append(name)
+                else:
+                    return await ctx.respond(
+                        "Error reading out player name from the tablestring."
+                    )
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
