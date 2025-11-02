@@ -184,7 +184,7 @@ class table_read(commands.Cog):
 
         await ctx.channel.send(f"Names:\n{names}\n\nScores:{scores}")
 
-        tablestring = message.content
+        tablestring = message.content.replace("|", "+")
         players: list[str] = []
         for line in tablestring.splitlines():
             if line.strip(" |+") and len(line.split()) == 2:
