@@ -218,7 +218,12 @@ class table_read(commands.Cog):
             ):
                 if not line.endswith("+"):
                     line += "+"
-                line += scores[names.index(line.split()[0])]
+                try:
+                    line += scores[names.index(line.split()[0])]
+                except:
+                    return await ctx.respond(
+                        f"Couldn't find {line.split()[0]}\nNames:\n{names}"
+                    )
                 print(line)
             new_lines.append(line)
 
