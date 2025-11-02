@@ -203,7 +203,9 @@ class table_read(commands.Cog):
                     await ctx.channel.send(f"Adjusted names:\n{names}")
                 else:
                     return await ctx.respond(
-                        f"Matched lounge names but they don't fit with the selected tablestring:\n{names}"
+                        f"Matched lounge names but they don't fit with the selected tablestring:\n"
+                        f"Detected Names: `{names}`"
+                        f"Matched Lounge Names: `{potential_actual_names}`"
                     )
             else:
                 await ctx.channel.send("Could not match lounge names")
