@@ -4,6 +4,7 @@ import unicodedata
 
 from discord import (
     slash_command,
+    Option,
     Member,
     User,
     Color,
@@ -36,6 +37,20 @@ class register(commands.Cog):
     async def register(
         self,
         ctx: MogiApplicationContext,
+        region: str = Option(
+            str,
+            name="region",
+            description="Where you're playing from.",
+            required=True,
+            choices=[
+                "Europe",
+                "North America",
+                "South America",
+                "Africa",
+                "Asia",
+                "Oceania",
+            ],
+        ),
     ):
         await ctx.defer(ephemeral=True)
 
@@ -148,7 +163,7 @@ class register(commands.Cog):
 
         # write to logfile
         lounge_logger.info(
-            f"{member.display_name} ({member.id}) registered as {username} | Locale: {ctx.locale}"
+            f"{member.display_name} ({member.id}) registered as {username} | Region: {region} | Locale: {ctx.locale}"
         )
 
         # add roles
@@ -162,6 +177,9 @@ class register(commands.Cog):
             await member.add_roles(
                 ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
             )
+        region_role = ctx.get_lounge_role(region)
+        if region_role and region_role not in ctx.user.roles:
+            await ctx.user.add_roles(region_role)
 
         # done
         await ctx.respond(
@@ -185,6 +203,7 @@ class register(commands.Cog):
                     "Account created:": readable_timedelta(delta_created),
                     "Lounge Name:": username,
                     "User Locale:": ctx.locale,
+                    "Selected Region": region,
                 },
                 color=(Color.red() if is_VERY_sus else Color.yellow()),
                 inline=False,
