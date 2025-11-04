@@ -12,6 +12,7 @@ class DataManager:
         find = staticmethod(players.find_player)
         create = staticmethod(players.create_new_player)
         get_profiles = staticmethod(players.get_profiles)
+        count = staticmethod(players.count)
         set_attribute = staticmethod(players.set_attribute)
         append_history = staticmethod(players.append_history)
         count_format_played = staticmethod(players.count_format_played)
