@@ -68,7 +68,7 @@ class edit(commands.Cog):
         ),
         new_name: str = Option(str, name="newname", description="new username"),
     ):
-        player: PlayerProfile = data_manager.find_player(searched_player)
+        player: PlayerProfile = data_manager.Players.find(searched_player)
 
         if not player:
             await ctx.respond("Couldn't find that player")
@@ -103,7 +103,7 @@ class edit(commands.Cog):
             bool, name="try_remove_roles", description="Try removing Lounge roles"
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(searched_player)
+        player: PlayerProfile = data_manager.Players.find(searched_player)
 
         if not player:
             await ctx.respond("Couldn't find that player")

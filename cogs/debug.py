@@ -9,7 +9,9 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Room
 
-from utils.data import mogi_manager, state_manager, data_manager, archive_type
+from utils.database.types import archive_type
+
+from utils.data import mogi_manager, state_manager, data_manager
 from utils.command_helpers import confirmation
 from utils.decorators import (
     is_admin,
@@ -65,10 +67,10 @@ class debug(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": data_manager.get_all_player_entries(
-                archive=archive_type.INCLUDE, with_id=False
+            "players": data_manager.Players.get_profiles(
+                archive=archive_type.INCLUDE, with_id=False, as_json=True
             ),
-            "mogis": data_manager.get_all_mogi_entries(with_id=False),
+            "mogis": data_manager.Mogis.get_all_mogis(with_id=False, as_json=True),
         }
 
         with open(backup_filename, "w") as backup_file:

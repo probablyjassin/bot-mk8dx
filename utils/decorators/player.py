@@ -4,7 +4,8 @@ from bson.int64 import Int64
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.find_player import get_guild_member
 
-from utils.data import data_manager, archive_type, mogi_manager
+from utils.database.types import archive_type
+from utils.data import data_manager, mogi_manager
 
 
 def with_player(
@@ -34,7 +35,7 @@ def with_player(
             # if not provided, choose the command user
 
             # Fetch player record and assign discord user as well
-            ctx.player = data_manager.find_player(
+            ctx.player = data_manager.Players.find(
                 query=ctx.user.id, archive=archive_type.INCLUDE
             )
 
@@ -101,7 +102,7 @@ def other_player(
             target_query: str | int | Int64 = kwargs.get(query_varname, None)
 
             # Fetch player record and assign discord user as well
-            ctx.player = data_manager.find_player(
+            ctx.player = data_manager.Players.find(
                 query=target_query, archive=archive_type.INCLUDE
             )
 
