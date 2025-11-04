@@ -43,6 +43,10 @@ def find_player(
     return PlayerProfile(**potential_player) if potential_player else None
 
 
+def count() -> int:
+    return db_players.count_documents({})
+
+
 def get_profiles(
     archive: archive_type = archive_type.NO,
     with_id: bool = False,
