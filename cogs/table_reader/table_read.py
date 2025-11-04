@@ -9,7 +9,6 @@ from discord import (
     Attachment,
 )
 from discord.ext import commands
-from discord.utils import get
 
 from models import MogiApplicationContext
 from utils.data import (
@@ -65,15 +64,11 @@ class table_read(commands.Cog):
     ):
         await ctx.defer()
 
-        debug_str = ""
-
         if screenshot is None:
             return await ctx.respond("No attachment found")
 
         if not is_image(screenshot):
             return await ctx.respond("Attachment is not an image")
-
-        debug_str += f"Submitted filename: {screenshot.filename}\n"
 
         data = await screenshot.read()
 
@@ -92,9 +87,7 @@ class table_read(commands.Cog):
             if potential_actual_names:
                 ocr_names = potential_actual_names
 
-        await ctx.respond(
-            f"```\n{ocr_to_tablestring(ocr_names, scores)}```\n\nDebug:{debug_str}"
-        )
+        await ctx.respond(f"```\n{ocr_to_tablestring(ocr_names, scores)}```")
 
     """ @message_command(
         name="Screenshot to Tablestring",
@@ -165,6 +158,8 @@ class table_read(commands.Cog):
     async def add(self, ctx: MogiApplicationContext, message: Message):
         await ctx.defer()
 
+        divider: str = "|" if "|" in message.content else "+"
+
         record = await store.get_bytes(ctx.guild_id, ctx.author.id)
         if not record:
             await ctx.respond(
@@ -179,13 +174,11 @@ class table_read(commands.Cog):
                 ephemeral=True,
             )
 
+        tablestring = message.content.replace("|", divider).replace("+", divider)
         output = table_read_ocr_api(BufferedReader(BytesIO(record)))
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
-        await ctx.channel.send(f"Names:\n{names}\n\nScores:{scores}")
-
-        tablestring = message.content.replace("|", "+")
         players: list[str] = []
         for line in tablestring.splitlines():
             if line.strip(" |+") and len(line.split()) == 2:
@@ -199,7 +192,6 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
-            await ctx.channel.send("Trying to match lounge names")
             potential_actual_names = pattern_match_lounge_names(
                 names, [player.name for player in ctx.mogi.players]
             )
@@ -207,15 +199,16 @@ class table_read(commands.Cog):
                 if set(players).issubset(set(potential_actual_names)):
                     names.clear()
                     names.extend(potential_actual_names)
-                    await ctx.channel.send(f"Adjusted names:\n{names}")
                 else:
                     return await ctx.respond(
                         f"Matched lounge names but they don't fit with the selected tablestring:\n"
-                        f"Detected Names: `{names}`"
+                        f"Detected Names: `{names}`\n"
                         f"Matched Lounge Names: `{potential_actual_names}`"
                     )
             else:
-                await ctx.channel.send("Could not match lounge names")
+                return await ctx.respond(
+                    "Could not match lounge names to in-game names"
+                )
 
         new_lines = []
         for line in tablestring.splitlines():
@@ -223,21 +216,20 @@ class table_read(commands.Cog):
             if (
                 line.strip(" |+")
                 and len(line.split()) == 2
-                and line.split()[1].replace("+", "").replace("|", "").isnumeric()
+                and line.split()[1].replace(divider, "").isnumeric()
+                # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
             ):
-                if not line.endswith("+"):
-                    line += "+"
+                if not line.endswith(divider):
+                    line += divider
                 try:
                     line += scores[names.index(line.split()[0])]
                 except:
                     return await ctx.respond(
-                        f"Couldn't find {line.split()[0]}\nNames:\n{names}"
+                        f"Couldn't find {line.split()[0]}\n"
+                        f"Names:\n{names}\n"
+                        f"Matched Lounge Names: `{potential_actual_names}`"
                     )
-                print(line)
             new_lines.append(line)
-
-        # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
-
         return await ctx.respond("\n".join(new_lines))
 
     @table.command(
