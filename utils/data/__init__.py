@@ -1,4 +1,4 @@
-# from ._database import client, db_mogis, db_players, db_archived, db_mogis
+# from ._database import client, db_mogis, db_players, db_mogis
 from .data_manager import data_manager, archive_type
 from .mogi_manager import mogi_manager
 from .roombrowser import get_room_info, ServerType
