@@ -41,7 +41,9 @@ def add_mogi_history(
     )
 
 
-def apply_result_mmr(usernames: list[str], deltas: list[int]) -> None:
+def apply_result_mmr(
+    data_to_update_obj: list[dict[str, str | int]], format: int
+) -> None:
     """
     ### Apply MMR results to players
     Note: Subs need to be removed prior from this list, the function does not check for this.
@@ -51,39 +53,16 @@ def apply_result_mmr(usernames: list[str], deltas: list[int]) -> None:
             UpdateOne(
                 {"name": entry["name"]},
                 {
-                    "$set": {"mmr": {"$max": [1, {"$add": ["$mmr", entry["delta"]]}]}},
+                    "$set": {"mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1},
                     "$push": {"history": entry["delta"]},
+                    "$inc": {f"formats.{format}": 1},
                 },
                 upsert=False,
             )
-            for entry in (
-                {"name": usernames[i], "delta": deltas[i]}
-                for i in range(len(usernames))
-            )
+            for entry in data_to_update_obj
         ]
     )
 
 
-def bulk_add_mmr(player_usernames: list[str], amount: int) -> None:
-    """
-    ### Add a certain `amount` of MMR to every player (by username) provided.
-    `amount` may be negative\n
-    It's ensured each player's MMR is still 1 or more total.
-    """
-    db_players.bulk_write(
-        [
-            UpdateOne(
-                {"name": username},
-                [
-                    {
-                        "$set": {
-                            "mmr": {"$max": [1, {"$add": ["$mmr", amount]}]},
-                        },
-                        "$push": {"history": amount},
-                    }
-                ],
-                upsert=False,
-            )
-            for username in player_usernames
-        ]
-    )
+def bulk_add_mmr(usernames: list[str], amount: int) -> None:
+    db_players.update_many({"name": {"$in": usernames}}, {"$inc": {"mmr": amount}})

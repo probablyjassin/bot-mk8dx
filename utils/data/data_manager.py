@@ -10,7 +10,7 @@ from utils.database import mogis
 class DataManager:
     class Players:
         find = staticmethod(players.find_player)
-        create = staticmethod(players.create_new_player)
+        create_new_player = staticmethod(players.create_new_player)
         get_profiles = staticmethod(players.get_profiles)
         count = staticmethod(players.count)
         set_attribute = staticmethod(players.set_attribute)

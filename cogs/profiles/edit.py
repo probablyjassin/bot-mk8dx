@@ -3,7 +3,6 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data._database import db_players
 from utils.data import data_manager, mogi_manager
 
 from utils.command_helpers import get_guild_member
@@ -108,7 +107,7 @@ class edit(commands.Cog):
         if not player:
             await ctx.respond("Couldn't find that player")
 
-        db_players.delete_one({"_id": player._id})
+        data_manager.Players.delete(player)
 
         if try_remove_roles:
             discord_member: Member | None = await get_guild_member(

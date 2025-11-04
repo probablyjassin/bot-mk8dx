@@ -17,6 +17,7 @@ def find_player(
         "$and": [
             {
                 "$or": [
+                    {"_id": query},
                     {"name": (query.lower() if isinstance(query, str) else query)},
                     {
                         "discord_id": (
@@ -67,6 +68,7 @@ def create_new_player(username: str, discord_id: int) -> None:
             "discord_id": Int64(discord_id),
             "mmr": 2000,
             "history": [],
+            "formats": {str(i): 0 for i in range(7)},
             "joined": round(time()),
         },
     )
@@ -76,7 +78,7 @@ def set_attribute(player: PlayerProfile, attribute, value) -> None:
     setattr(player, attribute, value)
     db_players.update_one(
         {"_id": player._id},
-        {"$set": {attribute: value}},
+        {"$set" if value else "$unset": {attribute: value if value else ""}},
     )
 
 

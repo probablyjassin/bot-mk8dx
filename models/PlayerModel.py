@@ -1,7 +1,7 @@
 from dataclasses import dataclass, field
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data._database import db_players
+from utils.data import data_manager
 
 
 @dataclass
@@ -62,16 +62,8 @@ class PlayerProfile:
         self._suspended = suspended
 
     # Methods
-
-    def update_attribute(self, attr_name: str, value):
-        setattr(self, f"_{attr_name}", value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$set": {attr_name: value}},
-        )
-
     def refresh(self):
-        data = db_players.find_one({"_id": self._id})
+        data = data_manager.Players.find(self._id)
         self.__dict__.update(PlayerProfile.from_json(data).__dict__)
 
     # Properties
@@ -88,7 +80,7 @@ class PlayerProfile:
 
     @name.setter
     def name(self, value):
-        self.update_attribute("name", value)
+        data_manager.Players.set_attribute(self, "name", value)
 
     # Discord ID (read-only)
     @property
@@ -102,19 +94,15 @@ class PlayerProfile:
 
     @mmr.setter
     def mmr(self, value):
-        self.update_attribute("mmr", value)
+        data_manager.Players.set_attribute(self, "mmr", value)
 
     # History (has different setter)
     @property
     def history(self):
         return self._history
 
-    def append_history(self, value):
-        self._history.append(value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$push": {"history": value}},
-        )
+    def append_history(self, value: int):
+        data_manager.Players.append_history(self, value)
 
     # Formats
     @property
@@ -122,11 +110,7 @@ class PlayerProfile:
         return self._formats
 
     def count_format_played(self, value):
-        self._formats[value] += 1
-        db_players.update_one(
-            {"_id": self._id},
-            {"$inc": {f"formats.{value}": 1}},
-        )
+        data_manager.Players.count_format_played(self, value)
 
     # Joined (read-only)
     @property
@@ -140,29 +124,12 @@ class PlayerProfile:
 
     @disconnects.setter
     def disconnects(self, value):
-        if value == 0:
-            del self.disconnects
-            return
-        self.update_attribute("disconnects", value)
-
-    @disconnects.deleter
-    def disconnects(self):
-        self._disconnects = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"disconnects": ""}},
-        )
+        data_manager.Players.set_attribute(self, "disconnects", value)
 
     def add_disconnect(self):
-        db_players.update_one(
-            {"_id": self._id},
-            (
-                {"$inc": {"disconnects": 1}}
-                if self._disconnects
-                else {"$set": {"disconnects": 1}}
-            ),
+        data_manager.Players.set_attribute(
+            self, "disconnects", self._disconnects + 1 if self._disconnects else 1
         )
-        self._disconnects = self._disconnects + 1 if self._disconnects else 1
 
     # Inactive
     @property
@@ -171,16 +138,7 @@ class PlayerProfile:
 
     @inactive.setter
     def inactive(self, value):
-        self.update_attribute("inactive", value)
-
-    # Custom deleter
-    @inactive.deleter
-    def inactive(self):
-        self._inactive = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"inactive": ""}},
-        )
+        data_manager.Players.set_attribute(self, "inactive", value)
 
     # Suspended
     @property
@@ -189,16 +147,7 @@ class PlayerProfile:
 
     @suspended.setter
     def suspended(self, value):
-        self.update_attribute("suspended", value)
-
-    # Custom deleter
-    @suspended.deleter
-    def suspended(self):
-        self._suspended = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"suspended": ""}},
-        )
+        data_manager.Players.set_attribute(self, "suspended", value)
 
     # Dict methods
     def to_json(self) -> dict:
