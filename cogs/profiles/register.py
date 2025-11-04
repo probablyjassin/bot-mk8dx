@@ -14,7 +14,7 @@ from discord.utils import get
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.data._database import db_players, db_archived, client
+from utils.data._database import db_players, client
 from utils.command_helpers import create_embed, REGIONS, VerificationView
 from utils.maths.readable_timediff import readable_timedelta
 
@@ -54,9 +54,7 @@ class register(commands.Cog):
             )
 
         existingPlayer = (
-            db_players.find_one({"discord_id": Int64(ctx.author.id)})
-            or db_archived.find_one({"discord_id": Int64(ctx.author.id)})
-            or None
+            db_players.find_one({"discord_id": Int64(ctx.author.id)}) or None
         )
         if existingPlayer:
             return await ctx.respond(

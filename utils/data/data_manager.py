@@ -7,7 +7,7 @@ from dataclasses import dataclass
 from models.PlayerModel import PlayerProfile
 from models.MogiModel import MogiHistoryData
 
-from utils.data._database import client, db_players, db_mogis, db_aliases
+from utils.data._database import client, db_players, db_mogis, db_guilds, db_aliases
 
 from config import SEASON
 
