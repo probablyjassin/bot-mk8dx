@@ -50,8 +50,8 @@ class sub(commands.Cog):
             required=False,
         ),
     ):
-        player_profile = data_manager.find_player(player_name)
-        replacement_profile = data_manager.find_player(replacement_name)
+        player_profile = data_manager.Players.find(player_name)
+        replacement_profile = data_manager.Players.find(replacement_name)
 
         if not player_profile:
             return await ctx.respond("Player profile not found", ephemeral=True)

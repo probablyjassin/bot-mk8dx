@@ -3,7 +3,8 @@ from discord.ui import View, Button
 from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile, Rank
-from utils.data import data_manager, archive_type
+from utils.database.types import archive_type
+from utils.data import data_manager
 
 from datetime import datetime
 from bson.int64 import Int64
@@ -24,7 +25,7 @@ class player(commands.Cog):
             required=False,
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(
+        player: PlayerProfile = data_manager.Players.find(
             searched_name or Int64(ctx.author.id), archive=archive_type.INCLUDE
         )
 

@@ -17,7 +17,7 @@ class penalties(commands.Cog):
     )
     async def bank(self, ctx: MogiApplicationContext):
 
-        player: PlayerProfile = data_manager.find_player("mrboost")
+        player: PlayerProfile = data_manager.Players.find("mrboost")
 
         if not player:
             return await ctx.respond("Couldn't find that player")
@@ -45,8 +45,8 @@ class penalties(commands.Cog):
         player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player_profile: PlayerProfile = data_manager.find_player(player)
-        penalty_holder: PlayerProfile = data_manager.find_player(self.bot.user.id)
+        player_profile: PlayerProfile = data_manager.Players.find(player)
+        penalty_holder: PlayerProfile = data_manager.Players.find(self.bot.user.id)
 
         if not player_profile:
             return await ctx.respond("Couldn't find that player")

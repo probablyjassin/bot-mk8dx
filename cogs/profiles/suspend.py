@@ -3,7 +3,8 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, archive_type
+from utils.database.types import archive_type
+from utils.data import data_manager
 from utils.decorators import is_moderator
 
 
@@ -24,7 +25,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(
+        player: PlayerProfile = data_manager.Player.find(
             searched_player, archive=archive_type.INCLUDE
         )
 
@@ -44,7 +45,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(
+        player: PlayerProfile = data_manager.Players.find(
             searched_player, archive=archive_type.INCLUDE
         )
 

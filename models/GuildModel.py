@@ -1,7 +1,8 @@
 from dataclasses import dataclass, field
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data._database import db_players
+
+from utils.data._database import db_guilds
 
 
 @dataclass
@@ -21,107 +22,71 @@ class Guild:
     _id: ObjectId
     _name: str
     _player_ids: list[Int64]
+    _icon: str
     _mmr: int
     _history: list[int]
-    _formats: dict[str, int] = field(
-        default_factory=lambda: {str(i): 0 for i in range(7)}
-    )
-    _joined: int | None = None
+    _creation_date: int | None = None
 
-    def __init__(
-        self,
-        _id,
-        name,
-        player_ids,
-        mmr,
-        history,
-        formats,
-        joined=None,
-    ):
-        self._id = _id
-        self._name = name
-        self._player_ids = player_ids
-        self._mmr = mmr
-        self._history = history
-        self._formats = (
-            formats if formats is not None else {str(i): 0 for i in range(7)}
-        )
-        self._joined = joined
-
-    # Methods
-
-    """ def update_attribute(self, attr_name: str, value):
+    # Getters and Setters
+    def update_attribute(self, attr_name: str, value):
         setattr(self, f"_{attr_name}", value)
         db_guilds.update_one(
             {"_id": self._id},
             {"$set": {attr_name: value}},
-        ) """
+        )
 
     """ def refresh(self):
         data = db_guilds.find_one({"_id": self._id})
         self.__dict__.update(Guild.from_json(data).__dict__) """
 
-    # Properties
-
-    # ID (read-only)
+    # name
     @property
-    def id(self):
-        return self._id
-
-    # Name
-    @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
     @name.setter
-    def name(self, value):
-        self.update_attribute("name", value)
+    def name(self, value: str):
+        self._name = value
 
-    # Discord ID
+    # icon
     @property
-    def player_ids(self):
+    def icon(self) -> str:
+        return self._icon
+
+    @icon.setter
+    def icon(self, value: str):
+        self._icon = value
+
+    # creation_date
+    @property
+    def creation_date(self) -> int | None:
+        return self._creation_date
+
+    # player_ids
+    @property
+    def player_ids(self) -> list[Int64]:
         return self._player_ids
 
-    """ player_ids.setter
-    def ... """
+    def append_player_id(self, player_id: Int64):
+        self._player_ids.append(player_id)
 
-    # MMR
+    def remove_player_id(self, player_id: Int64):
+        if player_id in self._player_ids:
+            self._player_ids.remove(player_id)
+
+    # history
     @property
-    def mmr(self):
-        return self._mmr
-
-    @mmr.setter
-    def mmr(self, value):
-        self.update_attribute("mmr", value)
-
-    # History (has different setter)
-    @property
-    def history(self):
+    def history(self) -> list[int]:
         return self._history
 
-    def append_history(self, value):
+    def append_history(self, value: int):
         self._history.append(value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$push": {"history": value}},
-        )
 
-    # Formats
-    @property
-    def formats(self):
-        return self._formats
+    def remove_history(self, value: int):
+        if value in self._history:
+            self._history.remove(value)
 
-    def count_format_played(self, value):
-        self._formats[value] += 1
-        db_players.update_one(
-            {"_id": self._id},
-            {"$inc": {f"formats.{value}": 1}},
-        )
-
-    # Joined (read-only)
-    @property
-    def joined(self):
-        return self._joined
+    # Properties
 
     # Dict methods
     def to_json(self) -> dict:
@@ -131,13 +96,13 @@ class Guild:
             "player_ids": self._player_ids,
             "mmr": self._mmr,
             "history": self._history,
-            "formats": self._formats,
-            "joined": self._joined,
+            "joined": self._creation_date,
         }
 
     def to_mongo(self) -> dict:
         self_json = self.to_json()
         self_json["_id"] = self._id
+        self_json["_player_ids"] = [Int64(pid) for pid in self._player_ids]
         return self_json
 
     @classmethod
