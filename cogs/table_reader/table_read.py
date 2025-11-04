@@ -277,7 +277,7 @@ class table_read(commands.Cog):
             "\n".join(
                 f"{key}: {value}"
                 for key, value in (data_manager.get_all_aliases()).items()
-                if key is not "_id"
+                if key != "_id"
             )
         )
 
