@@ -1,4 +1,4 @@
-py-cord==2.6.1
+py-cord>=2.7.0rc1
 pycord-multicog
 python-dotenv
 aiohttp
