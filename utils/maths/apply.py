@@ -1,7 +1,5 @@
-from pymongo import UpdateOne
-
 from models import Mogi
-from utils.data._database import db_players
+from utils.data.data_manager import data_manager
 
 
 async def apply_mmr(mogi: Mogi) -> None:
@@ -13,8 +11,8 @@ async def apply_mmr(mogi: Mogi) -> None:
         for i in range(len(mogi.players))
     ]
 
-    # create objects to update in the database in bulk
-    data_to_update_obj = [
+    # create objects to hand to the database in bulk
+    data_to_update_obj: list[dict[str, str | int]] = [
         {
             "name": all_player_names[i],
             "new_mmr": all_player_new_mmrs[i],
@@ -26,17 +24,6 @@ async def apply_mmr(mogi: Mogi) -> None:
         or mogi.mmr_results_by_group[i] > 0
     ]
 
-    db_players.bulk_write(
-        [
-            UpdateOne(
-                {"name": entry["name"]},
-                {
-                    "$set": {"mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1},
-                    "$push": {"history": entry["delta"]},
-                    "$inc": {f"formats.{'0' if mogi.is_mini else str(mogi.format)}": 1},
-                },
-                upsert=False,
-            )
-            for entry in data_to_update_obj
-        ]
+    data_manager.Mogis.apply_result_mmr(
+        data_to_update_obj, mogi.format if not mogi.is_mini else 0
     )

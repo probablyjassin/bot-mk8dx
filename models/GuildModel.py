@@ -2,8 +2,6 @@ from dataclasses import dataclass, field
 from bson.objectid import ObjectId
 from bson.int64 import Int64
 
-from utils.data._database import db_guilds
-
 
 @dataclass
 class Guild:
@@ -28,15 +26,9 @@ class Guild:
     _creation_date: int | None = None
 
     # Getters and Setters
-    def update_attribute(self, attr_name: str, value):
-        setattr(self, f"_{attr_name}", value)
-        db_guilds.update_one(
-            {"_id": self._id},
-            {"$set": {attr_name: value}},
-        )
 
     """ def refresh(self):
-        data = db_guilds.find_one({"_id": self._id})
+        data = find_one({"_id": self._id})
         self.__dict__.update(Guild.from_json(data).__dict__) """
 
     # name

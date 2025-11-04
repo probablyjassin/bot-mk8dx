@@ -2,11 +2,11 @@ import time, math
 from dataclasses import dataclass, field
 from bson import ObjectId
 
+from utils.data.data_manager import data_manager
 from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
-from utils.data._database import db_mogis
 from utils.maths.teams_algorithm import (
     teams_alg_distribute_by_order_kevnkkm,
     teams_alg_random,
@@ -178,16 +178,14 @@ class Mogi:
         """
         Save the mogi to the database.
         """
-        db_mogis.insert_one(
-            {
-                "started_at": self.started_at,
-                "finished_at": self.finished_at,
-                "player_ids": [player.discord_id for player in self.players],
-                "format": self.format if not self.is_mini else 0,
-                "subs": len(self.subs),
-                "results": self.mmr_results_by_group,
-                "disconnections": self.disconnections,
-            }
+        data_manager.Mogis.add_mogi_history(
+            started_at=self.started_at,
+            finished_at=self.finished_at,
+            player_ids=[player.discord_id for player in self.players],
+            format=self.format if not self.is_mini else 0,
+            subs=len(self.subs),
+            results=self.mmr_results_by_group,
+            disconnections=self.disconnections,
         )
 
     def finish(self) -> None:
