@@ -12,7 +12,10 @@ if TYPE_CHECKING:
 def find_player(
     query: int | Int64 | str,
     archive: archive_type = archive_type.NO,
-) -> PlayerProfile | None:
+) -> "PlayerProfile" | None:
+
+    from models.PlayerModel import PlayerProfile
+
     query_criteria = {
         "$and": [
             {
@@ -52,7 +55,10 @@ def get_profiles(
     archive: archive_type = archive_type.NO,
     with_id: bool = False,
     as_json: bool = False,
-) -> list[PlayerProfile] | list[dict] | None:
+) -> list["PlayerProfile"] | list[dict] | None:
+
+    from models.PlayerModel import PlayerProfile
+
     data: list[dict] = list(
         db_players.find(archive.value, {"_id": 0} if not with_id else {})
     )
@@ -74,7 +80,7 @@ def create_new_player(username: str, discord_id: int) -> None:
     )
 
 
-def set_attribute(player: PlayerProfile, attribute, value) -> None:
+def set_attribute(player: "PlayerProfile", attribute, value) -> None:
     setattr(player, attribute, value)
     db_players.update_one(
         {"_id": player._id},
@@ -82,7 +88,7 @@ def set_attribute(player: PlayerProfile, attribute, value) -> None:
     )
 
 
-def append_history(player: PlayerProfile, score: int) -> None:
+def append_history(player: "PlayerProfile", score: int) -> None:
     player.history.append(score)
     db_players.update_one(
         {"_id": player._id},
@@ -90,7 +96,7 @@ def append_history(player: PlayerProfile, score: int) -> None:
     )
 
 
-def count_format_played(player: PlayerProfile, value):
+def count_format_played(player: "PlayerProfile", value):
     player._formats[value] += 1
     db_players.update_one(
         {"_id": player._id},
@@ -98,5 +104,5 @@ def count_format_played(player: PlayerProfile, value):
     )
 
 
-def delete_player(player: PlayerProfile):
+def delete_player(player: "PlayerProfile"):
     db_players.delete_one({"_id": player._id})
