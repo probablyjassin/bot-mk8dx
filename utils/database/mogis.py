@@ -9,7 +9,10 @@ if TYPE_CHECKING:
 
 def get_all_mogis(
     with_id: bool = False, as_json: bool = False
-) -> list[MogiHistoryData] | list[dict]:
+) -> list["MogiHistoryData"] | list[dict]:
+
+    from models.MogiModel import MogiHistoryData
+
     data: list[dict] = list(
         db_mogis.find({}, {"_id": 0} if not (with_id or not as_json) else {})
     )
