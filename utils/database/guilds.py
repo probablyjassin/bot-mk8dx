@@ -2,7 +2,7 @@ from time import time
 from bson.int64 import Int64
 from utils.data._database import db_guilds
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from models.GuildModel import Guild
@@ -10,7 +10,10 @@ if TYPE_CHECKING:
 
 def find_guild(
     query: int | Int64 | str,
-) -> Guild | None:
+) -> Optional["Guild"]:
+
+    from models.GuildModel import Guild
+
     pipeline = []
 
     if isinstance(query, str):
@@ -102,7 +105,7 @@ def create_new_guild(
     )
 
 
-def set_attribute(guild: Guild, attribute, value) -> None:
+def set_attribute(guild: "Guild", attribute, value) -> None:
     setattr(guild, attribute, value)
     db_guilds.update_one(
         {"_id": guild._id},
@@ -110,7 +113,7 @@ def set_attribute(guild: Guild, attribute, value) -> None:
     )
 
 
-def append_history(guild: Guild, score: int) -> None:
+def append_history(guild: "Guild", score: int) -> None:
     guild.history.append(score)
     db_guilds.update_one(
         {"_id": guild._id},
@@ -118,5 +121,5 @@ def append_history(guild: Guild, score: int) -> None:
     )
 
 
-def delete_guild(guild: Guild):
+def delete_guild(guild: "Guild"):
     db_guilds.delete_one({"_id": guild._id})
