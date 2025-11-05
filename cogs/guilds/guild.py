@@ -21,19 +21,19 @@ class guild(commands.Cog):
     async def guild(
         self,
         ctx: MogiApplicationContext,
-        searched_name: str = Option(
+        name: str = Option(
             str, "Name", required=False, autocomplete=guild_name_autocomplete
         ),
     ):
         await ctx.defer()
 
         guild: Guild | None = data_manager.Guilds.find(
-            query=searched_name if searched_name else ctx.user.id
+            query=name if name else ctx.user.id
         )
 
         if not guild:
             return await ctx.respond(
-                f"Couldn't find {'that' if searched_name else 'your'} guild."
+                f"Couldn't find {'that' if name else 'your'} guild."
             )
 
         class GuildView(View):
