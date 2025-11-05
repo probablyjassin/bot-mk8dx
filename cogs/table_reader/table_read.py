@@ -268,8 +268,8 @@ class table_read(commands.Cog):
         await ctx.respond(
             "\n".join(
                 f"{key}: {value}"
-                for key, value in (data_manager.Aliases.get_all_aliases()).items()
-                if key is not "_id"
+                for key, value in (data_manager.get_all_aliases()).items()
+                if key != "_id"
             )
         )
 
