@@ -77,6 +77,7 @@ def find_guild(
 
     pipeline.append({"$match": query_criteria})
     pipeline.append({"$limit": 1})
+    pipeline.append({"$unset": "shorthand"})
 
     potential_guild = next(
         db_guilds.aggregate(pipeline),
