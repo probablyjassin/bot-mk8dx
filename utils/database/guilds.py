@@ -1,0 +1,122 @@
+from time import time
+from bson.int64 import Int64
+from utils.data._database import db_guilds
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.GuildModel import Guild
+
+
+def find_guild(
+    query: int | Int64 | str,
+) -> Guild | None:
+    pipeline = []
+
+    if isinstance(query, str):
+        # Add a field that extracts capital letters for shorthand matching
+        pipeline.append(
+            {
+                "$addFields": {
+                    "shorthand": {
+                        "$reduce": {
+                            "input": {"$range": [0, {"$strLenCP": "$name"}]},
+                            "initialValue": "",
+                            "in": {
+                                "$concat": [
+                                    "$$value",
+                                    {
+                                        "$cond": [
+                                            {
+                                                "$regexMatch": {
+                                                    "input": {
+                                                        "$substrCP": [
+                                                            "$name",
+                                                            "$$this",
+                                                            1,
+                                                        ]
+                                                    },
+                                                    "regex": "[A-Z]",
+                                                }
+                                            },
+                                            {"$substrCP": ["$name", "$$this", 1]},
+                                            "",
+                                        ]
+                                    },
+                                ]
+                            },
+                        }
+                    }
+                }
+            }
+        )
+
+    query_criteria = {
+        "$or": [
+            {"_id": query},
+            (
+                {
+                    "$or": [
+                        {"name": {"$regex": f"^{query}$", "$options": "i"}},
+                        {"shorthand": {"$regex": f"^{query}$", "$options": "i"}},
+                    ]
+                }
+                if isinstance(query, str)
+                else {"name": query}
+            ),
+            (
+                {"player_ids": Int64(query)}
+                if isinstance(query, int | Int64)
+                else {"player_ids": None}
+            ),
+        ]
+    }
+
+    pipeline.append({"$match": query_criteria})
+    pipeline.append({"$limit": 1})
+
+    potential_guild = next(
+        db_guilds.aggregate(pipeline),
+        None,
+    )
+
+    return Guild(**potential_guild) if potential_guild else None
+
+
+def count() -> int:
+    return db_guilds.count_documents({})
+
+
+def create_new_guild(
+    name: str, first_member_id: int, icon_url: str | None = None
+) -> None:
+    db_guilds.insert_one(
+        {
+            "name": name,
+            "icon": icon_url,
+            "player_ids": [Int64(first_member_id)],
+            "mmr": 2000,
+            "history": [],
+            "creation_date": round(time()),
+        },
+    )
+
+
+def set_attribute(guild: Guild, attribute, value) -> None:
+    setattr(guild, attribute, value)
+    db_guilds.update_one(
+        {"_id": guild._id},
+        {"$set" if value else "$unset": {attribute: value if value else ""}},
+    )
+
+
+def append_history(guild: Guild, score: int) -> None:
+    guild.history.append(score)
+    db_guilds.update_one(
+        {"_id": guild._id},
+        {"$push": {"history": score}},
+    )
+
+
+def delete_guild(guild: Guild):
+    db_guilds.delete_one({"_id": guild._id})

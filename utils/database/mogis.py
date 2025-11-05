@@ -4,7 +4,6 @@ from utils.data._database import db_players, db_mogis
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from models.PlayerModel import PlayerProfile
     from models.MogiModel import MogiHistoryData
 
 
