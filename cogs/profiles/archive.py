@@ -2,7 +2,7 @@ from discord import SlashCommandGroup, Option
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.decorators import is_moderator, other_player
+from utils.decorators import is_moderator, with_player
 
 
 class archive(commands.Cog):
@@ -15,7 +15,7 @@ class archive(commands.Cog):
 
     @archive.command(name="add", description="Archive a player")
     @is_moderator()
-    @other_player(query_varname="searched_player")
+    @with_player(query_varname="searched_player")
     async def archive_add(
         self,
         ctx: MogiApplicationContext,
@@ -32,7 +32,7 @@ class archive(commands.Cog):
 
     @archive.command(name="retrieve", description="Unarchive a player")
     @is_moderator()
-    @other_player(query_varname="searched_player")
+    @with_player(query_varname="searched_player")
     async def archive_retrieve(
         self,
         ctx: MogiApplicationContext,

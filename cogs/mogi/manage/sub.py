@@ -11,7 +11,7 @@ from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
     is_moderator,
-    other_player,
+    with_player,
 )
 
 
@@ -121,7 +121,7 @@ class sub(commands.Cog):
     @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
     @is_moderator()
-    @other_player(query_varname="player_name")
+    @with_player(query_varname="player_name")
     async def add_sub(
         self,
         ctx: MogiApplicationContext,
@@ -148,7 +148,7 @@ class sub(commands.Cog):
     )
     @is_mogi_in_progress()
     @is_moderator()
-    @other_player(query_varname="player_name")
+    @with_player(query_varname="player_name")
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,

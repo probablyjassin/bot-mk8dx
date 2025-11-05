@@ -6,7 +6,7 @@ from models import MogiApplicationContext, PlayerProfile
 from utils.data import data_manager, mogi_manager
 
 from utils.command_helpers import get_guild_member
-from utils.decorators import is_moderator, other_player
+from utils.decorators import is_moderator, with_player
 
 
 class edit(commands.Cog):
@@ -17,7 +17,7 @@ class edit(commands.Cog):
 
     @edit.command(name="add_mmr", description="Add MMR to a player")
     @is_moderator()
-    @other_player(query_varname="searched_player")
+    @with_player(query_varname="searched_player")
     async def add_mmr(
         self,
         ctx: MogiApplicationContext,
