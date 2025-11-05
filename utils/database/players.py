@@ -3,7 +3,7 @@ from time import time
 from utils.database.types import archive_type
 from utils.data._database import db_players
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 
 if TYPE_CHECKING:
     from models.PlayerModel import PlayerProfile
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 def find_player(
     query: int | Int64 | str,
     archive: archive_type = archive_type.NO,
-) -> "PlayerProfile" | None:
+) -> Optional["PlayerProfile"]:
 
     from models.PlayerModel import PlayerProfile
 
