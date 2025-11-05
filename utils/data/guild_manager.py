@@ -28,6 +28,9 @@ class GuildManager:
         if not player_found:
             raise ValueError("That player is not in any queue.")
 
+    def read_queue(self) -> dict[str, list[int]]:
+        return self._guild_mogi_registry
+
     def write_registry(self, data: dict[str, list]) -> None:
         self._guild_mogi_registry = data
 
