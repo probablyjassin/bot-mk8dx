@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
-from utils.command_helpers import search_autocomplete
+from utils.command_helpers import player_name_autocomplete
 from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_manager,
@@ -28,7 +28,7 @@ class remove(commands.Cog):
             str,
             name="player",
             description="The player to remove from the mogi.",
-            autocomplete=search_autocomplete,
+            autocomplete=player_name_autocomplete,
         ),
     ):
         ctx.mogi.players.remove(ctx.player)
