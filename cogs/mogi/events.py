@@ -28,7 +28,9 @@ class events(commands.Cog):
 
         await ctx.defer()
 
-        data_manager.bulk_add_mmr([player.name for player in ctx.mogi.players], amount)
+        data_manager.Mogis.bulk_add_mmr(
+            [player.name for player in ctx.mogi.players], amount
+        )
 
         await ctx.respond(f"{amount} MMR given to all players")
 

@@ -30,9 +30,11 @@ class swap(commands.Cog):
         player2: str = Option(str, name="player2", description="second player"),
     ):
         return await ctx.respond("This command is out of order.")
-        first_player: PlayerProfile | str = data_manager.find_player(player1) or player1
+        first_player: PlayerProfile | str = (
+            data_manager.Players.find(player1) or player1
+        )
         second_player: PlayerProfile | str = (
-            data_manager.find_player(player2) or player2
+            data_manager.Players.find(player2) or player2
         )
         for player in [first_player, second_player]:
             if isinstance(player, str):

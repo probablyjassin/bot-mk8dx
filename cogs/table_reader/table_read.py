@@ -251,13 +251,13 @@ class table_read(commands.Cog):
                 )
 
         searched_player = (
-            data_manager.find_player(query=to_player) if to_player else None
+            data_manager.Players.find(query=to_player) if to_player else None
         )
         if to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")
 
-        data_manager.set_player_alias(
-            searched_player.name if searched_player else ctx.player.name, name
+        data_manager.Aliases.set_player_alias(
+            searched_player if searched_player else ctx.player, name
         )
         return await ctx.respond(
             f"{searched_player.name if searched_player else ctx.player.name} -> `{name}`"
