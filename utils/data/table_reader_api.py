@@ -1,7 +1,7 @@
 from io import BufferedReader
 import requests
 from typing import TypedDict, cast
-from fuzzywuzzy import process
+from rapidfuzz import process
 
 from utils.data import data_manager
 from config import TABLE_READER_URL
