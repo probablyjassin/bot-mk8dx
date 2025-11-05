@@ -22,6 +22,8 @@ class guild(commands.Cog):
             str, "Name", required=False, autocomplete=guild_name_autocomplete
         ),
     ):
+        await ctx.defer()
+
         potential_guild: Guild | None = data_manager.Guilds.find(
             query=searched_name if searched_name else ctx.user.id
         )
