@@ -29,7 +29,7 @@ class guild(commands.Cog):
         )
 
         if potential_guild:
-            return potential_guild
+            return await ctx.respond(potential_guild.__repr__)
 
         return await ctx.respond(
             f"Couldn't find {'that' if searched_name else 'your'} guild."
