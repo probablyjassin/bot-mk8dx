@@ -1,13 +1,12 @@
+from datetime import datetime
+
 from discord import slash_command, Option, Embed, ButtonStyle, Colour
 from discord.ui import View, Button
 from discord.ext import commands
 
-from datetime import datetime
-
-from models import MogiApplicationContext, Guild
-
-from utils.data import data_manager
+from models import MogiApplicationContext
 from utils.command_helpers import guild_name_autocomplete
+from utils.decorators import with_guild
 
 
 class guild(commands.Cog):
@@ -18,20 +17,17 @@ class guild(commands.Cog):
         name="guild",
         description="View your guild or a guild of your choice",
     )
+    @with_guild(query_varname="name")
     async def guild(
         self,
         ctx: MogiApplicationContext,
-        name: str = Option(
+        name: str | None = Option(
             str, "Name", required=False, autocomplete=guild_name_autocomplete
         ),
     ):
         await ctx.defer()
 
-        guild: Guild | None = data_manager.Guilds.find(
-            query=name if name else ctx.user.id
-        )
-
-        if not guild:
+        if not (guild := ctx.lounge_guild):
             return await ctx.respond(
                 f"Couldn't find {'that' if name else 'your'} guild."
             )
