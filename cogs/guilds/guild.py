@@ -54,16 +54,16 @@ class guild(commands.Cog):
         )
         embed.add_field(name="MMR", value=f"{guild.mmr}")
 
+        guild_wins = len([delta for delta in guild.history if delta >= 0])
+        guild_losses = len([delta for delta in guild.history if delta < 0])
+        embed.add_field(name="Wins", value=guild_wins)
+        embed.add_field(name="Losses", value=guild_losses)
+
         if getattr(guild, "history", None):
             embed.add_field(
                 name="History (last 5)",
                 value=", ".join(map(str, guild.history[-5:])),
             )
-
-        guild_wins = len([delta for delta in guild.history if delta >= 0])
-        guild_losses = len([delta for delta in guild.history if delta < 0])
-        embed.add_field(name="Wins", value=guild_wins)
-        embed.add_field(name="Losses", value=guild_losses)
 
         embed.add_field(
             name="Winrate",
