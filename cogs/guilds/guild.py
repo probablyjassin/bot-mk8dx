@@ -1,5 +1,8 @@
-from discord import slash_command, Option
+from discord import slash_command, Option, Embed, ButtonStyle, Colour
+from discord.ui import View, Button
 from discord.ext import commands
+
+from datetime import datetime
 
 from models import MogiApplicationContext, Guild
 
@@ -24,16 +27,74 @@ class guild(commands.Cog):
     ):
         await ctx.defer()
 
-        potential_guild: Guild | None = data_manager.Guilds.find(
+        guild: Guild | None = data_manager.Guilds.find(
             query=searched_name if searched_name else ctx.user.id
         )
 
-        if potential_guild:
-            return await ctx.respond(potential_guild.__repr__)
+        if not guild:
+            return await ctx.respond(
+                f"Couldn't find {'that' if searched_name else 'your'} guild."
+            )
 
-        return await ctx.respond(
-            f"Couldn't find {'that' if searched_name else 'your'} guild."
+        class GuildView(View):
+            def __init__(self):
+                super().__init__(timeout=None)
+                self.add_item(
+                    Button(
+                        label="View on Website",
+                        style=ButtonStyle.link,
+                        url=f"https://mk8dx-yuzu.github.io/",
+                    )
+                )
+
+        embed = Embed(
+            title=f"{guild.name}",
+            description="",
+            color=Colour.blurple(),
         )
+        embed.add_field(name="MMR", value=f"{guild.mmr}")
+
+        if getattr(guild, "history", None):
+            embed.add_field(
+                name="History (last 5)",
+                value=", ".join(map(str, guild.history[-5:])),
+            )
+
+        guild_wins = len([delta for delta in guild.history if delta >= 0])
+        guild_losses = len([delta for delta in guild.history if delta < 0])
+        embed.add_field(name="Wins", value=guild_wins)
+        embed.add_field(name="Losses", value=guild_losses)
+
+        embed.add_field(
+            name="Winrate",
+            value=str(
+                round(
+                    (
+                        (
+                            guild_wins / (guild_wins + guild_losses)
+                            if (guild_wins + guild_losses)
+                            else 0
+                        )
+                        * 100
+                    )
+                )
+            )
+            + "%",
+        )
+
+        if getattr(guild, "creation_date", None):
+            embed.add_field(
+                name="Joined",
+                value=f"{datetime.fromtimestamp(guild.creation_date).strftime('%b %d %Y')}",
+            )
+
+        embed.set_author(
+            name="Yuzu-Lounge",
+            icon_url="https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
+        )
+        embed.set_thumbnail(url=guild.icon)
+
+        await ctx.respond(f"# {guild.name} - overview", embed=embed, view=GuildView())
 
 
 def setup(bot: commands.Bot):
