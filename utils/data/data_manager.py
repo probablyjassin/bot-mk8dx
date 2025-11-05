@@ -4,6 +4,7 @@ from utils.database import players
 from utils.database import aliases
 from utils.database import leaderboard
 from utils.database import mogis
+from utils.database import guilds
 
 
 @dataclass
@@ -32,6 +33,7 @@ class DataManager:
         bulk_add_mmr = staticmethod(mogis.bulk_add_mmr)
 
     class Guilds:
+        find = staticmethod(guilds.find_guild)
         get_all_guilds = None
         create = None
         delete = None
