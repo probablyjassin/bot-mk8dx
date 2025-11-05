@@ -5,6 +5,7 @@ from dataclasses import dataclass
 
 from models.MogiModel import Mogi
 from utils.data.mogi_manager import mogi_manager
+from utils.data.guild_manager import guild_manager
 
 logger = setup_logger(__name__)
 error_logger = setup_logger(__name__, "error.log", console=False)
@@ -83,19 +84,19 @@ class BotState:
 
     def save_state(self):
         mogi_registry = mogi_manager.read_registry()
+        guild_queue = guild_manager.read_registry()
+
+        # Save mogo registry
         with open(f"state/{state_filename}", "w") as state:
             json.dump(
                 {id: mogi_registry[id].to_json() for id in mogi_registry.keys()},
                 state,
                 indent=4,
             )
-        with open("state/state2.json", "w") as state:
-            json.dump(
-                pretty_format_mogi_dicts(
-                    {id: mogi_registry[id].to_json() for id in mogi_registry.keys()}
-                ),
-                state,
-            )
+
+        # Save guild queue
+        with open("state/guild_queue.json", "w") as state:
+            json.dump(guild_queue, state)
 
     def manual_save_state(self):
         with open("state/saved.json", "w") as saved:
@@ -108,6 +109,8 @@ class BotState:
 
     def load_saved(self):
         logger.info("Loading state backup...")
+
+        # Load mogi registry backup
         if not os.path.exists(f"state/{state_filename}"):
             logger.info(msg=f"{state_filename} not found - skipping load backup")
             return
@@ -144,6 +147,24 @@ class BotState:
 
             error_logger.error(
                 f"Error loading saved state: {e}\n{traceback.format_exc()}"
+            )
+
+        # Load Guild Queue Backup
+        logger.info("Loading guild queue backup...")
+        if not os.path.exists(f"state/guild_queue.json"):
+            logger.info(msg=f"guild_queue.json not found - skipping load guild queue")
+            return
+        try:
+            with open(f"state/guild_queue.json", "r") as state:
+                data: dict = json.load(state)
+                if data:
+                    guild_manager.write_registry(data=data)
+                    logger.info(msg=f"Existing state loaded from guild_queue.json")
+                else:
+                    logger.info(msg=f"No state in guild_queue.json - content: <{data}>")
+        except json.JSONDecodeError as e:
+            error_logger.error(
+                f"JSON parsing error in guild_queue.json: {e.msg} at line {e.lineno}, column {e.colno}"
             )
 
     def load_manual_saved(self):
