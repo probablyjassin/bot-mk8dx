@@ -4,6 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
+from utils.command_helpers import search_autocomplete
 from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_not_full,
@@ -28,7 +29,10 @@ class add(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         player: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=search_autocomplete,
         ),
     ):
         # Add to mogi and add roles
