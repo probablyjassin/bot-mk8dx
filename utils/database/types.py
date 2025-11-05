@@ -1,5 +1,4 @@
-import enum
-from typing import Enum
+from enum import Enum
 
 
 class archive_type(Enum):
