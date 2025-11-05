@@ -14,7 +14,6 @@ from discord.utils import get
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.data._database import db_players, db_archived, client
 from utils.command_helpers import create_embed, REGIONS, VerificationView
 from utils.maths.readable_timediff import readable_timedelta
 
@@ -22,6 +21,7 @@ from logger import setup_logger
 
 from bson.int64 import Int64
 from config import LOG_CHANNEL_ID
+from utils.data.data_manager import data_manager
 
 lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 
@@ -53,11 +53,7 @@ class register(commands.Cog):
                 "You're not in the right channel for this command.", ephemeral=True
             )
 
-        existingPlayer = (
-            db_players.find_one({"discord_id": Int64(ctx.author.id)})
-            or db_archived.find_one({"discord_id": Int64(ctx.author.id)})
-            or None
-        )
+        existingPlayer = data_manager.Players.find(ctx.author.id) or None
         if existingPlayer:
             return await ctx.respond(
                 "You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.",
@@ -65,7 +61,7 @@ class register(commands.Cog):
             )
 
         ## more or less temporary code for people who come back after the season reset
-        existingPlayer = (
+        """ existingPlayer = (
             client.get_database("season-3-lounge")
             .get_collection("players")
             .find_one({"discord_id": Int64(ctx.author.id)})
@@ -74,7 +70,7 @@ class register(commands.Cog):
             return await ctx.respond(
                 "You played in Season 3 but left the server since. Please contact an Admin to get your Profile migrated",
                 ephemeral=True,
-            )
+            ) """
 
         # username shenanigans
         def normalize_fancy_unicode(text: str) -> str:
@@ -102,7 +98,7 @@ class register(commands.Cog):
         if username == "":
             username = ctx.interaction.user.name.lower()
 
-        if db_players.find_one({"name": username}):
+        if data_manager.Players.find(username):
             return await ctx.respond(
                 "This username is already taken. Try changing your server display name or ask a moderator for help.",
                 ephemeral=True,
@@ -139,15 +135,8 @@ class register(commands.Cog):
 
         # Verification passed - proceed with registration
         try:
-            db_players.insert_one(
-                {
-                    "name": username,
-                    "discord_id": Int64(member.id),
-                    "mmr": 2000,
-                    "history": [],
-                    "joined": round(time.time()),
-                    "formats": {str(i): 0 for i in range(7)},
-                },
+            data_manager.Players.create_new_player(
+                username=username, discord_id=member.id
             )
         except Exception as e:
             return await ctx.respond(

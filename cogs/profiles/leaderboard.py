@@ -7,7 +7,7 @@ from discord import slash_command, Option, File
 from discord.ext import commands
 
 from models import MogiApplicationContext, Rank
-from utils.data._database import db_players
+from utils.data import data_manager
 
 
 class leaderboard(commands.Cog):
@@ -34,84 +34,22 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
-        max_players = db_players.count_documents({})
+        total_player_count = data_manager.Players.count()
 
         page_index = page_index if page_index > 0 else 1
-        max_pages = -(-max_players // 10)
+        max_pages = -(-total_player_count // 10)
 
         page_index = page_index if page_index <= max_pages else max_pages
 
         skip_count = 10 * (page_index - 1)
-        skip_count = skip_count if skip_count < max_players else max_players - 10
+        skip_count = (
+            skip_count if skip_count < total_player_count else total_player_count - 10
+        )
         skip_count = skip_count if skip_count >= 0 else 0
 
-        # Build an aggregation pipeline to handle most of the work in MongoDB
-        pipeline = []
-
-        # Add project stage to calculate wins, losses, and winrate in the database
-        pipeline.append(
-            {
-                "$project": {
-                    "name": 1,
-                    "mmr": 1,
-                    "history": 1,
-                    "Wins": {
-                        "$size": {
-                            "$filter": {
-                                "input": "$history",
-                                "as": "delta",
-                                "cond": {"$gte": ["$$delta", 0]},
-                            }
-                        }
-                    },
-                    "Losses": {
-                        "$size": {
-                            "$filter": {
-                                "input": "$history",
-                                "as": "delta",
-                                "cond": {"$lt": ["$$delta", 0]},
-                            }
-                        }
-                    },
-                }
-            }
+        data = data_manager.Leaderboard.get_leaderboard(
+            page_index=page_index, sort=sort
         )
-
-        # Calculate winrate
-        pipeline.append(
-            {
-                "$addFields": {
-                    "Winrate %": {
-                        "$cond": [
-                            {"$eq": [{"$add": ["$Wins", "$Losses"]}, 0]},
-                            0,
-                            {
-                                "$multiply": [
-                                    {
-                                        "$divide": [
-                                            "$Wins",
-                                            {"$add": ["$Wins", "$Losses"]},
-                                        ]
-                                    },
-                                    100,
-                                ]
-                            },
-                        ]
-                    }
-                }
-            }
-        )
-
-        # Sort based on user's choice
-        sort_field = "mmr" if sort == "MMR" else sort
-        pipeline.append({"$sort": {sort_field: -1}})
-
-        # Skip and limit for pagination
-        pipeline.append({"$skip": skip_count})
-        pipeline.append({"$limit": 10})
-
-        # Execute the pipeline
-        data = list(db_players.aggregate(pipeline))
 
         tabledata = {
             "Placement": [i + skip_count + 1 for i in range(len(data))],

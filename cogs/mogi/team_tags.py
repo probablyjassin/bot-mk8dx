@@ -52,7 +52,7 @@ class team_tags(commands.Cog):
                     "You cannot include another player's name in your tag."
                 )
 
-        player: PlayerProfile = data_manager.find_player(ctx.interaction.user.id)
+        player: PlayerProfile = data_manager.Players.find(ctx.interaction.user.id)
 
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
             0
