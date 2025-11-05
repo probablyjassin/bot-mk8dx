@@ -27,7 +27,7 @@ def with_guild(
             # kwargs.get(query_varname) is the guild query the user provided to the slash_command
             # if not provided, choose the command user's guild if applicable
 
-            query: str | int | None = (
+            query: str | int = (
                 kwargs.get(query_varname) if kwargs.get(query_varname) else ctx.user.id
             )
 
