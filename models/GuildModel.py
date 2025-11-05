@@ -55,6 +55,15 @@ class Guild:
     def icon(self, value: str):
         self._icon = value
 
+    # mmr
+    @property
+    def mmr(self) -> str:
+        return self._mmr
+
+    @mmr.setter
+    def mmr(self, value: str):
+        self._mmr = value
+
     # creation_date
     @property
     def creation_date(self) -> int | None:
