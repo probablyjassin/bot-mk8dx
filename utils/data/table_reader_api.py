@@ -55,7 +55,7 @@ def pattern_match_lounge_names(
         if match_result is None:
             print(f"failed to match {name}")
             return None
-        candidate_name, score = match_result
+        candidate_name, score, _ = match_result
         if score > 90:
             actual_names[i] = candidate_name
             available_lounge_names.remove(candidate_name)
@@ -72,7 +72,7 @@ def pattern_match_lounge_names(
         if match_result is None:
             print(f"failed to match {name}")
             return None
-        candidate_name, score = match_result
+        candidate_name, score, _ = match_result
         actual_names[i] = candidate_name
         available_lounge_names.remove(candidate_name)
         print(f"Matched: {name} → {candidate_name} ({score})")
@@ -83,7 +83,7 @@ def pattern_match_lounge_names(
             name, list((data_manager.Aliases.get_all_aliases()).values())
         )
         if attempt:
-            potential_alias_match, certainty = attempt
+            potential_alias_match, certainty, _ = attempt
             if potential_alias_match and certainty > 70:
                 # Find the key for this alias value
                 for alias_key, alias_val in (
