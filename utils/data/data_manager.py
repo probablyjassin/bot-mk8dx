@@ -40,7 +40,7 @@ class DataManager:
         delete = None
         add_member = None
         remove_member = None
-        set_attribute = None
+        set_attribute = staticmethod(guilds.set_attribute)
 
 
 data_manager = DataManager()

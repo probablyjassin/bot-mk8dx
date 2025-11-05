@@ -9,7 +9,7 @@ _cache_timestamp = 0
 CACHE_DURATION = 60 * 5
 
 
-async def search_autocomplete(ctx: AutocompleteContext) -> list[str]:
+async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
     global _player_names_cache, _cache_timestamp
 
     user_input = ctx.value

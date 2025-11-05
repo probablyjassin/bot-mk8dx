@@ -1,6 +1,7 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
+from utils.data.data_manager import data_manager
 
 
 @dataclass
@@ -10,26 +11,31 @@ class Guild:
     #### Attributes:
         _id (str): The _id assigned by MongoDB.
         name (str): The guild's full official name.
+        icon (str): Static URL to the Guild Icon image.
         player_ids (list[Int64]): The Discord IDs of all members. Note: MongoDB converts this to Int64.
         mmr (int): The matchmaking rating of the guild.
         history (list[int]): A list of historical MMR deltas.
-        formats (dict{int, int}): A dict of the formats the guild played and their amount.
-        joined (int | None): The timestamp when the player joined, or None.
+        creation_date (int | None): The timestamp when the player joined, or None.
     """
 
     _id: ObjectId
     _name: str
-    _player_ids: list[Int64]
     _icon: str
+    _player_ids: list[Int64]
     _mmr: int
     _history: list[int]
     _creation_date: int | None = None
 
-    # Getters and Setters
+    def __init__(self, _id, name, icon, player_ids, mmr, history, creation_date):
+        self._id = _id
+        self._name = name
+        self._icon = icon
+        self._player_ids = player_ids
+        self._mmr = mmr
+        self._history = history
+        self._creation_date = creation_date
 
-    """ def refresh(self):
-        data = find_one({"_id": self._id})
-        self.__dict__.update(Guild.from_json(data).__dict__) """
+    # Getters and Setters
 
     # name
     @property
@@ -38,7 +44,7 @@ class Guild:
 
     @name.setter
     def name(self, value: str):
-        self._name = value
+        data_manager.Guilds.set_attribute(self, "name", value)
 
     # icon
     @property
@@ -73,10 +79,6 @@ class Guild:
 
     def append_history(self, value: int):
         self._history.append(value)
-
-    def remove_history(self, value: int):
-        if value in self._history:
-            self._history.remove(value)
 
     # Properties
 

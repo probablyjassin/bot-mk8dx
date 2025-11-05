@@ -1,4 +1,4 @@
-from discord import slash_command, Option, Attachment
+from discord import slash_command, Option
 from discord.ext import commands
 
 from models import MogiApplicationContext, Guild
@@ -8,7 +8,7 @@ from utils.decorators import (
 )
 
 
-class display(commands.Cog):
+class guild(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
@@ -16,7 +16,6 @@ class display(commands.Cog):
         name="guild",
         description="View your guild or a guild of your choice",
     )
-    @is_admin()
     async def guild(
         self,
         ctx: MogiApplicationContext,
@@ -26,8 +25,9 @@ class display(commands.Cog):
             required=False,
         ),
     ):
+
         return await ctx.respond("meow")
 
 
 def setup(bot: commands.Bot):
-    bot.add_cog(display(bot))
+    bot.add_cog(guild(bot))
