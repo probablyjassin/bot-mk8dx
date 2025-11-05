@@ -34,26 +34,26 @@ class squads(commands.Cog):
     @with_guild()
     async def drop(self, ctx: MogiApplicationContext):
         queue = guild_manager.read_queue()
-        if not any(ctx.user.id in arr for arr in queue):
+        if not any(ctx.user.id in arr for arr in queue.values()):
             return await ctx.respond("Not queued up for the guild mogi.")
 
         guild_manager.queue_up(ctx.lounge_guild, ctx.user.id)
         return await ctx.respond(
-            f"<@{ctx.user.id}> dropped from the queue for {ctx.lounge_guild.name}!"
+            f"<@{ctx.user.id}> dropped from the queue for **{ctx.lounge_guild.name}**!"
         )
 
     @squads.command(
         name="list",
         description="Show the current guild mogi queue",
     )
-    async def drop(self, ctx: MogiApplicationContext):
+    async def list(self, ctx: MogiApplicationContext):
         queue = guild_manager.read_queue()
         if not any(arr for arr in queue):
             return await ctx.respond("No players in the current guild mogi queue.")
 
         queue_str = ""
         for guild_name in queue.keys():
-            queue_str += f"###{guild_name}\n"
+            queue_str += f"### {guild_name}\n"
             for player_id in queue[guild_name]:
                 queue_str += f"- <@{player_id}>\n"
             queue_str += "\n"
