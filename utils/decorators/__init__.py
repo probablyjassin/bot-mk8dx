@@ -10,6 +10,7 @@ from .checks import (
     LoungeRole,
 )
 from .player import with_player, other_player
+from .guild import with_guild
 
 __all__ = [
     "is_mogi_manager",
@@ -23,4 +24,5 @@ __all__ = [
     "LoungeRole",
     "with_player",
     "other_player",
+    "with_guild",
 ]
