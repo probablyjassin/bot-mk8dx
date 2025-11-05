@@ -24,7 +24,7 @@ class squads(commands.Cog):
 
         guild_manager.queue_up(ctx.lounge_guild, ctx.user.id)
         return await ctx.respond(
-            f"<@{ctx.user.id}> queued up for {ctx.lounge_guild.name}!"
+            f"<@{ctx.user.id}> queued up for **{ctx.lounge_guild.name}**!"
         )
 
     @squads.command(
@@ -53,7 +53,7 @@ class squads(commands.Cog):
 
         queue_str = ""
         for guild_name in queue.keys():
-            queue_str += f"### {guild_name}\n"
+            queue_str += f"## {guild_name}\n"
             for player_id in queue[guild_name]:
                 queue_str += f"- <@{player_id}>\n"
             queue_str += "\n"
