@@ -6,7 +6,7 @@ from models import MogiApplicationContext
 
 from utils.data import data_manager, mogi_manager
 from utils.maths.replace import recurse_replace
-from utils.command_helpers import get_guild_member
+from utils.command_helpers import get_guild_member, search_autocomplete
 from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
@@ -32,10 +32,16 @@ class sub(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=search_autocomplete,
         ),
         replacement_name: str = Option(
-            str, name="sub", description="username | @ mention | discord_id"
+            str,
+            name="sub",
+            description="username | @ mention | discord_id",
+            autocomplete=search_autocomplete,
         ),
         reason: str = Option(
             str,
@@ -120,7 +126,10 @@ class sub(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=search_autocomplete,
         ),
     ):
         if ctx.player in ctx.mogi.subs:
@@ -144,7 +153,10 @@ class sub(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=search_autocomplete,
         ),
     ):
         if ctx.player not in ctx.mogi.subs:
