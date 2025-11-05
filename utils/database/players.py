@@ -67,6 +67,10 @@ def get_profiles(
     return [PlayerProfile.from_json(player) for player in data]
 
 
+def get_all_player_names() -> list[str]:
+    return [player["name"] for player in db_players.find({}, {"name": 1, "_id": 0})]
+
+
 def create_new_player(username: str, discord_id: int) -> None:
     db_players.insert_one(
         {

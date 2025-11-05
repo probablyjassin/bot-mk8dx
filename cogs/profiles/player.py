@@ -5,6 +5,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile, Rank
 from utils.database.types import archive_type
 from utils.data import data_manager
+from utils.command_helpers import search_autocomplete
 
 from datetime import datetime
 from bson.int64 import Int64
@@ -23,6 +24,7 @@ class player(commands.Cog):
             name="name",
             description="defaults to yourself: username | @ mention | discord_id",
             required=False,
+            autocomplete=search_autocomplete,
         ),
     ):
         player: PlayerProfile = data_manager.Players.find(

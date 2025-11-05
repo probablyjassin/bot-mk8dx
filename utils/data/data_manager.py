@@ -13,6 +13,7 @@ class DataManager:
         find = staticmethod(players.find_player)
         create_new_player = staticmethod(players.create_new_player)
         get_profiles = staticmethod(players.get_profiles)
+        get_all_player_names = staticmethod(players.get_all_player_names)
         count = staticmethod(players.count)
         set_attribute = staticmethod(players.set_attribute)
         append_history = staticmethod(players.append_history)
