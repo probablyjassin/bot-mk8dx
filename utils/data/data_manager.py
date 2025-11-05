@@ -36,6 +36,7 @@ class DataManager:
     class Guilds:
         find = staticmethod(guilds.find_guild)
         get_all_guilds = None
+        get_all_guild_names = staticmethod(guilds.get_all_guild_names)
         create = None
         delete = None
         add_member = None

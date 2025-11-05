@@ -86,6 +86,10 @@ def find_guild(
     return Guild(**potential_guild) if potential_guild else None
 
 
+def get_all_guild_names() -> list[str]:
+    return [player["name"] for player in db_guilds.find({}, {"name": 1, "_id": 0})]
+
+
 def count() -> int:
     return db_guilds.count_documents({})
 
