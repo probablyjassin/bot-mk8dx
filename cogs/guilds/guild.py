@@ -52,6 +52,17 @@ class guild(commands.Cog):
             description="",
             color=Colour.blurple(),
         )
+
+        if getattr(guild, "player_ids", None):
+            member_mentions = "\n".join(
+                [f"<@{player_id}>" for player_id in guild.player_ids]
+            )
+            embed.add_field(
+                name=f"Members ({len(guild.player_ids)})",
+                value=member_mentions if member_mentions else "No members",
+                inline=False,
+            )
+
         embed.add_field(name="MMR", value=f"{guild.mmr}")
 
         guild_wins = len([delta for delta in guild.history if delta >= 0])
@@ -94,7 +105,9 @@ class guild(commands.Cog):
         )
         embed.set_thumbnail(url=guild.icon)
 
-        await ctx.respond(f"# {guild.name} - overview", embed=embed, view=GuildView())
+        await ctx.respond(
+            f"# {guild.name} - guild overview", embed=embed, view=GuildView()
+        )
 
 
 def setup(bot: commands.Bot):
