@@ -32,9 +32,7 @@ def with_guild(
             )
 
             # Fetch guild record
-            ctx.lounge_guild = data_manager.Guilds.find(
-                query=query if query else ctx.user.id
-            )
+            ctx.lounge_guild = data_manager.Guilds.find(query)
 
             if not ctx.lounge_guild:
                 return await ctx.respond(
