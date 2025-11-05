@@ -3,7 +3,7 @@ from .confirm import confirmation
 from .find_player import get_guild_member
 from .info_embed_factory import create_embed
 from .register_verifyer import VerificationView
-from .server_region import REGIONS, get_best_server
+from .server_assign import get_available_server
 from .team_roles import apply_team_roles, remove_team_roles
 from .update_server_passwords import fetch_server_passwords
 from .vote_btn_callback import format_vote_button_callback
@@ -16,8 +16,7 @@ __all__ = [
     "get_guild_member",
     "create_embed",
     "VerificationView",
-    "REGIONS",
-    "get_best_server",
+    "get_available_server",
     "apply_team_roles",
     "remove_team_roles",
     "fetch_server_passwords",

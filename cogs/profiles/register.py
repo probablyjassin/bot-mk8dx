@@ -4,18 +4,17 @@ import unicodedata
 
 from discord import (
     slash_command,
+    Option,
     Member,
     User,
-    Option,
     Color,
     AllowedMentions,
 )
-from discord.utils import get
 from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.data._database import db_players, db_archived, client
-from utils.command_helpers import create_embed, REGIONS, VerificationView
+from utils.command_helpers import create_embed, VerificationView
 from utils.maths.readable_timediff import readable_timedelta
 
 from logger import setup_logger
@@ -41,9 +40,16 @@ class register(commands.Cog):
         region: str = Option(
             str,
             name="region",
-            description="Where you're playing from. We use this to find the overall best server to play on.",
+            description="Where you're playing from.",
             required=True,
-            choices=REGIONS,
+            choices=[
+                "Europe",
+                "North America",
+                "South America",
+                "Africa",
+                "Asia",
+                "Oceania",
+            ],
         ),
     ):
         await ctx.defer(ephemeral=True)
@@ -171,11 +177,9 @@ class register(commands.Cog):
             await member.add_roles(
                 ctx.get_lounge_role("Lounge - Silver"), reason="Registered for Lounge"
             )
-
-        # add region role if applicable
-        for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
-            if region == role.name and role not in ctx.user.roles:
-                await ctx.user.add_roles(role)
+        region_role = ctx.get_lounge_role(region)
+        if region_role and region_role not in ctx.user.roles:
+            await ctx.user.add_roles(region_role)
 
         # done
         await ctx.respond(
@@ -198,8 +202,8 @@ class register(commands.Cog):
                 fields={
                     "Account created:": readable_timedelta(delta_created),
                     "Lounge Name:": username,
-                    "Selected Region:": region,
                     "User Locale:": ctx.locale,
+                    "Selected Region": region,
                 },
                 color=(Color.red() if is_VERY_sus else Color.yellow()),
                 inline=False,
