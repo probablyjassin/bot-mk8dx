@@ -8,5 +8,5 @@ colorlog
 matplotlib
 dataframe_image
 pandas
-fuzzywuzzy
+rapidfuzz
 python-Levenshtein
