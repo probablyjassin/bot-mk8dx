@@ -2,6 +2,7 @@ import string
 
 from discord import SlashCommandGroup, Option
 from discord.ext import commands
+from discord.utils import get
 
 from utils.data import data_manager
 from models import MogiApplicationContext
@@ -35,11 +36,15 @@ class guilds_edit(commands.Cog):
                 ephemeral=True,
             )
 
+        lounge_guild_role = get(
+            ctx.guild.roles,
+            name=f"GUILD | {getattr(ctx.lounge_guild, 'name')}",
+        )
+
         data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
-        if ctx.lounge_guild_role:
-            print("trying to change lounge guild name")
-            print(name)
-            ctx.lounge_guild_role.edit(name=f"GUILD | {name}")
+
+        if lounge_guild_role:
+            lounge_guild_role.edit(name=f"GUILD | {name}")
 
         return await ctx.respond(f"Changed the name of your guild to `{name}`")
 
@@ -71,8 +76,16 @@ class guilds_edit(commands.Cog):
             f"<@{ctx.player.discord_id}>, do you want to join the guild **{ctx.lounge_guild.name}**?",
             user_id=ctx.player.discord_id,
         ):
+            lounge_guild_role = get(
+                ctx.guild.roles,
+                name=f"GUILD | {getattr(ctx.lounge_guild, 'name')}",
+            )
+
             data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player.id)
-            ctx.player_discord.add_roles(ctx.lounge_guild_role)
+
+            if lounge_guild_role:
+                ctx.player_discord.add_roles(lounge_guild_role)
+
             await ctx.respond(
                 f"<@{ctx.player.id}> is now part of **{ctx.lounge_guild.name}**!"
             )
