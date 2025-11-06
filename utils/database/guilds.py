@@ -110,6 +110,16 @@ def create_new_guild(
     )
 
 
+def add_member(guild: "Guild", player_id: int) -> None:
+    if db_guilds.find_one({"player_ids": Int64(player_id)}):
+        raise ValueError("Player already in a guild")
+    guild.player_ids.append(Int64(player_id))
+    db_guilds.update_one(
+        {"_id": guild._id},
+        {"$push": {"player_ids": Int64(player_id)}},
+    )
+
+
 def set_attribute(guild: "Guild", attribute, value) -> None:
     setattr(guild, attribute, value)
     db_guilds.update_one(
