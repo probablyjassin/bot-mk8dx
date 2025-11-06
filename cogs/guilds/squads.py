@@ -19,7 +19,9 @@ class squads(commands.Cog):
     @with_guild()
     async def queue(self, ctx: MogiApplicationContext):
         queue = guild_manager.read_queue()
-        if any(ctx.user.id in arr for arr in queue):
+        if ctx.user.id in [
+            player_id for players in queue.values() for player_id in players
+        ]:
             return await ctx.respond("Already queued up for the guild mogi.")
 
         guild_manager.queue_up(ctx.lounge_guild, ctx.user.id)
