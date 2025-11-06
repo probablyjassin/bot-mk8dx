@@ -120,6 +120,16 @@ def add_member(guild: "Guild", player_id: int) -> None:
     )
 
 
+def remove_member(guild: "Guild", player_id: int) -> None:
+    if not db_guilds.find_one({"player_ids": Int64(player_id)}):
+        raise ValueError("Player not in a guild")
+    guild.player_ids.remove(Int64(player_id))
+    db_guilds.update_one(
+        {"_id": guild._id},
+        {"$pull": {"player_ids": Int64(player_id)}},
+    )
+
+
 def set_attribute(guild: "Guild", attribute, value) -> None:
     setattr(guild, f"_{attribute}", value)
     db_guilds.update_one(
@@ -145,5 +155,8 @@ def player_has_guild(player_id: int) -> bool:
     return bool(result)
 
 
-def get_player_guild(player_id: int) -> dict:
-    return db_guilds.find_one({"player_ids": Int64(player_id)})
+def get_player_guild(player_id: int) -> "Guild":
+    from models.GuildModel import Guild
+
+    potential_guild = db_guilds.find_one({"player_ids": Int64(player_id)})
+    return Guild(**potential_guild) if potential_guild else None

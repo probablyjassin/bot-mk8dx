@@ -5,9 +5,9 @@ from discord.ext import commands
 from discord.utils import get
 
 from utils.data import data_manager
-from models import MogiApplicationContext
+from models import MogiApplicationContext, Guild
 from utils.decorators import with_guild, with_player
-from utils.command_helpers import player_name_autocomplete, confirmation
+from utils.command_helpers import player_name_autocomplete, confirmation, is_moderator
 
 
 class guilds_edit(commands.Cog):
@@ -70,7 +70,7 @@ class guilds_edit(commands.Cog):
             ctx.player.discord_id
         ):
             return await ctx.respond(
-                f"That player is already in the guild **{existing_guild['name']}**."
+                f"That player is already in the guild **{existing_guild.name}**."
             )
 
         if await confirmation(
@@ -93,6 +93,41 @@ class guilds_edit(commands.Cog):
             )
         else:
             await ctx.respond("The player rejected the invitation.")
+
+    @guildedit.command(
+        name="remove-member", description="Remove a player from the guild they're in."
+    )
+    @is_moderator()
+    @with_player(query_varname="player")
+    async def remove_member(
+        self,
+        ctx: MogiApplicationContext,
+        player: str = Option(
+            str,
+            name="player",
+            description="The Lounge Player to remove",
+            required=True,
+            autocomplete=player_name_autocomplete,
+        ),
+    ):
+        await ctx.response.defer()
+
+        if not (guild := data_manager.Guilds.get_player_guild(ctx.player.discord_id)):
+            return await ctx.respond("That player is not in a guild.")
+
+        lounge_guild_role = get(
+            ctx.guild.roles,
+            name=f"GUILD | {guild.name}",
+        )
+
+        data_manager.Guilds.remove_member(guild, ctx.player.discord_id)
+
+        if lounge_guild_role:
+            await ctx.player_discord.remove_roles(lounge_guild_role)
+
+        await ctx.respond(
+            f"{ctx.player_discord.mention} has been removed from **{guild.name}**."
+        )
 
 
 def setup(bot: commands.Bot):
