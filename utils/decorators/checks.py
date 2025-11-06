@@ -1,12 +1,11 @@
-from discord import ChannelType
-from discord.ext import commands
-
-from models.CustomMogiContext import MogiApplicationContext
 from enum import Enum
+
+from discord import ApplicationContext, ChannelType
+from discord.ext import commands
 
 
 async def _check(
-    ctx: MogiApplicationContext,
+    ctx: ApplicationContext,
     condition: bool,
     error_message: str = "You're not allowed to use this command.",
 ):
@@ -23,7 +22,7 @@ class LoungeRole(Enum):
     MOGI_MANAGER = ("Mogi Manager", 1)
 
 
-def _is_at_least_role(ctx: MogiApplicationContext, role: LoungeRole) -> bool:
+def _is_at_least_role(ctx: ApplicationContext, role: LoungeRole) -> bool:
     """
     ## Internal function for command checkers that checks if the user has a sufficient role in the hierarchy
     `ctx.get_lounge_role(lounge_role.value[0]) in ctx.author.roles and lounge_role.value[1] >= min_level`
