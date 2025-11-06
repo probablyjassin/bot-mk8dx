@@ -1,3 +1,5 @@
+from typing import Optional
+
 from discord import ApplicationContext, Member, Guild, Role, TextChannel
 from discord.utils import get
 
@@ -39,11 +41,18 @@ class MogiApplicationContext(ApplicationContext):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        self.mogi: Mogi | None = mogi_manager.get_mogi(self.channel.id)
-        self.player: PlayerProfile | None = None
-        self.player_discord: Member | None = None
+        self.mogi: Optional[Mogi] = mogi_manager.get_mogi(self.channel.id)
+        self.player: Optional[PlayerProfile] = None
+        self.player_discord: Optional[Member] = None
 
-        self.lounge_guild: LoungeGuild | None = None
+        self.lounge_guild: Optional[LoungeGuild] = None
+        self.lounge_guild_role: Optional[Role] = None
+        if self.lounge_guild:
+            if lounge_guild_role := get(
+                self.main_guild.roles,
+                name=f"GUILD | {getattr(self.lounge_guild, 'name')}",
+            ):
+                self.lounge_guild_role = lounge_guild_role
 
         self.main_guild: Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: Role = get(self.main_guild.roles, name="InMogi")
