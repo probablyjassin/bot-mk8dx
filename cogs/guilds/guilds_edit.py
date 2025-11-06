@@ -55,7 +55,7 @@ class guilds_edit(commands.Cog):
             autocomplete=player_name_autocomplete,
         ),
     ):
-        if ctx.player
+        pass
 
 
 def setup(bot: commands.Bot):
