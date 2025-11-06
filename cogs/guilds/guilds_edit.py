@@ -1,4 +1,4 @@
-import string
+import re, string
 
 from discord import SlashCommandGroup, Option
 from discord.ext import commands
@@ -50,6 +50,20 @@ class guilds_edit(commands.Cog):
 
         return await ctx.respond(f"Changed the name of your guild to `{name}`")
 
+    @guildedit.command(name="icon", description="Change the guild icon.")
+    @with_guild(assert_is_owner=True)
+    async def icon(self, ctx: MogiApplicationContext, new_icon: str = Option(str)):
+        if not re.match(
+            r"^https?://.*\.(png|jpg|jpeg|gif|webp)$", new_icon, re.IGNORECASE
+        ):
+            return await ctx.respond(
+                "Invalid image URL. Please provide a valid URL "
+                "ending in .png, .jp(e)g, .gif, or .webp",
+            )
+
+        data_manager.Guilds.set_attribute(ctx.lounge_guild, "icon", new_icon)
+        return await ctx.respond(f"Changed your guild icon to: {new_icon}")
+
     @guildedit.command(name="add-member", description="Add a member to your guild")
     @with_guild(assert_is_owner=True)
     @with_player(query_varname="player")
@@ -95,7 +109,8 @@ class guilds_edit(commands.Cog):
             await ctx.respond("The player rejected the invitation.")
 
     @guildedit.command(
-        name="remove-member", description="Remove a player from the guild they're in."
+        name="remove-member",
+        description="MODS ONLY: Remove a player from their guild.",
     )
     @is_moderator()
     @with_player(query_varname="player")
