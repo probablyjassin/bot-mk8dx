@@ -41,6 +41,9 @@ class MogiApplicationContext(ApplicationContext):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.main_guild: Guild = get(self.bot.guilds, id=GUILD_IDS[0])
+        self.inmogi_role: Role = get(self.main_guild.roles, name="InMogi")
+
         self.mogi: Optional[Mogi] = mogi_manager.get_mogi(self.channel.id)
         self.player: Optional[PlayerProfile] = None
         self.player_discord: Optional[Member] = None
@@ -61,9 +64,6 @@ class MogiApplicationContext(ApplicationContext):
             )
         )
         print(self.lounge_guild_role)
-
-        self.main_guild: Guild = get(self.bot.guilds, id=GUILD_IDS[0])
-        self.inmogi_role: Role = get(self.main_guild.roles, name="InMogi")
 
         self.register_channel: TextChannel = get(
             self.main_guild.text_channels, id=REGISTER_CHANNEL_ID
