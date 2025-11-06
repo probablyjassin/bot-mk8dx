@@ -6,8 +6,8 @@ from discord.utils import get
 
 from utils.data import data_manager
 from models import MogiApplicationContext, Guild
-from utils.decorators import with_guild, with_player
-from utils.command_helpers import player_name_autocomplete, confirmation, is_moderator
+from utils.decorators import with_guild, with_player, is_moderator
+from utils.command_helpers import player_name_autocomplete, confirmation
 
 
 class guilds_edit(commands.Cog):
