@@ -37,6 +37,8 @@ class guilds_edit(commands.Cog):
 
         data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
         if ctx.lounge_guild_role:
+            print("trying to change lounge guild name")
+            print(name)
             ctx.lounge_guild_role.edit(name=f"GUILD | {name}")
 
         return await ctx.respond(f"Changed the name of your guild to `{name}`")
