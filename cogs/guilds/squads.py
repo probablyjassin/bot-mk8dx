@@ -1,4 +1,4 @@
-from discord import SlashCommandGroup
+from discord import SlashCommandGroup, AllowedMentions
 from discord.ext import commands
 
 from models import MogiApplicationContext
@@ -67,12 +67,12 @@ class squads(commands.Cog):
 
         queue = guild_manager.read_queue()
         valid_guilds: list[str] = []
-        min_players = 2
+        min_players = 12
         for guild_name in queue:
             if len(queue[guild_name]) < 2:
                 continue
             valid_guilds.append(guild_name)
-            min_players = max(min_players, len(queue[guild_name]))
+            min_players = min(min_players, len(queue[guild_name]))
 
         if len(valid_guilds) < 2:
             return await ctx.respond("Not enough Guilds with enough players!")
