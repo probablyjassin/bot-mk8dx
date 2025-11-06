@@ -91,7 +91,7 @@ class guild(commands.Cog):
 
         if getattr(guild, "creation_date", None):
             embed.add_field(
-                name="Joined",
+                name="Created at",
                 value=f"{datetime.fromtimestamp(guild.creation_date).strftime('%b %d %Y')}",
             )
 
