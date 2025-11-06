@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.data import guild_manager
-from utils.decorators import with_player, with_guild
+from utils.decorators import with_guild, is_mogi_manager
 
 
 class squads(commands.Cog):
@@ -88,6 +88,12 @@ class squads(commands.Cog):
                 message += f"*({subs} subs)*\n"
             message += "\n"
         await ctx.respond(message)
+
+    @squads.command(name="clear", description="Kick everyone from the queue")
+    @is_mogi_manager()
+    async def clear(self, ctx: MogiApplicationContext):
+        guild_manager.write_registry({})
+        await ctx.respond("## Guild mogi queue has been emptied!")
 
 
 def setup(bot: commands.Bot):
