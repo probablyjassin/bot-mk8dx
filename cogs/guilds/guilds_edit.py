@@ -28,6 +28,8 @@ class guilds_edit(commands.Cog):
             return await ctx.respond(
                 "Guild name has to be between 3 and 32 characters long"
             )
+        if name in data_manager.Guilds.get_all_guild_names():
+            return await ctx.respond("There already exists a guild with this name.")
 
         allowed_chars = string.ascii_letters + string.digits + " -_"
         if not all(char in allowed_chars for char in name):
@@ -40,8 +42,6 @@ class guilds_edit(commands.Cog):
             ctx.guild.roles,
             name=f"GUILD | {ctx.lounge_guild.name}",
         )
-
-        print(lounge_guild_role)
 
         data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
 
