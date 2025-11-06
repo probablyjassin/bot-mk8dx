@@ -4,7 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile
 
 from utils.data import data_manager, mogi_manager
-from utils.decorators import is_mogi_manager
+from utils.decorators import is_mogi_manager, with_player
 
 
 class penalties(commands.Cog):
@@ -39,20 +39,14 @@ class penalties(commands.Cog):
         description="Collect MMR for penalties",
     )
     @is_mogi_manager()
+    @with_player(query_varname="player")
     async def tax(
         self,
         ctx: MogiApplicationContext,
         player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player_profile: PlayerProfile = data_manager.Players.find(player)
-        penalty_holder: PlayerProfile = data_manager.Players.find(self.bot.user.id)
-
-        if not player_profile:
-            return await ctx.respond("Couldn't find that player")
-
-        if not penalty_holder:
-            return await ctx.respond("Couldn't find mrboost")
+        player_profile = ctx.player
 
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.read_registry().values():
@@ -73,7 +67,6 @@ class penalties(commands.Cog):
             )
 
         player_profile.mmr = player_profile.mmr - abs(mmr)
-        penalty_holder.mmr = penalty_holder.mmr + abs(mmr)
 
         await ctx.respond(
             f"Collected penalties from <@{player_profile.discord_id}>",

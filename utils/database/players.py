@@ -85,7 +85,7 @@ def create_new_player(username: str, discord_id: int) -> None:
 
 
 def set_attribute(player: "PlayerProfile", attribute, value) -> None:
-    setattr(player, attribute, value)
+    setattr(player, f"_{attribute}", value)
     db_players.update_one(
         {"_id": player._id},
         {"$set" if value else "$unset": {attribute: value if value else ""}},
