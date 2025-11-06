@@ -6,7 +6,7 @@ from discord.ext import commands
 from utils.data import data_manager
 from models import MogiApplicationContext
 from utils.decorators import with_guild, with_player
-from utils.command_helpers import player_name_autocomplete
+from utils.command_helpers import player_name_autocomplete, confirmation
 
 
 class guilds_edit(commands.Cog):
@@ -55,7 +55,27 @@ class guilds_edit(commands.Cog):
             autocomplete=player_name_autocomplete,
         ),
     ):
-        pass
+        await ctx.response.defer()
+
+        if existing_guild := data_manager.Guilds.get_player_guild(
+            ctx.player.discord_id
+        ):
+            return await ctx.respond(
+                f"That player is already in the guild **{existing_guild['name']}**."
+            )
+
+        if await confirmation(
+            ctx,
+            f"<@{ctx.player.discord_id}>, do you want to join the guild **{ctx.lounge_guild.name}**?",
+            user_id=ctx.player.discord_id,
+        ):
+            data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player.id)
+            ctx.player_discord.add_roles(ctx.lounge_guild_role)
+            await ctx.respond(
+                f"<@{ctx.player.id}> is now part of **{ctx.lounge_guild.name}**!"
+            )
+        else:
+            await ctx.respond("The player rejected the invitation.")
 
 
 def setup(bot: commands.Bot):
