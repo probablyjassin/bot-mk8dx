@@ -61,9 +61,10 @@ class squads(commands.Cog):
 
     @squads.command(name="start", description="Announce the start of a guild mogi.")
     async def start(self, ctx: MogiApplicationContext):
+        await ctx.response.defer()
+
         queue = guild_manager.read_queue()
-        amount_of_guilds = len(list(queue.keys()))
-        valid_guilds = []
+        valid_guilds: list[str] = []
         min_players = 2
         for guild_name in queue:
             if len(queue[guild_name]) < 2:
@@ -77,7 +78,14 @@ class squads(commands.Cog):
         message = f"# Guild Mogi: {min_players}"
         message += f"v{min_players}" * (len(valid_guilds) - 1)
         message += "\n\n"
-        await ctx.respond(f"")
+        for name in valid_guilds:
+            message += f"**{name}**\n"
+            for player_id in queue[name]:
+                message += f"<@{player_id}>\n"
+            if subs := len(queue[name]) - min_players:
+                message += f"*({subs} subs)*\n"
+            message += "\n"
+        await ctx.respond(message)
 
 
 def setup(bot: commands.Bot):
