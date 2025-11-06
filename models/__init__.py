@@ -1,4 +1,5 @@
-from .CustomMogiContext import MogiApplicationContext, RestrictedOption
+from .CustomMogiContext import MogiApplicationContext
+from .CustomOptionType import RestrictedOption
 from .PlayerModel import PlayerProfile
 from .MogiModel import Mogi, MogiHistoryData
 from .GuildModel import Guild
