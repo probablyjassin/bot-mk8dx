@@ -17,10 +17,6 @@ async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
     user_input = ctx.value
     current_time = time.time()
 
-    # If user is typing a mention, return empty to let Discord handle it
-    if user_input and user_input.strip().startswith("@"):
-        return []
-
     # Update cache if expired or empty
     if (
         _player_names_cache is None
