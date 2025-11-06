@@ -38,8 +38,10 @@ class guilds_edit(commands.Cog):
 
         lounge_guild_role = get(
             ctx.guild.roles,
-            name=f"GUILD | {getattr(ctx.lounge_guild, 'name')}",
+            name=f"GUILD | {ctx.lounge_guild.name}",
         )
+
+        print(lounge_guild_role)
 
         data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
 
