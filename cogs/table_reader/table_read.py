@@ -10,7 +10,7 @@ from discord import (
 )
 from discord.ext import commands
 
-from models import MogiApplicationContext
+from models import MogiApplicationContext, RestrictedOption
 from utils.data import (
     table_read_ocr_api,
     pattern_match_lounge_names,
@@ -18,6 +18,7 @@ from utils.data import (
     store,
 )
 from utils.data import data_manager
+from utils.command_helpers import player_name_autocomplete
 from utils.decorators import is_mogi_manager, with_player
 from utils.decorators.checks import _is_at_least_role, LoungeRole
 
@@ -241,15 +242,13 @@ class table_read(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         name: str = Option(str, required=True),
-        to_player: str = Option(str, required=False),
+        to_player: str = RestrictedOption(
+            str,
+            required=False,
+            autocomplete=player_name_autocomplete,
+            required_role=LoungeRole.MOGI_MANAGER,
+        ),
     ):
-
-        if to_player:
-            if not _is_at_least_role(ctx, LoungeRole.MOGI_MANAGER):
-                return await ctx.respond(
-                    "You can't use the `to_player` parameter, you can only set an alias for yourself"
-                )
-
         searched_player = (
             data_manager.Players.find(query=to_player) if to_player else None
         )
