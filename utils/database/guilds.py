@@ -121,7 +121,7 @@ def add_member(guild: "Guild", player_id: int) -> None:
 
 
 def set_attribute(guild: "Guild", attribute, value) -> None:
-    setattr(guild, attribute, value)
+    setattr(guild, f"_{attribute}", value)
     db_guilds.update_one(
         {"_id": guild._id},
         {"$set" if value else "$unset": {attribute: value if value else ""}},
