@@ -39,7 +39,7 @@ class squads(commands.Cog):
         if not any(ctx.user.id in arr for arr in queue.values()):
             return await ctx.respond("Not queued up for the guild mogi.")
 
-        guild_manager.queue_up(ctx.lounge_guild, ctx.user.id)
+        guild_manager.queue_drop(ctx.user.id)
         return await ctx.respond(
             f"<@{ctx.user.id}> dropped from the queue for **{ctx.lounge_guild.name}**!"
         )
