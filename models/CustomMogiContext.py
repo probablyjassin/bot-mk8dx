@@ -49,21 +49,6 @@ class MogiApplicationContext(ApplicationContext):
         self.player_discord: Optional[Member] = None
 
         self.lounge_guild: Optional[LoungeGuild] = None
-        self.lounge_guild_role: Optional[Role] = None
-        if self.lounge_guild:
-            if lounge_guild_role := get(
-                self.main_guild.roles,
-                name=f"GUILD | {getattr(self.lounge_guild, 'name')}",
-            ):
-                self.lounge_guild_role = lounge_guild_role
-
-        print(
-            get(
-                self.main_guild.roles,
-                name=f"GUILD | {getattr(self.lounge_guild, 'name')}",
-            )
-        )
-        print(self.lounge_guild_role)
 
         self.register_channel: TextChannel = get(
             self.main_guild.text_channels, id=REGISTER_CHANNEL_ID
