@@ -5,10 +5,11 @@ from discord.ext import commands
 
 from utils.data import data_manager
 from models import MogiApplicationContext
-from utils.decorators import with_guild
+from utils.decorators import with_guild, with_player
+from utils.command_helpers import player_name_autocomplete
 
 
-class edit(commands.Cog):
+class guilds_edit(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
@@ -40,6 +41,22 @@ class edit(commands.Cog):
 
         return await ctx.respond(f"Changed the name of your guild to `{name}`")
 
+    @guildedit.command(name="add-member", description="Add a member to your guild")
+    @with_guild(assert_is_owner=True)
+    @with_player(query_varname="player")
+    async def add_member(
+        self,
+        ctx: MogiApplicationContext,
+        player: str = Option(
+            str,
+            name="player",
+            description="The Lounge Player to add",
+            required=True,
+            autocomplete=player_name_autocomplete,
+        ),
+    ):
+        if ctx.player
+
 
 def setup(bot: commands.Bot):
-    bot.add_cog(edit(bot))
+    bot.add_cog(guilds_edit(bot))
