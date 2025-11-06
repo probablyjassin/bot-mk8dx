@@ -89,7 +89,7 @@ class guilds_edit(commands.Cog):
                 await ctx.player_discord.add_roles(lounge_guild_role)
 
             await ctx.respond(
-                f"<@{ctx.player_discord.id}> is now part of **{ctx.lounge_guild.name}**!"
+                f"# <@{ctx.player_discord.id}> is now part of **{ctx.lounge_guild.name}**!"
             )
         else:
             await ctx.respond("The player rejected the invitation.")
