@@ -54,6 +54,14 @@ class MogiApplicationContext(ApplicationContext):
             ):
                 self.lounge_guild_role = lounge_guild_role
 
+        print(
+            get(
+                self.main_guild.roles,
+                name=f"GUILD | {getattr(self.lounge_guild, 'name')}",
+            )
+        )
+        print(self.lounge_guild_role)
+
         self.main_guild: Guild = get(self.bot.guilds, id=GUILD_IDS[0])
         self.inmogi_role: Role = get(self.main_guild.roles, name="InMogi")
 
