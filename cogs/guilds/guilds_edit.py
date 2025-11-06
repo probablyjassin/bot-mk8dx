@@ -46,7 +46,7 @@ class guilds_edit(commands.Cog):
         data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
 
         if lounge_guild_role:
-            lounge_guild_role.edit(name=f"GUILD | {name}")
+            await lounge_guild_role.edit(name=f"GUILD | {name}")
 
         return await ctx.respond(f"Changed the name of your guild to `{name}`")
 
@@ -80,16 +80,16 @@ class guilds_edit(commands.Cog):
         ):
             lounge_guild_role = get(
                 ctx.guild.roles,
-                name=f"GUILD | {getattr(ctx.lounge_guild, 'name')}",
+                name=f"GUILD | {ctx.lounge_guild.name}",
             )
 
             data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player_discord.id)
 
             if lounge_guild_role:
-                ctx.player_discord.add_roles(lounge_guild_role)
+                await ctx.player_discord.add_roles(lounge_guild_role)
 
             await ctx.respond(
-                f"<@{ctx.player.id}> is now part of **{ctx.lounge_guild.name}**!"
+                f"<@{ctx.player_discord.id}> is now part of **{ctx.lounge_guild.name}**!"
             )
         else:
             await ctx.respond("The player rejected the invitation.")
