@@ -81,7 +81,7 @@ class guilds_edit(commands.Cog):
                 name=f"GUILD | {getattr(ctx.lounge_guild, 'name')}",
             )
 
-            data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player.id)
+            data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player_discord.id)
 
             if lounge_guild_role:
                 ctx.player_discord.add_roles(lounge_guild_role)
