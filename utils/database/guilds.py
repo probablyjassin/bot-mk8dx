@@ -128,3 +128,12 @@ def append_history(guild: "Guild", score: int) -> None:
 
 def delete_guild(guild: "Guild"):
     db_guilds.delete_one({"_id": guild._id})
+
+
+def player_has_guild(player_id: int) -> bool:
+    result = db_guilds.find_one({"player_ids": Int64(player_id)})
+    return bool(result)
+
+
+def get_player_guild(player_id: int) -> dict:
+    return db_guilds.find_one({"player_ids": Int64(player_id)})

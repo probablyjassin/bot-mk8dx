@@ -37,10 +37,12 @@ class DataManager:
         find = staticmethod(guilds.find_guild)
         get_all_guilds = None
         get_all_guild_names = staticmethod(guilds.get_all_guild_names)
-        create = None
-        delete = None
+        create = staticmethod(guilds.create_new_guild)
+        delete = staticmethod(guilds.delete_guild)
         add_member = None
-        remove_member = None
+        player_has_guild = staticmethod(guilds.player_has_guild)
+        get_player_guild = staticmethod(guilds.get_player_guild)
+        append_history = staticmethod(guilds.append_history)
         set_attribute = staticmethod(guilds.set_attribute)
 
 
