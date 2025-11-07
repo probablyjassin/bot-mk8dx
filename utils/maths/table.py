@@ -4,35 +4,34 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
-from models import Mogi
 
+async def create_table(
+    names: list[str],
+    old_mmrs: list[int],
+    results: list[int],
+    placements: list[int],
+    team_size: int,
+) -> BytesIO:
 
-async def create_table(mogi: Mogi) -> BytesIO:
-
-    all_player_names = [player.name for player in mogi.players]
-    all_player_mmrs = [player.mmr for player in mogi.players]
-
-    all_player_new_mmrs = [
+    new_mmrs = [
         max(
-            (1, all_player_mmrs[i] + mogi.mmr_results_by_group[i]),
+            (1, old_mmrs[i] + results[i]),
         )
-        for i in range(len(mogi.players))
+        for i in range(len(names))
     ]
 
     data = {
-        "Pos.": mogi.placements_by_group,
-        "Player": all_player_names,
-        "MMR": all_player_mmrs,
-        "Change": [
-            round(mogi.mmr_results_by_group[i]) for i in range(0, len(mogi.players))
-        ],
-        "New MMR": all_player_new_mmrs,
+        "Pos.": placements,
+        "Player": names,
+        "MMR": old_mmrs,
+        "Change": [round(results[i]) for i in range(0, len(results))],
+        "New MMR": new_mmrs,
     }
 
     df = pd.DataFrame(data).set_index("Player")
     df = df.sort_values(by="Change", ascending=False)
 
-    if mogi.format == 1:
+    if team_size == 1:
         df = df.sort_values(by="Pos.", ascending=True)
 
     # Calculate appropriate figure size based on table dimensions

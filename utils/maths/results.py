@@ -69,7 +69,16 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
     }
 
     # Store the date of the results
-    file = File(await create_table(ctx.mogi), filename="table.png")
+    file = File(
+        await create_table(
+            names=[player.name for player in ctx.mogi.players],
+            old_mmrs=[player.mmr for player in ctx.mogi.players],
+            results=ctx.mogi.mmr_results_by_group,
+            placements=ctx.mogi.placements_by_group,
+            team_size=ctx.mogi.format,
+        ),
+        filename="table.png",
+    )
     message = await ctx.results_channel.send(
         content=f"# Results - {time.strftime('%d.%m.%y')}\n"
         f"Duration: {int((ctx.mogi.finished_at - ctx.mogi.started_at) / 60)} minutes"
