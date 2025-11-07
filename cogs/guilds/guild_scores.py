@@ -1,13 +1,15 @@
-import asyncio
+import asyncio, time
 
-from discord import slash_command, Thread, ChannelType
+from discord import slash_command, Thread, ChannelType, File
 from discord.ext import commands
 from pycord.multicog import subcommand
 
 from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
 from utils.command_helpers import get_awaited_message
-from utils.data import guild_manager
+from utils.data import guild_manager, data_manager
+from utils.maths.results import calculate_mmr
+from utils.maths.table import create_table
 
 
 class guild_scores(commands.Cog):
@@ -60,9 +62,30 @@ class guild_scores(commands.Cog):
 
             ranks: list[int] = [int(placement) for placement in rank_str]
 
-            message = ""
-            for i in range(len(ranks)):
-                message += f"{queue[i]}: {ranks[i]}\n"
+            playing_guild_objects = [
+                data_manager.Guilds.find(queue[i]) for i in range(len(queue))
+            ]
+
+            results = calculate_mmr(
+                [guild.mmr for guild in playing_guild_objects],
+                ranks,
+                1,
+            )
+
+            file = File(
+                await create_table(
+                    names=queue,
+                    old_mmrs=[guild.mmr for guild in playing_guild_objects],
+                    results=results,
+                    placements=ranks,
+                    team_size=1,
+                ),
+                filename="table.png",
+            )
+            message = await ctx.results_channel.send(
+                content=f"# Guild Mogi Results - {time.strftime('%d.%m.%y')}",
+                file=file,
+            )
 
             await ctx.respond(message)
 
