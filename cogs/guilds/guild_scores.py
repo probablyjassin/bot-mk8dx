@@ -60,15 +60,17 @@ class guild_scores(commands.Cog):
                     "The lenght of the results provided don't match the amount of guilds playing."
                 )
 
-            ranks: list[int] = [int(placement) for placement in rank_str]
+            guild_manager.placements: list[int] = [
+                int(placement) for placement in rank_str
+            ]
 
             playing_guild_objects = [
                 data_manager.Guilds.find(queue[i]) for i in range(len(queue))
             ]
 
-            results = calculate_mmr(
+            guild_manager.results = calculate_mmr(
                 [guild.mmr for guild in playing_guild_objects],
-                ranks,
+                guild_manager.placements,
                 1,
             )
 
@@ -76,8 +78,8 @@ class guild_scores(commands.Cog):
                 await create_table(
                     names=queue,
                     old_mmrs=[guild.mmr for guild in playing_guild_objects],
-                    results=results,
-                    placements=ranks,
+                    results=guild_manager.results,
+                    placements=guild_manager.placements,
                     team_size=1,
                 ),
                 filename="table.png",
