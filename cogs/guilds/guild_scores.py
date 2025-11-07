@@ -60,9 +60,7 @@ class guild_scores(commands.Cog):
                     "The lenght of the results provided don't match the amount of guilds playing."
                 )
 
-            guild_manager.placements: list[int] = [
-                int(placement) for placement in rank_str
-            ]
+            guild_manager.placements = [int(placement) for placement in rank_str]
 
             playing_guild_objects = [
                 data_manager.Guilds.find(queue[i]) for i in range(len(queue))
