@@ -51,6 +51,13 @@ class guild_scores(commands.Cog):
             # clean up by deleting the thread
             await result_collection_thread.delete()
 
+            if not rank_str.isnumeric():
+                return await ctx.respond("The result needs to be strictly numeric!")
+            if len(rank_str) != len(queue):
+                return await ctx.respond(
+                    "The lenght of the results provided don't match the amount of guilds playing."
+                )
+
             # Process the tablestring
             await ctx.respond("Work In Progress: " + rank_str)
 
