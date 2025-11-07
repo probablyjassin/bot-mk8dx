@@ -82,12 +82,12 @@ class guild_scores(commands.Cog):
                 ),
                 filename="table.png",
             )
-            message = await ctx.results_channel.send(
+            await ctx.results_channel.send(
                 content=f"# Guild Mogi Results - {time.strftime('%d.%m.%y')}",
                 file=file,
             )
 
-            await ctx.respond(message)
+            await ctx.respond("Results posted in #results")
 
 
 def setup(bot: commands.Bot):
