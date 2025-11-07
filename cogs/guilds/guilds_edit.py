@@ -18,6 +18,24 @@ class guilds_edit(commands.Cog):
         name="guildedit", description="Commands for Guild owners"
     )
 
+    # Available for a limited time: Leaving the current guild
+    @guildedit.command(
+        name="leave",
+        description="Leave your current guild to join a different one (temporarily available)",
+    )
+    @with_guild()
+    async def leave(self, ctx: MogiApplicationContext):
+        lounge_guild_role = get(
+            ctx.guild.roles,
+            name=f"GUILD | {ctx.lounge_guild.name}",
+        )
+
+        if lounge_guild_role in ctx.user.roles:
+            await ctx.user.remove_roles(lounge_guild_role)
+
+        data_manager.Guilds.remove_member(ctx.guild, ctx.user.id)
+        await ctx.respond(f"{ctx.user.mention} left the guild **{ctx.guild.name}**.")
+
     @guildedit.command(
         name="change-name",
         description="Change the name of your guild",
