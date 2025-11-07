@@ -141,20 +141,6 @@ class mogi(commands.Cog):
             allowed_mentions=AllowedMentions(roles=True),
         )
 
-    @commands.Cog.listener()
-    async def on_message(self, message: Message) -> None:
-        if message.author.bot:
-            return
-        if "lounge" not in message.channel.name:
-            return
-        lounge_player_role: Role = get(message.guild.roles, name="Lounge Player")
-        if lounge_player_role in message.role_mentions:
-            bucket = self.ping._buckets.get_bucket(message.channel)
-            if bucket:
-                print("bucket found")
-                bucket.reset()
-                print("bucket reset (?)")
-
 
 def setup(bot: commands.Bot):
     bot.add_cog(mogi(bot))
