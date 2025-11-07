@@ -27,6 +27,9 @@ class guild_scores(commands.Cog):
 
             queue = guild_manager.read_playing()
 
+            if not queue:
+                return await ctx.respond("No guild mogi in progress.")
+
             # Create a thread to collect points
             result_collection_thread: Thread = await ctx.channel.create_thread(
                 name=f"collecting-result-{ctx.author.name}",
