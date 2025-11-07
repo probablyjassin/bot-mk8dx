@@ -8,6 +8,7 @@ class GuildManager:
         self._guild_mogi_registry: dict[str, list] = data
         self.playing_guilds: list[str] = []
         self.guilds_format: int | None = None
+        self.placements: list[int] | None = None
         self.results: list[int] | None = None
 
     _guild_mogi_registry: dict[str, list[int]]
@@ -61,6 +62,7 @@ class GuildManager:
         self._guild_mogi_registry = data["guilds"]
         self.playing_guilds = data["playing_guilds"]
         self.guilds_format = data["guilds_format"]
+        self.placements = data["placements"]
         self.results = data["results"]
 
     def read_registry(self) -> dict[str, dict[str, list] | list | int]:
@@ -68,6 +70,7 @@ class GuildManager:
             "guilds": self._guild_mogi_registry,
             "playing_guilds": self.playing_guilds,
             "guilds_format": self.guilds_format,
+            "placements": self.placements,
             "results": self.results,
         }
 
