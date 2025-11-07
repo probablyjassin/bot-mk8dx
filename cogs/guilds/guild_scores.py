@@ -58,8 +58,13 @@ class guild_scores(commands.Cog):
                     "The lenght of the results provided don't match the amount of guilds playing."
                 )
 
-            # Process the tablestring
-            await ctx.respond("Work In Progress: " + rank_str)
+            ranks: list[int] = [int(placement) for placement in rank_str]
+
+            message = ""
+            for i in range(len(ranks)):
+                message += f"{queue[i]}: {ranks[i]}\n"
+
+            await ctx.respond(message)
 
 
 def setup(bot: commands.Bot):
