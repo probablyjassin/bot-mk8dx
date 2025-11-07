@@ -50,31 +50,45 @@ class squads(commands.Cog):
     )
     async def list(self, ctx: MogiApplicationContext):
         queue = guild_manager.read_queue()
-        if not any(arr for arr in queue):
-            return await ctx.respond("No players in the current guild mogi queue.")
+        playing_guilds = guild_manager.read_playing()
+        queue_message = ""
 
-        queue_str = ""
-        for guild_name in queue.keys():
-            queue_str += f"## {guild_name}\n"
-            for player_id in queue[guild_name]:
-                queue_str += f"- <@{player_id}>\n"
-            queue_str += "\n"
-        return await ctx.respond(queue_str)
+        if not len(playing_guilds):
+            if not any(arr for arr in queue):
+                return await ctx.respond("No players in the current guild mogi queue.")
+
+            queue_message = ""
+            for guild_name in queue.keys():
+                queue_message += f"## {guild_name}\n"
+                for player_id in queue[guild_name]:
+                    queue_message += f"- <@{player_id}>\n"
+                queue_message += "\n"
+        else:
+            playing_guilds = guild_manager.playing_guilds
+            playing_format = guild_manager.guilds_format
+
+            queue_message = f"# Guild Mogi: {playing_format}"
+            queue_message += f"v{playing_format}" * (len(playing_guilds) - 1)
+            queue_message += "\n\n"
+            for name in playing_guilds:
+                queue_message += f"**{name}**\n"
+                for player_id in queue[name]:
+                    queue_message += f"<@{player_id}>\n"
+                if subs := len(queue[name]) - playing_format:
+                    queue_message += f"*({subs} subs)*\n"
+                queue_message += "\n"
+
+        return await ctx.respond(queue_message, allowed_mentions=AllowedMentions.none())
 
     @squads.command(name="start", description="Announce the start of a guild mogi.")
     async def start(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 
         queue = guild_manager.read_queue()
-        valid_guilds: list[str] = []
-        min_players = 12
-        for guild_name in queue:
-            if len(queue[guild_name]) < 2:
-                continue
-            valid_guilds.append(guild_name)
-            min_players = min(min_players, len(queue[guild_name]))
+        min_players, valid_guilds = guild_manager.start()
 
         if len(valid_guilds) < 2:
+            guild_manager.clear_playing()
             return await ctx.respond("Not enough Guilds with enough players!")
 
         message = f"# Guild Mogi: {min_players}"
@@ -92,7 +106,7 @@ class squads(commands.Cog):
     @squads.command(name="clear", description="Kick everyone from the queue")
     @is_mogi_manager()
     async def clear(self, ctx: MogiApplicationContext):
-        guild_manager.write_registry({})
+        guild_manager.clear_queue()
         await ctx.respond("## Guild mogi queue has been emptied!")
 
 
