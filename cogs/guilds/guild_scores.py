@@ -25,7 +25,7 @@ class guild_scores(commands.Cog):
         async with self.collect_semaphore:
             await ctx.response.defer()
 
-            queue = guild_manager.read_queue()
+            queue = guild_manager.read_playing()
 
             # Create a thread to collect points
             result_collection_thread: Thread = await ctx.channel.create_thread(
@@ -37,7 +37,7 @@ class guild_scores(commands.Cog):
                 "Example: Team A placed 3rd, Team B placed 2nd, Team C placed first. -> "
                 "Type '321'\n"
                 "## Guild Queue Order:\n"
-                f"- {'\n - '.join(guild_name for guild_name in list(queue.keys()))}"
+                f"- {'\n - '.join(guild_name for guild_name in queue)}"
             )
 
             # Wait for the tablestring to be sent in the thread
