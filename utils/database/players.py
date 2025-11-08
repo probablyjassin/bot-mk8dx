@@ -51,10 +51,20 @@ async def find_list(player_ids: list[int | Int64]) -> list["PlayerProfile"]:
     from models.PlayerModel import PlayerProfile
 
     player_documents = await db_players.find(
-        {"discord_id": {"$in": [Int64(player_id) for player_id in player_ids]}}
+        {"discord_id": {"$in": [Int64(player_id) for player_id in player_ids]}},
     ).to_list(length=None)
 
-    return [PlayerProfile(**player_document) for player_document in player_documents]
+    # Create a mapping of discord_id to player document
+    player_map = {int(doc["discord_id"]): doc for doc in player_documents}
+
+    # Return players in the same order as player_ids
+    ordered_documents = [
+        player_map[int(player_id)]
+        for player_id in player_ids
+        if int(player_id) in player_map
+    ]
+
+    return [PlayerProfile(**player_document) for player_document in ordered_documents]
 
 
 async def count() -> int:
