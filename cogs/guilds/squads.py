@@ -27,11 +27,21 @@ class squads(commands.Cog):
                 for guild in guild_manager.playing_guilds
                 if guild.name == ctx.lounge_guild.name
             ]:
+                # if player guild not in mogi
                 if not target_guild:
                     return await ctx.respond(
                         "The guild mogi is already going on and your guild is not in."
                     )
+
                 target_guild = target_guild[0]
+
+                # if player already in mogi or sub
+                if (
+                    ctx.player in target_guild.playing
+                    or ctx.player in target_guild.subs
+                ):
+                    return await ctx.respond("You're already part of this guild mogi.")
+
                 target_guild.add_sub(ctx.player)
                 return await ctx.respond(
                     "You've queued up as a sub for the ongoing guild mogi for your team."
