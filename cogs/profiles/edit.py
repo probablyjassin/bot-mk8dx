@@ -48,7 +48,7 @@ class edit(commands.Cog):
             )
 
         new_mmr = ctx.player.mmr + delta_mmr
-        ctx.player.mmr = new_mmr
+        await ctx.player.set_mmr(new_mmr)
 
         if isHistory:
             await ctx.player.append_history(delta_mmr)
@@ -86,7 +86,7 @@ class edit(commands.Cog):
                 None,
             )
 
-        player.name = new_name
+        await player.set_name(new_name)
 
         await ctx.respond(f"Changed <@{player.discord_id}>'s username to {new_name}")
 

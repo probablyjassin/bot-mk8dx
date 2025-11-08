@@ -42,7 +42,7 @@ class inmogi_disconnects(commands.Cog):
                     content="This is not for you",
                     ephemeral=True,
                 )
-            player.add_disconnect()
+            await player.add_disconnect()
             await interaction.response.send_message(
                 content=f"<@{player.discord_id}> DCd {inmogi_role.mention}! \nAdded to counter (now {player.disconnects})",
                 view=None,

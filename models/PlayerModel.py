@@ -78,7 +78,7 @@ class PlayerProfile:
     def name(self):
         return self._name
 
-    async def set_name(self, value):
+    async def set_name(self, value: str):
         await data_manager.Players.set_attribute(self, "name", value)
 
     # Discord ID (read-only)
@@ -178,7 +178,4 @@ class PlayerProfile:
             inactive=data.get("inactive"),
             suspended=data.get("suspended"),
         )
-        """ instance.disconnects = data.get("disconnects")
-        instance.inactive = data.get("inactive")
-        instance.suspended = data.get("suspended") """
         return instance
