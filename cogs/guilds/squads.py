@@ -101,6 +101,9 @@ class squads(commands.Cog):
     async def start(self, ctx: MogiApplicationContext):
         await ctx.response.defer()
 
+        if len(guild_manager.playing_guilds):
+            return await ctx.respond("Already started.")
+
         queue = guild_manager.read_queue()
         min_players, valid_guilds = guild_manager.start()
 
