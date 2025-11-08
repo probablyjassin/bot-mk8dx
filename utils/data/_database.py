@@ -3,8 +3,9 @@ This module is responsible for connecting to the MongoDB database.
 """
 
 import atexit
+from motor.motor_asyncio import AsyncIOMotorClient
+from pymongo.server_api import ServerApi
 
-from pymongo import MongoClient
 from config import MONGO_URI, LOUNGE_DB
 
 from logger import setup_logger
@@ -12,7 +13,7 @@ from logger import setup_logger
 logger = setup_logger(__name__)
 
 
-client = MongoClient(MONGO_URI)
+client = AsyncIOMotorClient(MONGO_URI, server_api=ServerApi("1"))
 db = client.get_database(LOUNGE_DB)
 db_players = db.get_collection("players")
 db_guilds = db.get_collection("guilds")

@@ -48,10 +48,10 @@ class edit(commands.Cog):
             )
 
         new_mmr = ctx.player.mmr + delta_mmr
-        ctx.player.mmr = new_mmr
+        await ctx.player.set_mmr(new_mmr)
 
         if isHistory:
-            ctx.player.append_history(delta_mmr)
+            await ctx.player.append_history(delta_mmr)
 
         await ctx.respond(
             f"Changed by {delta_mmr}:\n Updated <@{ctx.player.discord_id}> MMR to {new_mmr}"
@@ -67,10 +67,10 @@ class edit(commands.Cog):
         ),
         new_name: str = Option(str, name="newname", description="new username"),
     ):
-        player: PlayerProfile = data_manager.Players.find(searched_player)
+        player: PlayerProfile = await data_manager.Players.find(searched_player)
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.read_registry().values():
@@ -86,7 +86,7 @@ class edit(commands.Cog):
                 None,
             )
 
-        player.name = new_name
+        await player.set_name(new_name)
 
         await ctx.respond(f"Changed <@{player.discord_id}>'s username to {new_name}")
 
@@ -102,12 +102,12 @@ class edit(commands.Cog):
             bool, name="try_remove_roles", description="Try removing Lounge roles"
         ),
     ):
-        player: PlayerProfile = data_manager.Players.find(searched_player)
+        player: PlayerProfile = await data_manager.Players.find(searched_player)
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
-        data_manager.Players.delete(player)
+        await data_manager.Players.delete(player)
 
         if try_remove_roles:
             discord_member: Member | None = await get_guild_member(

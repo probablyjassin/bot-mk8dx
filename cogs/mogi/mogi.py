@@ -37,7 +37,7 @@ class mogi(commands.Cog):
     async def close(self, ctx: MogiApplicationContext):
         await ctx.interaction.response.defer()
 
-        player: PlayerProfile | None = data_manager.Players.find(ctx.user.id)
+        player: PlayerProfile | None = await data_manager.Players.find(ctx.user.id)
         if not player:
             return await ctx.respond("Couldn't find your Profile")
         if (

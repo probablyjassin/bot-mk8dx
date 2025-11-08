@@ -53,7 +53,7 @@ class register(commands.Cog):
                 "You're not in the right channel for this command.", ephemeral=True
             )
 
-        existingPlayer = data_manager.Players.find(ctx.author.id) or None
+        existingPlayer = await data_manager.Players.find(ctx.author.id) or None
         if existingPlayer:
             return await ctx.respond(
                 "You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.",
@@ -98,7 +98,7 @@ class register(commands.Cog):
         if username == "":
             username = ctx.interaction.user.name.lower()
 
-        if data_manager.Players.find(username):
+        if await data_manager.Players.find(username):
             return await ctx.respond(
                 "This username is already taken. Try changing your server display name or ask a moderator for help.",
                 ephemeral=True,
@@ -135,7 +135,7 @@ class register(commands.Cog):
 
         # Verification passed - proceed with registration
         try:
-            data_manager.Players.create_new_player(
+            await data_manager.Players.create_new_player(
                 username=username, discord_id=member.id
             )
         except Exception as e:

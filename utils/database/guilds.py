@@ -8,7 +8,7 @@ if TYPE_CHECKING:
     from models.GuildModel import Guild
 
 
-def find_guild(
+async def find_guild(
     query: int | Int64 | str,
 ) -> Optional["Guild"]:
 
@@ -79,26 +79,29 @@ def find_guild(
     pipeline.append({"$limit": 1})
     pipeline.append({"$unset": "shorthand"})
 
-    potential_guild = next(
-        db_guilds.aggregate(pipeline),
-        None,
-    )
+    results = db_guilds.aggregate(pipeline)
+    potential_guild = await results.to_list(length=1)
 
-    return Guild(**potential_guild) if potential_guild else None
+    return Guild(**potential_guild[0]) if potential_guild else None
 
 
-def get_all_guild_names() -> list[str]:
-    return [player["name"] for player in db_guilds.find({}, {"name": 1, "_id": 0})]
+async def get_all_guild_names() -> list[str]:
+    return [
+        player["name"]
+        for player in await db_guilds.find({}, {"name": 1, "_id": 0}).to_list(
+            length=None
+        )
+    ]
 
 
-def count() -> int:
-    return db_guilds.count_documents({})
+async def count() -> int:
+    return await db_guilds.count_documents({})
 
 
-def create_new_guild(
+async def create_new_guild(
     name: str, first_member_id: int, icon_url: str | None = None
 ) -> None:
-    db_guilds.insert_one(
+    await db_guilds.insert_one(
         {
             "name": name,
             "icon": icon_url,
@@ -110,53 +113,53 @@ def create_new_guild(
     )
 
 
-def add_member(guild: "Guild", player_id: int) -> None:
-    if db_guilds.find_one({"player_ids": Int64(player_id)}):
+async def add_member(guild: "Guild", player_id: int) -> None:
+    if await db_guilds.find_one({"player_ids": Int64(player_id)}):
         raise ValueError("Player already in a guild")
     guild.player_ids.append(Int64(player_id))
-    db_guilds.update_one(
+    await db_guilds.update_one(
         {"_id": guild._id},
         {"$push": {"player_ids": Int64(player_id)}},
     )
 
 
-def remove_member(guild: "Guild", player_id: int) -> None:
-    if not db_guilds.find_one({"player_ids": Int64(player_id)}):
+async def remove_member(guild: "Guild", player_id: int) -> None:
+    if not await db_guilds.find_one({"player_ids": Int64(player_id)}):
         raise ValueError("Player not in a guild")
     guild.player_ids.remove(Int64(player_id))
-    db_guilds.update_one(
+    await db_guilds.update_one(
         {"_id": guild._id},
         {"$pull": {"player_ids": Int64(player_id)}},
     )
 
 
-def set_attribute(guild: "Guild", attribute, value) -> None:
+async def set_attribute(guild: "Guild", attribute, value) -> None:
     setattr(guild, f"_{attribute}", value)
-    db_guilds.update_one(
+    await db_guilds.update_one(
         {"_id": guild._id},
         {"$set" if value else "$unset": {attribute: value if value else ""}},
     )
 
 
-def append_history(guild: "Guild", score: int) -> None:
+async def append_history(guild: "Guild", score: int) -> None:
     guild.history.append(score)
-    db_guilds.update_one(
+    await db_guilds.update_one(
         {"_id": guild._id},
         {"$push": {"history": score}},
     )
 
 
-def delete_guild(guild: "Guild"):
-    db_guilds.delete_one({"_id": guild._id})
+async def delete_guild(guild: "Guild"):
+    await db_guilds.delete_one({"_id": guild._id})
 
 
-def player_has_guild(player_id: int) -> bool:
-    result = db_guilds.find_one({"player_ids": Int64(player_id)})
+async def player_has_guild(player_id: int) -> bool:
+    result = await db_guilds.find_one({"player_ids": Int64(player_id)})
     return bool(result)
 
 
-def get_player_guild(player_id: int) -> "Guild":
+async def get_player_guild(player_id: int) -> "Guild":
     from models.GuildModel import Guild
 
-    potential_guild = db_guilds.find_one({"player_ids": Int64(player_id)})
+    potential_guild = await db_guilds.find_one({"player_ids": Int64(player_id)})
     return Guild(**potential_guild) if potential_guild else None

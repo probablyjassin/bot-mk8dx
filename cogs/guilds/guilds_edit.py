@@ -33,7 +33,7 @@ class guilds_edit(commands.Cog):
         if lounge_guild_role in ctx.user.roles:
             await ctx.user.remove_roles(lounge_guild_role)
 
-        data_manager.Guilds.remove_member(ctx.guild, ctx.user.id)
+        await data_manager.Guilds.remove_member(ctx.guild, ctx.user.id)
         await ctx.respond(f"{ctx.user.mention} left the guild **{ctx.guild.name}**.")
 
     @guildedit.command(
@@ -46,7 +46,7 @@ class guilds_edit(commands.Cog):
             return await ctx.respond(
                 "Guild name has to be between 3 and 32 characters long"
             )
-        if name in data_manager.Guilds.get_all_guild_names():
+        if name in await data_manager.Guilds.get_all_guild_names():
             return await ctx.respond("There already exists a guild with this name.")
 
         allowed_chars = string.ascii_letters + string.digits + " -_"
@@ -61,7 +61,7 @@ class guilds_edit(commands.Cog):
             name=f"GUILD | {ctx.lounge_guild.name}",
         )
 
-        data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
+        await data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
 
         if lounge_guild_role:
             await lounge_guild_role.edit(name=f"GUILD | {name}")
@@ -79,7 +79,7 @@ class guilds_edit(commands.Cog):
                 "ending in .png, .jp(e)g, .gif, or .webp",
             )
 
-        data_manager.Guilds.set_attribute(ctx.lounge_guild, "icon", new_icon)
+        await data_manager.Guilds.set_attribute(ctx.lounge_guild, "icon", new_icon)
         return await ctx.respond(f"Changed your guild icon to: {new_icon}")
 
     @guildedit.command(name="add-member", description="Add a member to your guild")
@@ -98,7 +98,7 @@ class guilds_edit(commands.Cog):
     ):
         await ctx.response.defer()
 
-        if existing_guild := data_manager.Guilds.get_player_guild(
+        if existing_guild := await data_manager.Guilds.get_player_guild(
             ctx.player.discord_id
         ):
             return await ctx.respond(
@@ -115,7 +115,9 @@ class guilds_edit(commands.Cog):
                 name=f"GUILD | {ctx.lounge_guild.name}",
             )
 
-            data_manager.Guilds.add_member(ctx.lounge_guild, ctx.player_discord.id)
+            await data_manager.Guilds.add_member(
+                ctx.lounge_guild, ctx.player_discord.id
+            )
 
             if lounge_guild_role:
                 await ctx.player_discord.add_roles(lounge_guild_role)
@@ -145,7 +147,9 @@ class guilds_edit(commands.Cog):
     ):
         await ctx.response.defer()
 
-        if not (guild := data_manager.Guilds.get_player_guild(ctx.player.discord_id)):
+        if not (
+            guild := await data_manager.Guilds.get_player_guild(ctx.player.discord_id)
+        ):
             return await ctx.respond("That player is not in a guild.")
 
         lounge_guild_role = get(
@@ -153,7 +157,7 @@ class guilds_edit(commands.Cog):
             name=f"GUILD | {guild.name}",
         )
 
-        data_manager.Guilds.remove_member(guild, ctx.player.discord_id)
+        await data_manager.Guilds.remove_member(guild, ctx.player.discord_id)
 
         if lounge_guild_role:
             await ctx.player_discord.remove_roles(lounge_guild_role)

@@ -9,7 +9,7 @@ if TYPE_CHECKING:
     from models.PlayerModel import PlayerProfile
 
 
-def find_player(
+async def find_player(
     query: int | Int64 | str,
     archive: archive_type = archive_type.NO,
 ) -> Optional["PlayerProfile"]:
@@ -39,19 +39,19 @@ def find_player(
         ]
     }
 
-    potential_player = next(
-        db_players.aggregate([{"$match": query_criteria}, {"$limit": 1}]),
-        None,
-    )
+    results = await db_players.aggregate(
+        [{"$match": query_criteria}, {"$limit": 1}]
+    ).to_list(length=1)
+    potential_player = results[0] if results else None
 
     return PlayerProfile(**potential_player) if potential_player else None
 
 
-def count() -> int:
-    return db_players.count_documents({})
+async def count() -> int:
+    return await db_players.count_documents({})
 
 
-def get_profiles(
+async def get_profiles(
     archive: archive_type = archive_type.NO,
     with_id: bool = False,
     as_json: bool = False,
@@ -59,20 +59,23 @@ def get_profiles(
 
     from models.PlayerModel import PlayerProfile
 
-    data: list[dict] = list(
-        db_players.find(archive.value, {"_id": 0} if not with_id else {})
-    )
+    data: list[dict] = await db_players.find(
+        archive.value, {"_id": 0} if not with_id else {}
+    ).to_list(length=None)
+
     if as_json:
         return data
     return [PlayerProfile.from_json(player) for player in data]
 
 
-def get_all_player_names() -> list[str]:
-    return [player["name"] for player in db_players.find({}, {"name": 1, "_id": 0})]
+async def get_all_player_names() -> list[str]:
+    cursor = db_players.find({}, {"name": 1, "_id": 0})
+    results = await cursor.to_list(length=None)
+    return [player["name"] for player in results]
 
 
-def create_new_player(username: str, discord_id: int) -> None:
-    db_players.insert_one(
+async def create_new_player(username: str, discord_id: int) -> None:
+    await db_players.insert_one(
         {
             "name": username,
             "discord_id": Int64(discord_id),
@@ -84,29 +87,29 @@ def create_new_player(username: str, discord_id: int) -> None:
     )
 
 
-def set_attribute(player: "PlayerProfile", attribute, value) -> None:
+async def set_attribute(player: "PlayerProfile", attribute, value) -> None:
     setattr(player, f"_{attribute}", value)
-    db_players.update_one(
+    await db_players.update_one(
         {"_id": player._id},
         {"$set" if value else "$unset": {attribute: value if value else ""}},
     )
 
 
-def append_history(player: "PlayerProfile", score: int) -> None:
+async def append_history(player: "PlayerProfile", score: int) -> None:
     player.history.append(score)
-    db_players.update_one(
+    await db_players.update_one(
         {"_id": player._id},
         {"$push": {"history": score}},
     )
 
 
-def count_format_played(player: "PlayerProfile", value):
+async def count_format_played(player: "PlayerProfile", value):
     player._formats[value] += 1
-    db_players.update_one(
+    await db_players.update_one(
         {"_id": player._id},
         {"$inc": {f"formats.{value}": 1}},
     )
 
 
-def delete_player(player: "PlayerProfile"):
-    db_players.delete_one({"_id": player._id})
+async def delete_player(player: "PlayerProfile"):
+    await db_players.delete_one({"_id": player._id})

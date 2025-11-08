@@ -62,9 +62,10 @@ class PlayerProfile:
         self._suspended = suspended
 
     # Methods
-    def refresh(self):
-        data = data_manager.Players.find(self._id)
-        self.__dict__.update(PlayerProfile.from_json(data).__dict__)
+    async def refresh(self):
+        data = await data_manager.Players.find(self._id)
+        if data:
+            self.__dict__.update(data.__dict__)
 
     # Properties
 
@@ -78,9 +79,8 @@ class PlayerProfile:
     def name(self):
         return self._name
 
-    @name.setter
-    def name(self, value):
-        data_manager.Players.set_attribute(self, "name", value)
+    async def set_name(self, value: str):
+        await data_manager.Players.set_attribute(self, "name", value)
 
     # Discord ID (read-only)
     @property
@@ -92,25 +92,24 @@ class PlayerProfile:
     def mmr(self):
         return self._mmr
 
-    @mmr.setter
-    def mmr(self, value):
-        data_manager.Players.set_attribute(self, "mmr", value)
+    async def set_mmr(self, value):
+        await data_manager.Players.set_attribute(self, "mmr", value)
 
     # History (has different setter)
     @property
     def history(self):
         return self._history
 
-    def append_history(self, value: int):
-        data_manager.Players.append_history(self, value)
+    async def append_history(self, value: int):
+        await data_manager.Players.append_history(self, value)
 
     # Formats
     @property
     def formats(self):
         return self._formats
 
-    def count_format_played(self, value):
-        data_manager.Players.count_format_played(self, value)
+    async def count_format_played(self, value):
+        await data_manager.Players.count_format_played(self, value)
 
     # Joined (read-only)
     @property
@@ -122,12 +121,11 @@ class PlayerProfile:
     def disconnects(self):
         return self._disconnects
 
-    @disconnects.setter
-    def disconnects(self, value):
-        data_manager.Players.set_attribute(self, "disconnects", value)
+    async def set_disconnects(self, value):
+        await data_manager.Players.set_attribute(self, "disconnects", value)
 
-    def add_disconnect(self):
-        data_manager.Players.set_attribute(
+    async def add_disconnect(self):
+        await data_manager.Players.set_attribute(
             self, "disconnects", self._disconnects + 1 if self._disconnects else 1
         )
 
@@ -136,18 +134,16 @@ class PlayerProfile:
     def inactive(self):
         return self._inactive
 
-    @inactive.setter
-    def inactive(self, value):
-        data_manager.Players.set_attribute(self, "inactive", value)
+    async def set_inactive(self, value):
+        await data_manager.Players.set_attribute(self, "inactive", value)
 
     # Suspended
     @property
     def suspended(self):
         return self._suspended
 
-    @suspended.setter
-    def suspended(self, value):
-        data_manager.Players.set_attribute(self, "suspended", value)
+    async def set_suspended(self, value):
+        await data_manager.Players.set_attribute(self, "suspended", value)
 
     # Dict methods
     def to_json(self) -> dict:
@@ -183,7 +179,4 @@ class PlayerProfile:
             inactive=data.get("inactive"),
             suspended=data.get("suspended"),
         )
-        """ instance.disconnects = data.get("disconnects")
-        instance.inactive = data.get("inactive")
-        instance.suspended = data.get("suspended") """
         return instance
