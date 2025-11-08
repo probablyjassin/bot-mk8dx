@@ -76,17 +76,11 @@ class GuildManager:
     def write_registry(self, data: dict) -> None:
         self.queue = data.get("queue", {})
 
-        print(data)
-        print("------------------------")
-        print(data["playing_guilds"])
-
         # Deserialize playing_guilds from JSON
         playing_guilds_data: list[dict] = data.get("playing_guilds", [])
         self.playing_guilds = [
             PlayingGuild.from_json(pg_data) for pg_data in playing_guilds_data
         ]
-
-        print(self.playing_guilds)
 
         self.guilds_format = data.get("guilds_format")
         self.placements = data.get("placements")
