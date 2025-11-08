@@ -101,16 +101,16 @@ class PlayerProfile:
     def history(self):
         return self._history
 
-    def append_history(self, value: int):
-        data_manager.Players.append_history(self, value)
+    async def append_history(self, value: int):
+        await data_manager.Players.append_history(self, value)
 
     # Formats
     @property
     def formats(self):
         return self._formats
 
-    def count_format_played(self, value):
-        data_manager.Players.count_format_played(self, value)
+    async def count_format_played(self, value):
+        await data_manager.Players.count_format_played(self, value)
 
     # Joined (read-only)
     @property

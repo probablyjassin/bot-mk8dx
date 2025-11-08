@@ -63,7 +63,7 @@ class guild_scores(commands.Cog):
             guild_manager.placements = [int(placement) for placement in rank_str]
 
             playing_guild_objects = [
-                data_manager.Guilds.find(queue[i]) for i in range(len(queue))
+                await data_manager.Guilds.find(queue[i]) for i in range(len(queue))
             ]
 
             guild_manager.results = calculate_mmr(

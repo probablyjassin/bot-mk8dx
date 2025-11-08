@@ -51,7 +51,7 @@ class edit(commands.Cog):
         ctx.player.mmr = new_mmr
 
         if isHistory:
-            ctx.player.append_history(delta_mmr)
+            await ctx.player.append_history(delta_mmr)
 
         await ctx.respond(
             f"Changed by {delta_mmr}:\n Updated <@{ctx.player.discord_id}> MMR to {new_mmr}"
