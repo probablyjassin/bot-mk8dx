@@ -2,7 +2,6 @@ from discord import AutocompleteContext
 from rapidfuzz import process, fuzz
 from utils.data.data_manager import data_manager
 import time
-from utils.database.guilds import get_all_guild_names
 
 # Cache for player names
 _player_names_cache = None
@@ -50,7 +49,7 @@ async def guild_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
 
     # Update cache if expired or empty
     if _guild_names_cache is None or (current_time - _cache_timestamp) > CACHE_DURATION:
-        _guild_names_cache = data_manager.Guilds.get_all_guild_names()
+        _guild_names_cache = await data_manager.Guilds.get_all_guild_names()
         _cache_timestamp = current_time
         print(f"Player names cache refreshed ({len(_guild_names_cache)} players)")
 

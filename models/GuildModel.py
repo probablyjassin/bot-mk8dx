@@ -42,9 +42,8 @@ class Guild:
     def name(self) -> str:
         return self._name
 
-    @name.setter
-    def name(self, value: str):
-        data_manager.Guilds.set_attribute(self, "name", value)
+    async def set_name(self, value: str):
+        await data_manager.Guilds.set_attribute(self, "name", value)
 
     # icon
     @property
