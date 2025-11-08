@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.data import guild_manager
-from utils.decorators import with_guild, is_mogi_manager
+from utils.decorators import with_guild, with_player, is_mogi_manager
 
 
 class squads(commands.Cog):
@@ -16,12 +16,25 @@ class squads(commands.Cog):
         name="queue",
         description="Mark yourself as available for a guild mogi",
     )
+    @with_player()
     @with_guild()
     async def queue(self, ctx: MogiApplicationContext):
+        # if already playing
         if len(guild_manager.playing_guilds):
-            return await ctx.respond(
-                "Can't join or drop from the queue while already playing."
-            )
+            if target_guild := [
+                guild
+                for guild in guild_manager.playing_guilds
+                if guild.name == ctx.lounge_guild.name
+            ]:
+                if not target_guild:
+                    return await ctx.respond(
+                        "The guild mogi is already going on and your guild is not in."
+                    )
+                target_guild = target_guild[0]
+                target_guild.add_sub(ctx.player)
+                return await ctx.respond(
+                    "You've queued up as a sub for the ongoing guild mogi for your team."
+                )
 
         queue = guild_manager.read_queue()
         if ctx.user.id in [
