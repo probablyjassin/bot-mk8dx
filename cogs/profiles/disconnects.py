@@ -33,7 +33,7 @@ class disconnects(commands.Cog):
                 None,
             )
 
-        ctx.player.add_disconnect()
+        await ctx.player.add_disconnect()
 
         await ctx.respond(
             f"Added a DC to <@{ctx.player.discord_id}> (now {ctx.player.disconnects})"
@@ -56,7 +56,7 @@ class disconnects(commands.Cog):
                 None,
             )
 
-        ctx.player.disconnects = amount
+        await ctx.player.set_disconnects(amount)
 
         await ctx.respond(
             f"Set <@{ctx.player.discord_id}>'s DC count to {ctx.player.disconnects}"

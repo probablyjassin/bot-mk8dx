@@ -32,7 +32,7 @@ class suspend(commands.Cog):
         if not player:
             await ctx.respond("Couldn't find that player")
 
-        player.suspended = True
+        await player.set_suspended(True)
 
         await ctx.respond(f"Suspended <@{player.discord_id}>")
 
@@ -52,7 +52,7 @@ class suspend(commands.Cog):
         if not player:
             await ctx.respond("Couldn't find that player")
 
-        player.suspended = False
+        await player.set_suspended(False)
 
         await ctx.respond(f"Unsuspended <@{player.discord_id}>")
 
