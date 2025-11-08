@@ -47,7 +47,7 @@ async def find_player(
     return PlayerProfile(**potential_player) if potential_player else None
 
 
-async def find_list(player_ids: list[int | Int64]) -> list[PlayerProfile]:
+async def find_list(player_ids: list[int | Int64]) -> list["PlayerProfile"]:
     from models.PlayerModel import PlayerProfile
 
     player_documents = await db_players.find(
