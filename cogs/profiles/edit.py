@@ -70,7 +70,7 @@ class edit(commands.Cog):
         player: PlayerProfile = await data_manager.Players.find(searched_player)
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.read_registry().values():
