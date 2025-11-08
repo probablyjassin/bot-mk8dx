@@ -105,21 +105,26 @@ class squads(commands.Cog):
             return await ctx.respond("Already started.")
 
         queue = guild_manager.read_queue()
-        min_players, valid_guilds = guild_manager.start()
-
-        if len(valid_guilds) < 2:
-            guild_manager.clear_playing()
+        if len([lst for lst in list(queue.values()) if len(lst) >= 2]) < 2:
             return await ctx.respond("Not enough Guilds with enough players!")
 
+        min_players, playing_guilds = await guild_manager.start()
+
         message = f"# Guild Mogi: {min_players}"
-        message += f"v{min_players}" * (len(valid_guilds) - 1)
+        message += f"v{min_players}" * (len(playing_guilds) - 1)
         message += "\n\n"
-        for name in valid_guilds:
-            message += f"**{name}**\n"
-            for player_id in queue[name]:
-                message += f"<@{player_id}>\n"
-            if subs := len(queue[name]) - min_players:
-                message += f"*({subs} subs)*\n"
+        for playing_guild in playing_guilds:
+
+            message += f"**{playing_guild.name}**\n"
+
+            for player in playing_guild.playing:
+                message += f"<@{player.discord_id}>\n"
+
+            if len(playing_guild.subs):
+                message += "- *subs:*\n"
+                for sub in playing_guild.subs:
+                    message += f"*<@{sub.discord_id}>*\n"
+
             message += "\n"
         await ctx.respond(message)
 
