@@ -11,6 +11,7 @@ from utils.database import guilds
 class DataManager:
     class Players:
         find = staticmethod(players.find_player)
+        find_list = staticmethod(players.find_list)
         create_new_player = staticmethod(players.create_new_player)
         get_profiles = staticmethod(players.get_profiles)
         get_all_player_names = staticmethod(players.get_all_player_names)

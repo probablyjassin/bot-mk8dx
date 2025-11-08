@@ -8,7 +8,7 @@ from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
 from utils.command_helpers import get_awaited_message
 from utils.data import guild_manager, data_manager
-from utils.maths.results import calculate_mmr
+from utils.maths.guild_mogi_mmrs import guild_calc_new_mmr
 from utils.maths.table import create_table
 
 
@@ -27,9 +27,9 @@ class guild_scores(commands.Cog):
         async with self.collect_semaphore:
             await ctx.response.defer()
 
-            queue = guild_manager.read_playing()
+            playing_guilds = guild_manager.read_playing()
 
-            if not queue:
+            if not playing_guilds:
                 return await ctx.respond("No guild mogi in progress.")
 
             # Create a thread to collect points
@@ -42,7 +42,7 @@ class guild_scores(commands.Cog):
                 "Example: Team A placed 3rd, Team B placed 2nd, Team C placed first. -> "
                 "Type '321'\n"
                 "## Guild Queue Order:\n"
-                f"- {'\n - '.join(guild_name for guild_name in queue)}"
+                f"- {'\n - '.join(playing_guild.name for playing_guild in playing_guilds)}"
             )
 
             # Wait for the tablestring to be sent in the thread
@@ -55,28 +55,26 @@ class guild_scores(commands.Cog):
 
             if not rank_str.isnumeric():
                 return await ctx.respond("The result needs to be strictly numeric!")
-            if len(rank_str) != len(queue):
+            if len(rank_str) != len(playing_guilds):
                 return await ctx.respond(
                     "The lenght of the results provided don't match the amount of guilds playing."
                 )
 
             guild_manager.placements = [int(placement) for placement in rank_str]
 
-            playing_guild_objects = []
-            for guild_id in queue:
-                guild = await data_manager.Guilds.find(guild_id)
-                playing_guild_objects.append(guild)
-
-            guild_manager.results = calculate_mmr(
-                [guild.mmr for guild in playing_guild_objects],
-                guild_manager.placements,
-                1,
+            guild_manager.results = await guild_calc_new_mmr(
+                guilds=guild_manager.playing_guilds,
+                playing_players_per_guild=[
+                    [player for player in guild.playing]
+                    for guild in guild_manager.playing_guilds
+                ],
+                guild_placements=guild_manager.placements,
             )
 
             file = File(
                 await create_table(
-                    names=queue,
-                    old_mmrs=[guild.mmr for guild in playing_guild_objects],
+                    names=playing_guilds,
+                    old_mmrs=[guild.mmr for guild in playing_guilds],
                     results=guild_manager.results,
                     placements=guild_manager.placements,
                     team_size=1,
