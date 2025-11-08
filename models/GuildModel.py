@@ -99,10 +99,11 @@ class Guild:
         return {
             "_id": str(self._id),
             "name": self._name,
+            "icon": self._icon,
             "player_ids": self._player_ids,
             "mmr": self._mmr,
             "history": self._history,
-            "joined": self._creation_date,
+            "creation_date": self._creation_date,
         }
 
     def to_mongo(self) -> dict:
@@ -116,11 +117,11 @@ class Guild:
         instance = cls(
             _id=ObjectId(data["_id"]),
             name=data["name"],
+            icon=data["icon"],
             player_ids=data["player_ids"],
             mmr=data["mmr"],
             history=data["history"],
-            formats=data["formats"],
-            joined=data.get("joined"),
+            creation_date=data.get("creation_date"),
         )
         return instance
 
@@ -225,10 +226,11 @@ class PlayingGuild(Guild):
         return {
             "_id": str(self._id),
             "name": self._name,
+            "icon": self._icon,
             "player_ids": self._player_ids,
             "mmr": self._mmr,
             "history": self._history,
-            "joined": self._creation_date,
+            "creation_date": self._creation_date,
             "playing": [player.to_json() for player in self._playing],
             "subs": [player.to_json() for player in self._subs],
         }
