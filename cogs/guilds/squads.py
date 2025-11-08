@@ -128,6 +128,13 @@ class squads(commands.Cog):
             message += "\n"
         await ctx.respond(message)
 
+    @squads.command(name="stop", description="Go back to gathering")
+    async def stop(self, ctx: MogiApplicationContext):
+        guild_manager.clear_playing()
+        await ctx.respond(
+            "## Guild mogi has been stopped! Gathering in progress again!"
+        )
+
     @squads.command(name="clear", description="Kick everyone from the queue")
     @is_mogi_manager()
     async def clear(self, ctx: MogiApplicationContext):
