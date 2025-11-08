@@ -70,7 +70,8 @@ async def get_profiles(
 
 async def get_all_player_names() -> list[str]:
     cursor = db_players.find({}, {"name": 1, "_id": 0})
-    return await cursor.to_list(length=None)
+    results = await cursor.to_list(length=None)
+    return [player["name"] for player in results]
 
 
 async def create_new_player(username: str, discord_id: int) -> None:
