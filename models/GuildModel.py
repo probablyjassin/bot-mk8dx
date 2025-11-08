@@ -204,3 +204,31 @@ class PlayingGuild(Guild):
     def to_json(self) -> dict:
         # Use parent's to_json to avoid serializing members/playing
         return super().to_json()
+
+    @classmethod
+    def from_json(cls, data):
+        # Create base Guild from data
+        base_guild = Guild.from_json(data)
+
+        # Extract playing and subs if present
+        playing = []
+        if "playing" in data:
+            playing = [PlayerProfile.from_json(p) for p in data["playing"]]
+
+        subs = []
+        if "subs" in data:
+            subs = [PlayerProfile.from_json(s) for s in data["subs"]]
+
+        return cls(base_guild, playing=playing, subs=subs)
+
+    def to_json_full(self) -> dict:
+        return {
+            "_id": str(self._id),
+            "name": self._name,
+            "player_ids": self._player_ids,
+            "mmr": self._mmr,
+            "history": self._history,
+            "joined": self._creation_date,
+            "playing": [player.to_json() for player in self._playing],
+            "subs": [player.to_json() for player in self._subs],
+        }
