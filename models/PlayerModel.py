@@ -64,7 +64,8 @@ class PlayerProfile:
     # Methods
     async def refresh(self):
         data = await data_manager.Players.find(self._id)
-        self.__dict__.update(PlayerProfile.from_json(data).__dict__)
+        if data:
+            self.__dict__.update(data.__dict__)
 
     # Properties
 
