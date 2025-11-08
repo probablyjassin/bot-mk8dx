@@ -174,11 +174,11 @@ class Mogi:
 
         self.collected_points = team_points_list
 
-    def archive_mogi_data(self) -> None:
+    async def archive_mogi_data(self) -> None:
         """
         Save the mogi to the database.
         """
-        data_manager.Mogis.add_mogi_history(
+        await data_manager.Mogis.add_mogi_history(
             started_at=self.started_at,
             finished_at=self.finished_at,
             player_ids=[player.discord_id for player in self.players],
@@ -188,7 +188,7 @@ class Mogi:
             disconnections=self.disconnections,
         )
 
-    def finish(self) -> None:
+    async def finish(self) -> None:
         """
         Marks the current mogi as completed.
         #### Side Effects:
@@ -199,7 +199,7 @@ class Mogi:
         self.isPlaying = False
         self.isFinished = True
         self.finished_at = self.finished_at or round(time.time())
-        self.archive_mogi_data()
+        await self.archive_mogi_data()
 
     def to_json(self) -> dict:
         """

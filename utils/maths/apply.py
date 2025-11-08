@@ -24,6 +24,6 @@ async def apply_mmr(mogi: Mogi) -> None:
         or mogi.mmr_results_by_group[i] > 0
     ]
 
-    data_manager.Mogis.apply_result_mmr(
+    await data_manager.Mogis.apply_result_mmr(
         data_to_update_obj, mogi.format if not mogi.is_mini else 0
     )
