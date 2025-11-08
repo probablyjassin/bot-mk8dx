@@ -141,6 +141,70 @@ class squads(commands.Cog):
         guild_manager.clear_queue()
         await ctx.respond("## Guild mogi queue has been emptied!")
 
+    @squads.command(
+        name="debug",
+        description="[DEBUG] Show complete guild_manager state",
+    )
+    @is_mogi_manager()
+    async def debug(self, ctx: MogiApplicationContext):
+        import json
+
+        debug_info = "# Guild Manager Debug Info\n\n"
+
+        # Queue state
+        queue = guild_manager.read_queue()
+        debug_info += "## Queue\n```json\n"
+        debug_info += json.dumps(queue, indent=2)
+        debug_info += "\n```\n\n"
+
+        # Playing guilds
+        playing_guilds = guild_manager.read_playing()
+        debug_info += f"## Playing Guilds ({len(playing_guilds)})\n```json\n"
+        playing_guilds_data = [
+            {
+                "name": pg.guild.name if hasattr(pg, "guild") else pg.name,
+                "playing_count": len(pg.playing) if hasattr(pg, "playing") else 0,
+                "subs_count": len(pg.subs) if hasattr(pg, "subs") else 0,
+                "playing_ids": (
+                    [p.discord_id for p in pg.playing] if hasattr(pg, "playing") else []
+                ),
+                "subs_ids": (
+                    [p.discord_id for p in pg.subs] if hasattr(pg, "subs") else []
+                ),
+            }
+            for pg in playing_guilds
+        ]
+        debug_info += json.dumps(playing_guilds_data, indent=2)
+        debug_info += "\n```\n\n"
+
+        # Format and other state
+        debug_info += "## State Variables\n```\n"
+        debug_info += f"guilds_format: {guild_manager.guilds_format}\n"
+        debug_info += f"placements: {guild_manager.placements}\n"
+        debug_info += f"results: {guild_manager.results}\n"
+        debug_info += "```\n\n"
+
+        # Full registry dump
+        registry = guild_manager.read_registry()
+        debug_info += "## Full Registry\n```json\n"
+        registry_serializable = {
+            "guilds_format": registry["guilds_format"],
+            "placements": registry["placements"],
+            "results": registry["results"],
+            "playing_guilds_count": len(registry["playing_guilds"]),
+        }
+        debug_info += json.dumps(registry_serializable, indent=2)
+        debug_info += "\n```"
+
+        # Split message if too long (Discord limit: 2000 chars)
+        if len(debug_info) > 2000:
+            chunks = [debug_info[i : i + 1990] for i in range(0, len(debug_info), 1990)]
+            await ctx.respond(chunks[0])
+            for chunk in chunks[1:]:
+                await ctx.send(chunk)
+        else:
+            await ctx.respond(debug_info)
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(squads(bot))
