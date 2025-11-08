@@ -135,7 +135,7 @@ class register(commands.Cog):
 
         # Verification passed - proceed with registration
         try:
-            data_manager.Players.create_new_player(
+            await data_manager.Players.create_new_player(
                 username=username, discord_id=member.id
             )
         except Exception as e:

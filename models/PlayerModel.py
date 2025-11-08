@@ -78,9 +78,8 @@ class PlayerProfile:
     def name(self):
         return self._name
 
-    @name.setter
-    def name(self, value):
-        data_manager.Players.set_attribute(self, "name", value)
+    async def set_name(self, value):
+        await data_manager.Players.set_attribute(self, "name", value)
 
     # Discord ID (read-only)
     @property
@@ -92,9 +91,8 @@ class PlayerProfile:
     def mmr(self):
         return self._mmr
 
-    @mmr.setter
-    def mmr(self, value):
-        data_manager.Players.set_attribute(self, "mmr", value)
+    async def set_mmr(self, value):
+        await data_manager.Players.set_attribute(self, "mmr", value)
 
     # History (has different setter)
     @property
@@ -122,12 +120,11 @@ class PlayerProfile:
     def disconnects(self):
         return self._disconnects
 
-    @disconnects.setter
-    def disconnects(self, value):
-        data_manager.Players.set_attribute(self, "disconnects", value)
+    async def set_disconnects(self, value):
+        await data_manager.Players.set_attribute(self, "disconnects", value)
 
-    def add_disconnect(self):
-        data_manager.Players.set_attribute(
+    async def add_disconnect(self):
+        await data_manager.Players.set_attribute(
             self, "disconnects", self._disconnects + 1 if self._disconnects else 1
         )
 
@@ -136,18 +133,16 @@ class PlayerProfile:
     def inactive(self):
         return self._inactive
 
-    @inactive.setter
-    def inactive(self, value):
-        data_manager.Players.set_attribute(self, "inactive", value)
+    async def set_inactive(self, value):
+        await data_manager.Players.set_attribute(self, "inactive", value)
 
     # Suspended
     @property
     def suspended(self):
         return self._suspended
 
-    @suspended.setter
-    def suspended(self, value):
-        data_manager.Players.set_attribute(self, "suspended", value)
+    async def set_suspended(self, value):
+        await data_manager.Players.set_attribute(self, "suspended", value)
 
     # Dict methods
     def to_json(self) -> dict:

@@ -107,7 +107,7 @@ class edit(commands.Cog):
         if not player:
             await ctx.respond("Couldn't find that player")
 
-        data_manager.Players.delete(player)
+        await data_manager.Players.delete(player)
 
         if try_remove_roles:
             discord_member: Member | None = await get_guild_member(

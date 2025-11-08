@@ -67,7 +67,7 @@ class disconnects(commands.Cog):
     )
     async def disconnects_list(self, ctx: MogiApplicationContext):
         # Get all players and filter out those without disconnects field
-        all_players = data_manager.Players.get_profiles(
+        all_players = await data_manager.Players.get_profiles(
             archive=archive_type.INCLUDE, as_json=True
         )
         players_with_dcs = [
