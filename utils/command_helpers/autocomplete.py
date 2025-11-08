@@ -21,7 +21,7 @@ async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
         _player_names_cache is None
         or (current_time - _cache_timestamp) > CACHE_DURATION
     ):
-        _player_names_cache = data_manager.Players.get_all_player_names()
+        _player_names_cache = await data_manager.Players.get_all_player_names()
         _cache_timestamp = current_time
         print(f"Player names cache refreshed ({len(_player_names_cache)} players)")
 
