@@ -18,6 +18,11 @@ class squads(commands.Cog):
     )
     @with_guild()
     async def queue(self, ctx: MogiApplicationContext):
+        if len(guild_manager.playing_guilds):
+            return await ctx.respond(
+                "Can't join or drop from the queue while already playing."
+            )
+
         queue = guild_manager.read_queue()
         if ctx.user.id in [
             player_id for players in queue.values() for player_id in players
@@ -35,6 +40,11 @@ class squads(commands.Cog):
     )
     @with_guild()
     async def drop(self, ctx: MogiApplicationContext):
+        if len(guild_manager.playing_guilds):
+            return await ctx.respond(
+                "Can't join or drop from the queue while already playing."
+            )
+
         queue = guild_manager.read_queue()
         if not any(ctx.user.id in arr for arr in queue.values()):
             return await ctx.respond("Not queued up for the guild mogi.")
