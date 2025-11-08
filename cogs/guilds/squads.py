@@ -1,4 +1,4 @@
-from discord import SlashCommandGroup, AllowedMentions
+from discord import SlashCommandGroup, AllowedMentions, Option
 from discord.ext import commands
 
 from models import MogiApplicationContext
@@ -153,6 +153,22 @@ class squads(commands.Cog):
     async def clear(self, ctx: MogiApplicationContext):
         guild_manager.clear_queue()
         await ctx.respond("## Guild mogi queue has been emptied!")
+
+    @squads.command(name="sub", description="Get")
+    @with_player(query_varname="player")
+    @with_guild()
+    async def sub(self, ctx: MogiApplicationContext, player: str = Option(str)):
+        user_guild = [
+            guild
+            for guild in guild_manager.playing_guilds
+            if guild.name == ctx.lounge_guild.name
+        ]
+        if not user_guild:
+            return await ctx.respond("Your guild is not part of a current guild mogi.")
+        user_guild = user_guild[0]
+
+        if not user_guild.subs:
+            return await ctx.respond("There are no subs available from your guild.")
 
     @squads.command(
         name="debug",
