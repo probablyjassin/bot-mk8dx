@@ -103,7 +103,7 @@ def create_new_guild(
             "name": name,
             "icon": icon_url,
             "player_ids": [Int64(first_member_id)],
-            "mmr": 2000,
+            "mmr": 3000,
             "history": [],
             "creation_date": round(time()),
         },
