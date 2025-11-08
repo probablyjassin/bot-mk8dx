@@ -8,7 +8,7 @@ from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
 from utils.command_helpers import get_awaited_message
 from utils.data import guild_manager, data_manager
-from utils.maths.results import calculate_mmr
+from utils.maths.guild_mogi_mmrs import guild_calc_new_mmr
 from utils.maths.table import create_table
 
 
@@ -67,10 +67,9 @@ class guild_scores(commands.Cog):
                 guild = await data_manager.Guilds.find(guild_id)
                 playing_guild_objects.append(guild)
 
-            guild_manager.results = calculate_mmr(
-                [guild.mmr for guild in playing_guild_objects],
+            guild_manager.results = await guild_calc_new_mmr(
+                playing_guild_objects,
                 guild_manager.placements,
-                1,
             )
 
             file = File(
