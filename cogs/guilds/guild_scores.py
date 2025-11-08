@@ -63,8 +63,12 @@ class guild_scores(commands.Cog):
             guild_manager.placements = [int(placement) for placement in rank_str]
 
             guild_manager.results = await guild_calc_new_mmr(
-                playing_guilds,
-                guild_manager.placements,
+                guilds=guild_manager.playing_guilds,
+                playing_players_per_guild=[
+                    [player for player in guild.playing]
+                    for guild in guild_manager.playing_guilds
+                ],
+                guild_placements=guild_manager.placements,
             )
 
             file = File(
