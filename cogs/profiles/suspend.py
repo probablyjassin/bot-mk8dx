@@ -30,7 +30,7 @@ class suspend(commands.Cog):
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         await player.set_suspended(True)
 
@@ -50,7 +50,7 @@ class suspend(commands.Cog):
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         await player.set_suspended(False)
 
