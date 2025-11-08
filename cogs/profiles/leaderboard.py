@@ -8,6 +8,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Rank
 from utils.data import data_manager
+from utils.database.types import sort_type
 
 
 class leaderboard(commands.Cog):
@@ -48,7 +49,7 @@ class leaderboard(commands.Cog):
         skip_count = skip_count if skip_count >= 0 else 0
 
         data = await data_manager.Leaderboard.get_leaderboard(
-            page_index=page_index, sort=sort
+            page_index=page_index, sort=sort_type[sort]
         )
 
         tabledata = {
