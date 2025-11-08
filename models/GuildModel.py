@@ -123,3 +123,84 @@ class Guild:
             joined=data.get("joined"),
         )
         return instance
+
+
+@dataclass
+class PlayingGuild(Guild):
+    """
+    ### Represents a guild with active player objects (bot-side only, not stored in DB).
+    Inherits from Guild but includes actual PlayerProfile objects for members.
+    #### Additional Attributes:
+        members (list[PlayerProfile]): List of all member PlayerProfile objects.
+        playing (list[PlayerProfile]): List of members currently playing.
+    """
+
+    def __init__(
+        self,
+        guild: Guild,
+        playing: list[PlayerProfile] = None,
+        subs: list[PlayerProfile] = None,
+    ):
+        super().__init__(
+            _id=guild._id,
+            name=guild._name,
+            icon=guild._icon,
+            player_ids=guild._player_ids,
+            mmr=guild._mmr,
+            history=guild._history,
+            creation_date=guild._creation_date,
+        )
+        self._playing: list[PlayerProfile] = playing or []
+        self._subs: list[PlayerProfile] = subs or []
+
+    # playing
+    @property
+    def playing(self) -> list[PlayerProfile]:
+        return self._playing
+
+    def set_playing(self, value: list[PlayerProfile]):
+        self._playing = value
+
+    def add_playing(self, player: PlayerProfile):
+        if player.discord_id in self.player_ids and player not in self._playing:
+            self._playing.append(player)
+
+    def remove_playing(self, player: PlayerProfile):
+        if player in self._playing:
+            self._playing.remove(player)
+
+    def clear_playing(self):
+        self._playing.clear()
+
+    # subs
+    @property
+    def subs(self) -> list[PlayerProfile]:
+        return self._subs
+
+    def set_subs(self, value: list[PlayerProfile]):
+        self._subs = value
+
+    def add_sub(self, player: PlayerProfile):
+        if (
+            player.discord_id in self.player_ids
+            and player not in self._playing
+            and player not in self._subs
+        ):
+            self._subs.append(player)
+
+    def remove_sub(self, player: PlayerProfile):
+        if player in self._subs:
+            self._subs.remove(player)
+
+    def clear_subs(self):
+        self._subs.clear()
+
+    # Override to_mongo to ensure DB operations only use base Guild data
+    def to_mongo(self) -> dict:
+        # Use parent's to_mongo to avoid serializing members/playing
+        return super().to_mongo()
+
+    # Override to_json to exclude members/playing from serialization
+    def to_json(self) -> dict:
+        # Use parent's to_json to avoid serializing members/playing
+        return super().to_json()
