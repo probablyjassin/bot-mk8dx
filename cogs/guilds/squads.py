@@ -190,6 +190,7 @@ class squads(commands.Cog):
         subbing_member = target_guild.subs[0]
         target_guild.playing.remove(ctx.player)
         target_guild.playing.append(subbing_member)
+        target_guild.subs.remove(subbing_member)
 
         await ctx.respond(
             f"<@{ctx.player.discord_id}> has been subbed out for <@{subbing_member.discord_id}>"
