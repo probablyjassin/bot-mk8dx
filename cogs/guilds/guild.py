@@ -51,7 +51,10 @@ class guild(commands.Cog):
 
         if getattr(guild, "player_ids", None):
             member_mentions = "\n".join(
-                [f"<@{player_id}>" for player_id in guild.player_ids]
+                [
+                    f"<@{player_id}>{' ⭐' if i == 0 else ''}"
+                    for i, player_id in enumerate(guild.player_ids)
+                ]
             )
             embed.add_field(
                 name=f"Members ({len(guild.player_ids)})",
