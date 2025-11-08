@@ -47,7 +47,7 @@ class leaderboard(commands.Cog):
         )
         skip_count = skip_count if skip_count >= 0 else 0
 
-        data = data_manager.Leaderboard.get_leaderboard(
+        data = await data_manager.Leaderboard.get_leaderboard(
             page_index=page_index, sort=sort
         )
 

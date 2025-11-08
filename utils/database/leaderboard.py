@@ -2,12 +2,12 @@ from utils.data._database import db_players
 from utils.database.types import archive_type, sort_type
 
 
-def get_leaderboard(
+async def get_leaderboard(
     page_index: int,
     sort: sort_type = sort_type.MMR,
     archive: archive_type = archive_type.NO,
 ) -> list[dict] | None:
-    total_player_count = db_players.count_documents({})
+    total_player_count = await db_players.count_documents({})
 
     page_index = page_index if page_index > 0 else 1
     max_pages = -(-total_player_count // 10)
@@ -95,4 +95,4 @@ def get_leaderboard(
     pipeline.append({"$skip": skip_count})
     pipeline.append({"$limit": 10})
 
-    return list(db_players.aggregate(pipeline))
+    return await db_players.aggregate(pipeline).to_list(length=None)
