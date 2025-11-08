@@ -1,5 +1,6 @@
 from discord import SlashCommandGroup, AllowedMentions, Option
 from discord.ext import commands
+from discord.utils import get
 
 from models import MogiApplicationContext
 from utils.data import guild_manager
@@ -157,18 +158,42 @@ class squads(commands.Cog):
     @squads.command(name="sub", description="Get")
     @with_player(query_varname="player")
     @with_guild()
-    async def sub(self, ctx: MogiApplicationContext, player: str = Option(str)):
-        user_guild = [
+    async def sub(
+        self,
+        ctx: MogiApplicationContext,
+        player: str = Option(str, description="The player to sub"),
+    ):
+        if not (
+            ctx.lounge_guild.player_ids[0] == ctx.user.id
+            or get(ctx.guild.roles, name="Mogi Manager") in ctx.user.roles
+        ):
+            return await ctx.respond(
+                "You need either a mogi manager or the guild owner to sub someone."
+            )
+
+        target_guild = [
             guild
             for guild in guild_manager.playing_guilds
             if guild.name == ctx.lounge_guild.name
         ]
-        if not user_guild:
+        if not target_guild:
             return await ctx.respond("Your guild is not part of a current guild mogi.")
-        user_guild = user_guild[0]
+        target_guild = target_guild[0]
+        if ctx.player not in target_guild.playing:
+            return await ctx.respond(
+                "That player can't be subbed out because they're not playing in your team right now."
+            )
 
-        if not user_guild.subs:
+        if not target_guild.subs:
             return await ctx.respond("There are no subs available from your guild.")
+
+        subbing_member = target_guild.subs[0]
+        target_guild.playing.remove(ctx.player)
+        target_guild.playing.append(subbing_member)
+
+        await ctx.respond(
+            f"<@{ctx.player.discord_id}> has been subbed out for <@{subbing_member.discord_id}>"
+        )
 
     @squads.command(
         name="debug",
