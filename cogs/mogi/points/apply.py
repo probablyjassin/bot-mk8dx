@@ -40,7 +40,7 @@ class apply(commands.Cog):
             await ctx.send("Applied MMR changes ✅")
             await update_roles(ctx, ctx.mogi)
 
-            ctx.mogi.finish()
+            await ctx.mogi.finish()
             for player in ctx.mogi.players:
                 user = await get_guild_member(ctx.guild, player.discord_id)
                 if not user:
