@@ -17,8 +17,8 @@ async def guild_calc_new_mmr(
     ]
 
     guild_mmrs_for_calculation: list[int] = [
-        math.sqrt(team_size)
-        * (guild.mmr + average_active_player_mmrs[i] for i, guild in enumerate(guilds))
+        round(math.sqrt(team_size) * (guild.mmr + average_active_player_mmrs[i]))
+        for i, guild in enumerate(guilds)
     ]
 
     return calculate_mmr(guild_mmrs_for_calculation, guild_placements, 1)
