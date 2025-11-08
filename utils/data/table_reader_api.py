@@ -25,7 +25,9 @@ async def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
     async with aiohttp.ClientSession() as session:
         data = aiohttp.FormData()
         data.add_field("file", file)
-        async with session.post(TABLE_READER_URL, data=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
+        async with session.post(
+            TABLE_READER_URL, data=data, timeout=aiohttp.ClientTimeout(total=30)
+        ) as response:
             response.raise_for_status()
             result = await response.json()
             if not result["players"]:
@@ -79,17 +81,17 @@ async def pattern_match_lounge_names(
         print(f"Matched: {name} → {candidate_name} ({score})")
 
     # Check aliases and override if higher confidence
+    all_aliases = await data_manager.Aliases.get_all_aliases()
+
     for i, name in enumerate(players):
         attempt: tuple[str, int] | None = process.extractOne(
-            name, list((await data_manager.Aliases.get_all_aliases()).values())
+            name, list(all_aliases.values())
         )
         if attempt:
             potential_alias_match, certainty, _ = attempt
             if potential_alias_match and certainty > 70:
                 # Find the key for this alias value
-                for alias_key, alias_val in (
-                    await data_manager.Aliases.get_all_aliases()
-                ).items():
+                for alias_key, alias_val in all_aliases.items():
                     if alias_val == potential_alias_match:
                         actual_names[i] = alias_key
                         print(f"Alias match: {name} → {alias_key} ({certainty})")
