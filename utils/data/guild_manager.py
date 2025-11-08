@@ -8,7 +8,7 @@ from utils.data.data_manager import data_manager
 class GuildManager:
     def __init__(self):
         self.queue: dict[str, list[int]] = None
-        self.playing_guilds: list[PlayingGuild | None] = None
+        self.playing_guilds: list[PlayingGuild] = None
         self.guilds_format: int | None = None
         self.placements: list[int] | None = None
         self.results: list[int] | None = None
