@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
+from models.PlayerModel import PlayerProfile
 from utils.data.data_manager import data_manager
 
 
@@ -87,6 +88,9 @@ class Guild:
 
     def append_history(self, value: int):
         self._history.append(value)
+
+    async def fetch_player_profiles(self) -> list[PlayerProfile]:
+        return await data_manager.Players.find_list(self.player_ids)
 
     # Properties
 
