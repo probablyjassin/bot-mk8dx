@@ -250,7 +250,7 @@ class table_read(commands.Cog):
         ),
     ):
         searched_player = (
-            data_manager.Players.find(query=to_player) if to_player else None
+            await data_manager.Players.find(query=to_player) if to_player else None
         )
         if to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")

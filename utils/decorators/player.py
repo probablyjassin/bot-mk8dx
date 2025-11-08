@@ -40,7 +40,9 @@ def with_player(
             )
 
             # Fetch player record and assign discord user as well
-            ctx.player = data_manager.Players.find(query, archive=archive_type.INCLUDE)
+            ctx.player = await data_manager.Players.find(
+                query, archive=archive_type.INCLUDE
+            )
 
             if not ctx.player:
                 return await ctx.respond(
