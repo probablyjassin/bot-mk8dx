@@ -73,7 +73,7 @@ class guild_scores(commands.Cog):
 
             file = File(
                 await create_table(
-                    names=playing_guilds,
+                    names=[guild.name for guild in playing_guilds],
                     old_mmrs=[guild.mmr for guild in playing_guilds],
                     results=guild_manager.results,
                     placements=guild_manager.placements,
