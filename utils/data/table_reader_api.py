@@ -25,7 +25,7 @@ async def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
     async with aiohttp.ClientSession() as session:
         data = aiohttp.FormData()
         data.add_field("file", file)
-        async with session.post(TABLE_READER_URL, data=data, timeout=30) as response:
+        async with session.post(TABLE_READER_URL, data=data, timeout=aiohttp.ClientTimeout(total=30)) as response:
             response.raise_for_status()
             result = await response.json()
             if not result["players"]:
