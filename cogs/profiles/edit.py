@@ -105,7 +105,7 @@ class edit(commands.Cog):
         player: PlayerProfile = await data_manager.Players.find(searched_player)
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
         await data_manager.Players.delete(player)
 
