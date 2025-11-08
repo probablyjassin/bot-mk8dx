@@ -82,7 +82,7 @@ async def find_guild(
     results = db_guilds.aggregate(pipeline)
     potential_guild = await results.to_list(length=1)
 
-    return Guild(**potential_guild) if potential_guild else None
+    return Guild(**potential_guild[0]) if potential_guild else None
 
 
 async def get_all_guild_names() -> list[str]:
