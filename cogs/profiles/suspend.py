@@ -45,7 +45,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.Players.find(
+        player: PlayerProfile = await data_manager.Players.find(
             searched_player, archive=archive_type.INCLUDE
         )
 

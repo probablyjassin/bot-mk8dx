@@ -62,8 +62,8 @@ class PlayerProfile:
         self._suspended = suspended
 
     # Methods
-    def refresh(self):
-        data = data_manager.Players.find(self._id)
+    async def refresh(self):
+        data = await data_manager.Players.find(self._id)
         self.__dict__.update(PlayerProfile.from_json(data).__dict__)
 
     # Properties
