@@ -61,6 +61,7 @@ class squads(commands.Cog):
     async def list(self, ctx: MogiApplicationContext):
         queue = guild_manager.read_queue()
         playing_guilds = guild_manager.read_playing()
+
         queue_message = ""
 
         if not len(playing_guilds):
@@ -74,18 +75,24 @@ class squads(commands.Cog):
                     queue_message += f"- <@{player_id}>\n"
                 queue_message += "\n"
         else:
-            playing_guilds = guild_manager.playing_guilds
             playing_format = guild_manager.guilds_format
 
             queue_message = f"# Guild Mogi: {playing_format}"
             queue_message += f"v{playing_format}" * (len(playing_guilds) - 1)
             queue_message += "\n\n"
-            for name in playing_guilds:
-                queue_message += f"**{name}**\n"
-                for player_id in queue[name]:
-                    queue_message += f"<@{player_id}>\n"
-                if subs := len(queue[name]) - playing_format:
-                    queue_message += f"*({subs} subs)*\n"
+
+            for playing_guild in playing_guilds:
+
+                queue_message += f"**{playing_guild.name}**\n"
+
+                for player in playing_guild.playing:
+                    queue_message += f"<@{player.discord_id}>\n"
+
+                if len(playing_guild.subs):
+                    queue_message += "- *subs:*\n"
+                    for sub in playing_guild.subs:
+                        queue_message += f"*<@{sub.discord_id}>*\n"
+
                 queue_message += "\n"
 
         return await ctx.respond(queue_message, allowed_mentions=AllowedMentions.none())
