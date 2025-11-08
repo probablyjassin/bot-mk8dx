@@ -35,7 +35,7 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
-        total_player_count = data_manager.Players.count()
+        total_player_count = await data_manager.Players.count()
 
         page_index = page_index if page_index > 0 else 1
         max_pages = -(-total_player_count // 10)
@@ -48,7 +48,7 @@ class leaderboard(commands.Cog):
         )
         skip_count = skip_count if skip_count >= 0 else 0
 
-        data = data_manager.Leaderboard.get_leaderboard(
+        data = await data_manager.Leaderboard.get_leaderboard(
             page_index=page_index, sort=sort_type[sort]
         )
 

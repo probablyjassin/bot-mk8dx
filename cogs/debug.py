@@ -67,10 +67,12 @@ class debug(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": data_manager.Players.get_profiles(
+            "players": await data_manager.Players.get_profiles(
                 archive=archive_type.INCLUDE, with_id=False, as_json=True
             ),
-            "mogis": data_manager.Mogis.get_all_mogis(with_id=False, as_json=True),
+            "mogis": await data_manager.Mogis.get_all_mogis(
+                with_id=False, as_json=True
+            ),
         }
 
         with open(backup_filename, "w") as backup_file:

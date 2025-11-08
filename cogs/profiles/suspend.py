@@ -25,14 +25,14 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.Player.find(
+        player: PlayerProfile = await data_manager.Players.find(
             searched_player, archive=archive_type.INCLUDE
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
-        player.suspended = True
+        await player.set_suspended(True)
 
         await ctx.respond(f"Suspended <@{player.discord_id}>")
 
@@ -45,14 +45,14 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.Players.find(
+        player: PlayerProfile = await data_manager.Players.find(
             searched_player, archive=archive_type.INCLUDE
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
-        player.suspended = False
+        await player.set_suspended(False)
 
         await ctx.respond(f"Unsuspended <@{player.discord_id}>")
 

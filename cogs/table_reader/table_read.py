@@ -74,7 +74,7 @@ class table_read(commands.Cog):
         data = await screenshot.read()
 
         buffer_image = BufferedReader(BytesIO(data))
-        output = table_read_ocr_api(buffer_image)
+        output = await table_read_ocr_api(buffer_image)
         print("api result:")
         print(output)
         ocr_names = [entry["name"] for entry in output]
@@ -82,7 +82,7 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
-            potential_actual_names = pattern_match_lounge_names(
+            potential_actual_names = await pattern_match_lounge_names(
                 ocr_names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
@@ -121,7 +121,7 @@ class table_read(commands.Cog):
         data = await screenshot.read()
 
         buffer_image = BufferedReader(BytesIO(data))
-        output = table_read_ocr_api(buffer_image)
+        output = await table_read_ocr_api(buffer_image)
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
@@ -176,7 +176,7 @@ class table_read(commands.Cog):
             )
 
         tablestring = message.content.replace("|", divider).replace("+", divider)
-        output = table_read_ocr_api(BufferedReader(BytesIO(record)))
+        output = await table_read_ocr_api(BufferedReader(BytesIO(record)))
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
@@ -193,7 +193,7 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         if ctx.mogi and len(ctx.mogi.players) == len(names):
-            potential_actual_names = pattern_match_lounge_names(
+            potential_actual_names = await pattern_match_lounge_names(
                 names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
@@ -250,12 +250,12 @@ class table_read(commands.Cog):
         ),
     ):
         searched_player = (
-            data_manager.Players.find(query=to_player) if to_player else None
+            await data_manager.Players.find(query=to_player) if to_player else None
         )
         if to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")
 
-        data_manager.Aliases.set_player_alias(
+        await data_manager.Aliases.set_player_alias(
             searched_player if searched_player else ctx.player, name
         )
         return await ctx.respond(
@@ -267,7 +267,7 @@ class table_read(commands.Cog):
         await ctx.respond(
             "\n".join(
                 f"{key}: {value}"
-                for key, value in (data_manager.Aliases.get_all_aliases()).items()
+                for key, value in (await data_manager.Aliases.get_all_aliases()).items()
                 if key != "_id"
             )
         )

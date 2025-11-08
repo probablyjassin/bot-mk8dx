@@ -16,7 +16,7 @@ class stats(commands.Cog):
 
     @slash_command(name="stats", description="Show Lounge stats for the current season")
     async def stats(self, ctx: MogiApplicationContext):
-        all_mogis: list[MogiHistoryData] = data_manager.Mogis.get_all_mogis()
+        all_mogis: list[MogiHistoryData] = await data_manager.Mogis.get_all_mogis()
 
         durations = [
             datetime.fromtimestamp(mogi.finished_at)

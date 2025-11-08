@@ -26,7 +26,7 @@ class archive(commands.Cog):
         if ctx.player.inactive:
             return await ctx.respond(f"{ctx.player.name} is already archived")
 
-        ctx.player.inactive = True
+        await ctx.player.set_inactive(True)
 
         await ctx.respond(f"Archived <@{ctx.player.discord_id}>")
 
@@ -42,7 +42,7 @@ class archive(commands.Cog):
     ):
         if not ctx.player.inactive:
             return await ctx.respond(f"{ctx.player.name} is already not archived")
-        ctx.player.inactive = False
+        await ctx.player.set_inactive(False)
 
         await ctx.respond(f"Retrieved <@{ctx.player.discord_id}>")
 

@@ -27,7 +27,7 @@ class player(commands.Cog):
             autocomplete=player_name_autocomplete,
         ),
     ):
-        player: PlayerProfile = data_manager.Players.find(
+        player: PlayerProfile = await data_manager.Players.find(
             searched_name or Int64(ctx.author.id), archive=archive_type.INCLUDE
         )
 

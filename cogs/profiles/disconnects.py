@@ -33,7 +33,7 @@ class disconnects(commands.Cog):
                 None,
             )
 
-        ctx.player.add_disconnect()
+        await ctx.player.add_disconnect()
 
         await ctx.respond(
             f"Added a DC to <@{ctx.player.discord_id}> (now {ctx.player.disconnects})"
@@ -56,7 +56,7 @@ class disconnects(commands.Cog):
                 None,
             )
 
-        ctx.player.disconnects = amount
+        await ctx.player.set_disconnects(amount)
 
         await ctx.respond(
             f"Set <@{ctx.player.discord_id}>'s DC count to {ctx.player.disconnects}"
@@ -67,7 +67,7 @@ class disconnects(commands.Cog):
     )
     async def disconnects_list(self, ctx: MogiApplicationContext):
         # Get all players and filter out those without disconnects field
-        all_players = data_manager.Players.get_profiles(
+        all_players = await data_manager.Players.get_profiles(
             archive=archive_type.INCLUDE, as_json=True
         )
         players_with_dcs = [
