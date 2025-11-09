@@ -137,5 +137,9 @@ state/
 logs/
 backups/
 
-# custom config files
-lounge.config
+# ignore everything under config
+config/**
+
+!config/
+!config/*example*
+!config/**/*example*

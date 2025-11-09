@@ -29,4 +29,6 @@ async def guild_calc_new_mmr(
         for i, guild in enumerate(guilds)
     ]
 
-    return calculate_mmr(guild_mmrs_for_calculation, guild_placements, 1)
+    results = calculate_mmr(guild_mmrs_for_calculation, guild_placements, 1)
+    results = [abs(score) if score > -10 else score for score in results]
+    return [score * 1.3 for score in results]
