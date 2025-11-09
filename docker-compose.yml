@@ -4,10 +4,10 @@ services:
     image: ghcr.io/probablyjassin/bot-mk8dx:latest
     restart: unless-stopped
     volumes:
+      - ./config:/app/config
       - ./state:/app/state
       - ./logs:/app/logs
       - ./backups:/app/backups
-      - ./lounge.config:/app/lounge.config
     env_file:
       - .env
   # Uncomment to enable watchtower (if not already existant on the host)

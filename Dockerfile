@@ -16,6 +16,7 @@ RUN --mount=type=cache,target=/root/.cache/pip \
 COPY . /app
 
 # Add volumes for data
+VOLUME /app/config
 VOLUME /app/state
 VOLUME /app/logs
 VOLUME /app/backups
