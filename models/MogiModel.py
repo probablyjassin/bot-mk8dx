@@ -12,8 +12,6 @@ from utils.maths.teams_algorithm import (
     teams_alg_random,
 )
 
-from config import FLAGS
-
 
 @dataclass
 class Mogi:
@@ -97,11 +95,7 @@ class Mogi:
                 self.teams.append([player])
 
         else:
-            algorithm = (
-                teams_alg_random
-                if (FLAGS["random_teams"] or random_teams)
-                else teams_alg_distribute_by_order_kevnkkm
-            )
+            algorithm = teams_alg_distribute_by_order_kevnkkm
             self.teams = algorithm(self.players, format_int)
             # important: we put players in the new order determined by the team-making
             self.players = [player for team in self.teams for player in team]

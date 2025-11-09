@@ -18,7 +18,7 @@ from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
-from config import FORMATS, FLAGS
+from config import FORMATS
 
 
 class stop(commands.Cog):
@@ -35,13 +35,8 @@ class stop(commands.Cog):
     async def vote(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
-        if FLAGS["hold_mogis"]:
-            return await ctx.respond(
-                "Because of maintenance, you cannot start mogis for just a few moments."
-            )
-
         # not enough players
-        if len(ctx.mogi.players) <= 5 and not FLAGS["no_min_players"]:
+        if len(ctx.mogi.players) <= 5:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -121,7 +116,7 @@ class stop(commands.Cog):
         if ctx.mogi.isPlaying or ctx.mogi.vote:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
-        if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
+        if len(ctx.mogi.players) <= 5:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(
@@ -179,27 +174,26 @@ class stop(commands.Cog):
 
         not_voted_str = ""
 
-        if FLAGS["show_votes"]:
-            most_votes = max(ctx.mogi.vote.votes.values())
-            max_votes = [
+        most_votes = max(ctx.mogi.vote.votes.values())
+        max_votes = [
+            key
+            for key in ctx.mogi.vote.votes.keys()
+            if ctx.mogi.vote.votes[key] == most_votes
+        ]
+        if max_votes:
+            not_voted_str += "Most voted so far:\n"
+            for key in max_votes:
+                not_voted_str += key + "\n"
+            runner_ups = [
                 key
                 for key in ctx.mogi.vote.votes.keys()
-                if ctx.mogi.vote.votes[key] == most_votes
+                if ctx.mogi.vote.votes[key] == most_votes - 1
             ]
-            if max_votes:
-                not_voted_str += "Most voted so far:\n"
-                for key in max_votes:
+            if runner_ups:
+                not_voted_str += "\nRunner ups:\n"
+                for key in runner_ups:
                     not_voted_str += key + "\n"
-                runner_ups = [
-                    key
-                    for key in ctx.mogi.vote.votes.keys()
-                    if ctx.mogi.vote.votes[key] == most_votes - 1
-                ]
-                if runner_ups:
-                    not_voted_str += "\nRunner ups:\n"
-                    for key in runner_ups:
-                        not_voted_str += key + "\n"
-            not_voted_str += "\n"
+        not_voted_str += "\n"
 
         not_voted_str += "Missing votes from:\n"
         hasnt_voted = []
