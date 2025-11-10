@@ -1,3 +1,5 @@
+from typing import Literal
+
 from discord import Option, AllowedMentions, SlashCommandGroup, Member
 from discord.ext import commands
 from discord.utils import get
@@ -43,11 +45,11 @@ class sub(commands.Cog):
             description="username | @ mention | discord_id",
             autocomplete=player_name_autocomplete,
         ),
-        reason: str = Option(
-            str,
+        reason: Literal[
+            "DC'd twice or more", "Needs to go / disappeared / other"
+        ] = Option(
             name="reason",
             description="Why is this person getting subbed?",
-            choices=["DC'd twice or more", "Needs to go / disappeared / other"],
         ),
         no_tax: bool = Option(
             bool,

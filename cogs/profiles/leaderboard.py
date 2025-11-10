@@ -1,3 +1,4 @@
+from typing import Literal
 from io import BytesIO
 import pandas as pd
 import dataframe_image as dfi
@@ -7,6 +8,7 @@ from discord import slash_command, Option, File
 from discord.ext import commands
 
 from models import MogiApplicationContext, Rank
+import typing
 from utils.data import data_manager
 from utils.database.types import sort_type
 
@@ -19,12 +21,10 @@ class leaderboard(commands.Cog):
     async def leaderboard(
         self,
         ctx: MogiApplicationContext,
-        sort=Option(
-            str,
+        sort: Literal["MMR", "Wins", "Losses", "Winrate %"] = Option(
             name="sort",
             description="Sort the leaderboard, default is MMR",
             required=False,
-            choices=["MMR", "Wins", "Losses", "Winrate %"],
             default="MMR",
         ),
         page_index=Option(

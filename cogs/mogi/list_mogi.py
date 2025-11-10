@@ -1,3 +1,5 @@
+from typing import Literal, Optional
+
 from discord import slash_command, Option, AllowedMentions
 from discord.ext import commands
 
@@ -14,11 +16,10 @@ class list_mogi(commands.Cog):
     async def l(
         self,
         ctx: MogiApplicationContext,
-        context=Option(
+        context: Optional[Literal["tablestring", "usernames", "mmr"]] = Option(
             name="context",
             description="extra context to give the list",
             required=False,
-            choices=["tablestring", "usernames", "mmr"],
         ),
     ):
         if len(ctx.mogi.players) == 0:
