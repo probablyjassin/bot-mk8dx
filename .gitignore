@@ -125,9 +125,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# VS Code settings
-.vscode/
-
 # tests
 tests
 *test*.*
