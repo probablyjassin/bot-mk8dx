@@ -82,7 +82,7 @@ class guilds_edit(commands.Cog):
         await data_manager.Guilds.set_attribute(ctx.lounge_guild, "icon", new_icon)
         return await ctx.respond(f"Changed your guild icon to: {new_icon}")
 
-    @guildedit.command(name="add-member", description="Add a member to your guild")
+    @guildedit.command(name="add-member", description="Invite a member to your guild")
     @with_guild(assert_is_owner=True)
     @with_player(query_varname="player")
     async def add_member(
