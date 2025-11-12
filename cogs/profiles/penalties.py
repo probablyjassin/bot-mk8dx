@@ -66,7 +66,7 @@ class penalties(commands.Cog):
                 None,
             )
 
-        player_profile.mmr = player_profile.mmr - abs(mmr)
+        player_profile.set_mmr(player_profile.mmr - abs(mmr))
 
         await ctx.respond(
             f"Collected penalties from <@{player_profile.discord_id}>",

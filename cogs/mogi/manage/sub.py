@@ -115,7 +115,7 @@ class sub(commands.Cog):
 
         if not no_tax:
             tax = 50 if reason == "DC'd twice or more" else 100
-            player_profile.mmr = player_profile.mmr - tax
+            player_profile.set_mmr(player_profile.mmr - tax)
             await ctx.channel.send(
                 f"Penalized {player_user.mention} for leaving the mogi prematurely"
             )
