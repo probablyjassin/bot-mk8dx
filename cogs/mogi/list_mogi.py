@@ -20,6 +20,7 @@ class list_mogi(commands.Cog):
             name="context",
             description="extra context to give the list",
             required=False,
+            default=None,
         ),
     ):
         if len(ctx.mogi.players) == 0:
