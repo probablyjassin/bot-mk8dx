@@ -20,8 +20,8 @@ async def guild_calc_new_mmr(
     results = calculate_mmr(guild_mmrs_for_calculation, guild_placements, team_size)
     results = [round(abs(score) * 0.5) if score > -20 else score for score in results]
 
-    # Weigh results slightly based on guild MMR
-    guild_weight: float = 0.1
+    # Weigh results based on guild MMR
+    guild_weight: float = 0.5
 
     average_player_mmrs: list[float] = [
         sum(player.mmr for player in guild_players) / len(guild_players)
@@ -29,14 +29,29 @@ async def guild_calc_new_mmr(
     ]
 
     weighted_results = [
-        round(
-            result * (1 - guild_weight)
-            + result * guild_weight * (guilds[i].mmr / average_player_mmrs[i])
-        )
+        result * (1 - guild_weight)
+        + result * guild_weight * (guilds[i].mmr / average_player_mmrs[i])
         for i, result in enumerate(results)
     ]
 
-    return weighted_results
+    # MMR surplus/deficit to inject into the system per guild
+    # Positive = add MMR to pool (inflationary), Negative = remove MMR (deflationary), 0 = zero-sum
+    mmr_surplus_per_guild: float = (
+        2.0  # Add 2 MMR per guild (e.g., 4 guilds = +8 total MMR)
+    )
+
+    total_change = sum(weighted_results)
+
+    # Calculate how much to adjust each guild to achieve desired surplus
+    # First normalize to zero, then add the desired surplus
+    current_surplus_per_guild = total_change / len(weighted_results)
+    adjustment_per_guild = current_surplus_per_guild - mmr_surplus_per_guild
+
+    normalized_results = [
+        round(result - adjustment_per_guild) for result in weighted_results
+    ]
+
+    return normalized_results
 
 
 """
