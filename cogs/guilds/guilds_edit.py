@@ -34,7 +34,9 @@ class guilds_edit(commands.Cog):
             await ctx.user.remove_roles(lounge_guild_role)
 
         await data_manager.Guilds.remove_member(ctx.lounge_guild, ctx.user.id)
-        await ctx.respond(f"{ctx.user.mention} left the guild **{ctx.guild.name}**.")
+        await ctx.respond(
+            f"{ctx.user.mention} left the guild **{ctx.lounge_guild.name}**."
+        )
 
     @guildedit.command(
         name="change-name",
