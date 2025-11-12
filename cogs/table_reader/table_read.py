@@ -187,7 +187,7 @@ class table_read(commands.Cog):
 
         try:
             output = await table_read_ocr_api(BufferedReader(BytesIO(record)))
-        except aiohttp.ClientResponseError as e:
+        except ClientResponseError as e:
             return await ctx.respond(
                 f"Error reading table: HTTP {e.status} - {e.message}"
             )
