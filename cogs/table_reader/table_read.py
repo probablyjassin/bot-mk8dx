@@ -1,5 +1,6 @@
 import re
 from io import BytesIO, BufferedReader
+from aiohttp import ClientResponseError
 
 from discord import (
     SlashCommandGroup,
@@ -74,9 +75,16 @@ class table_read(commands.Cog):
         data = await screenshot.read()
 
         buffer_image = BufferedReader(BytesIO(data))
-        output = await table_read_ocr_api(buffer_image)
-        print("api result:")
-        print(output)
+
+        try:
+            output = await table_read_ocr_api(buffer_image)
+        except ClientResponseError as e:
+            return await ctx.respond(
+                f"Table reader API returned an error: HTTP {e.status} - {e.message}"
+            )
+        except Exception as e:
+            return await ctx.respond(f"Error reading table: {str(e)}")
+
         ocr_names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
@@ -176,7 +184,16 @@ class table_read(commands.Cog):
             )
 
         tablestring = message.content.replace("|", divider).replace("+", divider)
-        output = await table_read_ocr_api(BufferedReader(BytesIO(record)))
+
+        try:
+            output = await table_read_ocr_api(BufferedReader(BytesIO(record)))
+        except aiohttp.ClientResponseError as e:
+            return await ctx.respond(
+                f"Error reading table: HTTP {e.status} - {e.message}"
+            )
+        except Exception as e:
+            return await ctx.respond(f"Error reading table: {str(e)}")
+
         names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
