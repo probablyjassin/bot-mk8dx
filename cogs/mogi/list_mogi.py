@@ -1,4 +1,4 @@
-from typing import Annotated, Literal, Optional
+from typing import Optional
 
 from discord import slash_command, Option, AllowedMentions
 from discord.ext import commands
@@ -16,14 +16,13 @@ class list_mogi(commands.Cog):
     async def l(
         self,
         ctx: MogiApplicationContext,
-        context: Annotated[
-            Optional[Literal["tablestring", "usernames", "mmr"]],
-            Option(
-                name="context",
-                description="extra context to give the list",
-                required=False,
-            ),
-        ],
+        context: Optional[str] = Option(
+            str,
+            name="context",
+            description="extra context to give the list",
+            choices=["tablestring", "usernames", "mmr"],
+            required=False,
+        ),
     ):
         if len(ctx.mogi.players) == 0:
             return await ctx.respond("No players in this mogi.")
