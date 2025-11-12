@@ -92,7 +92,7 @@ class guild_scores(commands.Cog):
                 file=file,
             )
 
-            await ctx.respond("Results posted in #results")
+            await ctx.respond("Results posted in the results channel.")
 
 
 def setup(bot: commands.Bot):
