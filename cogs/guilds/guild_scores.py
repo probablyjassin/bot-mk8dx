@@ -71,6 +71,12 @@ class guild_scores(commands.Cog):
                 guild_placements=guild_manager.placements,
             )
 
+            name_strings: list[str] = [guild.name for guild in playing_guilds]
+            for i, guild in enumerate(playing_guilds):
+                name_strings[i] += "\n" + ", ".join(
+                    [player.name for player in guild.playing]
+                )
+
             file = File(
                 await create_table(
                     names=[guild.name for guild in playing_guilds],
