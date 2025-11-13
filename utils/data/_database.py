@@ -17,6 +17,7 @@ client = AsyncIOMotorClient(MONGO_URI, server_api=ServerApi("1"))
 db = client.get_database(LOUNGE_DB)
 db_players = db.get_collection("players")
 db_guilds = db.get_collection("guilds")
+db_guild_mogis = db.get_collection("guild_mogis")
 db_mogis = db.get_collection("mogis")
 db_aliases = db.get_collection("aliases")
 

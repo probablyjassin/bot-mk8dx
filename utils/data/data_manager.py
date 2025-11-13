@@ -47,6 +47,7 @@ class DataManager:
         append_history = staticmethod(guilds.append_history)
         set_attribute = staticmethod(guilds.set_attribute)
         apply_result_mmr = staticmethod(guilds.apply_result_mmr)
+        save_mogi_history = staticmethod(guilds.save_mogi_history)
 
 
 data_manager = DataManager()

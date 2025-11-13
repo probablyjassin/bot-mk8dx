@@ -6,7 +6,7 @@ from pycord.multicog import subcommand
 
 from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
-from utils.data import guild_manager
+from utils.data import guild_manager, data_manager
 from utils.maths.apply import apply_guild_mmr
 
 
@@ -38,7 +38,19 @@ class guild_apply(commands.Cog):
                     "Results don't add up with the guilds in the mogi."
                 )
 
-            apply_guild_mmr(playing_guilds, guild_mogi_results)
+            await apply_guild_mmr(playing_guilds, guild_mogi_results)
+
+            await data_manager.Guilds.save_mogi_history(
+                guild_names=[guild.name for guild in playing_guilds],
+                players=[
+                    [player.discord_id for player in guild.playing]
+                    for guild in playing_guilds
+                ],
+                format=guild_manager.guilds_format,
+                results=guild_manager.results,
+                started_at=guild_manager.started_at,
+            )
+
             guild_manager.clear_queue()
 
             await ctx.respond("# This guild mogi is finished and closed.")
