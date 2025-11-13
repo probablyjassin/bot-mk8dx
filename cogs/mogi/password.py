@@ -6,6 +6,9 @@ from models import MogiApplicationContext
 
 from utils.decorators.checks import _is_at_least_role
 from utils.decorators import LoungeRole, with_player
+from utils.command_helpers import get_best_server
+
+from utils.data import guild_manager
 
 
 class password(commands.Cog):
@@ -20,6 +23,25 @@ class password(commands.Cog):
         passwords: dict | None = None
         with open("state/passwords.json", "r", encoding="utf-8") as f:
             passwords: dict | None = json.load(f)
+
+        # for guilds
+        if len(guild_manager.playing_guilds):
+            for guild in guild_manager.playing_guilds:
+                if ctx.player in guild.playing:
+                    best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
+
+                    pwd = passwords.get(best_server.name)
+
+                    response = (
+                        f"{ctx.mogi.room.name}\nPassword: `{pwd}`"
+                        if pwd
+                        else "Password for your mogi's room not found, please contact a Mogi Manager or Admin."
+                    )
+
+                    await ctx.respond(
+                        response,
+                        ephemeral=True,
+                    )
 
         if (not ctx.mogi or not ctx.mogi.room) and ctx.get_lounge_role(
             "Admin"
