@@ -1,5 +1,6 @@
 from time import time
 from bson.int64 import Int64
+from pymongo import UpdateOne
 from utils.data._database import db_guilds
 
 from typing import TYPE_CHECKING, Optional
@@ -163,3 +164,19 @@ async def get_player_guild(player_id: int) -> "Guild":
 
     potential_guild = await db_guilds.find_one({"player_ids": Int64(player_id)})
     return Guild(**potential_guild) if potential_guild else None
+
+
+async def apply_result_mmr(data_to_update_obj: list[dict[str, str | int]]):
+    await db_guilds.bulk_write(
+        [
+            UpdateOne(
+                {"name": entry["name"]},
+                {
+                    "$set": {"mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1},
+                    "$push": {"history": entry["delta"]},
+                },
+                upsert=False,
+            )
+            for entry in data_to_update_obj
+        ]
+    )
