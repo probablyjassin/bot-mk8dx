@@ -44,8 +44,7 @@ class squads(commands.Cog):
 
                 target_guild.add_sub(ctx.player)
                 return await ctx.respond(
-                    "You've queued up as a sub for the ongoing guild mogi for your team.\n"
-                    f"Debug: {ctx.lounge_guild.name}, {target_guild.playing}"
+                    "You've queued up as a sub for the ongoing guild mogi for your team."
                 )
 
         queue = guild_manager.read_queue()
