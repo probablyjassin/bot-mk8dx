@@ -46,6 +46,7 @@ class DataManager:
         get_player_guild = staticmethod(guilds.get_player_guild)
         append_history = staticmethod(guilds.append_history)
         set_attribute = staticmethod(guilds.set_attribute)
+        apply_result_mmr = staticmethod(guilds.apply_result_mmr)
 
 
 data_manager = DataManager()

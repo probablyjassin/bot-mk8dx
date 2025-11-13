@@ -62,10 +62,12 @@ class GuildManager:
         self.queue = {}
         self.playing_guilds = []
         self.guilds_format = None
+        self.results = []
 
     def clear_playing(self) -> None:
         self.playing_guilds = []
         self.guilds_format = None
+        self.results = []
 
     def read_queue(self) -> dict[str, list[int]]:
         return self.queue
