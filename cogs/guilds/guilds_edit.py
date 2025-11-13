@@ -100,6 +100,9 @@ class guilds_edit(commands.Cog):
     ):
         await ctx.response.defer()
 
+        if len(ctx.lounge_guild.player_ids) >= 12:
+            return await ctx.respond("Your guild is maxed out on players (12).")
+
         if existing_guild := await data_manager.Guilds.get_player_guild(
             ctx.player.discord_id
         ):
