@@ -1,3 +1,4 @@
+from time import time
 from dataclasses import dataclass
 from models.GuildModel import Guild, PlayingGuild
 from models.PlayerModel import PlayerProfile
@@ -12,6 +13,7 @@ class GuildManager:
         self.guilds_format: int | None = None
         self.placements: list[int] | None = None
         self.results: list[int] | None = None
+        self.started_at: int | None = None
 
     def queue_up(self, guild: Guild, player_id: int) -> None:
         if player_id not in guild.player_ids:
@@ -56,6 +58,7 @@ class GuildManager:
             self.playing_guilds.append(playing_guild)
 
         self.guilds_format = min_players
+        self.started_at = round(time())
         return min_players, self.playing_guilds
 
     def clear_queue(self) -> None:
@@ -63,6 +66,7 @@ class GuildManager:
         self.playing_guilds = []
         self.guilds_format = None
         self.results = []
+        self.started_at = None
 
     def clear_playing(self) -> None:
         self.playing_guilds = []

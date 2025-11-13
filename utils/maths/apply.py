@@ -29,7 +29,7 @@ async def apply_mmr(mogi: Mogi) -> None:
     )
 
 
-def apply_guild_mmr(guilds: list[Guild | PlayingGuild], mmr_deltas: list[int]):
+async def apply_guild_mmr(guilds: list[Guild | PlayingGuild], mmr_deltas: list[int]):
     data_to_update_obj: list[dict[str, str | int]] = [
         {
             "name": guilds[i].name,
@@ -39,4 +39,4 @@ def apply_guild_mmr(guilds: list[Guild | PlayingGuild], mmr_deltas: list[int]):
         for i in range(len(guilds))
     ]
 
-    data_manager.Guilds.apply_result_mmr(data_to_update_obj)
+    await data_manager.Guilds.apply_result_mmr(data_to_update_obj)

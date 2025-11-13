@@ -1,7 +1,7 @@
 from time import time
 from bson.int64 import Int64
 from pymongo import UpdateOne
-from utils.data._database import db_guilds
+from utils.data._database import db_guilds, db_guild_mogis
 
 from typing import TYPE_CHECKING, Optional
 
@@ -147,6 +147,25 @@ async def append_history(guild: "Guild", score: int) -> None:
     await db_guilds.update_one(
         {"_id": guild._id},
         {"$push": {"history": score}},
+    )
+
+
+async def save_mogi_history(
+    guild_names: list[str],
+    players: list[list[int]],
+    format: int,
+    results: list[int],
+    started_at: int,
+) -> None:
+    await db_guild_mogis.insert_one(
+        {
+            "guilds": guild_names,
+            "players": players,
+            "format": format,
+            "results": results,
+            "started_at": started_at,
+            "finished_at": round(time()),
+        }
     )
 
 
