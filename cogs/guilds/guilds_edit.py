@@ -33,6 +33,12 @@ class guilds_edit(commands.Cog):
         if lounge_guild_role in ctx.user.roles:
             await ctx.user.remove_roles(lounge_guild_role)
 
+        if (
+            general_guilds_role := get(ctx.guild.roles, name="Guilds")
+            and general_guilds_role in ctx.player_discord.roles
+        ):
+            await ctx.player_discord.remove_roles(general_guilds_role)
+
         await data_manager.Guilds.remove_member(ctx.lounge_guild, ctx.user.id)
         await ctx.respond(
             f"{ctx.user.mention} left the guild **{ctx.lounge_guild.name}**."
@@ -127,6 +133,12 @@ class guilds_edit(commands.Cog):
             if lounge_guild_role:
                 await ctx.player_discord.add_roles(lounge_guild_role)
 
+            if (
+                general_guilds_role := get(ctx.guild.roles, name="Guilds")
+                and general_guilds_role not in ctx.player_discord.roles
+            ):
+                await ctx.player_discord.add_roles(general_guilds_role)
+
             await ctx.respond(
                 f"# <@{ctx.player_discord.id}> is now part of **{ctx.lounge_guild.name}**!"
             )
@@ -166,6 +178,12 @@ class guilds_edit(commands.Cog):
 
         if lounge_guild_role:
             await ctx.player_discord.remove_roles(lounge_guild_role)
+
+        if (
+            general_guilds_role := get(ctx.guild.roles, name="Guilds")
+            and general_guilds_role in ctx.player_discord.roles
+        ):
+            await ctx.player_discord.remove_roles(general_guilds_role)
 
         await ctx.respond(
             f"{ctx.player_discord.mention} has been removed from **{guild.name}**."
