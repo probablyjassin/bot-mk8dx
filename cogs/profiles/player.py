@@ -112,6 +112,11 @@ class player(commands.Cog):
         if getattr(player, "disconnects", None):
             embed.add_field(name="DCd", value=f"{player.disconnects} times")
 
+        if player_guild := await data_manager.Guilds.get_player_guild(
+            player.discord_id
+        ):
+            embed.add_field(name="Guild", value=f"**{player_guild.name}**")
+
         embed.set_author(
             name="Yuzu-Lounge",
             icon_url="https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
