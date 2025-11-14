@@ -25,7 +25,10 @@ class password(commands.Cog):
             passwords: dict | None = json.load(f)
 
         # for guilds
-        if len(guild_manager.playing_guilds):
+        if (
+            len(guild_manager.playing_guilds)
+            and ctx.get_lounge_role("Admin") not in ctx.user.roles
+        ):
             for guild in guild_manager.playing_guilds:
                 if ctx.player in guild.playing:
                     best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
@@ -38,7 +41,7 @@ class password(commands.Cog):
                         else "Password for your mogi's room not found, please contact a Mogi Manager or Admin."
                     )
 
-                    await ctx.respond(
+                    return await ctx.respond(
                         response,
                         ephemeral=True,
                     )
