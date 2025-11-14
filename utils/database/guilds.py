@@ -178,7 +178,7 @@ async def player_has_guild(player_id: int) -> bool:
     return bool(result)
 
 
-async def get_player_guild(player_id: int) -> "Guild" | None:
+async def get_player_guild(player_id: int) -> Optional["Guild"]:
     from models.GuildModel import Guild
 
     potential_guild = await db_guilds.find_one({"player_ids": Int64(player_id)})
