@@ -35,8 +35,7 @@ class guilds_edit(commands.Cog):
 
         if (
             general_guilds_role := get(ctx.guild.roles, name="Guilds")
-            and general_guilds_role in ctx.player_discord.roles
-        ):
+        ) and general_guilds_role in ctx.player_discord.roles:
             await ctx.player_discord.remove_roles(general_guilds_role)
 
         await data_manager.Guilds.remove_member(ctx.lounge_guild, ctx.user.id)
@@ -135,8 +134,7 @@ class guilds_edit(commands.Cog):
 
             if (
                 general_guilds_role := get(ctx.guild.roles, name="Guilds")
-                and general_guilds_role not in ctx.player_discord.roles
-            ):
+            ) and general_guilds_role not in ctx.player_discord.roles:
                 await ctx.player_discord.add_roles(general_guilds_role)
 
             await ctx.respond(
@@ -181,8 +179,7 @@ class guilds_edit(commands.Cog):
 
         if (
             general_guilds_role := get(ctx.guild.roles, name="Guilds")
-            and general_guilds_role in ctx.player_discord.roles
-        ):
+        ) and general_guilds_role in ctx.player_discord.roles:
             await ctx.player_discord.remove_roles(general_guilds_role)
 
         await ctx.respond(
