@@ -33,7 +33,7 @@ class password(commands.Cog):
                     pwd = passwords.get(best_server.name)
 
                     response = (
-                        f"{ctx.mogi.room.name}\nPassword: `{pwd}`"
+                        f"Password: `{pwd}`"
                         if pwd
                         else "Password for your mogi's room not found, please contact a Mogi Manager or Admin."
                     )
