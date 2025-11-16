@@ -57,90 +57,90 @@ def ocr_to_tablestring(ocr_names: list[str], scores: list[str]) -> str:
 async def pattern_match_lounge_names(
     players: list[str], lounge_names: list[str]
 ) -> list[str] | None:
-    actual_names = [None] * len(players)
-    available_lounge_names = lounge_names[:]
-
-    print("--- thingy matching results: ----")
-
-    # Pass 1: lock in high-confidence matches (>90 score)
-    for i, name in enumerate(players):
-        match_result: tuple[str, int] | None = process.extractOne(
-            name, available_lounge_names
+    """
+    Match OCR-detected player names to their actual lounge names using fuzzy matching.
+    Uses a multi-pass approach with alias checking for better accuracy.
+    """
+    if len(players) != len(lounge_names):
+        print(
+            f"Error: Player count mismatch. OCR: {len(players)}, Lounge: {len(lounge_names)}"
         )
-        if match_result is None:
-            print(f"failed to match {name}")
-            return None
-        candidate_name, score, _ = match_result
-        if score > 90:
-            actual_names[i] = candidate_name
-            available_lounge_names.remove(candidate_name)
-            print(f"High confidence: {name} → {candidate_name} ({score})")
+        return None
 
-    # Pass 2: match remaining players from remaining pool
-    for i, name in enumerate(players):
-        if actual_names[i] is not None:
-            continue  # already matched
+    print("--- Pattern matching results ---")
 
-        match_result: tuple[str, int] | None = process.extractOne(
-            name, available_lounge_names
-        )
-        if match_result is None:
-            print(f"failed to match {name}")
-            return None
-        candidate_name, score, _ = match_result
-        actual_names[i] = candidate_name
-        available_lounge_names.remove(candidate_name)
-        print(f"Matched: {name} → {candidate_name} ({score})")
-
-    # Check aliases and override if higher confidence
+    # Fetch aliases once upfront
     all_aliases = await data_manager.Aliases.get_all_aliases()
 
-    for i, name in enumerate(players):
-        attempt: tuple[str, int] | None = process.extractOne(
-            name, list(all_aliases.values())
+    # Create a scoring map for all possible matches
+    match_scores = {}
+    for ocr_name in players:
+        match_scores[ocr_name] = {}
+
+        # Score against lounge names
+        for lounge_name in lounge_names:
+            result = process.extractOne(ocr_name, [lounge_name])
+            if result:
+                match_scores[ocr_name][lounge_name] = result[1]
+
+        # Score against aliases (map back to actual lounge name)
+        for alias_key, alias_val in all_aliases.items():
+            if alias_key in lounge_names:
+                result = process.extractOne(ocr_name, [alias_val])
+                if result:
+                    # Use alias score if it's better than direct match
+                    current_score = match_scores[ocr_name].get(alias_key, 0)
+                    match_scores[ocr_name][alias_key] = max(current_score, result[1])
+
+    # Greedy matching: assign best matches first
+    assigned = {}
+    used_lounge_names = set()
+
+    # Sort OCR names by their best match score (descending)
+    sorted_players = sorted(
+        players,
+        key=lambda p: max(match_scores[p].values()) if match_scores[p] else 0,
+        reverse=True,
+    )
+
+    for ocr_name in sorted_players:
+        # Find best available match
+        best_match = None
+        best_score = 0
+
+        for lounge_name, score in match_scores[ocr_name].items():
+            if lounge_name not in used_lounge_names and score > best_score:
+                best_match = lounge_name
+                best_score = score
+
+        if best_match is None:
+            print(f"Failed to match: {ocr_name}")
+            return None
+
+        assigned[ocr_name] = best_match
+        used_lounge_names.add(best_match)
+
+        # Check if match was via alias
+        alias_used = ""
+        for alias_key, alias_val in all_aliases.items():
+            if alias_key == best_match:
+                result = process.extractOne(ocr_name, [alias_val])
+                if result and result[1] >= best_score:
+                    alias_used = f" (via alias '{alias_val}')"
+                    break
+
+        confidence = (
+            "HIGH" if best_score > 90 else "MEDIUM" if best_score > 70 else "LOW"
         )
-        if attempt:
-            potential_alias_match, certainty, _ = attempt
-            if potential_alias_match and certainty > 70:
-                # Find the key for this alias value
-                for alias_key, alias_val in all_aliases.items():
-                    if alias_val == potential_alias_match:
-                        # Only override if the alias key is in lounge_names and not already used
-                        if alias_key in lounge_names and alias_key not in actual_names:
-                            # Return the old name to the pool
-                            if actual_names[i]:
-                                available_lounge_names.append(actual_names[i])
-                            actual_names[i] = alias_key
-                            print(f"Alias match: {name} → {alias_key} ({certainty})")
-                        break
+        print(f"[{confidence}] {ocr_name} → {best_match} ({best_score}){alias_used}")
 
-    # Pass 3: Final validation and cleanup - ensure no duplicates and all names assigned
-    used_names = set()
-    for i, assigned_name in enumerate(actual_names):
-        if assigned_name in used_names:
-            # Duplicate detected - reassign from available pool
-            print(f"Duplicate detected: {assigned_name} at position {i}")
-            if available_lounge_names:
-                new_name = available_lounge_names.pop(0)
-                actual_names[i] = new_name
-                print(f"Reassigned to: {new_name}")
-            else:
-                print(f"No available names left for position {i}")
-                return None
-        else:
-            used_names.add(assigned_name)
+    # Reconstruct in original player order
+    result = [assigned[name] for name in players]
 
-    # Verify all names are assigned
-    if None in actual_names:
-        print("Error: Some names were not assigned")
+    # Validation
+    if len(set(result)) != len(lounge_names):
+        print(f"Error: Duplicate assignments detected")
         return None
 
-    # Verify correct count
-    if len(set(actual_names)) != len(lounge_names):
-        print(
-            f"Error: Name count mismatch. Expected {len(lounge_names)}, got {len(set(actual_names))}"
-        )
-        return None
-
-    print(f"Final assignments: {actual_names}")
-    return actual_names
+    print(f"✓ Successfully matched all {len(players)} players")
+    return result
