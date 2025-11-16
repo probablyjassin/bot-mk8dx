@@ -214,7 +214,7 @@ class table_read(commands.Cog):
                 names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
-                if set(players).issubset(set(potential_actual_names)):
+                if set(players) == set(potential_actual_names):
                     names.clear()
                     names.extend(potential_actual_names)
                 else:
