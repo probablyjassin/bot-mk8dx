@@ -72,7 +72,8 @@ class stop(commands.Cog):
                 best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
                 ctx.mogi.room = best_server
             await ctx.channel.send(
-                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+                f"# Yuzu Server: {ctx.mogi.room.name}\n"
+                f"Use </password:{self.bot.get_application_command(name='password').id}>"
             )
 
         async def send_mogi_start(winning_format: str, random_teams: bool):
@@ -87,7 +88,15 @@ class stop(commands.Cog):
 
             # Send the lineup, show the mogi has started
             await ctx.send(
-                f"# Mogi starting!\n## Format: {'RANDOM' if random_teams and format_int != 1 else ''} {winning_format.upper()} Mogi\n### Lineup:\n{lineup}"
+                f"# Mogi starting!\n"
+                "## Format: "
+                f"{'RANDOM' if random_teams and format_int != 1 else ''} "
+                f"{winning_format.upper()} Mogi\n"
+                f"### Lineup:\n{lineup}"
+            )
+
+            await ctx.send(
+                f"# </password:{self.bot.get_application_command(name='password').id}>"
             )
 
         ctx.mogi.vote.add_setup_handler(send_vote)
