@@ -221,7 +221,8 @@ class table_read(commands.Cog):
                     return await ctx.respond(
                         f"Matched lounge names but they don't fit with the selected tablestring:\n"
                         f"Detected Names: `{names}`\n"
-                        f"Matched Lounge Names: `{potential_actual_names}`"
+                        f"Matched Lounge Names: `{potential_actual_names}`\n"
+                        f"Names on tablestring: `{players}`"
                     )
             else:
                 return await ctx.respond(
