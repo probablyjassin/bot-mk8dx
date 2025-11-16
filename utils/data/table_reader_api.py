@@ -105,8 +105,42 @@ async def pattern_match_lounge_names(
                 # Find the key for this alias value
                 for alias_key, alias_val in all_aliases.items():
                     if alias_val == potential_alias_match:
-                        actual_names[i] = alias_key
-                        print(f"Alias match: {name} → {alias_key} ({certainty})")
+                        # Only override if the alias key is in lounge_names and not already used
+                        if alias_key in lounge_names and alias_key not in actual_names:
+                            # Return the old name to the pool
+                            if actual_names[i]:
+                                available_lounge_names.append(actual_names[i])
+                            actual_names[i] = alias_key
+                            print(f"Alias match: {name} → {alias_key} ({certainty})")
                         break
 
+    # Pass 3: Final validation and cleanup - ensure no duplicates and all names assigned
+    used_names = set()
+    for i, assigned_name in enumerate(actual_names):
+        if assigned_name in used_names:
+            # Duplicate detected - reassign from available pool
+            print(f"Duplicate detected: {assigned_name} at position {i}")
+            if available_lounge_names:
+                new_name = available_lounge_names.pop(0)
+                actual_names[i] = new_name
+                print(f"Reassigned to: {new_name}")
+            else:
+                print(f"No available names left for position {i}")
+                return None
+        else:
+            used_names.add(assigned_name)
+
+    # Verify all names are assigned
+    if None in actual_names:
+        print("Error: Some names were not assigned")
+        return None
+
+    # Verify correct count
+    if len(set(actual_names)) != len(lounge_names):
+        print(
+            f"Error: Name count mismatch. Expected {len(lounge_names)}, got {len(set(actual_names))}"
+        )
+        return None
+
+    print(f"Final assignments: {actual_names}")
     return actual_names
