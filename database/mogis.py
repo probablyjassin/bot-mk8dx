@@ -1,5 +1,5 @@
 from pymongo import UpdateOne
-from database._mongodb import db_players, db_mogis
+from ._mongodb import db_players, db_mogis
 
 from typing import TYPE_CHECKING
 
