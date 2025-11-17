@@ -6,7 +6,7 @@ from pycord.multicog import subcommand
 
 from models import MogiApplicationContext
 from utils.data import mogi_manager
-from utils.maths.apply import apply_mmr
+from utils.maths import apply_mmr
 
 from utils.command_helpers import update_roles, remove_team_roles, get_guild_member
 from utils.decorators import (

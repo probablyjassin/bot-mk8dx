@@ -7,7 +7,7 @@ from pycord.multicog import subcommand
 from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
 from utils.data import guild_manager, data_manager
-from utils.maths.apply import apply_guild_mmr
+from utils.maths import apply_guild_mmr
 
 
 class guild_apply(commands.Cog):

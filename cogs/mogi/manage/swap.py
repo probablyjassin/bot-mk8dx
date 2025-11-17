@@ -5,7 +5,7 @@ from models import MogiApplicationContext, PlayerProfile
 from pycord.multicog import subcommand
 
 from utils.data import data_manager
-from utils.maths.replace import recurse_replace
+from utils.maths import recurse_replace
 from utils.decorators import (
     is_mogi_open,
     is_admin,

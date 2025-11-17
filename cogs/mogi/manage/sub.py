@@ -7,7 +7,7 @@ from discord.utils import get
 from models import MogiApplicationContext
 
 from utils.data import data_manager, mogi_manager
-from utils.maths.replace import recurse_replace
+from utils.maths import recurse_replace
 from utils.command_helpers import get_guild_member, player_name_autocomplete
 from utils.decorators import (
     is_mogi_in_progress,

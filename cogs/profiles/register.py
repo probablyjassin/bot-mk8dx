@@ -15,7 +15,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext
 from utils.command_helpers import create_embed, REGIONS, VerificationView
-from utils.maths.readable_timediff import readable_timedelta
+from utils.maths import readable_timedelta
 
 from logger import setup_logger
 
