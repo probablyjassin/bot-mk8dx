@@ -1,4 +1,4 @@
-import time, math
+import time
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -7,7 +7,7 @@ from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
-from utils.maths import teams_alg_distribute_by_order_kevnkkm
+from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
 
 
 @dataclass

@@ -1,14 +1,19 @@
+from typing import TYPE_CHECKING
+
 import math, time
 from discord import File
 
-from models import MogiApplicationContext
-
-from utils.maths import get_placements_from_scores, calculate_mmr, create_table
+from .placements import get_placements_from_scores
+from .mmr_algorithm import calculate_mmr
+from .table import create_table
 
 from config import FORMATS
 
+if TYPE_CHECKING:
+    from models.CustomMogiContext import MogiApplicationContext
 
-async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
+
+async def process_tablestring(ctx: "MogiApplicationContext", tablestring: str):
     ctx.mogi.finished_at = round(time.time())
 
     if not tablestring:
