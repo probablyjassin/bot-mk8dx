@@ -1,8 +1,13 @@
-from models import PlayerProfile
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models import PlayerProfile
 
 
 def recurse_replace(
-    space: list | list[list] | PlayerProfile, player: PlayerProfile, sub: PlayerProfile
+    space: "list | list[list] | PlayerProfile",
+    player: "PlayerProfile",
+    sub: "PlayerProfile",
 ):
     if isinstance(space, list):
         return [recurse_replace(item, player, sub) for item in space]

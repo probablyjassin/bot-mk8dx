@@ -1,8 +1,13 @@
-from models import Mogi, Guild, PlayingGuild
+from typing import TYPE_CHECKING
+
 from utils.data.data_manager import data_manager
 
+if TYPE_CHECKING:
+    from models.MogiModel import Mogi
+    from models.GuildModel import Guild, PlayingGuild
 
-async def apply_mmr(mogi: Mogi) -> None:
+
+async def apply_mmr(mogi: "Mogi") -> None:
 
     all_player_names = [player.name for player in mogi.players]
     all_player_mmrs = [player.mmr for player in mogi.players]
@@ -29,7 +34,7 @@ async def apply_mmr(mogi: Mogi) -> None:
     )
 
 
-async def apply_guild_mmr(guilds: list[Guild | PlayingGuild], mmr_deltas: list[int]):
+async def apply_guild_mmr(guilds: list["Guild | PlayingGuild"], mmr_deltas: list[int]):
     data_to_update_obj: list[dict[str, str | int]] = [
         {
             "name": guilds[i].name,
