@@ -3,9 +3,7 @@ from discord import File
 
 from models import MogiApplicationContext
 
-from utils.maths.mmr_algorithm import calculate_mmr
-from utils.maths.placements import get_placements_from_scores
-from utils.maths.table import create_table
+from utils.maths import get_placements_from_scores, calculate_mmr, create_table
 
 from config import FORMATS
 

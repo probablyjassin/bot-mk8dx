@@ -7,10 +7,7 @@ from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
-from utils.maths.teams_algorithm import (
-    teams_alg_distribute_by_order_kevnkkm,
-    teams_alg_random,
-)
+from utils.maths import teams_alg_distribute_by_order_kevnkkm
 
 
 @dataclass
