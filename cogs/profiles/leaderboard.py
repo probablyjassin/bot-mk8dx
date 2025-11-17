@@ -10,7 +10,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, Rank
 import typing
 from utils.data import data_manager
-from utils.database.types import sort_type
+from database.types import sort_type
 
 
 class leaderboard(commands.Cog):

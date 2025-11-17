@@ -1,10 +1,10 @@
 from dataclasses import dataclass
 
-from utils.database import players
-from utils.database import aliases
-from utils.database import leaderboard
-from utils.database import mogis
-from utils.database import guilds
+from database import players
+from database import aliases
+from database import leaderboard
+from database import mogis
+from database import guilds
 
 
 @dataclass

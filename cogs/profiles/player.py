@@ -3,7 +3,7 @@ from discord.ui import View, Button
 from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile, Rank
-from utils.database.types import archive_type
+from database.types import archive_type
 from utils.data import data_manager
 from utils.command_helpers import player_name_autocomplete
 

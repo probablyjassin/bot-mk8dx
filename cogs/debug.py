@@ -9,7 +9,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Room
 
-from utils.database.types import archive_type
+from database.types import archive_type
 
 from utils.data import mogi_manager, state_manager, data_manager
 from utils.command_helpers import confirmation

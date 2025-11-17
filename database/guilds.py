@@ -1,7 +1,7 @@
 from time import time
 from bson.int64 import Int64
 from pymongo import UpdateOne
-from utils.data._database import db_guilds, db_guild_mogis
+from database._mongodb import db_guilds, db_guild_mogis
 
 from typing import TYPE_CHECKING, Optional
 

@@ -1,10 +1,9 @@
 from functools import wraps
-from bson.int64 import Int64
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.find_player import get_guild_member
 
-from utils.database.types import archive_type
+from database.types import archive_type
 from utils.data import data_manager, mogi_manager
 
 
