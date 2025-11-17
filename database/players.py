@@ -1,7 +1,7 @@
 from bson.int64 import Int64
 from time import time
-from utils.database.types import archive_type
-from utils.data._database import db_players
+from database.types import archive_type
+from database._mongodb import db_players
 
 from typing import TYPE_CHECKING, Optional
 

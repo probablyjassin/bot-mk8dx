@@ -11,7 +11,7 @@ from discord import Activity, ActivityType, Status, AllowedMentions
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from utils.database.types import archive_type
+from database.types import archive_type
 from utils.data import data_manager, state_manager, mogi_manager
 
 from utils.command_helpers import fetch_server_passwords

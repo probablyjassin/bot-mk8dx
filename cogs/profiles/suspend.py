@@ -3,7 +3,7 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.database.types import archive_type
+from database.types import archive_type
 from utils.data import data_manager
 from utils.decorators import is_moderator
 
