@@ -6,7 +6,6 @@ from pycord.multicog import subcommand
 
 from models import MogiApplicationContext
 from utils.data import mogi_manager
-from utils.maths import apply_mmr
 
 from utils.command_helpers import update_roles, remove_team_roles, get_guild_member
 from utils.decorators import (
@@ -36,7 +35,7 @@ class apply(commands.Cog):
                     "Something has gone seriously wrong, players and results don't add up. Use /debug to find the issue and contact a moderator."
                 )
 
-            await apply_mmr(ctx.mogi)
+            await ctx.mogi.apply_mmr()
             await ctx.send("Applied MMR changes ✅")
             await update_roles(ctx, ctx.mogi)
 
