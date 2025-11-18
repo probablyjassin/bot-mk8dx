@@ -50,7 +50,7 @@ async def apply_result_mmr(data_to_update_obj: list[dict[str, str | int]]) -> No
     return await guilds.apply_result_mmr(data_to_update_obj=data_to_update_obj)
 
 
-async def save_mogi_history(
+async def save_guild_mogi_history(
     guild_names: list[str],
     players: list[list[int]],
     format: int,

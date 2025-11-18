@@ -14,7 +14,7 @@ from database.types import archive_type
 from services.mogis import get_all_mogi_history
 from services.players import get_all_player_profiles
 
-from utils.data import mogi_manager, state_manager, data_manager
+from utils.data import mogi_manager, state_manager
 from utils.command_helpers import confirmation
 from utils.decorators import (
     is_admin,
