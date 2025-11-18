@@ -5,7 +5,7 @@ from discord.ext import commands
 from discord.utils import get
 
 from utils.data import data_manager
-from models import MogiApplicationContext, Guild
+from models import MogiApplicationContext
 from utils.decorators import with_guild, with_player, is_moderator
 from utils.command_helpers import player_name_autocomplete, confirmation
 

@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data.data_manager import data_manager
+
+from services.guilds import remove_member, set_guild_attribute
+from services.players import find_player_profiles_by_ids
 
 from typing import TYPE_CHECKING
 
@@ -48,7 +50,7 @@ class Guild:
         return self._name
 
     async def set_name(self, value: str):
-        await data_manager.Guilds.set_attribute(self, "name", value)
+        await set_guild_attribute(self, "name", value)
 
     # icon
     @property
@@ -82,8 +84,7 @@ class Guild:
         self._player_ids.append(player_id)
 
     def remove_player_id(self, player_id: Int64):
-        if player_id in self._player_ids:
-            self._player_ids.remove(player_id)
+        remove_member(guild=self, player_id=player_id)
 
     # history
     @property
@@ -94,7 +95,7 @@ class Guild:
         self._history.append(value)
 
     async def fetch_player_profiles(self) -> list["PlayerProfile"]:
-        return await data_manager.Players.find_list(self.player_ids)
+        return await find_player_profiles_by_ids(self.player_ids)
 
     # Properties
 

@@ -14,7 +14,7 @@ from discord.utils import get
 from database.types import archive_type
 from services.mogis import get_all_mogi_history
 from services.players import get_all_player_profiles
-from utils.data import data_manager, state_manager, mogi_manager
+from utils.data import state_manager, mogi_manager
 
 from utils.command_helpers import fetch_server_passwords
 
