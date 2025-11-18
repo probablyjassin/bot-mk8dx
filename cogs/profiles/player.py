@@ -112,9 +112,7 @@ class player(commands.Cog):
         if getattr(player, "disconnects", None):
             embed.add_field(name="DCd", value=f"{player.disconnects} times")
 
-        if player_guild := await data_manager.Guilds.get_player_guild(
-            player.discord_id
-        ):
+        if player_guild := await player.fetch_guild():
             embed.add_field(name="Guild", value=f"**{player_guild.name}**")
 
         embed.set_author(

@@ -3,6 +3,11 @@ from bson.objectid import ObjectId
 from bson.int64 import Int64
 from utils.data import data_manager
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.GuildModel import Guild
+
 
 @dataclass
 class PlayerProfile:
@@ -144,6 +149,9 @@ class PlayerProfile:
 
     async def set_suspended(self, value):
         await data_manager.Players.set_attribute(self, "suspended", value)
+
+    async def fetch_guild(self) -> "Guild":
+        return await data_manager.Guilds.get_player_guild(self.discord_id)
 
     # Dict methods
     def to_json(self) -> dict:
