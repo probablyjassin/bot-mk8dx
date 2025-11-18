@@ -3,36 +3,13 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, mogi_manager
+from utils.data import mogi_manager
 from utils.decorators import is_mogi_manager, with_player
 
 
 class penalties(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
-
-    @slash_command(
-        name="bank",
-        description="Check MrBoost's bank balance",
-    )
-    async def bank(self, ctx: MogiApplicationContext):
-
-        player: PlayerProfile = await data_manager.Players.find("mrboost")
-
-        if not player:
-            return await ctx.respond("Couldn't find that player")
-
-        embed: Embed = Embed(title=f"{player.name}")
-        embed.add_field(
-            name="MMR",
-            value=f"{player.mmr}",
-            inline=True,
-        )
-        embed.set_image(
-            url="https://raw.githubusercontent.com/mk8dx-yuzu/images/7ff99fd3ac23c74c75fbf964f0d2070342eb33ee/mrboost.gif"
-        )
-
-        await ctx.respond(f"mrboost - overview", embed=embed)
 
     @slash_command(
         name="tax",

@@ -8,9 +8,10 @@ from discord import slash_command, Option, File
 from discord.ext import commands
 
 from models import MogiApplicationContext, Rank
-import typing
-from utils.data import data_manager
 from database.types import sort_type
+
+from services.players import count_players
+from services.miscellaneous import get_leaderboard
 
 
 class leaderboard(commands.Cog):
@@ -35,7 +36,7 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
-        total_player_count = await data_manager.Players.count()
+        total_player_count = await count_players()
 
         page_index = page_index if page_index > 0 else 1
         max_pages = -(-total_player_count // 10)
@@ -48,9 +49,7 @@ class leaderboard(commands.Cog):
         )
         skip_count = skip_count if skip_count >= 0 else 0
 
-        data = await data_manager.Leaderboard.get_leaderboard(
-            page_index=page_index, sort=sort_type[sort]
-        )
+        data = await get_leaderboard(page_index=page_index, sort=sort_type[sort])
 
         tabledata = {
             "Placement": [i + skip_count + 1 for i in range(len(data))],

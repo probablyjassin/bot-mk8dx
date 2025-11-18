@@ -3,8 +3,8 @@ from discord.utils import get
 from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
+from services.players import find_player_profile
 
-from utils.data import data_manager
 from utils.decorators import (
     is_mogi_in_progress,
     is_in_mogi,
@@ -52,7 +52,7 @@ class team_tags(commands.Cog):
                     "You cannot include another player's name in your tag."
                 )
 
-        player: PlayerProfile = await data_manager.Players.find(ctx.interaction.user.id)
+        player: PlayerProfile = await find_player_profile(ctx.interaction.user.id)
 
         team_i = [i for i, subarray in enumerate(ctx.mogi.teams) if player in subarray][
             0

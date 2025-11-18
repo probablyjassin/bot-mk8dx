@@ -2,14 +2,11 @@ from discord import slash_command, Option, ButtonStyle, Embed, Colour
 from discord.ui import View, Button
 from discord.ext import commands
 
-from models import MogiApplicationContext, PlayerProfile, Rank
-from database.types import archive_type
-from utils.data import data_manager
+from models import MogiApplicationContext, Rank
 from utils.decorators import with_player
 from utils.command_helpers import player_name_autocomplete
 
 from datetime import datetime
-from bson.int64 import Int64
 
 
 class player(commands.Cog):

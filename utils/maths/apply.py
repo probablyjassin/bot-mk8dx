@@ -1,5 +1,5 @@
 from typing import TYPE_CHECKING
-from utils.data.data_manager import data_manager
+from services.guilds import apply_result_mmr
 
 if TYPE_CHECKING:
     from models.GuildModel import Guild, PlayingGuild
@@ -15,4 +15,4 @@ async def apply_guild_mmr(guilds: list["Guild | PlayingGuild"], mmr_deltas: list
         for i in range(len(guilds))
     ]
 
-    await data_manager.Guilds.apply_result_mmr(data_to_update_obj)
+    await apply_result_mmr(data_to_update_obj)

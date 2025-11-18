@@ -18,10 +18,12 @@ from utils.data import (
     ocr_to_tablestring,
     store,
 )
-from utils.data import data_manager
 from utils.command_helpers import player_name_autocomplete
 from utils.decorators import is_mogi_manager, with_player
-from utils.decorators.checks import _is_at_least_role, LoungeRole
+from utils.decorators.checks import LoungeRole
+
+from services.players import find_player_profile
+from services.miscellaneous import set_player_alias, get_all_aliases
 
 
 def is_image(attachment: Attachment) -> bool:
@@ -267,14 +269,12 @@ class table_read(commands.Cog):
         ),
     ):
         searched_player = (
-            await data_manager.Players.find(query=to_player) if to_player else None
+            await find_player_profile(query=to_player) if to_player else None
         )
         if to_player and not searched_player:
             return await ctx.respond("Couldn't find that player")
 
-        await data_manager.Aliases.set_player_alias(
-            searched_player if searched_player else ctx.player, name
-        )
+        await set_player_alias(searched_player if searched_player else ctx.player, name)
         return await ctx.respond(
             f"{searched_player.name if searched_player else ctx.player.name} -> `{name}`"
         )
@@ -284,7 +284,7 @@ class table_read(commands.Cog):
         await ctx.respond(
             "\n".join(
                 f"{key}: {value}"
-                for key, value in (await data_manager.Aliases.get_all_aliases()).items()
+                for key, value in (await get_all_aliases()).items()
                 if key != "_id"
             )
         )

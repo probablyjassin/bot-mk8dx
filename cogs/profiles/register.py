@@ -1,4 +1,3 @@
-import time
 import datetime
 import unicodedata
 
@@ -19,9 +18,8 @@ from utils.maths import readable_timedelta
 
 from logger import setup_logger
 
-from bson.int64 import Int64
 from config import LOG_CHANNEL_ID
-from utils.data.data_manager import data_manager
+from services.players import find_player_profile, create_new_player
 
 lounge_logger = setup_logger(__name__, "lounge.log", "a", console=False)
 
@@ -53,7 +51,7 @@ class register(commands.Cog):
                 "You're not in the right channel for this command.", ephemeral=True
             )
 
-        existingPlayer = await data_manager.Players.find(ctx.author.id) or None
+        existingPlayer = await find_player_profile(ctx.author.id) or None
         if existingPlayer:
             return await ctx.respond(
                 "You are already registered for Lounge.\nIf your Profile is archived or you're missing the Lounge roles due to rejoining the server, contact a moderator.",
@@ -98,7 +96,7 @@ class register(commands.Cog):
         if username == "":
             username = ctx.interaction.user.name.lower()
 
-        if await data_manager.Players.find(username):
+        if await find_player_profile(username):
             return await ctx.respond(
                 "This username is already taken. Try changing your server display name or ask a moderator for help.",
                 ephemeral=True,
@@ -135,9 +133,7 @@ class register(commands.Cog):
 
         # Verification passed - proceed with registration
         try:
-            await data_manager.Players.create_new_player(
-                username=username, discord_id=member.id
-            )
+            await create_new_player(username=username, discord_id=member.id)
         except Exception as e:
             return await ctx.respond(
                 f"Some error occured creating your player record. Please ask a moderator: {e}",

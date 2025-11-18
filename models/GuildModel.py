@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
 
-from services.guilds import remove_member, set_guild_attribute
+from services.guilds import add_member, remove_member, set_guild_attribute
 from services.players import find_player_profiles_by_ids
 
 from typing import TYPE_CHECKING
@@ -57,9 +57,8 @@ class Guild:
     def icon(self) -> str:
         return self._icon
 
-    @icon.setter
-    def icon(self, value: str):
-        self._icon = value
+    async def set_icon(self, value: str):
+        await set_guild_attribute(self, "icon", value)
 
     # mmr
     @property
@@ -80,11 +79,11 @@ class Guild:
     def player_ids(self) -> list[Int64]:
         return self._player_ids
 
-    def append_player_id(self, player_id: Int64):
-        self._player_ids.append(player_id)
+    async def add_member(self, player_id: Int64):
+        await add_member(guild=self, player_id=player_id)
 
-    def remove_player_id(self, player_id: Int64):
-        remove_member(guild=self, player_id=player_id)
+    async def remove_member(self, player_id: Int64):
+        await remove_member(guild=self, player_id=player_id)
 
     # history
     @property
