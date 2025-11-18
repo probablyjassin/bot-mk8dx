@@ -2,7 +2,8 @@ from time import time
 from dataclasses import dataclass
 from models.GuildModel import Guild, PlayingGuild
 from models.PlayerModel import PlayerProfile
-from utils.data.data_manager import data_manager
+from services.guilds import find_guild
+from services.players import find_player_profiles_by_ids
 
 
 @dataclass
@@ -42,9 +43,9 @@ class GuildManager:
             if len(queue[guild_name]) < 2:
                 continue
 
-            guild_obj = await data_manager.Guilds.find(guild_name)
+            guild_obj = await find_guild(guild_name)
 
-            queued_players: list[PlayerProfile] = await data_manager.Players.find_list(
+            queued_players: list[PlayerProfile] = await find_player_profiles_by_ids(
                 player_id_list
             )
 

@@ -2,8 +2,8 @@ import aiohttp
 from io import BufferedReader
 from typing import TypedDict, cast
 from rapidfuzz import process
+from services.miscellaneous import get_all_aliases
 
-from utils.data import data_manager
 from config import TABLE_READER_URL
 
 
@@ -93,7 +93,7 @@ async def pattern_match_lounge_names(
         print(f"Matched: {name} → {candidate_name} ({score})")
 
     # Check aliases and override if higher confidence
-    all_aliases = await data_manager.Aliases.get_all_aliases()
+    all_aliases = await get_all_aliases()
 
     for i, name in enumerate(players):
         attempt: tuple[str, int] | None = process.extractOne(

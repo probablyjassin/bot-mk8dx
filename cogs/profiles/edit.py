@@ -3,8 +3,9 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, mogi_manager
+from utils.data import mogi_manager
 
+from services.players import find_player_profile, delete_player
 from utils.command_helpers import get_guild_member
 from utils.decorators import is_moderator, with_player
 
@@ -67,7 +68,7 @@ class edit(commands.Cog):
         ),
         new_name: str = Option(str, name="newname", description="new username"),
     ):
-        player: PlayerProfile = await data_manager.Players.find(searched_player)
+        player: PlayerProfile = await find_player_profile(searched_player)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
@@ -102,12 +103,12 @@ class edit(commands.Cog):
             bool, name="try_remove_roles", description="Try removing Lounge roles"
         ),
     ):
-        player: PlayerProfile = await data_manager.Players.find(searched_player)
+        player: PlayerProfile = await find_player_profile(searched_player)
 
         if not player:
             return await ctx.respond("Couldn't find that player")
 
-        await data_manager.Players.delete(player)
+        await delete_player(player)
 
         if try_remove_roles:
             discord_member: Member | None = await get_guild_member(

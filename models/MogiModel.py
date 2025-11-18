@@ -2,12 +2,12 @@ import time
 from dataclasses import dataclass, field
 from bson import ObjectId
 
-from utils.data.data_manager import data_manager
 from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
 from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
+from services.mogis import apply_result_mmr, add_mogi_history
 
 
 @dataclass
@@ -188,7 +188,7 @@ class Mogi:
         ]
 
         # push changes to the database
-        await data_manager.Mogis.apply_result_mmr(
+        await apply_result_mmr(
             data_to_update_obj, self.format if not self.is_mini else 0
         )
 
@@ -196,7 +196,7 @@ class Mogi:
         """
         Save the mogi to the database.
         """
-        await data_manager.Mogis.add_mogi_history(
+        await add_mogi_history(
             started_at=self.started_at,
             finished_at=self.finished_at,
             player_ids=[player.discord_id for player in self.players],

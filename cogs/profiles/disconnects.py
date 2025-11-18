@@ -6,7 +6,6 @@ from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager, is_moderator, with_player
 
 from database.types import archive_type
-from utils.data import data_manager
 from services.players import get_all_player_profiles
 
 
