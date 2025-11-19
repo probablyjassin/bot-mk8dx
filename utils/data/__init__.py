@@ -8,6 +8,7 @@ from .table_reader_api import (
     table_read_ocr_api,
     pattern_match_lounge_names,
     ocr_to_tablestring,
+    group_tablestring_by_teams,
 )
 
 __all__ = [
@@ -21,4 +22,5 @@ __all__ = [
     "table_read_ocr_api",
     "pattern_match_lounge_names",
     "ocr_to_tablestring",
+    "group_tablestring_by_teams",
 ]

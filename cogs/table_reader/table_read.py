@@ -1,6 +1,7 @@
 import re
 from io import BytesIO, BufferedReader
 from aiohttp import ClientResponseError
+from typing import Optional
 
 from discord import (
     SlashCommandGroup,
@@ -11,11 +12,12 @@ from discord import (
 )
 from discord.ext import commands
 
-from models import MogiApplicationContext, RestrictedOption
+from models import PlayerProfile, MogiApplicationContext, RestrictedOption
 from utils.data import (
     table_read_ocr_api,
     pattern_match_lounge_names,
     ocr_to_tablestring,
+    group_tablestring_by_teams,
     store,
 )
 from utils.command_helpers import player_name_autocomplete
@@ -44,6 +46,41 @@ def is_image(attachment: Attachment) -> bool:
             )
         )
     return is_image
+
+
+async def image_data_to_tablestring(
+    buffer_image: BufferedReader,
+    mogi_teams: Optional[list[list[PlayerProfile]]] = None,
+    mogi_format: Optional[int] = None,
+    team_tags: Optional[list[str]] = None,
+) -> str:
+    mogi_players = [player for team in mogi_teams for player in team]
+
+    output = await table_read_ocr_api(buffer_image)
+
+    ocr_names = [entry["name"] for entry in output]
+    scores = [entry["score"] for entry in output]
+
+    # if there is a mogi, try to match the names to the output
+    if mogi_players and len(mogi_players) == len(ocr_names):
+        potential_actual_names = await pattern_match_lounge_names(
+            ocr_names, [player.name for player in mogi_players]
+        )
+        if potential_actual_names:
+            ocr_names = potential_actual_names
+
+    created_tablestring = ocr_to_tablestring(ocr_names, scores)
+
+    if mogi_format and mogi_format >= 2:
+
+        if potential_grouped_tablestring := group_tablestring_by_teams(
+            tablestring=created_tablestring,
+            teams=mogi_teams,
+            team_tags=team_tags,
+        ):
+            created_tablestring = potential_grouped_tablestring
+
+    return created_tablestring
 
 
 class table_read(commands.Cog):
@@ -78,8 +115,15 @@ class table_read(commands.Cog):
 
         buffer_image = BufferedReader(BytesIO(data))
 
+        created_tablestring = None
+
         try:
-            output = await table_read_ocr_api(buffer_image)
+            created_tablestring = await image_data_to_tablestring(
+                buffer_image=buffer_image,
+                mogi_teams=ctx.mogi.teams if ctx.mogi else None,
+                mogi_format=ctx.mogi.format if ctx.mogi else None,
+                team_tags=ctx.mogi.team_tags if ctx.mogi else None,
+            )
         except ClientResponseError as e:
             return await ctx.respond(
                 f"Table reader API returned an error: HTTP {e.status} - {e.message}"
@@ -87,22 +131,10 @@ class table_read(commands.Cog):
         except Exception as e:
             return await ctx.respond(f"Error reading table: {str(e)}")
 
-        ocr_names = [entry["name"] for entry in output]
-        scores = [entry["score"] for entry in output]
+        await ctx.respond(f"```\n{created_tablestring}```")
 
-        # if there is a mogi, try to match the names to the output
-        if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
-            potential_actual_names = await pattern_match_lounge_names(
-                ocr_names, [player.name for player in ctx.mogi.players]
-            )
-            if potential_actual_names:
-                ocr_names = potential_actual_names
-
-        await ctx.respond(f"```\n{ocr_to_tablestring(ocr_names, scores)}```")
-
-    """ @message_command(
-        name="Screenshot to Tablestring",
-        description="Get a tablestring from a screenshot",
+    @message_command(
+        name="Read Table",
     )
     async def read(self, ctx: MogiApplicationContext, message: Message):
         await ctx.defer()
@@ -121,46 +153,30 @@ class table_read(commands.Cog):
                 screenshot = a
                 break
 
-        debug_str = ""
-
         if screenshot is None:
             return await ctx.respond("No attachment found")
-
-        debug_str += f"Submitted filename: {screenshot.filename}\n"
 
         data = await screenshot.read()
 
         buffer_image = BufferedReader(BytesIO(data))
-        output = await table_read_ocr_api(buffer_image)
-        names = [entry["name"] for entry in output]
-        scores = [entry["score"] for entry in output]
 
-        # if there is a mogi, try to match the names to the output
-        if ctx.mogi and len(ctx.mogi.players) == len(names):
-            debug_str += f"Tried to match screenshot names to lounge names\n"
-            actual_names = names[:]
-            choices = [player.name for player in ctx.mogi.players]
+        created_tablestring = None
 
-            print("thingy matching results:")
-            for i, name in enumerate(names):
-                match_result: tuple[str, int] | None = process.extractOne(name, choices)
-                print(match_result)
-                if match_result is None:
-                    continue
-                candidate_name, _ = match_result
-                actual_names[i] = candidate_name
+        try:
+            created_tablestring = await image_data_to_tablestring(
+                buffer_image=buffer_image,
+                mogi_teams=ctx.mogi.teams if ctx.mogi else None,
+                mogi_format=ctx.mogi.format if ctx.mogi else None,
+                team_tags=ctx.mogi.team_tags if ctx.mogi else None,
+            )
+        except ClientResponseError as e:
+            return await ctx.respond(
+                f"Table reader API returned an error: HTTP {e.status} - {e.message}"
+            )
+        except Exception as e:
+            return await ctx.respond(f"Error reading table: {str(e)}")
 
-            names = actual_names
-
-        def ocr_to_tablestring(names: list[str], scores: list[str]) -> str:
-            tablestring = "-\n"
-            for i, name in enumerate(names):
-                tablestring += f"{name} {scores[i]}+\n\n"
-            return tablestring
-
-        await ctx.respond(
-            f"```\n{ocr_to_tablestring(names, scores)}```\n\nDebug:{debug_str}"
-        ) """
+        await ctx.respond(f"```\n{created_tablestring}```")
 
     @message_command(
         name="Tablestring->Add points from Img",
@@ -216,14 +232,15 @@ class table_read(commands.Cog):
                 names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
-                if set(players).issubset(set(potential_actual_names)):
+                if set(players) == set(potential_actual_names):
                     names.clear()
                     names.extend(potential_actual_names)
                 else:
                     return await ctx.respond(
                         f"Matched lounge names but they don't fit with the selected tablestring:\n"
                         f"Detected Names: `{names}`\n"
-                        f"Matched Lounge Names: `{potential_actual_names}`"
+                        f"Matched Lounge Names: `{potential_actual_names}`\n"
+                        f"Names on tablestring: `{players}`"
                     )
             else:
                 return await ctx.respond(
