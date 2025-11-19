@@ -104,8 +104,8 @@ class sub(commands.Cog):
             ]
             for role in all_team_roles:
                 if role in player_user.roles:
-                    player_user.remove_roles(role)
-                    replacement_user.add_roles(role)
+                    await player_user.remove_roles(role)
+                    await replacement_user.add_roles(role)
 
         if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
