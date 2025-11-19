@@ -1,10 +1,14 @@
-import aiohttp
 from io import BufferedReader
-from typing import TypedDict, cast
-from rapidfuzz import process
+import aiohttp
 
+from rapidfuzz import process
 from utils.data import data_manager
 from config import TABLE_READER_URL
+
+from typing import Optional, TypedDict, cast, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.PlayerModel import PlayerProfile
 
 
 class OCRPlayerList(TypedDict):
@@ -144,3 +148,23 @@ async def pattern_match_lounge_names(
 
     print(f"✓ Successfully matched all {len(players)} players")
     return result
+
+
+def group_tablestring_by_teams(
+    tablestring: str, teams: list[list["PlayerProfile"]], team_tags: list[str]
+) -> Optional[str]:
+
+    # Check if the players are actually all in the tablestring
+    if not all(player.name in tablestring for team in teams for player in team):
+        return None
+
+    grouped_tablestring = "-\n"
+    for i, team in enumerate(teams):
+        grouped_tablestring += f"{team_tags[i]}\n"
+        for player in team:
+            grouped_tablestring += [
+                line for line in tablestring.splitlines() if player.name in line
+            ][0] + "\n"
+        grouped_tablestring += "\n\n"
+
+    return grouped_tablestring

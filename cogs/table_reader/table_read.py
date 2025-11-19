@@ -16,6 +16,7 @@ from utils.data import (
     table_read_ocr_api,
     pattern_match_lounge_names,
     ocr_to_tablestring,
+    group_tablestring_by_teams,
     store,
 )
 from utils.data import data_manager
@@ -96,7 +97,18 @@ class table_read(commands.Cog):
             if potential_actual_names:
                 ocr_names = potential_actual_names
 
-        await ctx.respond(f"```\n{ocr_to_tablestring(ocr_names, scores)}```")
+        created_tablestring = ocr_to_tablestring(ocr_names, scores)
+
+        if ctx.mogi and ctx.mogi.format >= 2:
+
+            if potential_grouped_tablestring := group_tablestring_by_teams(
+                tablestring=created_tablestring,
+                teams=ctx.mogi.teams,
+                team_tags=ctx.mogi.team_tags,
+            ):
+                created_tablestring = potential_grouped_tablestring
+
+        await ctx.respond(f"```\n{created_tablestring}```")
 
     """ @message_command(
         name="Screenshot to Tablestring",
