@@ -7,7 +7,7 @@ from pycord.multicog import subcommand
 from models import MogiApplicationContext
 from utils.decorators import is_mogi_manager
 from utils.command_helpers import get_awaited_message
-from utils.data import guild_manager, data_manager
+from utils.data import guild_manager
 from utils.maths.guild_mogi_mmrs import guild_calc_new_mmr
 from utils.maths.table import create_table
 
