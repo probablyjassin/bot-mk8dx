@@ -78,7 +78,8 @@ class guild_scores(commands.Cog):
                 )
 
             file = File(
-                await create_table(
+                await asyncio.to_thread(
+                    create_table,
                     names=name_strings,
                     old_mmrs=[guild.mmr for guild in playing_guilds],
                     results=guild_manager.results,
