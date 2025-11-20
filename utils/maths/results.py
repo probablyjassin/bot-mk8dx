@@ -1,4 +1,4 @@
-import math, time
+import math, time, asyncio
 from discord import File
 
 from models import MogiApplicationContext
@@ -70,12 +70,14 @@ async def process_tablestring(ctx: MogiApplicationContext, tablestring: str):
 
     # Store the date of the results
     file = File(
-        await create_table(
-            names=[player.name for player in ctx.mogi.players],
-            old_mmrs=[player.mmr for player in ctx.mogi.players],
-            results=ctx.mogi.mmr_results_by_group,
-            placements=ctx.mogi.placements_by_group,
-            team_size=ctx.mogi.format,
+        await asyncio.to_thread(
+            create_table(
+                names=[player.name for player in ctx.mogi.players],
+                old_mmrs=[player.mmr for player in ctx.mogi.players],
+                results=ctx.mogi.mmr_results_by_group,
+                placements=ctx.mogi.placements_by_group,
+                team_size=ctx.mogi.format,
+            )
         ),
         filename="table.png",
     )
