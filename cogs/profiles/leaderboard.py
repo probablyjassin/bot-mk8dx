@@ -1,7 +1,11 @@
-from typing import Literal
 from io import BytesIO
-import pandas as pd
+import asyncio
+
+import matplotlib
+
+matplotlib.use("Agg")  # Use non-interactive backend
 import matplotlib.pyplot as plt
+import pandas as pd
 
 import discord
 from discord import slash_command, Option, File
@@ -35,6 +39,8 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
+        await ctx.defer()
+
         total_player_count = await data_manager.Players.count()
 
         page_index = page_index if page_index > 0 else 1
@@ -52,114 +58,121 @@ class leaderboard(commands.Cog):
             page_index=page_index, sort=sort_type[sort]
         )
 
-        tabledata: dict[str, list] = {
-            "Placement": [i + skip_count + 1 for i in range(len(data))],
-            "Player": [],
-            "Rank": [],
-            "MMR": [],
-            "Wins": [],
-            "Losses": [],
-            "Winrate %": [],
-        }
+        def create_table():
+            tabledata: dict[str, list] = {
+                "Placement": [i + skip_count + 1 for i in range(len(data))],
+                "Player": [],
+                "Rank": [],
+                "MMR": [],
+                "Wins": [],
+                "Losses": [],
+                "Winrate %": [],
+            }
 
-        for player in data:
-            tabledata["Player"].append(player["name"])
-            tabledata["Rank"].append(Rank.getRankByMMR(player["mmr"]).rankname)
-            tabledata["MMR"].append(player["mmr"])
-            tabledata["Wins"].append(player["Wins"])
-            tabledata["Losses"].append(player["Losses"])
-            tabledata["Winrate %"].append(f"{round(player['Winrate %'], 2):.2f}")
+            for player in data:
+                tabledata["Player"].append(player["name"])
+                tabledata["Rank"].append(Rank.getRankByMMR(player["mmr"]).rankname)
+                tabledata["MMR"].append(player["mmr"])
+                tabledata["Wins"].append(player["Wins"])
+                tabledata["Losses"].append(player["Losses"])
+                tabledata["Winrate %"].append(f"{round(player['Winrate %'], 2):.2f}")
 
-        df = pd.DataFrame(tabledata)
-        df["Placement"] = range(skip_count + 1, skip_count + len(df) + 1)
-        df = df.set_index("Placement")
+            df = pd.DataFrame(tabledata)
+            df["Placement"] = range(skip_count + 1, skip_count + len(df) + 1)
+            df = df.set_index("Placement")
 
-        # Calculate appropriate figure size based on table dimensions
-        num_rows = len(df) + 1  # +1 for header
-        num_cols = len(df.columns) + 1  # +1 for index
+            # Calculate appropriate figure size based on table dimensions
+            num_rows = len(df) + 1  # +1 for header
+            num_cols = len(df.columns) + 1  # +1 for index
 
-        fig_width = num_cols * 1.5
-        fig_height = num_rows * 0.8
+            fig_width = num_cols * 1.5
+            fig_height = num_rows * 0.8
 
-        # Create figure with calculated size
-        fig, ax = plt.subplots(figsize=(fig_width, fig_height))
-        ax.axis("off")
+            # Create figure with calculated size
+            fig, ax = plt.subplots(figsize=(fig_width, fig_height))
+            ax.axis("off")
 
-        # Define colors
-        bg_dark = "#0F0F1C"
-        bg_light = "#151528"
-        text_color = "#CACAE3"
-        border_color = "#0E0E1B"
+            # Define colors
+            bg_dark = "#0F0F1C"
+            bg_light = "#151528"
+            text_color = "#CACAE3"
+            border_color = "#0E0E1B"
 
-        # Prepare cell colors - alternating rows
-        cell_colors = []
-        for idx, row in df.iterrows():
-            row_colors = []
-            for col in df.columns:
-                # Alternating row colors
-                color = bg_light if df.index.get_loc(idx) % 2 == 0 else bg_dark
-                row_colors.append(color)
-            cell_colors.append(row_colors)
+            # Prepare cell colors - alternating rows
+            cell_colors = []
+            for idx, row in df.iterrows():
+                row_colors = []
+                for col in df.columns:
+                    # Alternating row colors
+                    color = bg_light if df.index.get_loc(idx) % 2 == 0 else bg_dark
+                    row_colors.append(color)
+                cell_colors.append(row_colors)
 
-        # Create table that fills the entire figure
-        table = ax.table(
-            cellText=df.values,
-            colLabels=df.columns,
-            rowLabels=df.index,
-            cellLoc="center",
-            loc="center",
-            cellColours=cell_colors,
-            colColours=[bg_dark] * len(df.columns),
-            rowColours=[bg_light if i % 2 == 0 else bg_dark for i in range(len(df))],
-            bbox=[0, 0, 1, 1],  # Make table fill entire axes
-        )
-
-        # Style the table
-        table.auto_set_font_size(False)
-        table.set_fontsize(16)
-
-        # Auto-size columns based on content
-        table.auto_set_column_width(col=list(range(len(df.columns))))
-
-        # Set text color and borders
-        for (row, col), cell in table.get_celld().items():
-            is_header = row == 0
-
-            cell.set_text_props(
-                color=text_color, weight="bold" if is_header else "normal"
+            # Create table that fills the entire figure
+            table = ax.table(
+                cellText=df.values,
+                colLabels=df.columns,
+                rowLabels=df.index,
+                cellLoc="center",
+                loc="center",
+                cellColours=cell_colors,
+                colColours=[bg_dark] * len(df.columns),
+                rowColours=[
+                    bg_light if i % 2 == 0 else bg_dark for i in range(len(df))
+                ],
+                bbox=[0, 0, 1, 1],  # Make table fill entire axes
             )
-            cell.set_edgecolor(border_color)
-            cell.set_linewidth(1.5)
-            cell.set_height(1.0 / num_rows)
 
-        # Set background color
-        fig.patch.set_facecolor(bg_dark)
+            # Style the table
+            table.auto_set_font_size(False)
+            table.set_fontsize(16)
 
-        # Add title as text above the table
-        fig.text(
-            0.5,
-            0.98,
-            f"Leaderboard sorted by {sort} | Page {page_index}",
-            ha="center",
-            va="top",
-            fontsize=18,
-            weight="bold",
-            color=text_color,
-        )
+            # Auto-size columns based on content
+            table.auto_set_column_width(col=list(range(len(df.columns))))
 
-        # Save to buffer with no extra padding
-        buffer = BytesIO()
-        plt.savefig(
-            buffer,
-            format="png",
-            facecolor=bg_dark,
-            bbox_inches="tight",
-            pad_inches=0.1,
-            dpi=200,
-        )
-        plt.close()
+            # Set text color and borders
+            for (row, col), cell in table.get_celld().items():
+                is_header = row == 0
 
-        buffer.seek(0)
+                cell.set_text_props(
+                    color=text_color, weight="bold" if is_header else "normal"
+                )
+                cell.set_edgecolor(border_color)
+                cell.set_linewidth(1.5)
+                cell.set_height(1.0 / num_rows)
+
+            # Set background color
+            fig.patch.set_facecolor(bg_dark)
+
+            # Add title as text above the table
+            fig.text(
+                0.5,
+                0.98,
+                f"Leaderboard sorted by {sort} | Page {page_index}",
+                ha="center",
+                va="top",
+                fontsize=18,
+                weight="bold",
+                color=text_color,
+            )
+
+            # Save to buffer with no extra padding
+            buffer = BytesIO()
+            plt.savefig(
+                buffer,
+                format="png",
+                facecolor=bg_dark,
+                bbox_inches="tight",
+                pad_inches=0.1,
+                dpi=200,
+            )
+            plt.close()
+
+            buffer.seek(0)
+            return buffer
+
+        # Run the table creation in a thread to avoid blocking
+        buffer = await asyncio.to_thread(create_table)
 
         file = File(buffer, filename="leaderboard-table.png")
 
