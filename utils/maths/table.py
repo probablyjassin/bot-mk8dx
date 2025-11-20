@@ -1,11 +1,15 @@
 from io import BytesIO
 
-import pandas as pd
+import matplotlib
+
+matplotlib.use("Agg")  # Use non-interactive backend
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 
+import pandas as pd
 
-async def create_table(
+
+def create_table(
     names: list[str],
     old_mmrs: list[int],
     results: list[int],
