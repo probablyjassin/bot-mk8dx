@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-import math, time
+import math, time, asyncio
 from discord import File
 
 from .placements import get_placements_from_scores
@@ -73,7 +73,8 @@ async def process_tablestring(ctx: "MogiApplicationContext", tablestring: str):
 
     # Store the date of the results
     file = File(
-        await create_table(
+        await asyncio.to_thread(
+            create_table,
             names=[player.name for player in ctx.mogi.players],
             old_mmrs=[player.mmr for player in ctx.mogi.players],
             results=ctx.mogi.mmr_results_by_group,

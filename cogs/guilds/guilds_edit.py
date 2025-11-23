@@ -24,6 +24,7 @@ class guilds_edit(commands.Cog):
         description="Leave your current guild to join a different one (temporarily available)",
     )
     @with_guild()
+    @with_player()
     async def leave(self, ctx: MogiApplicationContext):
         lounge_guild_role = get(
             ctx.guild.roles,
