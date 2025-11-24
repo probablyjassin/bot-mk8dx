@@ -41,6 +41,8 @@ class leaderboard(commands.Cog):
             default=1,
         ),
     ):
+        await ctx.defer()
+
         total_player_count = await count_players()
 
         page_index = page_index if page_index > 0 else 1
