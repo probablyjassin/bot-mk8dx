@@ -1,11 +1,11 @@
 from functools import wraps
-from bson.int64 import Int64
 
 from models.CustomMogiContext import MogiApplicationContext
 from utils.command_helpers.find_player import get_guild_member
 
-from utils.database.types import archive_type
-from utils.data import data_manager, mogi_manager
+from database.types import archive_type
+from utils.data import mogi_manager
+from services.players import find_player_profile
 
 
 def with_player(
@@ -40,9 +40,7 @@ def with_player(
             )
 
             # Fetch player record and assign discord user as well
-            ctx.player = await data_manager.Players.find(
-                query, archive=archive_type.INCLUDE
-            )
+            ctx.player = await find_player_profile(query, archive=archive_type.INCLUDE)
 
             if not ctx.player:
                 return await ctx.respond(

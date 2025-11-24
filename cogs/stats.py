@@ -1,7 +1,7 @@
 from discord import slash_command, Color
 from discord.ext import commands
 
-from utils.data import data_manager
+from services.mogis import get_all_mogi_history
 from models import MogiApplicationContext, MogiHistoryData
 from utils.command_helpers import create_embed
 from datetime import datetime
@@ -16,7 +16,7 @@ class stats(commands.Cog):
 
     @slash_command(name="stats", description="Show Lounge stats for the current season")
     async def stats(self, ctx: MogiApplicationContext):
-        all_mogis: list[MogiHistoryData] = await data_manager.Mogis.get_all_mogis()
+        all_mogis: list[MogiHistoryData] = await get_all_mogi_history()
 
         durations = [
             datetime.fromtimestamp(mogi.finished_at)

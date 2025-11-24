@@ -2,7 +2,7 @@ from functools import wraps
 from bson.int64 import Int64
 
 from models.CustomMogiContext import MogiApplicationContext
-from utils.data import data_manager
+from services.guilds import find_guild
 
 
 def with_guild(
@@ -32,7 +32,7 @@ def with_guild(
             )
 
             # Fetch guild record
-            ctx.lounge_guild = await data_manager.Guilds.find(query)
+            ctx.lounge_guild = await find_guild(query)
 
             if not ctx.lounge_guild:
                 return await ctx.respond(

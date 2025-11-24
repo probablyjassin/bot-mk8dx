@@ -4,8 +4,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, PlayerProfile
 from pycord.multicog import subcommand
 
-from utils.data import data_manager
-from utils.maths.replace import recurse_replace
+from utils.maths import recurse_replace
 from utils.decorators import (
     is_mogi_open,
     is_admin,
@@ -30,12 +29,8 @@ class swap(commands.Cog):
         player2: str = Option(str, name="player2", description="second player"),
     ):
         return await ctx.respond("This command is out of order.")
-        first_player: PlayerProfile | str = (
-            await data_manager.Players.find(player1) or player1
-        )
-        second_player: PlayerProfile | str = (
-            await data_manager.Players.find(player2) or player2
-        )
+        first_player: PlayerProfile | str = await find(player1) or player1
+        second_player: PlayerProfile | str = await find(player2) or player2
         for player in [first_player, second_player]:
             if isinstance(player, str):
                 return await ctx.respond(f"{player} not found")

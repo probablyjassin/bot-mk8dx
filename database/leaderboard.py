@@ -1,5 +1,5 @@
-from utils.data._database import db_players
-from utils.database.types import archive_type, sort_type
+from ._mongodb import db_players
+from database.types import archive_type, sort_type
 
 
 async def get_leaderboard(

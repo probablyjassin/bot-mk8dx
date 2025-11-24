@@ -1,4 +1,4 @@
-from utils.data._database import db_aliases
+from ._mongodb import db_aliases
 
 from typing import TYPE_CHECKING
 

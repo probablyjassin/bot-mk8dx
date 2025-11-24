@@ -3,9 +3,9 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.database.types import archive_type
-from utils.data import data_manager
+from database.types import archive_type
 from utils.decorators import is_moderator
+from services.players import find_player_profile
 
 
 class suspend(commands.Cog):
@@ -25,7 +25,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = await data_manager.Players.find(
+        player: PlayerProfile = await find_player_profile(
             searched_player, archive=archive_type.INCLUDE
         )
 
@@ -45,7 +45,7 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = await data_manager.Players.find(
+        player: PlayerProfile = await find_player_profile(
             searched_player, archive=archive_type.INCLUDE
         )
 
