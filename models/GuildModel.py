@@ -1,8 +1,14 @@
 from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from models.PlayerModel import PlayerProfile
-from utils.data.data_manager import data_manager
+
+from services.guilds import add_member, remove_member, set_guild_attribute
+from services.players import find_player_profiles_by_ids
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.PlayerModel import PlayerProfile
 
 
 @dataclass
@@ -44,16 +50,15 @@ class Guild:
         return self._name
 
     async def set_name(self, value: str):
-        await data_manager.Guilds.set_attribute(self, "name", value)
+        await set_guild_attribute(self, "name", value)
 
     # icon
     @property
     def icon(self) -> str:
         return self._icon
 
-    @icon.setter
-    def icon(self, value: str):
-        self._icon = value
+    async def set_icon(self, value: str):
+        await set_guild_attribute(self, "icon", value)
 
     # mmr
     @property
@@ -74,12 +79,11 @@ class Guild:
     def player_ids(self) -> list[Int64]:
         return self._player_ids
 
-    def append_player_id(self, player_id: Int64):
-        self._player_ids.append(player_id)
+    async def add_member(self, player_id: Int64):
+        await add_member(guild=self, player_id=player_id)
 
-    def remove_player_id(self, player_id: Int64):
-        if player_id in self._player_ids:
-            self._player_ids.remove(player_id)
+    async def remove_member(self, player_id: Int64):
+        await remove_member(guild=self, player_id=player_id)
 
     # history
     @property
@@ -89,8 +93,8 @@ class Guild:
     def append_history(self, value: int):
         self._history.append(value)
 
-    async def fetch_player_profiles(self) -> list[PlayerProfile]:
-        return await data_manager.Players.find_list(self.player_ids)
+    async def fetch_player_profiles(self) -> list["PlayerProfile"]:
+        return await find_player_profiles_by_ids(self.player_ids)
 
     # Properties
 
@@ -139,8 +143,8 @@ class PlayingGuild(Guild):
     def __init__(
         self,
         guild: Guild,
-        playing: list[PlayerProfile] = None,
-        subs: list[PlayerProfile] = None,
+        playing: list["PlayerProfile"] = None,
+        subs: list["PlayerProfile"] = None,
     ):
         super().__init__(
             _id=guild._id,
@@ -151,22 +155,22 @@ class PlayingGuild(Guild):
             history=guild._history,
             creation_date=guild._creation_date,
         )
-        self._playing: list[PlayerProfile] = playing or []
-        self._subs: list[PlayerProfile] = subs or []
+        self._playing: list["PlayerProfile"] = playing or []
+        self._subs: list["PlayerProfile"] = subs or []
 
     # playing
     @property
-    def playing(self) -> list[PlayerProfile]:
+    def playing(self) -> list["PlayerProfile"]:
         return self._playing
 
-    def set_playing(self, value: list[PlayerProfile]):
+    def set_playing(self, value: list["PlayerProfile"]):
         self._playing = value
 
-    def add_playing(self, player: PlayerProfile):
+    def add_playing(self, player: "PlayerProfile"):
         if player.discord_id in self.player_ids and player not in self._playing:
             self._playing.append(player)
 
-    def remove_playing(self, player: PlayerProfile):
+    def remove_playing(self, player: "PlayerProfile"):
         if player in self._playing:
             self._playing.remove(player)
 
@@ -175,13 +179,13 @@ class PlayingGuild(Guild):
 
     # subs
     @property
-    def subs(self) -> list[PlayerProfile]:
+    def subs(self) -> list["PlayerProfile"]:
         return self._subs
 
-    def set_subs(self, value: list[PlayerProfile]):
+    def set_subs(self, value: list["PlayerProfile"]):
         self._subs = value
 
-    def add_sub(self, player: PlayerProfile):
+    def add_sub(self, player: "PlayerProfile"):
         if (
             player.discord_id in self.player_ids
             and player not in self._playing
@@ -189,7 +193,7 @@ class PlayingGuild(Guild):
         ):
             self._subs.append(player)
 
-    def remove_sub(self, player: PlayerProfile):
+    def remove_sub(self, player: "PlayerProfile"):
         if player in self._subs:
             self._subs.remove(player)
 
@@ -208,6 +212,8 @@ class PlayingGuild(Guild):
 
     @classmethod
     def from_json(cls, data):
+        from models.PlayerModel import PlayerProfile
+
         # Create base Guild from data
         base_guild = Guild.from_json(data)
 

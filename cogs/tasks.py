@@ -11,8 +11,10 @@ from discord import Activity, ActivityType, Status, AllowedMentions
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from utils.database.types import archive_type
-from utils.data import data_manager, state_manager, mogi_manager
+from database.types import archive_type
+from services.mogis import get_all_mogi_history
+from services.players import get_all_player_profiles
+from utils.data import state_manager, mogi_manager
 
 from utils.command_helpers import fetch_server_passwords
 
@@ -82,12 +84,10 @@ class tasks(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": await data_manager.Players.get_profiles(
+            "players": await get_all_player_profiles(
                 archive=archive_type.INCLUDE, with_id=False, as_json=True
             ),
-            "mogis": await data_manager.Mogis.get_all_mogis(
-                with_id=False, as_json=True
-            ),
+            "mogis": await get_all_mogi_history(with_id=False, as_json=True),
         }
 
         with open(backup_filename, "w") as backup_file:

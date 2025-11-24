@@ -1,16 +1,13 @@
-import time, math
+import time
 from dataclasses import dataclass, field
 from bson import ObjectId
 
-from utils.data.data_manager import data_manager
 from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
-from utils.maths.teams_algorithm import (
-    teams_alg_distribute_by_order_kevnkkm,
-    teams_alg_random,
-)
+from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
+from services.mogis import apply_result_mmr, add_mogi_history
 
 
 @dataclass
@@ -168,11 +165,38 @@ class Mogi:
 
         self.collected_points = team_points_list
 
+    async def apply_mmr(self) -> None:
+        """Applies the previously collected mmr results in `self.mmr_results_by_group` to the database."""
+        all_player_names = [player.name for player in self.players]
+        all_player_mmrs = [player.mmr for player in self.players]
+        all_player_new_mmrs = [
+            all_player_mmrs[i] + self.mmr_results_by_group[i]
+            for i in range(len(self.players))
+        ]
+
+        # create objects to hand to the database in bulk
+        data_to_update_obj: list[dict[str, str | int]] = [
+            {
+                "name": all_player_names[i],
+                "new_mmr": all_player_new_mmrs[i],
+                "delta": self.mmr_results_by_group[i],
+            }
+            # don't update subs unless they gained mmr
+            for i in range(len(all_player_names))
+            if not any(sub.name == all_player_names[i] for sub in self.subs)
+            or self.mmr_results_by_group[i] > 0
+        ]
+
+        # push changes to the database
+        await apply_result_mmr(
+            data_to_update_obj, self.format if not self.is_mini else 0
+        )
+
     async def archive_mogi_data(self) -> None:
         """
         Save the mogi to the database.
         """
-        await data_manager.Mogis.add_mogi_history(
+        await add_mogi_history(
             started_at=self.started_at,
             finished_at=self.finished_at,
             player_ids=[player.discord_id for player in self.players],
@@ -265,14 +289,7 @@ class Mogi:
         )
 
     def __contains__(self, other: PlayerProfile) -> bool:
-        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)
-
-        Args:
-            other (PlayerProfile): The player that should be checked if they are in the Mogi.
-
-        Returns:
-            bool: Whether the player is in the Mogi or not.
-        """
+        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)"""
         return other in self.players
 
 

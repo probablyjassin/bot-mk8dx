@@ -1,5 +1,4 @@
 # from ._database import client, db_mogis, db_players, db_mogis
-from .data_manager import data_manager
 from .mogi_manager import mogi_manager
 from .guild_manager import guild_manager
 from .roombrowser import get_room_info, ServerType
@@ -13,7 +12,6 @@ from .table_reader_api import (
 )
 
 __all__ = [
-    "data_manager",
     "mogi_manager",
     "guild_manager",
     "get_room_info",

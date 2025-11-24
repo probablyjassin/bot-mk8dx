@@ -1,11 +1,10 @@
-from discord import slash_command, Option, TextChannel, AllowedMentions, Message, Role
+from discord import slash_command, Option, TextChannel, AllowedMentions
 from discord.ext import commands
-from discord.utils import get
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, mogi_manager
-
+from utils.data import mogi_manager
+from services.players import find_player_profile
 from utils.decorators import is_mogi_not_in_progress, is_mogi_open, is_admin
 from utils.command_helpers import confirmation, remove_team_roles, get_guild_member
 
@@ -31,7 +30,7 @@ class mogi(commands.Cog):
     async def close(self, ctx: MogiApplicationContext):
         await ctx.interaction.response.defer()
 
-        player: PlayerProfile | None = await data_manager.Players.find(ctx.user.id)
+        player: PlayerProfile | None = await find_player_profile(query=ctx.user.id)
         if not player:
             return await ctx.respond("Couldn't find your Profile")
         if (

@@ -6,8 +6,9 @@ from discord.utils import get
 
 from models import MogiApplicationContext
 
-from utils.data import data_manager, mogi_manager
-from utils.maths.replace import recurse_replace
+from services.players import find_player_profile
+from utils.data import mogi_manager
+from utils.maths import recurse_replace
 from utils.command_helpers import get_guild_member, player_name_autocomplete
 from utils.decorators import (
     is_mogi_in_progress,
@@ -58,8 +59,8 @@ class sub(commands.Cog):
             required=False,
         ),
     ):
-        player_profile = await data_manager.Players.find(player_name)
-        replacement_profile = await data_manager.Players.find(replacement_name)
+        player_profile = await find_player_profile(player_name)
+        replacement_profile = await find_player_profile(replacement_name)
 
         if not player_profile:
             return await ctx.respond("Player profile not found", ephemeral=True)

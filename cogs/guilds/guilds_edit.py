@@ -4,8 +4,8 @@ from discord import SlashCommandGroup, Option
 from discord.ext import commands
 from discord.utils import get
 
-from utils.data import data_manager
-from models import MogiApplicationContext, Guild
+from services.guilds import get_all_guild_names
+from models import MogiApplicationContext
 from utils.decorators import with_guild, with_player, is_moderator
 from utils.command_helpers import player_name_autocomplete, confirmation
 
@@ -39,7 +39,7 @@ class guilds_edit(commands.Cog):
         ) and general_guilds_role in ctx.player_discord.roles:
             await ctx.player_discord.remove_roles(general_guilds_role)
 
-        await data_manager.Guilds.remove_member(ctx.lounge_guild, ctx.user.id)
+        await ctx.lounge_guild.remove_member(ctx.user.id)
         await ctx.respond(
             f"{ctx.user.mention} left the guild **{ctx.lounge_guild.name}**."
         )
@@ -54,7 +54,7 @@ class guilds_edit(commands.Cog):
             return await ctx.respond(
                 "Guild name has to be between 3 and 32 characters long"
             )
-        if name in await data_manager.Guilds.get_all_guild_names():
+        if name in await get_all_guild_names():
             return await ctx.respond("There already exists a guild with this name.")
 
         allowed_chars = string.ascii_letters + string.digits + " -_"
@@ -69,7 +69,7 @@ class guilds_edit(commands.Cog):
             name=f"GUILD | {ctx.lounge_guild.name}",
         )
 
-        await data_manager.Guilds.set_attribute(ctx.lounge_guild, "name", name)
+        await ctx.lounge_guild.set_name(name)
 
         if lounge_guild_role:
             await lounge_guild_role.edit(name=f"GUILD | {name}")
@@ -87,7 +87,7 @@ class guilds_edit(commands.Cog):
                 "ending in .png, .jp(e)g, .gif, or .webp",
             )
 
-        await data_manager.Guilds.set_attribute(ctx.lounge_guild, "icon", new_icon)
+        await ctx.lounge_guild.set_icon(new_icon)
         return await ctx.respond(f"Changed your guild icon to: {new_icon}")
 
     @guildedit.command(name="add-member", description="Invite a member to your guild")
@@ -109,9 +109,7 @@ class guilds_edit(commands.Cog):
         if len(ctx.lounge_guild.player_ids) >= 12:
             return await ctx.respond("Your guild is maxed out on players (12).")
 
-        if existing_guild := await data_manager.Guilds.get_player_guild(
-            ctx.player.discord_id
-        ):
+        if existing_guild := await ctx.player.fetch_guild():
             return await ctx.respond(
                 f"That player is already in the guild **{existing_guild.name}**."
             )
@@ -126,9 +124,7 @@ class guilds_edit(commands.Cog):
                 name=f"GUILD | {ctx.lounge_guild.name}",
             )
 
-            await data_manager.Guilds.add_member(
-                ctx.lounge_guild, ctx.player_discord.id
-            )
+            await ctx.lounge_guild.add_member(ctx.player_discord.id)
 
             if lounge_guild_role:
                 await ctx.player_discord.add_roles(lounge_guild_role)
@@ -163,9 +159,7 @@ class guilds_edit(commands.Cog):
     ):
         await ctx.response.defer()
 
-        if not (
-            guild := await data_manager.Guilds.get_player_guild(ctx.player.discord_id)
-        ):
+        if not (guild := await ctx.player.fetch_guild()):
             return await ctx.respond("That player is not in a guild.")
 
         lounge_guild_role = get(
@@ -173,7 +167,7 @@ class guilds_edit(commands.Cog):
             name=f"GUILD | {guild.name}",
         )
 
-        await data_manager.Guilds.remove_member(guild, ctx.player.discord_id)
+        await guild.remove_member(ctx.player.discord_id)
 
         if lounge_guild_role:
             await ctx.player_discord.remove_roles(lounge_guild_role)

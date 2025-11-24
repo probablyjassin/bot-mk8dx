@@ -2,7 +2,8 @@ from io import BufferedReader
 import aiohttp
 
 from rapidfuzz import process
-from utils.data import data_manager
+from services.miscellaneous import get_all_aliases
+
 from config import TABLE_READER_URL
 
 from typing import Optional, TypedDict, cast, TYPE_CHECKING
@@ -74,7 +75,7 @@ async def pattern_match_lounge_names(
     print("--- Pattern matching results ---")
 
     # Fetch aliases once upfront
-    all_aliases = await data_manager.Aliases.get_all_aliases()
+    all_aliases = await get_all_aliases()
 
     # Create a scoring map for all possible matches
     match_scores = {}

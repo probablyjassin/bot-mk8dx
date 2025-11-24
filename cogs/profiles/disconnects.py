@@ -5,8 +5,8 @@ from models import MogiApplicationContext
 
 from utils.decorators import is_mogi_manager, is_moderator, with_player
 
-from utils.database.types import archive_type
-from utils.data import data_manager
+from database.types import archive_type
+from services.players import get_all_player_profiles
 
 
 class disconnects(commands.Cog):
@@ -67,7 +67,7 @@ class disconnects(commands.Cog):
     )
     async def disconnects_list(self, ctx: MogiApplicationContext):
         # Get all players and filter out those without disconnects field
-        all_players = await data_manager.Players.get_profiles(
+        all_players = await get_all_player_profiles(
             archive=archive_type.INCLUDE, as_json=True
         )
         players_with_dcs = [
