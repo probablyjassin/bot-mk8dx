@@ -6,6 +6,7 @@ import json
 import requests
 from datetime import datetime, timezone, timedelta
 from datetime import time as datetime_time
+from zoneinfo import ZoneInfo
 
 from discord import Activity, ActivityType, Status, AllowedMentions
 from discord.ext import commands, tasks
@@ -70,7 +71,7 @@ class tasks(commands.Cog):
             hour=22,
             minute=0,
             second=0,
-            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+            tzinfo=ZoneInfo("Europe/Berlin"),
         )
     )
     async def daily_db_backup(self):
@@ -116,7 +117,7 @@ class tasks(commands.Cog):
             hour=7,
             minute=30,
             second=0,
-            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+            tzinfo=ZoneInfo("Europe/Berlin"),
         )
     )
     async def get_updated_passwords(self):
