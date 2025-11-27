@@ -159,7 +159,7 @@ class register(commands.Cog):
 
         # add region role if applicable
         for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:
-            if region == role.name and role not in ctx.user.roles:
+            if role and region == role.name and role not in ctx.user.roles:
                 await ctx.user.add_roles(role)
 
         # done
