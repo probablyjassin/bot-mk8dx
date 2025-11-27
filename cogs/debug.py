@@ -190,22 +190,6 @@ class debug(commands.Cog):
             msg += f"{room.name}\n"
         await ctx.respond(msg)
 
-    """ @debug.command(name="test_player", description="add a dummy player to the mogi")
-    @is_mogi_not_in_progress()
-    @is_admin()
-    async def test_player(self, ctx: MogiApplicationContext):
-
-        dummy_names = ["spamton", "jordan", "mrboost", "bruv"]
-        dummy: PlayerProfile = PlayerProfile(
-            _id=ObjectId("0123456789ab0123456789ab"),
-            name=f"{random.choice(dummy_names)}{str(random.randint(10, 99))}",
-            mmr=random.randint(1000, 6000),
-            discord_id=000000000000000000,
-            history=[],
-        )
-        ctx.mogi.players.append(dummy)
-        await ctx.respond(f"Added {dummy.name} to the mogi") """
-
     @debug.command(name="load_state", description="Load state")
     @is_admin()
     async def load_state(self, ctx: MogiApplicationContext):
