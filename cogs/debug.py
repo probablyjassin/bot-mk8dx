@@ -212,12 +212,6 @@ class debug(commands.Cog):
         state_manager.load_manual_saved()
         await ctx.respond("State loaded")
 
-    @debug.command(name="inmogi")
-    async def inmogi(self, ctx: MogiApplicationContext):
-        await ctx.respond(
-            f"<@&{ctx.inmogi_role.id}>", allowed_mentions=AllowedMentions(roles=True)
-        )
-
     @debug.command(name="perms", description="perms test")
     @is_admin()
     async def perms(self, ctx: MogiApplicationContext):
