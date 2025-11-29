@@ -39,7 +39,9 @@ class rollback(commands.Cog):
                 "Players:": "\n".join(
                     f"<@{player}>" for player in latest_mogi.player_ids
                 ),
-                "MMR changes (in player order):": "\n".join(),
+                "MMR changes (in player order):": "\n".join(
+                    [str(score) for score in latest_mogi.results]
+                ),
             },
         )
 
