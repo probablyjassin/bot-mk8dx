@@ -4,7 +4,7 @@ from discord.ext import commands
 from pycord.multicog import subcommand
 
 from utils.decorators import is_admin
-from utils.command_helpers import create_embed
+from utils.command_helpers import create_embed, confirmation, get_awaited_message
 
 from models import MogiApplicationContext, MogiHistoryData
 
@@ -23,6 +23,7 @@ class rollback(commands.Cog):
         description="Admin only: roll back the last mogi's results",
     )
     async def rollback(self, ctx: MogiApplicationContext):
+        await ctx.defer()
 
         latest_mogi: MogiHistoryData | None = await get_latest_mogi()
         if not latest_mogi:
@@ -45,7 +46,43 @@ class rollback(commands.Cog):
             },
         )
 
-        return await ctx.respond(embed=last_mogi_embed)
+        erase_mogi_fully: bool = True
+
+        if await confirmation(
+            ctx=ctx,
+            text="# React ✅ to overwrite the mogi with new fixed scores\n# OR ❌ to erase it completely!",
+            user_id=ctx.user.id,
+            embed=last_mogi_embed,
+        ):
+            erase_mogi_fully = False
+
+            # Ask user to input the new table string
+            await ctx.respond(
+                "Please send the corrected table string in this channel.\n"
+                "You have 60 seconds to respond."
+            )
+
+            tablestring = await get_awaited_message(
+                bot=self.bot, ctx=ctx, target_channel=ctx.channel
+            )
+
+            if not tablestring:
+                return await ctx.respond(
+                    "No table string provided. Rollback cancelled."
+                )
+
+            await ctx.respond(
+                f"Table string received:\n```\n{tablestring}\n```\n"
+                "The rest is not implemented yet"
+            )
+
+            # TODO: add logic to recreate the table and collect points
+
+        else:
+            # TODO: erase completely
+            await ctx.respond("This is not implemented yet.")
+
+        return await ctx.respond("WIP")
 
 
 def setup(bot: commands.Bot):
