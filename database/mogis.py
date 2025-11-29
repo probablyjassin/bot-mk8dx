@@ -1,18 +1,20 @@
 from pymongo import UpdateOne
 from ._mongodb import db_players, db_mogis
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 if TYPE_CHECKING:
     from models.MogiModel import MogiHistoryData
 
 
-async def get_latest_mogi(as_json: bool = False) -> "MogiHistoryData" | dict | None:
+async def get_latest_mogi(
+    as_json: bool = False,
+) -> Optional[Union["MogiHistoryData", dict]]:
 
     from models.MogiModel import MogiHistoryData
 
     data: dict = await db_mogis.find_one(
-        {}, {"_id": 0} if not as_json else {}, sort=[("finished_at", -1)]
+        {}, {"_id": 0} if as_json else {}, sort=[("finished_at", -1)]
     )
 
     if not data:
