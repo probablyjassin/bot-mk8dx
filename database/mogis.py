@@ -7,6 +7,22 @@ if TYPE_CHECKING:
     from models.MogiModel import MogiHistoryData
 
 
+async def get_latest_mogi(as_json: bool = False) -> "MogiHistoryData" | dict | None:
+
+    from models.MogiModel import MogiHistoryData
+
+    data: dict = await db_mogis.find_one(
+        {}, {"_id": 0} if not as_json else {}, sort=[("finished_at", -1)]
+    )
+
+    if not data:
+        return None
+
+    if as_json:
+        return data
+    return MogiHistoryData.from_dict(data)
+
+
 async def get_all_mogis(
     with_id: bool = False, as_json: bool = False
 ) -> list["MogiHistoryData"] | list[dict]:

@@ -5,6 +5,10 @@ if TYPE_CHECKING:
     from models.MogiModel import MogiHistoryData
 
 
+async def get_latest_mogi(as_json: bool = False) -> "MogiHistoryData" | dict | None:
+    return await mogis.get_latest_mogi(as_json=as_json)
+
+
 async def get_all_mogi_history(
     with_id: bool = False, as_json: bool = False
 ) -> list["MogiHistoryData"] | list[dict]:
