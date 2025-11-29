@@ -28,19 +28,18 @@ class rollback(commands.Cog):
         if not latest_mogi:
             return await ctx.respond("Couldn't find a latest mogi in the database.")
 
-        latest_mogi.started_at
-
         all_players = await find_player_profiles_by_ids(latest_mogi.player_ids)
 
         last_mogi_embed = create_embed(
             title="Latest mogi:",
             description="You are trying to revert the following mogi:",
             fields={
-                "Started at:" f"<t:{latest_mogi.started_at}>",
-                "Finished at:" f"<t:{latest_mogi.finished_at}>",
-                "Players:"
-                "\n".join(f"<@{player}>" for player in latest_mogi.player_ids),
-                "MMR changes (in player order):" "\n".join(latest_mogi.results),
+                "Started at:": f"<t:{latest_mogi.started_at}>",
+                "Finished at:": f"<t:{latest_mogi.finished_at}>",
+                "Players:": "\n".join(
+                    f"<@{player}>" for player in latest_mogi.player_ids
+                ),
+                "MMR changes (in player order):": "\n".join(),
             },
         )
 
