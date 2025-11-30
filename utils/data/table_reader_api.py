@@ -43,6 +43,7 @@ async def table_read_ocr_api(
         async with session.post(
             TABLE_READER_URL,
             data=data,
+            params={"score_error_exceptions": "true"},
             timeout=aiohttp.ClientTimeout(total=30),
         ) as response:
             response.raise_for_status()
