@@ -11,6 +11,50 @@ from config import FORMATS
 
 if TYPE_CHECKING:
     from models.CustomMogiContext import MogiApplicationContext
+    from models.PlayerModel import PlayerProfile
+
+
+def collect_points(
+    tablestring: str, teams: list[list["PlayerProfile"]]
+) -> tuple[list[int], int]:
+    """
+    Collects and calculates points for players and teams from a given table string.\n
+    Returns a tuple of 1. the scores and 2. the amount of DCs infered from the tablestring.
+    """
+
+    all_players: list["PlayerProfile"] = [player for team in teams for player in team]
+    disconnections: int = 0
+    all_points = {}
+
+    try:
+        for line in tablestring.split("\n"):
+            line = line.replace("|", "+")
+            sections = line.split()
+            for player in all_players:
+                if sections and sections[0] == player.name:
+                    parts = [part.split("+") for part in line.split()]
+                    points = sum(
+                        [int(num) for part in parts for num in part if num.isdigit()]
+                    )
+                    all_points[player.name] = points
+                    disconnections = (
+                        len([num for part in parts for num in part if num.isdigit()])
+                        - 1
+                    )
+    except Exception as e:
+        print(e)
+
+    team_points_list = []
+    for team in teams:
+
+        try:
+            team_points = sum(all_points[player.name] for player in team)
+        except KeyError as error:
+            raise error
+
+        team_points_list.append(team_points)
+
+    return team_points_list, disconnections
 
 
 async def end_collect_tablestring_to_results(
@@ -24,7 +68,9 @@ async def end_collect_tablestring_to_results(
 
     # Collect the points to the mogi
     try:
-        ctx.mogi.collect_points(tablestring)
+        results = collect_points(tablestring, ctx.mogi.teams)
+        ctx.mogi.collected_points = results[0]
+        ctx.mogi.disconnections = results[1]
     except ValueError as e:
         await ctx.respond("Invalid tablestring format.")
         return False
