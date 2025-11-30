@@ -27,8 +27,8 @@ from utils.decorators.checks import LoungeRole
 from services.players import find_player_profile
 from services.miscellaneous import set_player_alias, get_all_aliases
 
-MSG_WARN = "⚠️ The scores don't fully add up. Double check them for errors."
-MSG_CORRECT = "✅ The scores seem to fully add up! Still double still with Lorenzi"
+MSG_WARN = "⚠️ The scores don't fully add up! Double check them for errors."
+MSG_CORRECT = "✅ The scores seem to fully add up. Still double check with Lorenzi!"
 
 
 def is_image(attachment: Attachment) -> bool:
@@ -57,7 +57,6 @@ async def image_data_to_tablestring(
     mogi_format: Optional[int] = None,
     team_tags: Optional[list[str]] = None,
 ) -> tuple[str, bool]:
-    mogi_players = [player for team in mogi_teams for player in team]
 
     output, warnings = await table_read_ocr_api(buffer_image)
 
@@ -65,6 +64,10 @@ async def image_data_to_tablestring(
     scores = [entry["score"] for entry in output]
 
     # if there is a mogi, try to match the names to the output
+    mogi_players = []
+    if mogi_teams:
+        mogi_players = [player for team in mogi_teams for player in team]
+
     if mogi_players and len(mogi_players) == len(ocr_names):
         potential_actual_names = await pattern_match_lounge_names(
             ocr_names, [player.name for player in mogi_players]
@@ -135,9 +138,9 @@ class table_read(commands.Cog):
             return await ctx.respond(f"Error reading table: {str(e)}")
 
         await ctx.respond(
-            f"```\n{created_tablestring}```" + "\n" + MSG_WARN
-            if has_warns
-            else MSG_CORRECT
+            f"```\n{created_tablestring}```"
+            + "\n"
+            + (MSG_WARN if has_warns else MSG_CORRECT)
         )
 
     @message_command(
@@ -176,6 +179,7 @@ class table_read(commands.Cog):
                 mogi_format=ctx.mogi.format if ctx.mogi else None,
                 team_tags=ctx.mogi.team_tags if ctx.mogi else None,
             )
+
         except ClientResponseError as e:
             return await ctx.respond(
                 f"Table reader API returned an error: HTTP {e.status} - {e.message}"
@@ -184,9 +188,9 @@ class table_read(commands.Cog):
             return await ctx.respond(f"Error reading table: {str(e)}")
 
         await ctx.respond(
-            f"```\n{created_tablestring}```" + "\n" + MSG_WARN
-            if has_warns
-            else MSG_CORRECT
+            f"```\n{created_tablestring}```"
+            + "\n"
+            + (MSG_WARN if has_warns else MSG_CORRECT)
         )
 
     @message_command(
@@ -281,7 +285,7 @@ class table_read(commands.Cog):
 
         updated_tablestring = "\n".join(new_lines)
         return await ctx.respond(
-            updated_tablestring + "\n" + MSG_WARN if warnings else MSG_CORRECT
+            updated_tablestring + "\n" + (MSG_WARN if warnings else MSG_CORRECT)
         )
 
     @table.command(
