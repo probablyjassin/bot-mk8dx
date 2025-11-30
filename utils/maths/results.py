@@ -57,69 +57,122 @@ def collect_points(
     return team_points_list, disconnections
 
 
+async def calculate_results_from_tablestring(
+    tablestring: str,
+    players: list["PlayerProfile"],
+    team_size: int,
+    is_mini: bool = False,
+) -> dict:
+    """
+    Calculates MMR results from a tablestring.
+
+    Returns:
+        - dict with keys:
+            - collected_points: list[int]
+            - disconnections: int
+            - mmr_results: list[int]
+            - placements: list[int]
+            - finished_at: int
+            - error: str (if any error occurred)
+    """
+
+    finished_at = round(time.time())
+
+    if not tablestring:
+        return {"error": "No tablestring found"}
+
+    # Group players into teams
+    teams = []
+    for i in range(0, len(players), team_size):
+        teams.append(players[i : i + team_size])
+
+    # Collect the points
+    try:
+        collected_points, disconnections = collect_points(tablestring, teams)
+    except ValueError:
+        return {"error": "Invalid tablestring format."}
+    except KeyError as e:
+        username = str(e).strip("'")
+        return {"error": f"Missing player name in tablestring: `{username}`"}
+
+    # Obtain the placements from the collected points
+    placements = []
+    for score in collected_points:
+        placements.append(get_placements_from_scores(collected_points)[score])
+
+    # Break down MMRs of all players
+    all_player_mmrs = [player.mmr for player in players]
+
+    # Calculate MMR results
+    mmr_deltas = calculate_mmr(
+        all_player_mmrs,
+        placements,
+        team_size,
+    )
+
+    # Apply custom MMR scaling
+    mmr_deltas = [
+        math.ceil(rating * 1.1) if rating > 0 else rating for rating in mmr_deltas
+    ]
+    if is_mini:
+        mmr_deltas = [math.floor(rating * 0.6) for rating in mmr_deltas]
+
+    # Extend results for every player in each team
+    mmr_results_by_player = []
+    placements_by_player = []
+    for delta in mmr_deltas:
+        mmr_results_by_player.extend([delta] * team_size)
+    for place in placements:
+        placements_by_player.extend([place] * team_size)
+
+    # Validate
+    if len(mmr_results_by_player) != len(players):
+        return {
+            "error": "Something has gone seriously wrong, the amount of players and the MMR results don't add up."
+        }
+
+    return {
+        "collected_points": collected_points,
+        "disconnections": disconnections,
+        "mmr_results": mmr_results_by_player,
+        "placements": placements_by_player,
+        "finished_at": finished_at,
+    }
+
+
 async def end_collect_tablestring_to_results(
     ctx: "MogiApplicationContext", tablestring: str
 ):
-    ctx.mogi.finished_at = round(time.time())
+    """
+    Wraps the abstracted calculate_results_from_tablestring function.
+    """
 
-    if not tablestring:
-        await ctx.respond("No tablestring found")
-        return False
-
-    # Collect the points to the mogi
-    try:
-        results = collect_points(tablestring, ctx.mogi.teams)
-        ctx.mogi.collected_points = results[0]
-        ctx.mogi.disconnections = results[1]
-    except ValueError as e:
-        await ctx.respond("Invalid tablestring format.")
-        return False
-    except KeyError as e:
-        # Extract the username from the KeyError message
-        username = str(e).strip("'")
-        ctx.mogi.collected_points = []
-        await ctx.respond(f"Missing player name in tablestring: `{username}`")
-        return False
-
-    # obtain the placements from the collected points
-    placements = []
-    for score in ctx.mogi.collected_points:
-        placements.append(get_placements_from_scores(ctx.mogi.collected_points)[score])
-
-    # break down names and mmrs of all players
-    all_player_mmrs = [player.mmr for player in ctx.mogi.players]
-
-    # Calculate MMR results
-    results = calculate_mmr(
-        all_player_mmrs,
-        placements,
-        ctx.mogi.format,
+    # Use the abstracted function
+    results = await calculate_results_from_tablestring(
+        tablestring=tablestring,
+        players=ctx.mogi.players,
+        team_size=ctx.mogi.format,
+        started_at=ctx.mogi.started_at,
+        is_mini=ctx.mogi.is_mini,
     )
 
-    # apply custom mmr scaling
-    results = [math.ceil(rating * 1.1) if rating > 0 else rating for rating in results]
-    if ctx.mogi.is_mini:
-        results = [math.floor(rating * 0.6) for rating in results]
-
-    # store the results in the mogi, extended for every player
-    for delta in results:
-        ctx.mogi.mmr_results_by_group.extend([delta] * ctx.mogi.format)
-
-    # Store the Placements in order of Players/Teams
-    for place in placements:
-        ctx.mogi.placements_by_group.extend([place] * ctx.mogi.format)
-
-    if not len(ctx.mogi.mmr_results_by_group) == len(ctx.mogi.players):
-        await ctx.respond(
-            "Something has gone seriously wrong, the amount of players and the MMR results don't add up. Use /debug to find the issue and contact a moderator."
-        )
+    # Handle errors
+    if "error" in results:
+        await ctx.respond(results["error"])
         return False
+
+    # Apply results to mogi
+    ctx.mogi.finished_at = results["finished_at"]
+    ctx.mogi.collected_points = results["collected_points"]
+    ctx.mogi.disconnections = results["disconnections"]
+    ctx.mogi.mmr_results_by_group = results["mmr_results"]
+    ctx.mogi.placements_by_group = results["placements"]
 
     key_to_format = {
         int(format[0]) if format[0].isdigit() else 1: format for format in FORMATS
     }
 
-    # Store the date of the results
+    # Create and send the results table
     file = File(
         await asyncio.to_thread(
             create_table,
