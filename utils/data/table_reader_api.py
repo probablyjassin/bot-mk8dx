@@ -18,7 +18,9 @@ class OCRPlayerList(TypedDict):
     score: str
 
 
-async def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
+async def table_read_ocr_api(
+    file: BufferedReader,
+) -> tuple[list[OCRPlayerList], list[str]]:
     """
     Send a buffered binary file to the table reader API and return the JSON response.
     """
@@ -49,7 +51,9 @@ async def table_read_ocr_api(file: BufferedReader) -> list[OCRPlayerList]:
             if not result["players"]:
                 return None
 
-            return cast(list[OCRPlayerList], result["players"])
+            warnings = result["warnings"] if result["warnings"] else []
+
+            return cast(list[OCRPlayerList], result["players"]), warnings
 
 
 def ocr_to_tablestring(ocr_names: list[str], scores: list[str]) -> str:

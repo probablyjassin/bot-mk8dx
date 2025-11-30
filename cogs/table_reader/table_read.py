@@ -27,6 +27,9 @@ from utils.decorators.checks import LoungeRole
 from services.players import find_player_profile
 from services.miscellaneous import set_player_alias, get_all_aliases
 
+MSG_WARN = "⚠️ The scores don't fully add up. Double check them for errors."
+MSG_CORRECT = "✅ The scores seem to fully add up! Still double still with Lorenzi"
+
 
 def is_image(attachment: Attachment) -> bool:
     # Prefer content_type when available, fallback to filename extension
@@ -53,10 +56,10 @@ async def image_data_to_tablestring(
     mogi_teams: Optional[list[list[PlayerProfile]]] = None,
     mogi_format: Optional[int] = None,
     team_tags: Optional[list[str]] = None,
-) -> str:
+) -> tuple[str, bool]:
     mogi_players = [player for team in mogi_teams for player in team]
 
-    output = await table_read_ocr_api(buffer_image)
+    output, warnings = await table_read_ocr_api(buffer_image)
 
     ocr_names = [entry["name"] for entry in output]
     scores = [entry["score"] for entry in output]
@@ -80,7 +83,7 @@ async def image_data_to_tablestring(
         ):
             created_tablestring = potential_grouped_tablestring
 
-    return created_tablestring
+    return created_tablestring, bool(warnings)
 
 
 class table_read(commands.Cog):
@@ -118,7 +121,7 @@ class table_read(commands.Cog):
         created_tablestring = None
 
         try:
-            created_tablestring = await image_data_to_tablestring(
+            created_tablestring, has_warns = await image_data_to_tablestring(
                 buffer_image=buffer_image,
                 mogi_teams=ctx.mogi.teams if ctx.mogi else None,
                 mogi_format=ctx.mogi.format if ctx.mogi else None,
@@ -131,7 +134,11 @@ class table_read(commands.Cog):
         except Exception as e:
             return await ctx.respond(f"Error reading table: {str(e)}")
 
-        await ctx.respond(f"```\n{created_tablestring}```")
+        await ctx.respond(
+            f"```\n{created_tablestring}```" + "\n" + MSG_WARN
+            if has_warns
+            else MSG_CORRECT
+        )
 
     @message_command(
         name="Read Table",
@@ -163,7 +170,7 @@ class table_read(commands.Cog):
         created_tablestring = None
 
         try:
-            created_tablestring = await image_data_to_tablestring(
+            created_tablestring, has_warns = await image_data_to_tablestring(
                 buffer_image=buffer_image,
                 mogi_teams=ctx.mogi.teams if ctx.mogi else None,
                 mogi_format=ctx.mogi.format if ctx.mogi else None,
@@ -176,7 +183,11 @@ class table_read(commands.Cog):
         except Exception as e:
             return await ctx.respond(f"Error reading table: {str(e)}")
 
-        await ctx.respond(f"```\n{created_tablestring}```")
+        await ctx.respond(
+            f"```\n{created_tablestring}```" + "\n" + MSG_WARN
+            if has_warns
+            else MSG_CORRECT
+        )
 
     @message_command(
         name="Tablestring->Add points from Img",
@@ -204,7 +215,7 @@ class table_read(commands.Cog):
         tablestring = message.content.replace("|", divider).replace("+", divider)
 
         try:
-            output = await table_read_ocr_api(BufferedReader(BytesIO(record)))
+            output, warnings = await table_read_ocr_api(BufferedReader(BytesIO(record)))
         except ClientResponseError as e:
             return await ctx.respond(
                 f"Error reading table: HTTP {e.status} - {e.message}"
@@ -267,7 +278,11 @@ class table_read(commands.Cog):
                         f"Matched Lounge Names: `{potential_actual_names}`"
                     )
             new_lines.append(line)
-        return await ctx.respond("\n".join(new_lines))
+
+        updated_tablestring = "\n".join(new_lines)
+        return await ctx.respond(
+            updated_tablestring + "\n" + MSG_WARN if warnings else MSG_CORRECT
+        )
 
     @table.command(
         name="alias",
