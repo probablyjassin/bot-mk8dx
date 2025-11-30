@@ -13,7 +13,9 @@ if TYPE_CHECKING:
     from models.CustomMogiContext import MogiApplicationContext
 
 
-async def process_tablestring(ctx: "MogiApplicationContext", tablestring: str):
+async def end_collect_tablestring_to_results(
+    ctx: "MogiApplicationContext", tablestring: str
+):
     ctx.mogi.finished_at = round(time.time())
 
     if not tablestring:
