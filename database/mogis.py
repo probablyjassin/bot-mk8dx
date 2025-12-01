@@ -25,6 +25,15 @@ async def get_latest_mogi(
     return MogiHistoryData.from_dict(data)
 
 
+async def update_latest_mogi(new_results: list[int]) -> None:
+    latest = await db_mogis.find_one({}, sort=[("finished_at", -1)])
+
+    if latest:
+        await db_mogis.update_one(
+            {"_id": latest["_id"]}, {"$set": {"results": new_results}}
+        )
+
+
 async def get_all_mogis(
     with_id: bool = False, as_json: bool = False
 ) -> list["MogiHistoryData"] | list[dict]:
