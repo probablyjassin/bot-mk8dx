@@ -1,4 +1,4 @@
-import time, asyncio, math
+import asyncio
 
 from discord import slash_command, File
 from discord.ext import commands
@@ -8,9 +8,7 @@ from pycord.multicog import subcommand
 from utils.decorators import is_admin
 from utils.command_helpers import create_embed, confirmation, get_awaited_message
 from utils.maths import (
-    get_placements_from_scores,
     create_table,
-    calculate_mmr,
     calculate_results_from_tablestring,
 )
 
@@ -35,7 +33,7 @@ class rollback(commands.Cog):
         description="Admin only: roll back the last mogi's results",
     )
     async def rollback(self, ctx: MogiApplicationContext):
-        await ctx.defer()
+        await ctx.defer(ephemeral=True)
 
         latest_mogi: MogiHistoryData | None = await get_latest_mogi()
         if not latest_mogi:
@@ -84,7 +82,7 @@ class rollback(commands.Cog):
                     "No table string provided. Rollback cancelled."
                 )
 
-            results = calculate_results_from_tablestring(
+            results = await calculate_results_from_tablestring(
                 tablestring=tablestring,
                 players=all_players,
                 team_size=latest_team_size,
@@ -92,7 +90,7 @@ class rollback(commands.Cog):
             )
 
             if "error" in results:
-                return await ctx.respond(results["error"])
+                return await ctx.send(results["error"])
 
             key_to_format = {
                 int(format[0]) if format[0].isdigit() else 1: format
@@ -108,27 +106,38 @@ class rollback(commands.Cog):
                         player.mmr - latest_mogi.results[i]
                         for i, player in enumerate(all_players)
                     ],
-                    results=results["mmr_results_by_player"],
-                    placements=results["placements_by_player"],
+                    results=results["mmr_results"],
+                    placements=results["placements"],
                     team_size=latest_team_size,
                 ),
                 filename="table.png",
             )
 
-            await ctx.respond(
+            await ctx.send(
                 content=f"# Rollback - New Results\n"
                 f"Original duration: {int((latest_mogi.finished_at - latest_mogi.started_at) / 60)} minutes\n"
                 f"Format: {key_to_format.get(latest_team_size, 'Unknown')}",
                 file=file,
             )
 
+            if not await confirmation(
+                ctx=ctx,
+                text="React ✅ to replace the previous mogi results with these new correct ones; "
+                "or ❌ to cancel",
+                user_id=ctx.user.id,
+            ):
+                await ctx.send("Canceled.")
+                return await ctx.respond("Done.")
+
+            await ctx.send("WIP.. Would apply here...")
+
             # TODO: Update the database with new results
 
         else:
             # TODO: erase completely
-            await ctx.respond("This is not implemented yet.")
+            await ctx.send("This is not implemented yet.")
 
-        return await ctx.respond("WIP")
+        return await ctx.respond("Done.")
 
 
 def setup(bot: commands.Bot):
