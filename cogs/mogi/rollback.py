@@ -2,8 +2,9 @@ import asyncio
 
 from discord import slash_command, File
 from discord.ext import commands
-
 from pycord.multicog import subcommand
+
+from services.mogis import update_latest_mogi
 
 from utils.decorators import is_admin
 from utils.command_helpers import create_embed, confirmation, get_awaited_message
@@ -130,6 +131,9 @@ class rollback(commands.Cog):
                 return await ctx.respond("Done.")
 
             await ctx.send("WIP.. Would apply here...")
+
+            # await update_latest_mogi(new_results=results["mmr_results"])
+            # TODO: also update player mmrs
 
             # TODO: Update the database with new results
 

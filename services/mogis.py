@@ -11,6 +11,10 @@ async def get_latest_mogi(
     return await mogis.get_latest_mogi(as_json=as_json)
 
 
+async def update_latest_mogi(new_results: list[int]) -> None:
+    await mogis.update_latest_mogi(new_results=new_results)
+
+
 async def get_all_mogi_history(
     with_id: bool = False, as_json: bool = False
 ) -> list["MogiHistoryData"] | list[dict]:
