@@ -7,7 +7,7 @@ from pycord.multicog import subcommand
 
 from utils.decorators import is_admin
 from utils.command_helpers import create_embed, confirmation, get_awaited_message
-from utils.maths import get_placements_from_scores, create_table, calculate_mmr
+from utils.maths import get_placements_from_scores, create_table, calculate_mmr, calculate_results_from_tablestring
 
 from models import MogiApplicationContext, MogiHistoryData
 
