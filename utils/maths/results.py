@@ -152,7 +152,6 @@ async def end_collect_tablestring_to_results(
         tablestring=tablestring,
         players=ctx.mogi.players,
         team_size=ctx.mogi.format,
-        started_at=ctx.mogi.started_at,
         is_mini=ctx.mogi.is_mini,
     )
 
