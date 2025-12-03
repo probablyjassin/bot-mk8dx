@@ -275,13 +275,10 @@ class table_read(commands.Cog):
             ):
                 if not line.endswith(divider):
                     line += divider
-
-                    # debugging
-                    extracted_name = line.split()[0]
-                    print(
-                        f"Looking for: '{extracted_name}' (repr: {repr(extracted_name)})"
-                    )
-                    # ----------
+                # debugging
+                extracted_name = line.split()[0]
+                print(f"Looking for: '{extracted_name}' (repr: {repr(extracted_name)})")
+                # ----------
                 try:
                     line += scores[names.index(line.split()[0].strip())]
                 except:
