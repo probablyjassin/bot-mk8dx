@@ -242,6 +242,8 @@ class table_read(commands.Cog):
                     )
 
         # if there is a mogi, try to match the names to the output
+        potential_actual_names = []
+
         if ctx.mogi and len(ctx.mogi.players) == len(names):
             potential_actual_names = await pattern_match_lounge_names(
                 names, [player.name for player in ctx.mogi.players]
@@ -273,8 +275,15 @@ class table_read(commands.Cog):
             ):
                 if not line.endswith(divider):
                     line += divider
+
+                    # debugging
+                    extracted_name = line.split()[0]
+                    print(
+                        f"Looking for: '{extracted_name}' (repr: {repr(extracted_name)})"
+                    )
+                    # ----------
                 try:
-                    line += scores[names.index(line.split()[0])]
+                    line += scores[names.index(line.split()[0].strip())]
                 except:
                     return await ctx.respond(
                         f"Couldn't find {line.split()[0]}\n"
