@@ -4,7 +4,10 @@ from .mmr_algorithm import calculate_mmr
 from .placements import get_placements_from_scores
 from .readable_timediff import readable_timedelta
 from .replace import recurse_replace
-from .results import end_collect_tablestring_to_results
+from .results import (
+    end_collect_tablestring_to_results,
+    calculate_results_from_tablestring,
+)
 from .table import create_table
 from .teams_algorithm import teams_alg_distribute_by_order_kevnkkm, teams_alg_random
 
@@ -16,6 +19,7 @@ __all__ = [
     "readable_timedelta",
     "recurse_replace",
     "end_collect_tablestring_to_results",
+    "calculate_results_from_tablestring",
     "create_table",
     "teams_alg_distribute_by_order_kevnkkm",
     "teams_alg_random",
