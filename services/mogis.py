@@ -1,8 +1,18 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 from database import mogis
 
 if TYPE_CHECKING:
     from models.MogiModel import MogiHistoryData
+
+
+async def get_latest_mogi(
+    as_json: bool = False,
+) -> Optional[Union["MogiHistoryData", dict]]:
+    return await mogis.get_latest_mogi(as_json=as_json)
+
+
+async def update_latest_mogi(new_results: list[int]) -> None:
+    await mogis.update_latest_mogi(new_results=new_results)
 
 
 async def get_all_mogi_history(
