@@ -16,7 +16,7 @@ class list_mogi(commands.Cog):
     async def l(
         self,
         ctx: MogiApplicationContext,
-        context: Optional[str] = Option(
+        context: str | None = Option(
             str,
             name="context",
             description="extra context to give the list",
