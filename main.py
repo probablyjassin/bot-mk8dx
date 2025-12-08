@@ -74,7 +74,6 @@ bot = YuzuLoungeBot(
 def load_cogs():
     """Load all cogs from the cogs directory."""
     print("----Loading extensions----")
-    bot.load_extension("jishaku")
     for root, _, files in os.walk("./cogs"):
         for file in files:
             if file.endswith(".py"):
