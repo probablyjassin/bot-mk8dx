@@ -227,35 +227,35 @@ class table_read(commands.Cog):
         except Exception as e:
             return await ctx.respond(f"Error reading table: {str(e)}")
 
-        names = [entry["name"] for entry in output]
+        ocr_names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
+        # Extract player names from tablestring
         players: list[str] = []
         for line in tablestring.splitlines():
-            if line.strip(" |+") and len(line.split()) == 2:
-                name = re.sub(r"\s+[\d|+]+\s*$", "", line).strip()
-                if name:
-                    players.append(name)
-                else:
-                    return await ctx.respond(
-                        "Error reading out player name from the tablestring."
-                    )
+            line = line.strip()
+            # Skip empty lines and team headers (lines without scores)
+            if not line or not re.search(r"\d+\s*\+?\s*$", line):
+                continue
+            # Extract name by removing the trailing score pattern
+            name = re.sub(r"\s+\d+\s*\+?\s*$", "", line).strip()
+            if name:
+                players.append(name)
 
         # if there is a mogi, try to match the names to the output
         potential_actual_names = []
 
-        if ctx.mogi and len(ctx.mogi.players) == len(names):
+        if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
             potential_actual_names = await pattern_match_lounge_names(
-                names, [player.name for player in ctx.mogi.players]
+                ocr_names, [player.name for player in ctx.mogi.players]
             )
             if potential_actual_names:
                 if set(players) == set(potential_actual_names):
-                    names.clear()
-                    names.extend(potential_actual_names)
+                    ocr_names = potential_actual_names
                 else:
                     return await ctx.respond(
                         f"Matched lounge names but they don't fit with the selected tablestring:\n"
-                        f"Detected Names: `{names}`\n"
+                        f"Detected Names: `{ocr_names}`\n"
                         f"Matched Lounge Names: `{potential_actual_names}`\n"
                         f"Names on tablestring: `{players}`"
                     )
@@ -264,34 +264,40 @@ class table_read(commands.Cog):
                     "Could not match lounge names to in-game names"
                 )
 
+        # Build lookup dictionary for scores
+        score_lookup = {}
+        for name, score in zip(ocr_names, scores):
+            score_lookup[name.strip().lower()] = str(score)
+
         new_lines = []
         for line in tablestring.splitlines():
-            print(line)
-            if (
-                line.strip(" |+")
-                and len(line.split()) == 2
-                and line.split()[1].replace(divider, "").isnumeric()
-                # points.append(eval(line.split()[1].replace("|", "+").strip(" |+")))
-            ):
-                if not line.endswith(divider):
-                    line += divider
-                # debugging
-                extracted_name = line.split()[0]
-                print(f"Looking for: '{extracted_name}' (repr: {repr(extracted_name)})")
-                # ----------
-                try:
-                    line += scores[names.index(line.split()[0].strip())]
-                except:
+            stripped_line = line.strip()
+
+            # Check if this line has a player score (ends with number+optional plus)
+            if stripped_line and re.search(r"\d+\s*\+?\s*$", stripped_line):
+                # Extract the player name
+                name = re.sub(r"\s+\d+\s*\+?\s*$", "", stripped_line).strip()
+
+                # Look up the OCR score
+                name_key = name.strip().lower()
+                if name_key in score_lookup:
+                    # Ensure line ends with divider
+                    if not line.rstrip().endswith(divider):
+                        line = line.rstrip() + divider
+                    line = line.rstrip() + score_lookup[name_key]
+                else:
                     return await ctx.respond(
-                        f"Couldn't find {line.split()[0]}\n"
-                        f"Names:\n{names}\n"
-                        f"Matched Lounge Names: `{potential_actual_names}`"
+                        f"Couldn't find player '{name}' in OCR results.\n"
+                        f"OCR Names: `{ocr_names}`\n"
+                        f"Tablestring Names: `{players}`"
                     )
+
             new_lines.append(line)
 
         updated_tablestring = "\n".join(new_lines)
         return await ctx.respond(
-            updated_tablestring + "\n" + (MSG_WARN if warnings else MSG_CORRECT)
+            f"```\n{updated_tablestring}\n```\n"
+            + (MSG_WARN if warnings else MSG_CORRECT)
         )
 
     @table.command(
