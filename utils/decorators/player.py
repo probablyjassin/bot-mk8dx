@@ -55,7 +55,8 @@ def with_player(
             if assert_in_mogi:
                 if not ctx.player in ctx.mogi.players:
                     return await ctx.respond(
-                        f"{'Player' if query_varname else 'You\'re'} not in this mogi"
+                        f"{'Player' if query_varname else 'You\'re'} not in this mogi",
+                        ephemeral=True,
                     )
 
             # Make sure player is not already in a mogi (including in another channel)
