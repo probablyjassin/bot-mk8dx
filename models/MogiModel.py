@@ -281,7 +281,7 @@ class Mogi:
             table_message_id=data.get("mmr_results_by_group", []),
             team_tags=data.get(
                 "team_tags",
-                ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],
+                ["TeamA", "TeamB", "TeamC", "TeamD", "TeamE", "TeamF"],
             ),
             started_at=data.get("started_at"),
             finished_at=data.get("finished_at"),
