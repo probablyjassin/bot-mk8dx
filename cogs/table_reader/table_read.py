@@ -68,7 +68,7 @@ async def image_data_to_tablestring(
     if mogi_teams:
         mogi_players = [player for team in mogi_teams for player in team]
 
-    if mogi_players and len(mogi_players) == len(ocr_names):
+    if mogi_players:
         potential_actual_names = await pattern_match_lounge_names(
             ocr_names, [player.name for player in mogi_players]
         )
