@@ -73,7 +73,9 @@ async def image_data_to_tablestring(
             ocr_names, [player.name for player in mogi_players]
         )
         if potential_actual_names:
-            ocr_names = potential_actual_names
+            ocr_names.clear()
+            for name in potential_actual_names:
+                ocr_names.append(name)
 
     created_tablestring = ocr_to_tablestring(ocr_names, scores)
 
