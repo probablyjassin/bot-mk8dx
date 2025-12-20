@@ -216,8 +216,6 @@ class table_read(commands.Cog):
                 ephemeral=True,
             )
 
-        tablestring = message.content.replace("|", divider).replace("+", divider)
-
         try:
             output, warnings = await table_read_ocr_api(BufferedReader(BytesIO(record)))
         except ClientResponseError as e:
@@ -230,9 +228,9 @@ class table_read(commands.Cog):
         ocr_names = [entry["name"] for entry in output]
         scores = [entry["score"] for entry in output]
 
-        # Extract player names from tablestring
+        # Extract player names from tablestring (use original content before divider replacement)
         players: list[str] = []
-        for line in tablestring.splitlines():
+        for line in message.content.splitlines():
             line = line.strip()
             # Skip empty lines and team headers (lines without scores)
             if not line or not re.search(r"\d+\s*\+?\s*$", line):
@@ -244,6 +242,10 @@ class table_read(commands.Cog):
 
         # if there is a mogi, try to match the names to the output
         potential_actual_names = []
+
+        # Now apply divider replacement for processing
+        divider: str = "|" if "|" in message.content else "+"
+        tablestring = message.content.replace("|", divider).replace("+", divider)
 
         if ctx.mogi and len(ctx.mogi.players) == len(ocr_names):
             potential_actual_names = await pattern_match_lounge_names(
