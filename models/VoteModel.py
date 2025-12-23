@@ -75,8 +75,10 @@ class Vote:
 
             # Check if vote should end
             if await self._should_end(mogi):
-                winning_format = self._get_winning_format()
-                await self.end(mogi, winning_format=winning_format)
+                winning_format, tied_formats = self._get_winning_format()
+                await self.end(
+                    mogi, winning_format=winning_format, tied_formats=tied_formats
+                )
                 return True
 
             return True
@@ -99,8 +101,10 @@ class Vote:
                 self.votes["mini"] += 1
 
                 if await self._should_end(mogi):
-                    winning_format = self._get_winning_format()
-                    await self.end(mogi, winning_format=winning_format)
+                    winning_format, tied_formats = self._get_winning_format()
+                    await self.end(
+                        mogi, winning_format=winning_format, tied_formats=tied_formats
+                    )
                 return True
 
             # Handle Random Teams Vote
@@ -113,7 +117,9 @@ class Vote:
 
                 return True
 
-    async def end(self, mogi: "Mogi", winning_format: str = None):
+    async def end(
+        self, mogi: "Mogi", winning_format: str = None, tied_formats: list[str] = None
+    ):
         """End the vote session"""
         if not self.is_active:
             return
@@ -132,8 +138,8 @@ class Vote:
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
         for handler in self._cleanup_handlers:
-            try:  # winning_format, random_teams
-                await handler(winning_format, random_teams)
+            try:  # winning_format, random_teams, tied_formats
+                await handler(winning_format, random_teams, tied_formats)
             except Exception as e:
                 print(f"Cleanup handler failed: {e}")
 
@@ -158,10 +164,10 @@ class Vote:
         # If the leading format can't be caught
         return max_votes > (second_highest + remaining_voters)
 
-    def _get_winning_format(self) -> str:
-        """Get the format with the most votes"""
+    def _get_winning_format(self) -> tuple[str, list[str] | None]:
+        """Get the format with the most votes. Returns (winning_format, tied_formats or None)"""
         if not any(self.votes.values()):
-            return "ffa"  # Default if no votes
+            return "ffa", None  # Default if no votes
 
         max_votes = max(self.votes.values())
         winners = [
@@ -171,12 +177,12 @@ class Vote:
         ]
 
         if len(winners) == 1:
-            return winners[0]
+            return winners[0], None
         else:
-            # Handle tie - could be random or have a priority order
+            # Handle tie - random selection
             import random
 
-            return random.choice(winners)
+            return random.choice(winners), winners
 
     def _get_format_int(self, format_choice: str) -> int:
         """Convert format string to integer"""

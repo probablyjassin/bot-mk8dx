@@ -76,7 +76,15 @@ class stop(commands.Cog):
                 f"Use </password:{self.bot.get_application_command(name='password').id}>"
             )
 
-        async def send_mogi_start(winning_format: str, random_teams: bool):
+        async def send_mogi_start(
+            winning_format: str, random_teams: bool, tied_formats: list[str] | None
+        ):
+            # Announce if vote was tied
+            if tied_formats and len(tied_formats) > 1:
+                await ctx.send(
+                    f"# Vote is tied between {' and '.join(tied_formats)}, choosing randomly..."
+                )
+
             format_int: int = (
                 int(winning_format[0]) if winning_format[0].isdigit() else 1
             )
