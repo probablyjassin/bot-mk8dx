@@ -17,7 +17,7 @@ class list_mogi(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         context: str | None = Option(
-            str,
+            input_type=str,
             name="context",
             description="extra context to give the list",
             choices=["tablestring", "usernames", "mmr"],
