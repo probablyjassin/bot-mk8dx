@@ -235,10 +235,10 @@ class table_read(commands.Cog):
         for line in message.content.splitlines():
             line = line.strip()
             # Skip empty lines and team headers (lines without scores)
-            if not line or not re.search(r"\d+\s*\+?\s*$", line):
+            if not line or not re.search(r"(\s+\d+\s*\+?\s*)+$", line):
                 continue
-            # Extract name by removing the trailing score pattern
-            name = re.sub(r"\s+\d+\s*\+?\s*$", "", line).strip()
+            # Extract name by removing all trailing score patterns
+            name = re.sub(r"(\s+\d+\s*\+?\s*)+$", "", line).strip()
             if name:
                 players.append(name)
 
