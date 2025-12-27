@@ -198,7 +198,7 @@ class stop(commands.Cog):
             if ctx.mogi.vote.votes[key] == most_votes
         ]
         if max_votes:
-            not_voted_str += "Most voted so far:\n"
+            not_voted_str += f"Most voted so far: ({most_votes})\n"
             for key in max_votes:
                 not_voted_str += key + "\n"
             runner_ups = [
@@ -209,7 +209,7 @@ class stop(commands.Cog):
             if runner_ups:
                 not_voted_str += "\nRunner ups:\n"
                 for key in runner_ups:
-                    not_voted_str += key + "\n"
+                    not_voted_str += f"{key} ({most_votes-1})\n"
         not_voted_str += "\n"
 
         not_voted_str += "Missing votes from:\n"
