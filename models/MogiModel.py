@@ -1,4 +1,5 @@
 import time
+from string import ascii_uppercase
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -64,7 +65,7 @@ class Mogi:
     table_message_id: int | None = None
 
     team_tags: list[str] = field(
-        default_factory=lambda: [f"Team {i}" for i in range(1, 7)]
+        default_factory=lambda: [f"Team {ascii_uppercase[i]}" for i in range(1, 7)]
     )
 
     started_at: int | None = None
