@@ -24,7 +24,7 @@ async def apply_team_roles(ctx: MogiApplicationContext | Interaction, mogi: Mogi
 
 
 async def remove_team_roles(ctx: MogiApplicationContext | Interaction):
-    all_team_roles = [get(ctx.guild.roles, name=f"Team{i+1}") for i in range(5)]
+    all_team_roles = [get(ctx.guild.roles, name=f"Team {i+1}") for i in range(5)]
 
     if len(all_team_roles[0].members) == 0:
         return
