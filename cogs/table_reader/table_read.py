@@ -30,6 +30,8 @@ from services.miscellaneous import set_player_alias, get_all_aliases
 MSG_WARN = "⚠️ The scores don't fully add up! Double check them for errors."
 MSG_CORRECT = "✅ The scores seem to fully add up. Still double check with Lorenzi!"
 
+scoring_regex = r"^ \+?(?:\d+\+)*\d+\s*"
+
 
 def is_image(attachment: Attachment) -> bool:
     # Prefer content_type when available, fallback to filename extension
@@ -101,7 +103,6 @@ class table_read(commands.Cog):
         name="read",
         description="Get a tablestring from a screenshot",
     )
-    @is_mogi_manager()
     async def read(
         self,
         ctx: MogiApplicationContext,
@@ -198,7 +199,6 @@ class table_read(commands.Cog):
     @message_command(
         name="Tablestring->Add points from Img",
     )
-    @is_mogi_manager()
     async def add(self, ctx: MogiApplicationContext, message: Message):
         await ctx.defer()
 
@@ -235,10 +235,10 @@ class table_read(commands.Cog):
         for line in message.content.splitlines():
             line = line.strip()
             # Skip empty lines and team headers (lines without scores)
-            if not line or not re.search(r"(\s+\d+\s*\+?\s*)+$", line):
+            if not line or not re.search(scoring_regex, line):
                 continue
             # Extract name by removing all trailing score patterns
-            name = re.sub(r"(\s+\d+\s*\+?\s*)+$", "", line).strip()
+            name = re.sub(scoring_regex, "", line).strip()
             if name:
                 players.append(name)
 
@@ -278,9 +278,9 @@ class table_read(commands.Cog):
             stripped_line = line.strip()
 
             # Check if this line has a player score (ends with number+optional plus)
-            if stripped_line and re.search(r"\d+\s*\+?\s*$", stripped_line):
+            if stripped_line and re.search(scoring_regex, stripped_line):
                 # Extract the player name
-                name = re.sub(r"\s+\d+\s*\+?\s*$", "", stripped_line).strip()
+                name = re.sub(scoring_regex, "", stripped_line).strip()
 
                 # Look up the OCR score
                 name_key = name.strip().lower()
