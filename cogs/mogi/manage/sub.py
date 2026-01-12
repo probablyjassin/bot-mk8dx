@@ -141,7 +141,7 @@ class sub(commands.Cog):
         ctx.mogi.subs.append(ctx.player)
 
         await ctx.respond(
-            f"<@{ctx.player.name}> is now listed as sub.",
+            f"<@{ctx.player.discord_id}> is now listed as sub.",
             allowed_mentions=AllowedMentions.none(),
         )
 
