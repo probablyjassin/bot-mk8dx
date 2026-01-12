@@ -1,3 +1,8 @@
+"""
+Currently unused code that was previously used for picking the server that best fits the region of most players.
+Most players are from Europe, so this feature is overkill.
+"""
+
 from discord import Member, Role, Interaction
 from discord.utils import get
 
