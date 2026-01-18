@@ -33,15 +33,15 @@ docker compose up -d
 
 That's it! Uncomment the [docker watchtower](https://github.com/containrrr/watchtower) section in the `docker-compose.yml` to automatically fetch updates to restart the bot when changes are detected!
 
-# The 4th Season of MK8DX-Lounge on Yuzu Online!
+# Season 5 of MK8DX-Lounge on Yuzu Online!
 
-<img width="4000" height="2812" alt="Yuzu Online Lounge Season 4 Banner" src="https://github.com/user-attachments/assets/f0ab0af9-9e22-45ad-8e8c-c10fbfc13e7f" />
+<img width="4000" height="2812" alt="Yuzu Online Lounge Season 5 Banner" src="https://github.com/user-attachments/assets/f0ab0af9-9e22-45ad-8e8c-c10fbfc13e7f" />
 
 We're happy to present the brand new season of Lounge to you! There is many new things we prepared for you this time!
 
 ## MMR reset
 
-The MMR reset is a _significant_ one this time around!
+We are bringing back the _significant_ resets from last season!
 We used a method that **resets top rated players by a lot more** than lower rated ones.
 
 In general:
@@ -63,36 +63,16 @@ woodlover:
 + 1255MMR (Silver Rank)
 ```
 
-## MINI MOGIS!
+## Statistics!
 
-Some have been wishing for this **over a full year ago** in \#suggestions, and due to popular demand, we finally implemented it! Furthermore, MMR gains/losses are reduced to 60%
-
-#### How it works:
-
-When voting for the format, instead of picking FFA, 2v2, 3v3,... pick `Mini Mogi`!
-
-Mini Mogis are always FFA, and they are **capped to 40 minutes of play time, or until you reach 6 races**! The Lounge Bot will also notify you in the mogi when the 40 minute threshold is reached.
-
-## RANDOM Teams!
-
-While voting for the format, you can now **press `Random Teams` before you pick**, to get **fully randomized teammates** if the vote ends in **2v2 or 3v3**!
-
-## Full Format History
-
-We now store which formats you played how often!
+Changes from Season 4 onwards were all about statistics.
+You've already seen tons of awesome new ways to see your history in our lounge added to the lounge website by Kevnkkm.
+Now we are bringing some to the bot as well!
 
 ## Many Bot optimizations
 
 The Lounge Bot has been steadily improving all the time. For this season we make lots of improvements to the general experience, like **getting rid of the unnecessary vote when you're starting with 7, 9 or 11 players**, and ma
 
-## Ujuj's TABLE READER!
-
-The Table Reader has finished development and works! Over the next few days, we will work hard on getting implemented right into the bot to automize tables for you!
-
-## Automated Abuse Protection!
-
-We implemented complex mechanics to flag and identify players who use VPNs, Proxies, and other kinds of Applications to try and use Alt-Accounts and such.
-
 ---
 
-#### That's it! Now enjoy Season 4 of MK8DX-Lounge on Yuzu Online!
+#### That's it! Now enjoy Season 5 of MK8DX-Lounge on Yuzu Online!
