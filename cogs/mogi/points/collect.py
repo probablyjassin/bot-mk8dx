@@ -4,7 +4,7 @@ from discord import ChannelType, Thread, message_command, Message, SlashCommandG
 from discord.ext import commands
 
 from models import MogiApplicationContext
-from utils.maths.results import process_tablestring
+from utils.maths import end_collect_tablestring_to_results
 from utils.command_helpers import get_awaited_message
 from utils.decorators import (
     is_mogi_in_progress,
@@ -52,7 +52,7 @@ class collect(commands.Cog):
             await points_collection_thread.delete()
 
             # Process the tablestring
-            await process_tablestring(ctx, tablestring)
+            await end_collect_tablestring_to_results(ctx, tablestring)
 
     @message_command(name="Collect Points")
     @is_mogi_manager()
@@ -68,7 +68,7 @@ class collect(commands.Cog):
             tablestring = message.content
 
             # Process the tablestring
-            await process_tablestring(ctx, tablestring)
+            await end_collect_tablestring_to_results(ctx, tablestring)
 
 
 def setup(bot: commands.Bot):

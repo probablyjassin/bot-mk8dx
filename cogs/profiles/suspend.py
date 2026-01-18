@@ -3,8 +3,9 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, archive_type
+from database.types import archive_type
 from utils.decorators import is_moderator
+from services.players import find_player_profile
 
 
 class suspend(commands.Cog):
@@ -24,14 +25,14 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(
+        player: PlayerProfile = await find_player_profile(
             searched_player, archive=archive_type.INCLUDE
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
-        player.suspended = True
+        await player.set_suspended(True)
 
         await ctx.respond(f"Suspended <@{player.discord_id}>")
 
@@ -44,14 +45,14 @@ class suspend(commands.Cog):
             str, name="player", description="username | @ mention | discord_id"
         ),
     ):
-        player: PlayerProfile = data_manager.find_player(
+        player: PlayerProfile = await find_player_profile(
             searched_player, archive=archive_type.INCLUDE
         )
 
         if not player:
-            await ctx.respond("Couldn't find that player")
+            return await ctx.respond("Couldn't find that player")
 
-        player.suspended = False
+        await player.set_suspended(False)
 
         await ctx.respond(f"Unsuspended <@{player.discord_id}>")
 

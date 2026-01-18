@@ -4,11 +4,12 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
+from utils.command_helpers import player_name_autocomplete
 from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_not_full,
     is_moderator,
-    other_player,
+    with_player,
 )
 
 
@@ -21,14 +22,17 @@ class add(commands.Cog):
     @is_moderator()
     @is_mogi_not_in_progress()
     @is_mogi_not_full()
-    @other_player(
+    @with_player(
         query_varname="player", assert_not_in_mogi=True, assert_not_suspended=True
     )
     async def add_player(
         self,
         ctx: MogiApplicationContext,
         player: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=player_name_autocomplete,
         ),
     ):
         # Add to mogi and add roles

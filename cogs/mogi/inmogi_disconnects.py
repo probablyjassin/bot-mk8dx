@@ -8,6 +8,8 @@ from models import Mogi
 
 from config import GUILD_IDS
 
+from utils.decorators.checks import _is_at_least_role, LoungeRole
+
 
 class inmogi_disconnects(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -37,12 +39,14 @@ class inmogi_disconnects(commands.Cog):
 
         # callback if player DCd
         async def yes_button_callback(interaction: Interaction):
-            if interaction.user.id != message.author.id:
+            if interaction.user.id != message.author.id and _is_at_least_role(
+                interaction, LoungeRole.ADMIN
+            ):
                 return await interaction.response.send_message(
                     content="This is not for you",
                     ephemeral=True,
                 )
-            player.add_disconnect()
+            await player.add_disconnect()
             await interaction.response.send_message(
                 content=f"<@{player.discord_id}> DCd {inmogi_role.mention}! \nAdded to counter (now {player.disconnects})",
                 view=None,

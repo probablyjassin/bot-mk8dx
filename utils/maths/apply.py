@@ -1,42 +1,18 @@
-from pymongo import UpdateOne
+from typing import TYPE_CHECKING
+from services.guilds import apply_result_mmr
 
-from models import Mogi
-from utils.data._database import db_players
+if TYPE_CHECKING:
+    from models.GuildModel import Guild, PlayingGuild
 
 
-async def apply_mmr(mogi: Mogi) -> None:
-
-    all_player_names = [player.name for player in mogi.players]
-    all_player_mmrs = [player.mmr for player in mogi.players]
-    all_player_new_mmrs = [
-        all_player_mmrs[i] + mogi.mmr_results_by_group[i]
-        for i in range(len(mogi.players))
-    ]
-
-    # create objects to update in the database in bulk
-    data_to_update_obj = [
+async def apply_guild_mmr(guilds: list["Guild | PlayingGuild"], mmr_deltas: list[int]):
+    data_to_update_obj: list[dict[str, str | int]] = [
         {
-            "name": all_player_names[i],
-            "new_mmr": all_player_new_mmrs[i],
-            "delta": mogi.mmr_results_by_group[i],
+            "name": guilds[i].name,
+            "new_mmr": guilds[i].mmr + mmr_deltas[i],
+            "delta": mmr_deltas[i],
         }
-        # don't update subs unless they gained mmr
-        for i in range(len(all_player_names))
-        if not any(sub.name == all_player_names[i] for sub in mogi.subs)
-        or mogi.mmr_results_by_group[i] > 0
+        for i in range(len(guilds))
     ]
 
-    db_players.bulk_write(
-        [
-            UpdateOne(
-                {"name": entry["name"]},
-                {
-                    "$set": {"mmr": entry["new_mmr"] if entry["new_mmr"] > 0 else 1},
-                    "$push": {"history": entry["delta"]},
-                    "$inc": {f"formats.{'0' if mogi.is_mini else str(mogi.format)}": 1},
-                },
-                upsert=False,
-            )
-            for entry in data_to_update_obj
-        ]
-    )
+    await apply_result_mmr(data_to_update_obj)

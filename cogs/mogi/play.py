@@ -18,7 +18,7 @@ from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_manager,
 )
-from config import FORMATS, FLAGS
+from config import FORMATS
 
 
 class stop(commands.Cog):
@@ -35,13 +35,8 @@ class stop(commands.Cog):
     async def vote(self, ctx: MogiApplicationContext):
         await ctx.defer()
 
-        if FLAGS["hold_mogis"]:
-            return await ctx.respond(
-                "Because of maintenance, you cannot start mogis for just a few moments."
-            )
-
         # not enough players
-        if len(ctx.mogi.players) <= 5 and not FLAGS["no_min_players"]:
+        if len(ctx.mogi.players) <= 5:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -77,10 +72,19 @@ class stop(commands.Cog):
                 best_server = await get_best_server(ctx=ctx, mogi=ctx.mogi)
                 ctx.mogi.room = best_server
             await ctx.channel.send(
-                f"# Yuzu Server: {ctx.mogi.room.name}\nUse `/password`"
+                f"# Yuzu Server: {ctx.mogi.room.name}\n"
+                f"Use </password:{self.bot.get_application_command(name='password').id}>"
             )
 
-        async def send_mogi_start(winning_format: str, random_teams: bool):
+        async def send_mogi_start(
+            winning_format: str, random_teams: bool, tied_formats: list[str] | None
+        ):
+            # Announce if vote was tied
+            if tied_formats and len(tied_formats) > 1:
+                await ctx.send(
+                    f"# Vote is tied between {' and '.join(tied_formats)}, choosing randomly..."
+                )
+
             format_int: int = (
                 int(winning_format[0]) if winning_format[0].isdigit() else 1
             )
@@ -92,7 +96,15 @@ class stop(commands.Cog):
 
             # Send the lineup, show the mogi has started
             await ctx.send(
-                f"# Mogi starting!\n## Format: {'RANDOM' if random_teams and format_int != 1 else ''} {winning_format.upper()} Mogi\n### Lineup:\n{lineup}"
+                f"# Mogi starting!\n"
+                "## Format: "
+                f"{'RANDOM' if random_teams and format_int != 1 else ''} "
+                f"{winning_format.upper()} Mogi\n"
+                f"### Lineup:\n{lineup}"
+            )
+
+            await ctx.send(
+                f"# </password:{self.bot.get_application_command(name='password').id}>"
             )
 
         ctx.mogi.vote.add_setup_handler(send_vote)
@@ -121,7 +133,7 @@ class stop(commands.Cog):
         if ctx.mogi.isPlaying or ctx.mogi.vote:
             return await ctx.respond("Mogi already started", ephemeral=True)
         # not enough players
-        if len(ctx.mogi.players) < 6 and not FLAGS["no_min_players"]:
+        if len(ctx.mogi.players) <= 5:
             return await ctx.respond("Not enough players to start", ephemeral=True)
 
         ctx.mogi.play(
@@ -179,27 +191,26 @@ class stop(commands.Cog):
 
         not_voted_str = ""
 
-        if FLAGS["show_votes"]:
-            most_votes = max(ctx.mogi.vote.votes.values())
-            max_votes = [
+        most_votes = max(ctx.mogi.vote.votes.values())
+        max_votes = [
+            key
+            for key in ctx.mogi.vote.votes.keys()
+            if ctx.mogi.vote.votes[key] == most_votes
+        ]
+        if max_votes:
+            not_voted_str += f"Most voted so far: ({most_votes})\n"
+            for key in max_votes:
+                not_voted_str += key + "\n"
+            runner_ups = [
                 key
                 for key in ctx.mogi.vote.votes.keys()
-                if ctx.mogi.vote.votes[key] == most_votes
+                if ctx.mogi.vote.votes[key] == most_votes - 1
             ]
-            if max_votes:
-                not_voted_str += "Most voted so far:\n"
-                for key in max_votes:
-                    not_voted_str += key + "\n"
-                runner_ups = [
-                    key
-                    for key in ctx.mogi.vote.votes.keys()
-                    if ctx.mogi.vote.votes[key] == most_votes - 1
-                ]
-                if runner_ups:
-                    not_voted_str += "\nRunner ups:\n"
-                    for key in runner_ups:
-                        not_voted_str += key + "\n"
-            not_voted_str += "\n"
+            if runner_ups:
+                not_voted_str += "\nRunner ups:\n"
+                for key in runner_ups:
+                    not_voted_str += f"{key} ({most_votes-1})\n"
+        not_voted_str += "\n"
 
         not_voted_str += "Missing votes from:\n"
         hasnt_voted = []

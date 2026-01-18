@@ -1,3 +1,7 @@
+"""
+This code was added to have new users who sign up for lounge actually read through the documentation.
+"""
+
 import asyncio
 
 from discord import SelectOption

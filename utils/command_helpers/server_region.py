@@ -1,3 +1,8 @@
+"""
+Currently unused code that was previously used for picking the server that best fits the region of most players.
+Most players are from Europe, so this feature is overkill.
+"""
+
 from discord import Member, Role, Interaction
 from discord.utils import get
 
@@ -21,8 +26,10 @@ async def get_best_server(
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 
+    players = mogi.players if mogi else []
+
     player_discord_members: list[Member] = [
-        get(ctx.guild.members, id=player.discord_id) for player in mogi.players
+        get(ctx.guild.members, id=player.discord_id) for player in players
     ]
     for member in player_discord_members:
         for role in REGION_ROLES:

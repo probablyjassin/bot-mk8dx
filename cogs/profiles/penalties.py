@@ -3,56 +3,27 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, PlayerProfile
 
-from utils.data import data_manager, mogi_manager
-from utils.decorators import is_mogi_manager
+from utils.data import mogi_manager
+from utils.decorators import is_mogi_manager, with_player
 
 
 class penalties(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(
-        name="bank",
-        description="Check MrBoost's bank balance",
-    )
-    async def bank(self, ctx: MogiApplicationContext):
-
-        player: PlayerProfile = data_manager.find_player("mrboost")
-
-        if not player:
-            return await ctx.respond("Couldn't find that player")
-
-        embed: Embed = Embed(title=f"{player.name}")
-        embed.add_field(
-            name="MMR",
-            value=f"{player.mmr}",
-            inline=True,
-        )
-        embed.set_image(
-            url="https://raw.githubusercontent.com/mk8dx-yuzu/images/7ff99fd3ac23c74c75fbf964f0d2070342eb33ee/mrboost.gif"
-        )
-
-        await ctx.respond(f"mrboost - overview", embed=embed)
-
-    @slash_command(
+    """ @slash_command(
         name="tax",
         description="Collect MMR for penalties",
     )
     @is_mogi_manager()
+    @with_player(query_varname="player")
     async def tax(
         self,
         ctx: MogiApplicationContext,
         player=Option(str, "Player to collect penalties from"),
         mmr=Option(int, "MMR to collect"),
     ):
-        player_profile: PlayerProfile = data_manager.find_player(player)
-        penalty_holder: PlayerProfile = data_manager.find_player(self.bot.user.id)
-
-        if not player_profile:
-            return await ctx.respond("Couldn't find that player")
-
-        if not penalty_holder:
-            return await ctx.respond("Couldn't find mrboost")
+        player_profile = ctx.player
 
         # Check if player is in a mogi in another channel
         for mogi in mogi_manager.read_registry().values():
@@ -72,13 +43,12 @@ class penalties(commands.Cog):
                 None,
             )
 
-        player_profile.mmr = player_profile.mmr - abs(mmr)
-        penalty_holder.mmr = penalty_holder.mmr + abs(mmr)
+        player_profile.set_mmr(player_profile.mmr - abs(mmr))
 
         await ctx.respond(
             f"Collected penalties from <@{player_profile.discord_id}>",
             allowed_mentions=AllowedMentions.none(),
-        )
+        ) """
 
 
 def setup(bot: commands.Bot):

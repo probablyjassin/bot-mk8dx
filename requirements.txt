@@ -1,12 +1,21 @@
-py-cord==2.6.1
+# Discord API
+py-cord==2.7.0rc1
 pycord-multicog
-python-dotenv
-aiohttp
-pymongo
-colorlog
 
+# MongoDB
+pymongo
+motor
+
+# Environment Variables
+python-dotenv
+
+# Tables
 matplotlib
-dataframe_image
 pandas
-fuzzywuzzy
+dataframe_image
+
+# Other
+aiohttp
+colorlog
+rapidfuzz
 python-Levenshtein

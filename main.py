@@ -42,11 +42,6 @@ class YuzuLoungeBot(Bot):
         state_manager.load_saved()
         await (await self.fetch_channel(LOG_CHANNEL_ID)).send("🟢 Bot is online!")
 
-        print("Guilds:")
-        for guild in self.guilds:
-            print(guild.name)
-        print("--------")
-
     async def get_application_context(self, interaction, cls=MogiApplicationContext):
         return await super().get_application_context(interaction, cls=cls)
 

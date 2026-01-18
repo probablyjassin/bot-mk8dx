@@ -1,5 +1,6 @@
 from dataclasses import dataclass, field
 from typing import Callable, TYPE_CHECKING
+import asyncio
 
 from config import FORMATS
 
@@ -20,6 +21,7 @@ class Vote:
         default_factory=lambda: {"random_teams_votes": 0, "random_teams_voters": []}
     )
     result: str | None = None
+    _vote_lock: asyncio.Lock = field(default_factory=asyncio.Lock)  # Add this
 
     _setup_handlers: list[Callable] = field(default_factory=lambda: [])
     _cleanup_handlers: list[Callable] = field(default_factory=lambda: [])
@@ -50,71 +52,74 @@ class Vote:
 
     async def cast_vote_format(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
         """Cast a vote for a specific format"""
-        if not self.is_active:
-            return False
+        async with self._vote_lock:  # Lock entire vote operation
+            if not self.is_active:
+                return False
 
-        # Check if user already voted
-        if user_id in self.voters:
-            return False
-
-        # Check if user is in the mogi
-        if user_id not in [player.discord_id for player in mogi.players]:
-            return False
-
-        # Check if format is valid for current player count
-        format_int = self._get_format_int(choice)
-        if not self._is_valid_format(mogi, format_int):
-            return False
-
-        # Cast the vote
-        self.voters.add(user_id)
-        self.votes[choice] += 1
-
-        # Check if vote should end
-        if await self._should_end(mogi):
-            winning_format = self._get_winning_format()
-            await self.end(mogi, winning_format=winning_format)
-            return True
-
-        return True
-
-    async def cast_vote_extra(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
-        if not self.is_active:
-            return False
-
-        # Check if user is in the mogi
-        if user_id not in [player.discord_id for player in mogi.players]:
-            return False
-
-        # Handle Mini Mogi vote like a normal vote
-        if choice == "Mini":
             # Check if user already voted
             if user_id in self.voters:
                 return False
 
-            # Cast the vote
+            # Check if user is in the mogi
+            if user_id not in [player.discord_id for player in mogi.players]:
+                return False
+
+            # Check if format is valid for current player count
+            format_int = self._get_format_int(choice)
+            if not self._is_valid_format(mogi, format_int):
+                return False
+
+            # Cast the vote (now atomic)
             self.voters.add(user_id)
-            self.votes["mini"] += 1
+            self.votes[choice] += 1
 
             # Check if vote should end
             if await self._should_end(mogi):
-                winning_format = self._get_winning_format()
-                await self.end(mogi, winning_format=winning_format)
+                winning_format, tied_formats = self._get_winning_format()
+                await self.end(
+                    mogi, winning_format=winning_format, tied_formats=tied_formats
+                )
+                return True
+
             return True
 
-        # Handle Random Teams Vote
-        if choice == "Random Teams":
-            # Check if user already voted this
-            if user_id in self.extras["random_teams_voters"]:
+    async def cast_vote_extra(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
+        async with self._vote_lock:  # Lock this too
+            if not self.is_active:
                 return False
 
-            # Cast the vote
-            self.extras["random_teams_voters"].append(user_id)
-            self.extras["random_teams_votes"] += 1
+            # Check if user is in the mogi
+            if user_id not in [player.discord_id for player in mogi.players]:
+                return False
 
-            return True
+            # Handle Mini Mogi vote
+            if choice == "Mini":
+                if user_id in self.voters:
+                    return False
 
-    async def end(self, mogi: "Mogi", winning_format: str = None):
+                self.voters.add(user_id)
+                self.votes["mini"] += 1
+
+                if await self._should_end(mogi):
+                    winning_format, tied_formats = self._get_winning_format()
+                    await self.end(
+                        mogi, winning_format=winning_format, tied_formats=tied_formats
+                    )
+                return True
+
+            # Handle Random Teams Vote
+            if choice == "Random Teams":
+                if user_id in self.extras["random_teams_voters"]:
+                    return False
+
+                self.extras["random_teams_voters"].append(user_id)
+                self.extras["random_teams_votes"] += 1
+
+                return True
+
+    async def end(
+        self, mogi: "Mogi", winning_format: str = None, tied_formats: list[str] = None
+    ):
         """End the vote session"""
         if not self.is_active:
             return
@@ -133,8 +138,8 @@ class Vote:
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
         for handler in self._cleanup_handlers:
-            try:  # winning_format, random_teams
-                await handler(winning_format, random_teams)
+            try:  # winning_format, random_teams, tied_formats
+                await handler(winning_format, random_teams, tied_formats)
             except Exception as e:
                 print(f"Cleanup handler failed: {e}")
 
@@ -159,10 +164,10 @@ class Vote:
         # If the leading format can't be caught
         return max_votes > (second_highest + remaining_voters)
 
-    def _get_winning_format(self) -> str:
-        """Get the format with the most votes"""
+    def _get_winning_format(self) -> tuple[str, list[str] | None]:
+        """Get the format with the most votes. Returns (winning_format, tied_formats or None)"""
         if not any(self.votes.values()):
-            return "ffa"  # Default if no votes
+            return "ffa", None  # Default if no votes
 
         max_votes = max(self.votes.values())
         winners = [
@@ -172,12 +177,12 @@ class Vote:
         ]
 
         if len(winners) == 1:
-            return winners[0]
+            return winners[0], None
         else:
-            # Handle tie - could be random or have a priority order
+            # Handle tie - random selection
             import random
 
-            return random.choice(winners)
+            return random.choice(winners), winners
 
     def _get_format_int(self, format_choice: str) -> int:
         """Convert format string to integer"""

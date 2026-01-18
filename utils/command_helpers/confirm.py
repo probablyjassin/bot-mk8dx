@@ -1,8 +1,14 @@
 import asyncio
+from discord import Reaction, User, Embed
 from models.CustomMogiContext import MogiApplicationContext
 
 
-async def confirmation(ctx: MogiApplicationContext, text: str) -> bool:
+async def confirmation(
+    ctx: MogiApplicationContext,
+    text: str,
+    embed: Embed = None,
+    user_id: int | None = None,
+) -> bool:
     """
     Sends a confirmation message and waits for the user to react with a checkmark or X.
 
@@ -10,17 +16,17 @@ async def confirmation(ctx: MogiApplicationContext, text: str) -> bool:
     :param text: The custom text to display in the confirmation message.
     :return: True if the user confirms, False otherwise.
     """
-    message = await ctx.send(text)
+    message = await ctx.send(text, embed=embed)
     await message.add_reaction("✅")
     await message.add_reaction("❌")
 
-    def check(reaction, user):
-        return user == ctx.author and str(reaction.emoji) in ["✅", "❌"]
+    def check(reaction: Reaction, user: User):
+        return user.id == (user_id if user_id else ctx.author.id) and str(
+            reaction.emoji
+        ) in ["✅", "❌"]
 
     try:
-        reaction, user = await ctx.bot.wait_for(
-            "reaction_add", timeout=60.0, check=check
-        )
+        reaction, _ = await ctx.bot.wait_for("reaction_add", timeout=60.0, check=check)
         if str(reaction.emoji) == "✅":
             return True
         else:

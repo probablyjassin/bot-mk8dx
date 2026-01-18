@@ -6,12 +6,16 @@ import json
 import requests
 from datetime import datetime, timezone, timedelta
 from datetime import time as datetime_time
+from zoneinfo import ZoneInfo
 
 from discord import Activity, ActivityType, Status, AllowedMentions
 from discord.ext import commands, tasks
 from discord.utils import get
 
-from utils.data import data_manager, archive_type, state_manager, mogi_manager
+from database.types import archive_type
+from services.mogis import get_all_mogi_history
+from services.players import get_all_player_profiles
+from utils.data import state_manager, mogi_manager
 
 from utils.command_helpers import fetch_server_passwords
 
@@ -67,7 +71,7 @@ class tasks(commands.Cog):
             hour=22,
             minute=0,
             second=0,
-            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+            tzinfo=ZoneInfo("Europe/Berlin"),
         )
     )
     async def daily_db_backup(self):
@@ -81,10 +85,10 @@ class tasks(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": data_manager.get_all_player_entries(
-                archive=archive_type.INCLUDE, with_id=False
+            "players": await get_all_player_profiles(
+                archive=archive_type.INCLUDE, with_id=False, as_json=True
             ),
-            "mogis": data_manager.get_all_mogi_entries(with_id=False),
+            "mogis": await get_all_mogi_history(with_id=False, as_json=True),
         }
 
         with open(backup_filename, "w") as backup_file:
@@ -113,7 +117,7 @@ class tasks(commands.Cog):
             hour=7,
             minute=30,
             second=0,
-            tzinfo=timezone(timedelta(hours=2), name="Europe/Berlin"),
+            tzinfo=ZoneInfo("Europe/Berlin"),
         )
     )
     async def get_updated_passwords(self):

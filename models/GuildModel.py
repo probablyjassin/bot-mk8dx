@@ -1,7 +1,14 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data._database import db_players
+
+from services.guilds import add_member, remove_member, set_guild_attribute
+from services.players import find_player_profiles_by_ids
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.PlayerModel import PlayerProfile
 
 
 @dataclass
@@ -11,133 +18,102 @@ class Guild:
     #### Attributes:
         _id (str): The _id assigned by MongoDB.
         name (str): The guild's full official name.
+        icon (str): Static URL to the Guild Icon image.
         player_ids (list[Int64]): The Discord IDs of all members. Note: MongoDB converts this to Int64.
         mmr (int): The matchmaking rating of the guild.
         history (list[int]): A list of historical MMR deltas.
-        formats (dict{int, int}): A dict of the formats the guild played and their amount.
-        joined (int | None): The timestamp when the player joined, or None.
+        creation_date (int | None): The timestamp when the player joined, or None.
     """
 
     _id: ObjectId
     _name: str
+    _icon: str
     _player_ids: list[Int64]
     _mmr: int
     _history: list[int]
-    _formats: dict[str, int] = field(
-        default_factory=lambda: {str(i): 0 for i in range(7)}
-    )
-    _joined: int | None = None
+    _creation_date: int | None = None
 
-    def __init__(
-        self,
-        _id,
-        name,
-        player_ids,
-        mmr,
-        history,
-        formats,
-        joined=None,
-    ):
+    def __init__(self, _id, name, icon, player_ids, mmr, history, creation_date):
         self._id = _id
         self._name = name
+        self._icon = icon
         self._player_ids = player_ids
         self._mmr = mmr
         self._history = history
-        self._formats = (
-            formats if formats is not None else {str(i): 0 for i in range(7)}
-        )
-        self._joined = joined
+        self._creation_date = creation_date
 
-    # Methods
+    # Getters and Setters
 
-    """ def update_attribute(self, attr_name: str, value):
-        setattr(self, f"_{attr_name}", value)
-        db_guilds.update_one(
-            {"_id": self._id},
-            {"$set": {attr_name: value}},
-        ) """
-
-    """ def refresh(self):
-        data = db_guilds.find_one({"_id": self._id})
-        self.__dict__.update(Guild.from_json(data).__dict__) """
-
-    # Properties
-
-    # ID (read-only)
+    # name
     @property
-    def id(self):
-        return self._id
-
-    # Name
-    @property
-    def name(self):
+    def name(self) -> str:
         return self._name
 
-    @name.setter
-    def name(self, value):
-        self.update_attribute("name", value)
+    async def set_name(self, value: str):
+        await set_guild_attribute(self, "name", value)
 
-    # Discord ID
+    # icon
     @property
-    def player_ids(self):
-        return self._player_ids
+    def icon(self) -> str:
+        return self._icon
 
-    """ player_ids.setter
-    def ... """
+    async def set_icon(self, value: str):
+        await set_guild_attribute(self, "icon", value)
 
-    # MMR
+    # mmr
     @property
-    def mmr(self):
+    def mmr(self) -> str:
         return self._mmr
 
     @mmr.setter
-    def mmr(self, value):
-        self.update_attribute("mmr", value)
+    def mmr(self, value: str):
+        self._mmr = value
 
-    # History (has different setter)
+    # creation_date
     @property
-    def history(self):
+    def creation_date(self) -> int | None:
+        return self._creation_date
+
+    # player_ids
+    @property
+    def player_ids(self) -> list[Int64]:
+        return self._player_ids
+
+    async def add_member(self, player_id: Int64):
+        await add_member(guild=self, player_id=player_id)
+
+    async def remove_member(self, player_id: Int64):
+        await remove_member(guild=self, player_id=player_id)
+
+    # history
+    @property
+    def history(self) -> list[int]:
         return self._history
 
-    def append_history(self, value):
+    def append_history(self, value: int):
         self._history.append(value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$push": {"history": value}},
-        )
 
-    # Formats
-    @property
-    def formats(self):
-        return self._formats
+    async def fetch_player_profiles(self) -> list["PlayerProfile"]:
+        return await find_player_profiles_by_ids(self.player_ids)
 
-    def count_format_played(self, value):
-        self._formats[value] += 1
-        db_players.update_one(
-            {"_id": self._id},
-            {"$inc": {f"formats.{value}": 1}},
-        )
-
-    # Joined (read-only)
-    @property
-    def joined(self):
-        return self._joined
+    # Properties
 
     # Dict methods
     def to_json(self) -> dict:
         return {
             "_id": str(self._id),
             "name": self._name,
+            "icon": self._icon,
             "player_ids": self._player_ids,
             "mmr": self._mmr,
             "history": self._history,
-            "formats": self._formats,
-            "joined": self._joined,
+            "creation_date": self._creation_date,
         }
 
     def to_mongo(self) -> dict:
         self_json = self.to_json()
         self_json["_id"] = self._id
+        self_json["_player_ids"] = [Int64(pid) for pid in self._player_ids]
         return self_json
 
     @classmethod
@@ -145,10 +121,122 @@ class Guild:
         instance = cls(
             _id=ObjectId(data["_id"]),
             name=data["name"],
+            icon=data["icon"],
             player_ids=data["player_ids"],
             mmr=data["mmr"],
             history=data["history"],
-            formats=data["formats"],
-            joined=data.get("joined"),
+            creation_date=data.get("creation_date"),
         )
         return instance
+
+
+@dataclass
+class PlayingGuild(Guild):
+    """
+    ### Represents a guild with active player objects (bot-side only, not stored in DB).
+    Inherits from Guild but includes actual PlayerProfile objects for members.
+    #### Additional Attributes:
+        members (list[PlayerProfile]): List of all member PlayerProfile objects.
+        playing (list[PlayerProfile]): List of members currently playing.
+    """
+
+    def __init__(
+        self,
+        guild: Guild,
+        playing: list["PlayerProfile"] = None,
+        subs: list["PlayerProfile"] = None,
+    ):
+        super().__init__(
+            _id=guild._id,
+            name=guild._name,
+            icon=guild._icon,
+            player_ids=guild._player_ids,
+            mmr=guild._mmr,
+            history=guild._history,
+            creation_date=guild._creation_date,
+        )
+        self._playing: list["PlayerProfile"] = playing or []
+        self._subs: list["PlayerProfile"] = subs or []
+
+    # playing
+    @property
+    def playing(self) -> list["PlayerProfile"]:
+        return self._playing
+
+    def set_playing(self, value: list["PlayerProfile"]):
+        self._playing = value
+
+    def add_playing(self, player: "PlayerProfile"):
+        if player.discord_id in self.player_ids and player not in self._playing:
+            self._playing.append(player)
+
+    def remove_playing(self, player: "PlayerProfile"):
+        if player in self._playing:
+            self._playing.remove(player)
+
+    def clear_playing(self):
+        self._playing.clear()
+
+    # subs
+    @property
+    def subs(self) -> list["PlayerProfile"]:
+        return self._subs
+
+    def set_subs(self, value: list["PlayerProfile"]):
+        self._subs = value
+
+    def add_sub(self, player: "PlayerProfile"):
+        if (
+            player.discord_id in self.player_ids
+            and player not in self._playing
+            and player not in self._subs
+        ):
+            self._subs.append(player)
+
+    def remove_sub(self, player: "PlayerProfile"):
+        if player in self._subs:
+            self._subs.remove(player)
+
+    def clear_subs(self):
+        self._subs.clear()
+
+    # Override to_mongo to ensure DB operations only use base Guild data
+    def to_mongo(self) -> dict:
+        # Use parent's to_mongo to avoid serializing members/playing
+        return super().to_mongo()
+
+    # Override to_json to exclude members/playing from serialization
+    def to_json(self) -> dict:
+        # Use parent's to_json to avoid serializing members/playing
+        return super().to_json()
+
+    @classmethod
+    def from_json(cls, data):
+        from models.PlayerModel import PlayerProfile
+
+        # Create base Guild from data
+        base_guild = Guild.from_json(data)
+
+        # Extract playing and subs if present
+        playing = []
+        if "playing" in data:
+            playing = [PlayerProfile.from_json(p) for p in data["playing"]]
+
+        subs = []
+        if "subs" in data:
+            subs = [PlayerProfile.from_json(s) for s in data["subs"]]
+
+        return cls(base_guild, playing=playing, subs=subs)
+
+    def to_json_full(self) -> dict:
+        return {
+            "_id": str(self._id),
+            "name": self._name,
+            "icon": self._icon,
+            "player_ids": self._player_ids,
+            "mmr": self._mmr,
+            "history": self._history,
+            "creation_date": self._creation_date,
+            "playing": [player.to_json() for player in self._playing],
+            "subs": [player.to_json() for player in self._subs],
+        }

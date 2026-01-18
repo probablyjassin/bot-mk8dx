@@ -1,7 +1,19 @@
 from dataclasses import dataclass, field
 from bson.objectid import ObjectId
 from bson.int64 import Int64
-from utils.data._database import db_players
+
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from models.GuildModel import Guild
+
+from services.players import (
+    find_player_profile,
+    set_player_attribute,
+    append_player_history,
+    count_player_format_played,
+)
+from services.guilds import get_player_guild
 
 
 @dataclass
@@ -62,17 +74,10 @@ class PlayerProfile:
         self._suspended = suspended
 
     # Methods
-
-    def update_attribute(self, attr_name: str, value):
-        setattr(self, f"_{attr_name}", value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$set": {attr_name: value}},
-        )
-
-    def refresh(self):
-        data = db_players.find_one({"_id": self._id})
-        self.__dict__.update(PlayerProfile.from_json(data).__dict__)
+    async def refresh(self):
+        data = await find_player_profile(self._id)
+        if data:
+            self.__dict__.update(data.__dict__)
 
     # Properties
 
@@ -86,9 +91,8 @@ class PlayerProfile:
     def name(self):
         return self._name
 
-    @name.setter
-    def name(self, value):
-        self.update_attribute("name", value)
+    async def set_name(self, value: str):
+        await set_player_attribute(self, "name", value)
 
     # Discord ID (read-only)
     @property
@@ -100,33 +104,24 @@ class PlayerProfile:
     def mmr(self):
         return self._mmr
 
-    @mmr.setter
-    def mmr(self, value):
-        self.update_attribute("mmr", value)
+    async def set_mmr(self, value):
+        await set_player_attribute(self, "mmr", value)
 
     # History (has different setter)
     @property
     def history(self):
         return self._history
 
-    def append_history(self, value):
-        self._history.append(value)
-        db_players.update_one(
-            {"_id": self._id},
-            {"$push": {"history": value}},
-        )
+    async def append_history(self, value: int):
+        await append_player_history(self, value)
 
     # Formats
     @property
     def formats(self):
         return self._formats
 
-    def count_format_played(self, value):
-        self._formats[value] += 1
-        db_players.update_one(
-            {"_id": self._id},
-            {"$inc": {f"formats.{value}": 1}},
-        )
+    async def count_format_played(self, value):
+        await count_player_format_played(self, value)
 
     # Joined (read-only)
     @property
@@ -138,67 +133,32 @@ class PlayerProfile:
     def disconnects(self):
         return self._disconnects
 
-    @disconnects.setter
-    def disconnects(self, value):
-        if value == 0:
-            del self.disconnects
-            return
-        self.update_attribute("disconnects", value)
+    async def set_disconnects(self, value):
+        await set_player_attribute(self, "disconnects", value)
 
-    @disconnects.deleter
-    def disconnects(self):
-        self._disconnects = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"disconnects": ""}},
+    async def add_disconnect(self):
+        await set_player_attribute(
+            self, "disconnects", self._disconnects + 1 if self._disconnects else 1
         )
-
-    def add_disconnect(self):
-        db_players.update_one(
-            {"_id": self._id},
-            (
-                {"$inc": {"disconnects": 1}}
-                if self._disconnects
-                else {"$set": {"disconnects": 1}}
-            ),
-        )
-        self._disconnects = self._disconnects + 1 if self._disconnects else 1
 
     # Inactive
     @property
     def inactive(self):
         return self._inactive
 
-    @inactive.setter
-    def inactive(self, value):
-        self.update_attribute("inactive", value)
-
-    # Custom deleter
-    @inactive.deleter
-    def inactive(self):
-        self._inactive = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"inactive": ""}},
-        )
+    async def set_inactive(self, value):
+        await set_player_attribute(self, "inactive", value)
 
     # Suspended
     @property
     def suspended(self):
         return self._suspended
 
-    @suspended.setter
-    def suspended(self, value):
-        self.update_attribute("suspended", value)
+    async def set_suspended(self, value):
+        await set_player_attribute(self, "suspended", value)
 
-    # Custom deleter
-    @suspended.deleter
-    def suspended(self):
-        self._suspended = None
-        db_players.update_one(
-            {"_id": self._id},
-            {"$unset": {"suspended": ""}},
-        )
+    async def fetch_guild(self) -> "Guild":
+        return await get_player_guild(self.discord_id)
 
     # Dict methods
     def to_json(self) -> dict:
@@ -234,7 +194,4 @@ class PlayerProfile:
             inactive=data.get("inactive"),
             suspended=data.get("suspended"),
         )
-        """ instance.disconnects = data.get("disconnects")
-        instance.inactive = data.get("inactive")
-        instance.suspended = data.get("suspended") """
         return instance

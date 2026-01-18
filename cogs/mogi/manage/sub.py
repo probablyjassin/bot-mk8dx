@@ -1,17 +1,20 @@
+from typing import Literal
+
 from discord import Option, AllowedMentions, SlashCommandGroup, Member
 from discord.ext import commands
 from discord.utils import get
 
 from models import MogiApplicationContext
 
-from utils.data import data_manager, mogi_manager
-from utils.maths.replace import recurse_replace
-from utils.command_helpers import get_guild_member
+from services.players import find_player_profile
+from utils.data import mogi_manager
+from utils.maths import recurse_replace
+from utils.command_helpers import get_guild_member, player_name_autocomplete
 from utils.decorators import (
     is_mogi_in_progress,
     is_mogi_manager,
     is_moderator,
-    other_player,
+    with_player,
 )
 
 
@@ -32,16 +35,22 @@ class sub(commands.Cog):
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=player_name_autocomplete,
         ),
         replacement_name: str = Option(
-            str, name="sub", description="username | @ mention | discord_id"
-        ),
-        reason: str = Option(
             str,
+            name="sub",
+            description="username | @ mention | discord_id",
+            autocomplete=player_name_autocomplete,
+        ),
+        reason: Literal[
+            "DC'd twice or more", "Needs to go / disappeared / other"
+        ] = Option(
             name="reason",
             description="Why is this person getting subbed?",
-            choices=["DC'd twice or more", "Needs to go / disappeared / other"],
         ),
         no_tax: bool = Option(
             bool,
@@ -50,8 +59,8 @@ class sub(commands.Cog):
             required=False,
         ),
     ):
-        player_profile = data_manager.find_player(player_name)
-        replacement_profile = data_manager.find_player(replacement_name)
+        player_profile = await find_player_profile(player_name)
+        replacement_profile = await find_player_profile(replacement_name)
 
         if not player_profile:
             return await ctx.respond("Player profile not found", ephemeral=True)
@@ -95,8 +104,8 @@ class sub(commands.Cog):
             ]
             for role in all_team_roles:
                 if role in player_user.roles:
-                    player_user.remove_roles(role)
-                    replacement_user.add_roles(role)
+                    await player_user.remove_roles(role)
+                    await replacement_user.add_roles(role)
 
         if replacement_user and ctx.inmogi_role not in replacement_user.roles:
             await replacement_user.add_roles(ctx.inmogi_role, reason="Subbed in")
@@ -107,7 +116,7 @@ class sub(commands.Cog):
 
         if not no_tax:
             tax = 50 if reason == "DC'd twice or more" else 100
-            player_profile.mmr = player_profile.mmr - tax
+            await player_profile.set_mmr(player_profile.mmr - tax)
             await ctx.channel.send(
                 f"Penalized {player_user.mention} for leaving the mogi prematurely"
             )
@@ -115,12 +124,15 @@ class sub(commands.Cog):
     @manage.command(name="add_sub", description="Add a player to the sub list.")
     @is_mogi_in_progress()
     @is_moderator()
-    @other_player(query_varname="player_name")
+    @with_player(query_varname="player_name")
     async def add_sub(
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=player_name_autocomplete,
         ),
     ):
         if ctx.player in ctx.mogi.subs:
@@ -129,7 +141,7 @@ class sub(commands.Cog):
         ctx.mogi.subs.append(ctx.player)
 
         await ctx.respond(
-            f"<@{ctx.player.name}> is now listed as sub.",
+            f"<@{ctx.player.discord_id}> is now listed as sub.",
             allowed_mentions=AllowedMentions.none(),
         )
 
@@ -139,12 +151,15 @@ class sub(commands.Cog):
     )
     @is_mogi_in_progress()
     @is_moderator()
-    @other_player(query_varname="player_name")
+    @with_player(query_varname="player_name")
     async def remove_sub(
         self,
         ctx: MogiApplicationContext,
         player_name: str = Option(
-            str, name="player", description="username | @ mention | discord_id"
+            str,
+            name="player",
+            description="username | @ mention | discord_id",
+            autocomplete=player_name_autocomplete,
         ),
     ):
         if ctx.player not in ctx.mogi.subs:

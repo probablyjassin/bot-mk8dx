@@ -1,4 +1,5 @@
-import time, math
+import time
+from string import ascii_uppercase
 from dataclasses import dataclass, field
 from bson import ObjectId
 
@@ -6,13 +7,8 @@ from .PlayerModel import PlayerProfile
 from .VoteModel import Vote
 from .RoomModel import Room
 
-from utils.data._database import db_mogis
-from utils.maths.teams_algorithm import (
-    teams_alg_distribute_by_order_kevnkkm,
-    teams_alg_random,
-)
-
-from config import FLAGS
+from utils.maths.teams_algorithm import teams_alg_distribute_by_order_kevnkkm
+from services.mogis import apply_result_mmr, add_mogi_history
 
 
 @dataclass
@@ -69,7 +65,7 @@ class Mogi:
     table_message_id: int | None = None
 
     team_tags: list[str] = field(
-        default_factory=lambda: [f"Team {i}" for i in range(1, 7)]
+        default_factory=lambda: [f"Team {ascii_uppercase[i]}" for i in range(1, 7)]
     )
 
     started_at: int | None = None
@@ -97,11 +93,7 @@ class Mogi:
                 self.teams.append([player])
 
         else:
-            algorithm = (
-                teams_alg_random
-                if (FLAGS["random_teams"] or random_teams)
-                else teams_alg_distribute_by_order_kevnkkm
-            )
+            algorithm = teams_alg_distribute_by_order_kevnkkm
             self.teams = algorithm(self.players, format_int)
             # important: we put players in the new order determined by the team-making
             self.players = [player for team in self.teams for player in team]
@@ -174,23 +166,48 @@ class Mogi:
 
         self.collected_points = team_points_list
 
-    def archive_mogi_data(self) -> None:
+    async def apply_mmr(self) -> None:
+        """Applies the previously collected mmr results in `self.mmr_results_by_group` to the database."""
+        all_player_names = [player.name for player in self.players]
+        all_player_mmrs = [player.mmr for player in self.players]
+        all_player_new_mmrs = [
+            all_player_mmrs[i] + self.mmr_results_by_group[i]
+            for i in range(len(self.players))
+        ]
+
+        # create objects to hand to the database in bulk
+        data_to_update_obj: list[dict[str, str | int]] = [
+            {
+                "name": all_player_names[i],
+                "new_mmr": all_player_new_mmrs[i],
+                "delta": self.mmr_results_by_group[i],
+            }
+            # don't update subs unless they gained mmr
+            for i in range(len(all_player_names))
+            if not any(sub.name == all_player_names[i] for sub in self.subs)
+            or self.mmr_results_by_group[i] > 0
+        ]
+
+        # push changes to the database
+        await apply_result_mmr(
+            data_to_update_obj, self.format if not self.is_mini else 0
+        )
+
+    async def archive_mogi_data(self) -> None:
         """
         Save the mogi to the database.
         """
-        db_mogis.insert_one(
-            {
-                "started_at": self.started_at,
-                "finished_at": self.finished_at,
-                "player_ids": [player.discord_id for player in self.players],
-                "format": self.format if not self.is_mini else 0,
-                "subs": len(self.subs),
-                "results": self.mmr_results_by_group,
-                "disconnections": self.disconnections,
-            }
+        await add_mogi_history(
+            started_at=self.started_at,
+            finished_at=self.finished_at,
+            player_ids=[player.discord_id for player in self.players],
+            format=self.format if not self.is_mini else 0,
+            subs=len(self.subs),
+            results=self.mmr_results_by_group,
+            disconnections=self.disconnections,
         )
 
-    def finish(self) -> None:
+    async def finish(self) -> None:
         """
         Marks the current mogi as completed.
         #### Side Effects:
@@ -201,7 +218,7 @@ class Mogi:
         self.isPlaying = False
         self.isFinished = True
         self.finished_at = self.finished_at or round(time.time())
-        self.archive_mogi_data()
+        await self.archive_mogi_data()
 
     def to_json(self) -> dict:
         """
@@ -265,7 +282,7 @@ class Mogi:
             table_message_id=data.get("mmr_results_by_group", []),
             team_tags=data.get(
                 "team_tags",
-                ["Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6"],
+                ["TeamA", "TeamB", "TeamC", "TeamD", "TeamE", "TeamF"],
             ),
             started_at=data.get("started_at"),
             finished_at=data.get("finished_at"),
@@ -273,14 +290,7 @@ class Mogi:
         )
 
     def __contains__(self, other: PlayerProfile) -> bool:
-        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)
-
-        Args:
-            other (PlayerProfile): The player that should be checked if they are in the Mogi.
-
-        Returns:
-            bool: Whether the player is in the Mogi or not.
-        """
+        """Checks if a player is in the Mogi. (Actually checks if the player is in self.players)"""
         return other in self.players
 
 

@@ -125,9 +125,6 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# VS Code settings
-.vscode/
-
 # tests
 tests
 *test*.*
@@ -137,5 +134,9 @@ state/
 logs/
 backups/
 
-# custom config files
-lounge.config
+# ignore everything under config
+config/**
+
+!config/
+!config/*example*
+!config/**/*example*

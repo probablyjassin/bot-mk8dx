@@ -4,10 +4,11 @@ from discord.ext import commands
 from models import MogiApplicationContext
 from pycord.multicog import subcommand
 
+from utils.command_helpers import player_name_autocomplete
 from utils.decorators import (
     is_mogi_not_in_progress,
     is_mogi_manager,
-    other_player,
+    with_player,
 )
 
 
@@ -19,12 +20,15 @@ class remove(commands.Cog):
     @slash_command(name="remove", description="Remove a player from the current mogi")
     @is_mogi_manager()
     @is_mogi_not_in_progress()
-    @other_player(query_varname="player", assert_in_mogi=True)
+    @with_player(query_varname="player", assert_in_mogi=True)
     async def remove(
         self,
         ctx: MogiApplicationContext,
         player: str = Option(
-            str, name="player", description="The player to remove from the mogi."
+            str,
+            name="player",
+            description="The player to remove from the mogi.",
+            autocomplete=player_name_autocomplete,
         ),
     ):
         ctx.mogi.players.remove(ctx.player)

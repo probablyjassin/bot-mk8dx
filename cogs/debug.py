@@ -9,7 +9,12 @@ from discord.ext import commands
 
 from models import MogiApplicationContext, Room
 
-from utils.data import mogi_manager, state_manager, data_manager, archive_type
+from database.types import archive_type
+
+from services.mogis import get_all_mogi_history
+from services.players import get_all_player_profiles
+
+from utils.data import mogi_manager, state_manager
 from utils.command_helpers import confirmation
 from utils.decorators import (
     is_admin,
@@ -65,10 +70,10 @@ class debug(commands.Cog):
             backup_folder, f"backup_{datetime.now().strftime(date_format)}.json"
         )
         backup_data = {
-            "players": data_manager.get_all_player_entries(
-                archive=archive_type.INCLUDE, with_id=False
+            "players": await get_all_player_profiles(
+                archive=archive_type.INCLUDE, with_id=False, as_json=True
             ),
-            "mogis": data_manager.get_all_mogi_entries(with_id=False),
+            "mogis": await get_all_mogi_history(with_id=False, as_json=True),
         }
 
         with open(backup_filename, "w") as backup_file:
@@ -185,33 +190,11 @@ class debug(commands.Cog):
             msg += f"{room.name}\n"
         await ctx.respond(msg)
 
-    """ @debug.command(name="test_player", description="add a dummy player to the mogi")
-    @is_mogi_not_in_progress()
-    @is_admin()
-    async def test_player(self, ctx: MogiApplicationContext):
-
-        dummy_names = ["spamton", "jordan", "mrboost", "bruv"]
-        dummy: PlayerProfile = PlayerProfile(
-            _id=ObjectId("0123456789ab0123456789ab"),
-            name=f"{random.choice(dummy_names)}{str(random.randint(10, 99))}",
-            mmr=random.randint(1000, 6000),
-            discord_id=000000000000000000,
-            history=[],
-        )
-        ctx.mogi.players.append(dummy)
-        await ctx.respond(f"Added {dummy.name} to the mogi") """
-
     @debug.command(name="load_state", description="Load state")
     @is_admin()
     async def load_state(self, ctx: MogiApplicationContext):
         state_manager.load_manual_saved()
         await ctx.respond("State loaded")
-
-    @debug.command(name="inmogi")
-    async def inmogi(self, ctx: MogiApplicationContext):
-        await ctx.respond(
-            f"<@&{ctx.inmogi_role.id}>", allowed_mentions=AllowedMentions(roles=True)
-        )
 
     @debug.command(name="perms", description="perms test")
     @is_admin()
@@ -241,10 +224,6 @@ class debug(commands.Cog):
     async def update_passwords(self, ctx: MogiApplicationContext):
         await fetch_server_passwords(self.bot)
         await ctx.respond(f"Done, check <#{LOG_CHANNEL_ID}>")
-
-    @debug.command(name="locale", description="print ctx.locale")
-    async def locale(self, ctx: MogiApplicationContext):
-        await ctx.respond(ctx.locale)
 
 
 def setup(bot: commands.Bot):
