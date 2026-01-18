@@ -87,9 +87,10 @@ async def find_guild(
 
 
 async def get_all_guild_names() -> list[str]:
+    print("all guild names function called")
     return [
-        player["name"]
-        for player in await db_guilds.find({}, {"name": 1, "_id": 0}).to_list(
+        guild["name"]
+        for guild in await db_guilds.find({}, {"name": 1, "_id": 0}).to_list(
             length=None
         )
     ]
