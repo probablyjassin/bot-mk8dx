@@ -11,7 +11,7 @@ class penalties(commands.Cog):
     def __init__(self, bot):
         self.bot: commands.Bot = bot
 
-    @slash_command(
+    """ @slash_command(
         name="tax",
         description="Collect MMR for penalties",
     )
@@ -48,7 +48,7 @@ class penalties(commands.Cog):
         await ctx.respond(
             f"Collected penalties from <@{player_profile.discord_id}>",
             allowed_mentions=AllowedMentions.none(),
-        )
+        ) """
 
 
 def setup(bot: commands.Bot):
