@@ -8,12 +8,13 @@ from services.guilds import get_all_guild_names
 # Cache for player names
 _player_names_cache = None
 _guild_names_cache = None
-_cache_timestamp = 0
+__guilds_cache_timestamp = 0
+__players_cache_timestamp = 0
 CACHE_DURATION = 60 * 5
 
 
 async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
-    global _player_names_cache, _cache_timestamp
+    global _player_names_cache, __players_cache_timestamp
 
     user_input = ctx.value
     current_time = time.time()
@@ -21,10 +22,10 @@ async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
     # Update cache if expired or empty
     if (
         _player_names_cache is None
-        or (current_time - _cache_timestamp) > CACHE_DURATION
+        or (current_time - __players_cache_timestamp) > CACHE_DURATION
     ):
         _player_names_cache = await get_all_player_names()
-        _cache_timestamp = current_time
+        __players_cache_timestamp = current_time
         print(f"Player names cache refreshed ({len(_player_names_cache)} players)")
 
     all_player_names = _player_names_cache
@@ -44,16 +45,19 @@ async def player_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
 
 
 async def guild_name_autocomplete(ctx: AutocompleteContext) -> list[str]:
-    global _guild_names_cache, _cache_timestamp
+    global _guild_names_cache, __guilds_cache_timestamp
 
     user_input = ctx.value
     current_time = time.time()
 
     # Update cache if expired or empty
-    if _guild_names_cache is None or (current_time - _cache_timestamp) > CACHE_DURATION:
+    if (
+        _guild_names_cache is None
+        or (current_time - __guilds_cache_timestamp) > CACHE_DURATION
+    ):
         _guild_names_cache = await get_all_guild_names()
-        _cache_timestamp = current_time
-        print(f"Player names cache refreshed ({len(_guild_names_cache)} players)")
+        __guilds_cache_timestamp = current_time
+        print(f"Guild names cache refreshed ({len(_guild_names_cache)} players)")
 
     all_guild_names = _guild_names_cache
 
