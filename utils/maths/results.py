@@ -183,10 +183,16 @@ async def end_collect_tablestring_to_results(
         ),
         filename="table.png",
     )
+
+    player_mention_str = "Players:\n" + ", ".join(
+        [f"<@{player.discord_id}>" for player in ctx.mogi.players]
+    )
+
     message = await ctx.results_channel.send(
         content=f"# Results - {time.strftime('%d.%m.%y')}\n"
         f"Duration: {int((ctx.mogi.finished_at - ctx.mogi.started_at) / 60)} minutes"
-        f"{' | MINI MOGI' if ctx.mogi.is_mini else ' | ' + key_to_format[ctx.mogi.format]}",
+        f"{' | MINI MOGI' if ctx.mogi.is_mini else ' | ' + key_to_format[ctx.mogi.format]}\n"
+        f"{player_mention_str}",
         file=file,
     )
 
