@@ -28,8 +28,10 @@ async def find_player_profiles_by_ids(
     return await players.find_list(player_ids=player_ids)
 
 
-async def create_new_player(username: str, discord_id: int) -> None:
-    return await players.create_new_player(username=username, discord_id=discord_id)
+async def create_new_player(username: str, discord_id: int, flag: str) -> None:
+    return await players.create_new_player(
+        username=username, discord_id=discord_id, flag=flag
+    )
 
 
 async def get_all_player_names() -> list[str]:

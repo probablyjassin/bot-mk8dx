@@ -1,5 +1,6 @@
 import datetime
 import unicodedata
+import emoji
 
 from discord import (
     slash_command,
@@ -42,6 +43,12 @@ class register(commands.Cog):
             description="Where you're playing from. We use this to find the overall best server to play on.",
             required=True,
             choices=REGIONS,
+        ),
+        flag: str = Option(
+            str,
+            name="flag",
+            description="The flag emoji for the country you're playing from (optional)",
+            required=False,
         ),
     ):
         await ctx.defer(ephemeral=True)
@@ -99,6 +106,28 @@ class register(commands.Cog):
                 ephemeral=True,
             )
 
+        # Verify flag emoji input
+        was_flag_valid = True
+
+        def is_valid_flag(s):
+            return (
+                emoji.is_emoji(s)
+                and len(emoji.emoji_list(s)) == 1
+                and (
+                    "flag" in emoji.demojize(s)
+                    or (
+                        emoji.EMOJI_DATA[input].get("alias")
+                        and any(
+                            "flag_for" in item
+                            for item in emoji.EMOJI_DATA[input].get("alias")
+                        )
+                    )
+                )
+            )
+
+        if flag and not is_valid_flag(flag):
+            was_flag_valid = False
+
         # Create verification dropdown
         embed = create_embed(
             title="🔍 Registration Verification",
@@ -121,7 +150,8 @@ class register(commands.Cog):
 
         # Verification passed - proceed with registration
         try:
-            await create_new_player(username=username, discord_id=member.id)
+            # TODO: add flag
+            await create_new_player(username=username, discord_id=member.id, flag=flag)
         except Exception as e:
             return await ctx.respond(
                 f"Some error occured creating your player record. Please ask a moderator: {e}",

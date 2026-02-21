@@ -94,11 +94,12 @@ async def get_all_player_names() -> list[str]:
     return [player["name"] for player in results]
 
 
-async def create_new_player(username: str, discord_id: int) -> None:
+async def create_new_player(username: str, discord_id: int, flag: str) -> None:
     await db_players.insert_one(
         {
             "name": username,
             "discord_id": Int64(discord_id),
+            "flag": flag,
             "mmr": 2000,
             "history": [],
             "formats": {str(i): 0 for i in range(7)},
