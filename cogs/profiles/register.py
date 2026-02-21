@@ -58,18 +58,6 @@ class register(commands.Cog):
                 ephemeral=True,
             )
 
-        ## more or less temporary code for people who come back after the season reset
-        """ existingPlayer = (
-            client.get_database("season-3-lounge")
-            .get_collection("players")
-            .find_one({"discord_id": Int64(ctx.author.id)})
-        )
-        if existingPlayer:
-            return await ctx.respond(
-                "You played in Season 3 but left the server since. Please contact an Admin to get your Profile migrated",
-                ephemeral=True,
-            ) """
-
         # username shenanigans
         def normalize_fancy_unicode(text: str) -> str:
             result = []
