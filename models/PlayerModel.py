@@ -24,6 +24,7 @@ class PlayerProfile:
         _id (str): The _id assigned by MongoDB.
         name (str): The username of the player.
         discord_id (Int64): The Discord ID of the player. Note: MongoDB converts this to Int64.
+        flag (str): The country flag of the player as an emoji.
         mmr (int): The matchmaking rating of the player.
         history (list[int]): A list of historical MMR deltas.
         formats (dict{int, int}): A dict of the formats the player played and their amount.
@@ -36,6 +37,7 @@ class PlayerProfile:
     _id: ObjectId
     _name: str
     _discord_id: Int64
+    _flag: str
     _mmr: int
     _history: list[int]
     _formats: dict[str, int] = field(
@@ -52,6 +54,7 @@ class PlayerProfile:
         _id,
         name,
         discord_id,
+        flag,
         mmr,
         history,
         formats,
@@ -63,6 +66,7 @@ class PlayerProfile:
         self._id = _id
         self._name = name
         self._discord_id = discord_id
+        self._flag = flag or ""
         self._mmr = mmr
         self._history = history
         self._formats = (
@@ -98,6 +102,15 @@ class PlayerProfile:
     @property
     def discord_id(self):
         return self._discord_id
+
+    # Flag
+    @property
+    def flag(self):
+        return self._flag
+
+    @flag.setter
+    def flag(self, value: str):
+        self._flag = value
 
     # MMR
     @property
@@ -166,6 +179,7 @@ class PlayerProfile:
             "_id": str(self._id),
             "name": self._name,
             "discord_id": self._discord_id,
+            "flag": self._flag,
             "mmr": self._mmr,
             "history": self._history,
             "formats": self._formats,
@@ -186,6 +200,7 @@ class PlayerProfile:
             _id=ObjectId(data["_id"]),
             name=data["name"],
             discord_id=Int64(data["discord_id"]),
+            flag=str(data["flag"]),
             mmr=data["mmr"],
             history=data["history"],
             formats=data["formats"],

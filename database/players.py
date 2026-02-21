@@ -99,7 +99,7 @@ async def create_new_player(username: str, discord_id: int, flag: str) -> None:
         {
             "name": username,
             "discord_id": Int64(discord_id),
-            "flag": flag,
+            "flag": flag or "",
             "mmr": 2000,
             "history": [],
             "formats": {str(i): 0 for i in range(7)},
