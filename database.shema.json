@@ -3,6 +3,7 @@
         {
             "name": "joe",
             "discord_id": 1234567890,
+            "flag": "de",
             "mmr": 2034,
             "history": [34],
             "disconnects": 5,
