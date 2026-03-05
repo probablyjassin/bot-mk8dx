@@ -7,7 +7,7 @@ from .server_region import REGIONS, get_best_server
 from .team_roles import apply_team_roles, remove_team_roles
 from .update_server_passwords import fetch_server_passwords
 from .vote_btn_callback import format_vote_button_callback
-from .vote_factory import create_vote_button_view
+from .vote_factory import create_vote_button_view, create_random_teams_vote_view
 from .wait_for import get_awaited_message
 from .autocomplete import player_name_autocomplete, guild_name_autocomplete
 
@@ -24,6 +24,7 @@ __all__ = [
     "fetch_server_passwords",
     "format_vote_button_callback",
     "create_vote_button_view",
+    "create_random_teams_vote_view",
     "get_awaited_message",
     "player_name_autocomplete",
     "guild_name_autocomplete",

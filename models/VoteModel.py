@@ -17,10 +17,6 @@ class Vote:
     votes: dict[str, int] = field(
         default_factory=lambda: {"mini": 0, **{format: 0 for format in FORMATS}}
     )
-    extras: dict[str, int | list] = field(
-        default_factory=lambda: {"random_teams_votes": 0, "random_teams_voters": []}
-    )
-
     user_votes: dict = field(default_factory=dict)  # user_id -> voted format key
 
     result: str | None = None
@@ -127,16 +123,6 @@ class Vote:
                     )
                 return True
 
-            # Handle Random Teams Vote
-            if choice == "Random Teams":
-                if user_id in self.extras["random_teams_voters"]:
-                    return False
-
-                self.extras["random_teams_voters"].append(user_id)
-                self.extras["random_teams_votes"] += 1
-
-                return True
-
     async def end(
         self, mogi: "Mogi", winning_format: str = None, tied_formats: list[str] = None
     ):
@@ -144,22 +130,16 @@ class Vote:
         if not self.is_active:
             return
 
-        format_int: int = int(winning_format[0]) if winning_format[0].isdigit() else 1
-
         self.is_active = False
         self.result = winning_format
-        random_teams: bool = self.extras["random_teams_votes"] > (
-            len(mogi.players) * 0.75
-        ) and format_int in [2, 3]
 
         if winning_format == "mini":
             mogi.is_mini = True
-        mogi.play(format_int, random_teams)
 
         # ALWAYS run cleanup handlers, no matter how the vote ends
         for handler in self._cleanup_handlers:
-            try:  # winning_format, random_teams, tied_formats
-                await handler(winning_format, random_teams, tied_formats)
+            try:
+                await handler(winning_format, tied_formats)
             except Exception as e:
                 print(f"Cleanup handler failed: {e}")
 

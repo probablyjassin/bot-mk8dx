@@ -1,3 +1,5 @@
+import asyncio, math
+
 from discord import (
     slash_command,
     SlashCommandGroup,
@@ -9,6 +11,7 @@ from discord.ext import commands
 from models import MogiApplicationContext, Vote
 from utils.command_helpers import (
     create_vote_button_view,
+    create_random_teams_vote_view,
     apply_team_roles,
     remove_team_roles,
     get_best_server,
@@ -36,7 +39,7 @@ class stop(commands.Cog):
         await ctx.defer()
 
         # not enough players
-        if len(ctx.mogi.players) <= 5:
+        if len(ctx.mogi.players) <= 6:
             return await ctx.respond("Not enough players to start", ephemeral=True)
         # more than 12 players
         if len(ctx.mogi.players) > 12:
@@ -55,10 +58,8 @@ class stop(commands.Cog):
         async def send_vote():
             ctx.mogi.isPlaying = True
             message = await ctx.respond(
-                f"Voting start!\nSelect a Format, or `Random Teams` first if you want it! {ctx.inmogi_role.mention}",
-                view=create_vote_button_view(
-                    FORMATS, ctx.mogi, extra_buttons=["Mini", "Random Teams"]
-                ),
+                f"Voting start!\nSelect a Format! {ctx.inmogi_role.mention}",
+                view=create_vote_button_view(FORMATS, ctx.mogi, extra_buttons=["Mini"]),
                 allowed_mentions=AllowedMentions(roles=True),
             )
             try:
@@ -76,9 +77,7 @@ class stop(commands.Cog):
                 f"Use </password:{self.bot.get_application_command(name='password').id}>"
             )
 
-        async def send_mogi_start(
-            winning_format: str, random_teams: bool, tied_formats: list[str] | None
-        ):
+        async def send_mogi_start(winning_format: str, tied_formats: list[str] | None):
             # Announce if vote was tied
             if tied_formats and len(tied_formats) > 1:
                 await ctx.send(
@@ -89,6 +88,31 @@ class stop(commands.Cog):
                 int(winning_format[0]) if winning_format[0].isdigit() else 1
             )
 
+            # Second vote: Random Teams (only for 2v2 and 3v3)
+            if format_int in [2, 3]:
+                result_event = asyncio.Event()
+                rt_result = [False]
+
+                async def on_rt_result(random_teams: bool):
+                    rt_result[0] = random_teams
+                    result_event.set()
+
+                rt_view = create_random_teams_vote_view(ctx.mogi, on_rt_result)
+                rt_msg = await ctx.channel.send(
+                    f"## Random Teams? 🎲\n"
+                    f"> Vote passes if more than **{math.ceil(len(ctx.mogi.players) * 0.6)} players** vote Yes.\n"
+                    f"> (Defaulting to No in 60 seconds) {ctx.inmogi_role.mention}",
+                    view=rt_view,
+                    allowed_mentions=AllowedMentions(roles=True),
+                )
+                rt_view.message = rt_msg
+                await result_event.wait()
+                random_teams = rt_result[0]
+            else:
+                random_teams = False
+
+            ctx.mogi.play(format_int, random_teams)
+
             # Create the lineup message by teams
             lineup = ""
             for i, team in enumerate(ctx.mogi.teams):
@@ -98,8 +122,7 @@ class stop(commands.Cog):
             await ctx.send(
                 f"# Mogi starting!\n"
                 "## Format: "
-                f"{'RANDOM' if random_teams and format_int != 1 else ''} "
-                f"{winning_format.upper()} Mogi\n"
+                f"{'RANDOM ' if random_teams else ''}{winning_format.upper()} Mogi\n"
                 f"### Lineup:\n{lineup}"
             )
 
