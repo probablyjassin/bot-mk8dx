@@ -16,8 +16,8 @@ class list_mogi(commands.Cog):
     async def l(
         self,
         ctx: MogiApplicationContext,
-        context: str | None = Option(
-            input_type=str,
+        context=Option(
+            str,
             name="context",
             description="extra context to give the list",
             choices=["tablestring", "usernames", "mmr"],

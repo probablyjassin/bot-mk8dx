@@ -89,51 +89,6 @@ class mogi(commands.Cog):
             f"# This mogi has been moved to <#{ctx.mogi.channel_id}>",
         )
 
-    @slash_command(
-        name="ping",
-        description="Ping Lounge Players to gather players to join the mogi.",
-    )
-    @commands.cooldown(1, 900, commands.BucketType.channel)
-    async def ping(
-        self,
-        ctx: MogiApplicationContext,
-        need_sub: bool = Option(
-            bool, description="use this when you're looking for a sub", required=False
-        ),
-        custom_message: str = Option(
-            str,
-            description="For mogi managers only. ''@LoungePlayer {custom_message}''",
-            required=False,
-        ),
-    ):
-        await ctx.defer(ephemeral=False)
-
-        if not ctx.mogi:
-            return await ctx.respond("No mogi open in this channel.")
-        if not ctx.mogi.collected_points and ctx.mogi.isPlaying and not need_sub:
-            return await ctx.respond(
-                "The mogi is already in progress. If you're looking for a sub use need_sub=True"
-            )
-
-        lounge_player_role = ctx.get_lounge_role("Lounge Player")
-
-        if custom_message and ctx.get_lounge_role("Mogi Manager") in ctx.user.roles:
-            return await ctx.respond(
-                f"# {lounge_player_role.mention} {custom_message}",
-                allowed_mentions=AllowedMentions(roles=True),
-            )
-
-        if need_sub:
-            return await ctx.respond(
-                f"# {lounge_player_role.mention} we need a sub",
-                allowed_mentions=AllowedMentions(roles=True),
-            )
-
-        return await ctx.respond(
-            f"# {lounge_player_role.mention} {len(ctx.mogi.players)}/{ctx.mogi.player_cap} - join mogi",
-            allowed_mentions=AllowedMentions(roles=True),
-        )
-
 
 def setup(bot: commands.Bot):
     bot.add_cog(mogi(bot))

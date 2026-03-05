@@ -147,6 +147,17 @@ class tasks(commands.Cog):
 
                 mogi.finished_at = round(time.time())
 
+    @tasks.loop(minutes=30)
+    async def clean_lounge_queue(self):
+        try:
+            with open("state/joined_times.json", "r") as f:
+                joined_times: dict[str, int] = json.load(f)
+                for player_id, jointime in joined_times.items():
+                    if round(time.time()) - jointime > 1800:
+                        print(f"WIP - <@{player_id}> is in the mogi for over 30mins")
+        except (FileNotFoundError, json.JSONDecodeError):
+            pass
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(tasks(bot))

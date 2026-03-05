@@ -1,7 +1,7 @@
-import asyncio
+import asyncio, json, time
 
 from discord import slash_command
-from discord.utils import get, utcnow
+from discord.utils import get
 from discord.ext import commands
 
 from models import MogiApplicationContext
@@ -33,6 +33,15 @@ class participation(commands.Cog):
             await ctx.respond(
                 f"{ctx.author.mention} has joined the mogi!\n{len(ctx.mogi.players)} {'player is' if in_mogi == 1 else 'players are'} in!"
             )
+
+            # note down joined time
+            with open("state/joined_times.json", "r+", encoding="utf-8") as f:
+                data = json.load(f)
+                if not isinstance(data, dict):
+                    data = {}
+                data[str(ctx.author.id)] = round(time.time())
+                f.seek(0)
+                json.dump(data, f)
 
             # WIP: while transitioning: remind people to add a region role
             for role in [get(ctx.guild.roles, name=region) for region in REGIONS]:

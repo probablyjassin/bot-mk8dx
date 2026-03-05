@@ -21,9 +21,7 @@ class guild(commands.Cog):
     async def guild(
         self,
         ctx: MogiApplicationContext,
-        name: str | None = Option(
-            str, "Name", required=False, autocomplete=guild_name_autocomplete
-        ),
+        name=Option(str, "Name", required=False, autocomplete=guild_name_autocomplete),
     ):
         await ctx.defer()
 
