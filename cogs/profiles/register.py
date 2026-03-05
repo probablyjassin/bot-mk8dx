@@ -106,27 +106,42 @@ class register(commands.Cog):
                 ephemeral=True,
             )
 
-        # Verify flag emoji input
+        # Verify flag emoji input and normalize to two-letter country code
         was_flag_valid = True
 
-        def is_valid_flag(s):
-            return (
-                emoji.is_emoji(s)
-                and len(emoji.emoji_list(s)) == 1
-                and (
-                    "flag" in emoji.demojize(s)
-                    or (
-                        emoji.EMOJI_DATA[input].get("alias")
-                        and any(
-                            "flag_for" in item
-                            for item in emoji.EMOJI_DATA[input].get("alias")
-                        )
-                    )
+        def parse_flag(s: str) -> str | None:
+            """Accept a flag emoji or two-letter country code and return the
+            two-letter code (lowercase), e.g. 'us', so it can be used as
+            f':flag_{code}:' in Discord. Returns None if the input is invalid."""
+            s = s.strip()
+            # Try interpreting as a flag emoji (two regional indicator symbols)
+            if emoji.is_emoji(s) and len(emoji.emoji_list(s)) == 1:
+                code = ""
+                for ch in s:
+                    cp = ord(ch)
+                    if 0x1F1E6 <= cp <= 0x1F1FF:
+                        code += chr(cp - 0x1F1E6 + ord("A"))
+                    else:
+                        code = ""
+                        break
+                if len(code) == 2:
+                    return code.lower()
+            # Try interpreting as a two-letter country code
+            if len(s) == 2 and s.isalpha():
+                code = s.upper()
+                flag_emoji_str = chr(0x1F1E6 + ord(code[0]) - ord("A")) + chr(
+                    0x1F1E6 + ord(code[1]) - ord("A")
                 )
-            )
+                if emoji.is_emoji(flag_emoji_str):
+                    return s.lower()
+            return None
 
-        if flag and not is_valid_flag(flag):
-            was_flag_valid = False
+        if flag:
+            parsed = parse_flag(flag)
+            if parsed is None:
+                was_flag_valid = False
+            else:
+                flag = parsed  # store as two-letter code, e.g. 'us'
 
         # Create verification dropdown
         embed = create_embed(
