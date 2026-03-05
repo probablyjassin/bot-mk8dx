@@ -7,7 +7,7 @@ from utils.command_helpers import create_embed
 from datetime import datetime
 from collections import Counter
 
-from config import FORMATS
+from config import FORMATS, SEASON
 
 
 class stats(commands.Cog):
@@ -75,7 +75,7 @@ class stats(commands.Cog):
         }
 
         embed = create_embed(
-            "Season 4 Mogi Stats",
+            f"Season {SEASON} Mogi Stats",
             "Some interesting stats",
             "https://raw.githubusercontent.com/mk8dx-yuzu/mk8dx-yuzu.github.io/main/public/images/kawaii_icon_by_kevnkkm.png",
             fields,
