@@ -36,7 +36,10 @@ class list_mogi(commands.Cog):
             # FFA
             if ctx.mogi.format == 1 or ctx.mogi.format == None:
                 list_of_players += "-\n" + "\n\n".join(
-                    [f"{player.name} +" for player in ctx.mogi.players]
+                    [
+                        f"{player.name} {f'[{player.flag}]' if player.flag else ''} +"
+                        for player in ctx.mogi.players
+                    ]
                 )
 
             # Teams
@@ -44,7 +47,10 @@ class list_mogi(commands.Cog):
                 for i, team in enumerate(ctx.mogi.teams):
                     list_of_players += f"{ctx.mogi.team_tags[i]}\n"
                     list_of_players += "\n".join(
-                        [f"{player.name} +" for player in team]
+                        [
+                            f"{player.name} {f'[{player.flag}]' if player.flag else ''} +"
+                            for player in team
+                        ]
                     )
                     list_of_players += "\n\n"
 
