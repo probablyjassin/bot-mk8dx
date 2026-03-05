@@ -5,70 +5,119 @@ from discord.ui import Button, View
 from models.MogiModel import Mogi
 
 
+def _vote_key(label: str) -> str:
+    """Map a button label to the key used in Vote.votes / Vote.user_votes."""
+    return "mini" if label == "Mini" else label
+
+
+def _get_vote_count(label: str, mogi: Mogi) -> int:
+    """Return the current vote count for a given button label."""
+    if not mogi.vote:
+        return 0
+    if label == "Random Teams":
+        return mogi.vote.extras.get("random_teams_votes", 0)
+    return mogi.vote.votes.get(_vote_key(label), 0)
+
+
+def _display_label(label: str, mogi: Mogi) -> str:
+    """Return the button label with the current vote count appended."""
+    count = _get_vote_count(label, mogi)
+    return f"{label} ({count})" if count else label
+
+
 def get_vote_button_style(format: int, player_count: int) -> discord.ButtonStyle:
     if player_count % format == 0 and player_count > format:
         return discord.ButtonStyle.blurple
     return discord.ButtonStyle.gray
 
 
-def create_format_vote_button(mogi: Mogi, label: str, is_extra: bool = False) -> Button:
-
-    FORMAT_BUTTON_INT = int(label[0]) if label[0].isnumeric() else 1
-
-    async def custom_callback(interaction: Interaction):
-        vote_func = None
-        if is_extra:
-            vote_func = mogi.vote.cast_vote_extra
-        else:
-            vote_func = mogi.vote.cast_vote_format
-        response = await vote_func(mogi=mogi, user_id=interaction.user.id, choice=label)
-
-        message = f"Voted for {label}"
-        if label == "Random Teams":
-            message += " (now also vote for the Teams Format you want!)"
-
-        if not response:
-            message = "Can't vote on that"
-        await interaction.respond(message, ephemeral=True)
-
-    button_style = get_vote_button_style(FORMAT_BUTTON_INT, len(mogi.players))
-    if is_extra:
-        button_style = discord.ButtonStyle.green
-    button = Button(
-        label=label,
-        style=button_style,
-        custom_id=label.lower(),
-    )
-    button.callback = custom_callback
-    return button
-
-
 def create_vote_button_view(
     button_labels: list[str], mogi: Mogi, extra_buttons: list[str] = None
 ) -> View:
     """
-    Creates a View object with buttons based on the provided labels and Mogi instance.
-    These buttons each have a callback function with the complex logic for starting the mogi if needed.
+    Creates a View with vote buttons whose labels reflect the live vote counts.
+    Clicking a button casts (or changes) the user's vote and refreshes the counts.
+
     Args:
-        button_labels (`list[str]`): A list of labels for the buttons to be created.
-        mogi (`Mogi`): An instance of the Mogi class to be associated with each button.
-        extra_buttons (`list[str]`, optional): Additional buttons to add on a new row.
+        button_labels: Format buttons (e.g. FORMATS).
+        mogi: The active Mogi instance.
+        extra_buttons: Optional extra buttons (e.g. ["Mini", "Random Teams"]).
     Returns:
-        View: A View object containing the created buttons.
+        A View containing all vote buttons.
     """
+    extra_buttons = extra_buttons or []
+
+    def _build_button(label: str, is_extra: bool) -> Button:
+        format_int = int(label[0]) if label[0].isnumeric() else 1
+
+        async def callback(interaction: Interaction):
+            # prevent interaction errors when someone votes right as the vote already ended
+            await interaction.response.defer(ephemeral=True)
+
+            if not mogi.vote:
+                return await interaction.followup.send(
+                    "Vote is not active.", ephemeral=True
+                )
+
+            prev_key = mogi.vote.user_votes.get(interaction.user.id)
+
+            vote_func = (
+                mogi.vote.cast_vote_extra if is_extra else mogi.vote.cast_vote_format
+            )
+            success = await vote_func(
+                mogi=mogi, user_id=interaction.user.id, choice=label
+            )
+
+            if not success:
+                return await interaction.followup.send(
+                    "Can't vote on that.", ephemeral=True
+                )
+
+            # Build the ephemeral confirmation message
+            new_key = _vote_key(label)
+            changed = prev_key is not None and prev_key != new_key
+            if label == "Random Teams":
+                msg = (
+                    "Voted for Random Teams — also vote for the teams format you want!"
+                )
+            elif changed:
+                msg = f"Changed vote to **{label}**."
+            else:
+                msg = f"Voted for **{label}**."
+
+            await interaction.followup.send(msg, ephemeral=True)
+
+            # Refresh button labels with updated counts (only while vote is still active)
+            if mogi.vote and mogi.vote.is_active:
+                try:
+                    await interaction.message.edit(
+                        view=create_vote_button_view(button_labels, mogi, extra_buttons)
+                    )
+                except Exception:
+                    pass
+
+        style = (
+            discord.ButtonStyle.green
+            if is_extra
+            else get_vote_button_style(format_int, len(mogi.players))
+        )
+
+        btn = Button(
+            label=_display_label(label, mogi),
+            style=style,
+            custom_id=label.lower().replace(" ", "_"),
+        )
+        btn.callback = callback
+        return btn
 
     class VoteButtonView(View):
         def __init__(self):
             super().__init__(timeout=None)
 
     view = VoteButtonView()
-
     for label in button_labels:
-        button = create_format_vote_button(mogi, label)
-        view.add_item(button)
-
+        view.add_item(_build_button(label, is_extra=False))
     for label in extra_buttons:
-        button = create_format_vote_button(mogi, label, is_extra=True)
-        view.add_item(button)
+        view.add_item(_build_button(label, is_extra=True))
 
     return view

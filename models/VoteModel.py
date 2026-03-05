@@ -20,8 +20,11 @@ class Vote:
     extras: dict[str, int | list] = field(
         default_factory=lambda: {"random_teams_votes": 0, "random_teams_voters": []}
     )
+
+    user_votes: dict = field(default_factory=dict)  # user_id -> voted format key
+
     result: str | None = None
-    _vote_lock: asyncio.Lock = field(default_factory=asyncio.Lock)  # Add this
+    _vote_lock: asyncio.Lock = field(default_factory=asyncio.Lock)
 
     _setup_handlers: list[Callable] = field(default_factory=lambda: [])
     _cleanup_handlers: list[Callable] = field(default_factory=lambda: [])
@@ -51,13 +54,9 @@ class Vote:
         return True
 
     async def cast_vote_format(self, mogi: "Mogi", user_id: int, choice: str) -> bool:
-        """Cast a vote for a specific format"""
-        async with self._vote_lock:  # Lock entire vote operation
+        """Cast or change a vote for a specific format"""
+        async with self._vote_lock:
             if not self.is_active:
-                return False
-
-            # Check if user already voted
-            if user_id in self.voters:
                 return False
 
             # Check if user is in the mogi
@@ -69,9 +68,21 @@ class Vote:
             if not self._is_valid_format(mogi, format_int):
                 return False
 
-            # Cast the vote (now atomic)
-            self.voters.add(user_id)
+            prev_choice = self.user_votes.get(user_id)
+
+            # Same vote — no-op
+            if prev_choice == choice:
+                return False
+
+            # Undo previous vote if the user had one
+            if user_id in self.voters and prev_choice and prev_choice in self.votes:
+                self.votes[prev_choice] -= 1
+            elif user_id not in self.voters:
+                self.voters.add(user_id)
+
+            # Cast the new vote
             self.votes[choice] += 1
+            self.user_votes[user_id] = choice
 
             # Check if vote should end
             if await self._should_end(mogi):
@@ -94,11 +105,20 @@ class Vote:
 
             # Handle Mini Mogi vote
             if choice == "Mini":
-                if user_id in self.voters:
+                prev_choice = self.user_votes.get(user_id)
+
+                # Same vote — no-op
+                if prev_choice == "mini":
                     return False
 
-                self.voters.add(user_id)
+                # Undo previous format vote if any
+                if user_id in self.voters and prev_choice and prev_choice in self.votes:
+                    self.votes[prev_choice] -= 1
+                elif user_id not in self.voters:
+                    self.voters.add(user_id)
+
                 self.votes["mini"] += 1
+                self.user_votes[user_id] = "mini"
 
                 if await self._should_end(mogi):
                     winning_format, tied_formats = self._get_winning_format()
@@ -221,8 +241,9 @@ class Vote:
         return {
             "voting_message_id": self.voting_message_id,
             "is_active": self.is_active,
-            "voters": list(self.voters),  # Convert set to list for JSON serialization
-            "votes": self.votes.copy(),  # Copy to avoid modifying original
+            "voters": list(self.voters),
+            "votes": self.votes.copy(),
+            "user_votes": {str(k): v for k, v in self.user_votes.items()},
             "result": self.result,
         }
 
@@ -234,7 +255,8 @@ class Vote:
         vote = cls()
         vote.voting_message_id = data.get("voting_message_id", None)
         vote.is_active = data.get("is_active", False)
-        vote.voters = set(data.get("voters", []))  # Convert list back to set
+        vote.voters = set(data.get("voters", []))
         vote.votes = data.get("votes", {format: 0 for format in FORMATS})
+        vote.user_votes = {int(k): v for k, v in data.get("user_votes", {}).items()}
         vote.result = data.get("result", None)
         return vote
