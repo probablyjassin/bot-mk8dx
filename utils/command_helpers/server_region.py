@@ -23,6 +23,24 @@ REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceani
 async def get_best_server(
     ctx: Interaction | MogiApplicationContext, mogi: Mogi
 ) -> Room | None:
+    if not ROOMS:
+        default_room = ROOMS_CONFIG[0]
+        return Room(
+            address=default_room["address"],
+            description="Join Discord to play here! dsc.gg/yuzuonline",
+            externalGuid="yuzuonline",
+            hasPassword=True,
+            id="yuzuonline",
+            maxPlayers=15,
+            name="EU MAIN 🌍 | LOUNGE → Join Discord to play here! dsc.gg/yuzuonline",
+            netVersion=1,
+            owner="yuzuonline",
+            players=[],
+            port=4600,
+            preferredGameName="Mario Kart 8 Deluxe",
+            preferredGameId=1,
+        )
+
     REGION_ROLES: list[Role] = [get(ctx.guild.roles, name=region) for region in REGIONS]
     regions_dict: dict[str, int] = {region: 0 for region in REGIONS}
 

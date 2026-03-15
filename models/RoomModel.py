@@ -1,7 +1,30 @@
 import requests
 from dataclasses import dataclass
 
-from config import YUZU_API_URL
+from config import YUZU_API_URL, LOG_CHANNEL_ID, ROOMS_CONFIG
+from logger import setup_logger
+
+logger = setup_logger(__name__)
+
+
+def fetch_lobby(timeout: int = 5) -> dict | None:
+    """Fetch lobby data from the Yuzu API with a timeout.
+
+    Returns the parsed JSON dict on success, or None on failure.
+    Logs an error if the request times out or fails.
+    """
+    try:
+        resp = requests.get(f"http://{YUZU_API_URL}/lobby", timeout=timeout)
+        resp.raise_for_status()
+        return resp.json()
+    except requests.exceptions.Timeout as e:
+        logger.error(
+            "Yuzu API timeout after %ss when fetching /lobby; API may be down", timeout
+        )
+        return None
+    except requests.exceptions.RequestException as e:
+        logger.error("Error fetching Yuzu API /lobby: %s", e)
+        return None
 
 
 @dataclass
@@ -68,7 +91,9 @@ class Room:
     @classmethod
     def from_address(cls, address: str, port: int) -> "Room | None":
         try:
-            data: dict = (requests.get(f"http://{YUZU_API_URL}/lobby")).json()
+            data: dict | None = fetch_lobby()
+            if data is None:
+                return None
             servers: list[dict] = data.get("rooms", [])
 
             potential_rooms = [
@@ -87,7 +112,9 @@ class Room:
             return None
 
     def refresh(self) -> None:
-        data: dict = (requests.get(f"http://{YUZU_API_URL}/lobby")).json()
+        data: dict | None = fetch_lobby()
+        if data is None:
+            return None
         servers: list[dict] = data.get("rooms", [])
         candidates = [
             entry
