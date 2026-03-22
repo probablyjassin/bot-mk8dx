@@ -119,5 +119,10 @@ DISCORD_TOKEN: str = os.getenv("DISCORD_TOKEN")
 MONGO_URI: str = os.getenv("MONGO_URI")
 LOUNGE_DB: str = os.getenv("LOUNGE_DB")
 
+REDIS_HOST: str = os.getenv("REDIS_HOST")
+REDIS_PORT: int = int(os.getenv("REDIS_PORT"))
+REDIS_DB: int = int(os.getenv("REDIS_DB"))
+REDIS_PASSWORD: str = os.getenv("REDIS_PASSWORD")
+
 PASSWORD_API_PASS: str = os.getenv("PASSWORD_API_PASS")
 HEALTHCHECK_URL: str = os.getenv("HEALTHCHECK_URL")
