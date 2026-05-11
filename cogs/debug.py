@@ -166,7 +166,10 @@ class debug(commands.Cog):
             choices=[room["name"] for room in ROOMS_CONFIG],
         ),
     ):
-        if not ROOMS:
+        available_rooms = ROOMS[:]
+        candidates = [room for room in available_rooms if room and room.name == server]
+
+        if not candidates:
             default_room = ROOMS_CONFIG[0]
             ctx.mogi.room = Room(
                 address=default_room["address"],
@@ -188,11 +191,9 @@ class debug(commands.Cog):
                 "because an error occured and/or the server browser is unavailable"
             )
 
-        available_rooms = ROOMS[:]
         for mogi in mogi_manager.read_registry().values():
             if mogi.room and mogi.room in available_rooms:
                 available_rooms.remove(mogi.room)
-        candidates = [room for room in available_rooms if room.name == server]
         room = candidates[0] if candidates else None
         if not room:
             return await ctx.respond("The room is not available right now")
