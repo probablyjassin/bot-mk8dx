@@ -199,7 +199,6 @@ class debug(commands.Cog):
             return await ctx.respond("The room is not available right now")
         ctx.mogi.room = room
         await ctx.respond(f"Set the server to:\n{room.name}")
-        await ctx.send(room, ephemeral=True)
 
     @debug.command(name="list_servers")
     @is_admin()
