@@ -166,6 +166,28 @@ class debug(commands.Cog):
             choices=[room["name"] for room in ROOMS_CONFIG],
         ),
     ):
+        if not ROOMS:
+            default_room = ROOMS_CONFIG[0]
+            ctx.mogi.room = Room(
+                address=default_room["address"],
+                description="Join Discord to play here! dsc.gg/yuzuonline",
+                externalGuid="yuzuonline",
+                hasPassword=True,
+                id="yuzuonline",
+                maxPlayers=15,
+                name="EU MAIN 🌍 | LOUNGE → Join Discord to play here! dsc.gg/yuzuonline",
+                netVersion=1,
+                owner="yuzuonline",
+                players=[],
+                port=4600,
+                preferredGameName="Mario Kart 8 Deluxe",
+                preferredGameId=1,
+            )
+            return await ctx.respond(
+                "Set the room to the default room, "
+                "because an error occured and/or the server browser is unavailable"
+            )
+
         available_rooms = ROOMS[:]
         for mogi in mogi_manager.read_registry().values():
             if mogi.room and mogi.room in available_rooms:
@@ -176,7 +198,7 @@ class debug(commands.Cog):
             return await ctx.respond("The room is not available right now")
         ctx.mogi.room = room
         await ctx.respond(f"Set the server to:\n{room.name}")
-        await ctx.send(room)
+        await ctx.send(room, ephemeral=True)
 
     @debug.command(name="list_servers")
     @is_admin()
