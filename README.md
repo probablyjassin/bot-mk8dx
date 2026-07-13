@@ -35,7 +35,8 @@ That's it! Uncomment the [docker watchtower](https://github.com/containrrr/watch
 
 # The 4th Season of MK8DX-Lounge on Yuzu Online!
 
-<img width="4000" height="2812" alt="Yuzu Online Lounge Season 4 Banner" src="https://github.com/user-attachments/assets/f0ab0af9-9e22-45ad-8e8c-c10fbfc13e7f" />
+<img width="4000" height="2812" alt="Yuzu Online Lounge Season 4 Banner" src="https://github.com/user-attachments/assets/fa29937f-48c0-473d-a30c-70f736882450" />
+
 
 We're happy to present the brand new season of Lounge to you! There is many new things we prepared for you this time!
 
