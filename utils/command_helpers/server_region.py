@@ -23,7 +23,7 @@ REGIONS = ["Europe", "North America", "South America", "Africa", "Asia", "Oceani
 async def get_best_server(
     ctx: Interaction | MogiApplicationContext, mogi: Mogi
 ) -> Room | None:
-    if not ROOMS:
+    if not ROOMS or True:
         default_room = ROOMS_CONFIG[0]
         return Room(
             address=default_room["address"],
