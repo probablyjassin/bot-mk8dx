@@ -30,7 +30,7 @@ from services.miscellaneous import set_player_alias, get_all_aliases
 MSG_WARN = "⚠️ The scores don't fully add up! Double check them for errors."
 MSG_CORRECT = "✅ The scores seem to fully add up. Still double check with Lorenzi!"
 
-scoring_regex = r"^ \+?(?:\d+\+)*\d+\s*"
+scoring_regex = r"\s*\d+\+\s*$"
 
 
 def is_image(attachment: Attachment) -> bool:
