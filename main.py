@@ -4,7 +4,7 @@ Used in competitive Mario Kart 8 Deluxe on the Yuzu Emulator.
 Coordinates events to let players gather together and play.
 """
 
-import os, sys
+import os, sys, asyncio
 
 import discord
 from pycord.multicog import Bot
@@ -16,6 +16,8 @@ from config import DISCORD_TOKEN, LOG_CHANNEL_ID
 from utils.data import state_manager
 from models.CustomMogiContext import MogiApplicationContext
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
 
 logger = setup_logger(__name__)
 
