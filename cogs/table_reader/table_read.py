@@ -363,6 +363,8 @@ class table_read(commands.Cog):
             if searched_player:
                 await set_player_alias(searched_player, player_aliases[player_usernames.index(username)])
 
+        await ctx.respond("ok.")
+
 
 
 def setup(bot: commands.Bot):
