@@ -4,6 +4,7 @@ from .guild_manager import guild_manager
 from .roombrowser import get_room_info, ServerType
 from .state import state_manager
 from .image_store import store, SelectedImageStore
+from .playerlist_store import player_alias_store
 from .table_reader_api import (
     table_read_ocr_api,
     pattern_match_lounge_names,
@@ -19,6 +20,7 @@ __all__ = [
     "state_manager",
     "store",
     "SelectedImageStore",
+    "player_alias_store",
     "table_read_ocr_api",
     "pattern_match_lounge_names",
     "ocr_to_tablestring",
