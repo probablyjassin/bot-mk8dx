@@ -341,6 +341,29 @@ class table_read(commands.Cog):
             )
         )
 
+    @message_command(
+    name="Remember aliases",
+    )
+    async def alias_remember(self, ctx: MogiApplicationContext, message: Message):
+        await ctx.defer()
+
+        player_usernames = []
+        player_aliases = []
+
+        for line in message.content.splitlines():
+            if ":" in line:
+                key, value = line.split(":", 1)
+                player_aliases.append(key.strip())
+                player_usernames.append(value.strip())
+
+        for username in player_usernames:
+            searched_player = (
+                await find_player_profile(query=username) if username else None
+            )
+            if searched_player:
+                await set_player_alias(searched_player, player_aliases[player_usernames.index(username)])
+
+
 
 def setup(bot: commands.Bot):
     bot.add_cog(table_read(bot))
