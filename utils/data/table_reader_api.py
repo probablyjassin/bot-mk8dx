@@ -79,6 +79,8 @@ async def pattern_match_lounge_names(
 
     print("--- Pattern matching results ---")
 
+    print("lounge_names:", [repr(n) for n in lounge_names])
+
     # Fetch aliases once upfront
     all_aliases = await get_all_aliases()
 
